@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { Idiomorph } from 'idiomorph/dist/idiomorph.esm';
+import { debounce } from "../lib";
 
 const optionSelector = "[role='option']:not([aria-disabled])"
 const activeSelector = "[aria-selected='true']"
@@ -222,6 +223,10 @@ export default class Autocomplete extends Controller {
   onInputChange = () => {
     if (this.hasHiddenTarget) this.hiddenTarget.value = ""
 
+    this.triggerFetch();
+  }
+
+  triggerFetch() {
     const query = this.inputTarget.value.trim()
     if ((query && query.length >= this.minLengthValue) || (!query && this.fetchEmptyValue)) {
       this.fetchResults(query)
@@ -252,6 +257,12 @@ export default class Autocomplete extends Controller {
     if (!this.hasStatusTarget || !this.loadingStatusValue) {
       return
     }
+
+    if (this.inputTarget !== document.activeElement) {
+      // Only show status message when input is focused
+      return;
+    }
+
     this.resultsShown = true
     this.inputTarget.setAttribute("aria-expanded", "true")
     this.setStatus(this.loadingStatusValue)
@@ -261,6 +272,11 @@ export default class Autocomplete extends Controller {
     if (!this.hasUrlValue) return
 
     const url = this.buildURL(query)
+
+    if (url === null) {
+      return;
+    }
+
     try {
       this.element.dispatchEvent(new CustomEvent("loadstart"))
       this.showLoadingStatus()
@@ -378,15 +394,6 @@ export default class Autocomplete extends Controller {
 
   optionsForFetch() {
     return { headers: { "X-Requested-With": "XMLHttpRequest" } } // override if you need
-  }
-}
-
-const debounce = (fn, delay = 10) => {
-  let timeoutId = null
-
-  return (...args) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(fn, delay)
   }
 }
 

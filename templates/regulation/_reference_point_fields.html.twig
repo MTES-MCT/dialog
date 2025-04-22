@@ -1,0 +1,53 @@
+<div
+    class="fr-x-autocomplete-wrapper fr-col-12 fr-col-md-3"
+    data-controller="autocomplete fetch"
+    data-autocomplete-url-value="{{ path('fragment_point_number_completion') }}"
+    data-autocomplete-query-param-value="search"
+    data-autocomplete-extra-query-params-value="{{ {
+        administrator: '#' ~ administrator.vars.id,
+        roadNumber: '#' ~ roadNumber.vars.id,
+    }|json_encode }}"
+    data-autocomplete-required-params-value="{{ ['administrator', 'roadNumber']|json_encode }}"
+    data-autocomplete-fetch-empty-value="true"
+    data-autocomplete-prefetch-value="true"
+    data-autocomplete-delay-value="500"
+    data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+    data-fetch-url-value="{{ url('fragment_side_options') }}"
+    data-fetch-extra-query-params-value="{{ {
+        administrator: '#' ~ administrator.vars.id,
+        roadNumber: '#' ~ roadNumber.vars.id,
+        pointNumberWithDepartmentCode: '#' ~ pointNumberWithDepartmentCode.vars.id,
+        currentOption: '#' ~ side.vars.id,
+        targetId: side.vars.id,
+    }|json_encode }}"
+    data-fetch-required-params-value="{{ ['administrator', 'roadNumber', 'pointNumberWithDepartmentCode']|json_encode }}"
+    data-action="autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
+>
+    {{ form_row(pointNumberWithDepartmentCode, {
+        attr: {
+            'data-autocomplete-target': 'hidden',
+        },
+    }) }}
+
+    {{ form_row(pointNumberWithDepartmentCodeLabel, {
+        attr: {
+            class: 'fr-input',
+            'data-autocomplete-target': 'input',
+            'data-action': 'reset:reset->autocomplete#reset',
+        }
+    }) }}
+
+    <ul
+        id="{{ pointNumberWithDepartmentCodeLabel.vars.id }}-results"
+        role="listbox"
+        aria-label="{{ 'regulation.location.pointNumber.results_label'|trans }}"
+        class="fr-x-autocomplete"
+        data-autocomplete-target="results"
+    >
+        <li role="status" data-autocomplete-target="status"></li>
+    </ul>
+</div>
+
+{{ form_row(side, { row_attr: {class:'fr-col-12 fr-col-md-5'}, attr: {class: 'fr-select'}}) }}
+
+{{ form_row(abscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}

@@ -18,6 +18,10 @@
                 <source>regulation.location.cityCode.error.blank</source>
                 <target>Veuillez choisir une ville ou un code postal parmi la liste.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.pointNumber.error.blank">
+                <source>regulation.location.pointNumber.error.blank</source>
+                <target>Veuillez choisir un PR parmi la liste.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.abscissa_out_of_range">
                 <source>regulation.location.error.abscissa_out_of_range</source>
                 <target>Cette abscisse n'est pas située sur la route. Veuillez vérifier votre saisie.</target>

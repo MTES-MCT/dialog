@@ -137,10 +137,57 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new RoadGeocodingFailureException($roadType, $message);
     }
 
+    public function findReferencePoints(string $search, string $administrator, string $roadNumber): array
+    {
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                'SELECT
+                    DISTINCT p.numero AS point_number,
+                    p.numero::integer AS _point_number_int, -- Must be selected because appears in ORDER BY
+                    p.code_insee_du_departement as department_code,
+                    (
+                        SELECT COUNT(DISTINCT(pp.code_insee_du_departement))
+                        FROM point_de_repere AS pp
+                        WHERE pp.numero = p.numero
+                        AND pp.gestionnaire = p.gestionnaire
+                        AND pp.route = p.route
+                        AND pp.type_de_pr LIKE \'PR%\'
+                    ) AS num_departments
+                FROM point_de_repere AS p
+                WHERE p.numero LIKE :numero_pattern
+                AND p.gestionnaire = :gestionnaire
+                AND p.route = :route
+                AND p.type_de_pr LIKE \'PR%\'
+                ORDER BY p.numero::integer, p.code_insee_du_departement
+                ',
+                [
+                    'numero_pattern' => \sprintf('%s%%', $search),
+                    'gestionnaire' => $administrator,
+                    'route' => $roadNumber,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Reference points query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $results = [];
+
+        foreach ($rows as $row) {
+            $results[] = [
+                'pointNumber' => $row['point_number'],
+                'departmentCode' => $row['department_code'],
+                'numDepartments' => $row['num_departments'],
+            ];
+        }
+
+        return $results;
+    }
+
     public function computeReferencePoint(
         string $roadType,
         string $administrator,
         string $roadNumber,
+        ?string $departmentCode,
         string $pointNumber,
         string $side,
         int $abscissa,
@@ -148,53 +195,58 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
             $row = $this->bdtopoConnection->fetchAssociative(
-                'SELECT ST_AsGeoJSON(
-                    ST_GeometryN(
-                        ST_LocateAlong(
-                            ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
-                            ST_InterpolatePoint(
+                \sprintf(
+                    'SELECT ST_AsGeoJSON(
+                        ST_GeometryN(
+                            ST_LocateAlong(
                                 ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
-                                p.geometrie
-                            ) + :abscissa * (
-                                -- L ordre de numérisation (= ordre des points dans la géométrie de la section)
-                                -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
-                                -- On détecte si les deux ordres correspondent avec cette règle :
-                                -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
-                                -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens
-                                CASE WHEN ST_Distance(
-                                    ST_StartPoint(s.geometrie),
-                                    (
-                                        SELECT pp.geometrie
-                                        FROM point_de_repere AS pp
-                                        WHERE pp.identifiant_de_section = s.identifiant_de_section
-                                        AND pp.ordre >= 0
-                                        ORDER BY pp.ordre ASC
-                                        LIMIT 1
-                                    )
-                                ) < ST_Length(s.geometrie) / 4
-                                THEN 1
-                                ELSE -1
-                                END
-                            )
-                        ),
-                        1
-                    )
-                ) AS geom
-                FROM point_de_repere AS p
-                LEFT JOIN section_de_points_de_repere AS s
-                    ON p.identifiant_de_section = s.identifiant_de_section
-                WHERE p.gestionnaire = :administrator
-                    AND p.route = :roadNumber
-                    AND p.numero = :pointNumber
-                    AND p.cote = :side
-                    -- Types dans la BDTOPO : C, CS, DS, FS, PR, PR0, PRF.
-                    -- On ne garde que les types PR, PR0 et PRF, car les autres types ne correspondent pas à des PR "physiques".
-                    AND p.type_de_pr LIKE \'PR%\'
-                ',
+                                ST_InterpolatePoint(
+                                    ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
+                                    p.geometrie
+                                ) + :abscissa * (
+                                    -- L ordre de numérisation (= ordre des points dans la géométrie de la section)
+                                    -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
+                                    -- On détecte si les deux ordres correspondent avec cette règle :
+                                    -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
+                                    -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens
+                                    CASE WHEN ST_Distance(
+                                        ST_StartPoint(s.geometrie),
+                                        (
+                                            SELECT pp.geometrie
+                                            FROM point_de_repere AS pp
+                                            WHERE pp.identifiant_de_section = s.identifiant_de_section
+                                            AND pp.ordre >= 0
+                                            ORDER BY pp.ordre ASC
+                                            LIMIT 1
+                                        )
+                                    ) < ST_Length(s.geometrie) / 4
+                                    THEN 1
+                                    ELSE -1
+                                    END
+                                )
+                            ),
+                            1
+                        )
+                    ) AS geom
+                    FROM point_de_repere AS p
+                    LEFT JOIN section_de_points_de_repere AS s
+                        ON p.identifiant_de_section = s.identifiant_de_section
+                    WHERE p.gestionnaire = :administrator
+                        AND p.route = :roadNumber
+                        AND p.numero = :pointNumber
+                        AND p.cote = :side
+                        -- Types dans la BDTOPO : C, CS, DS, FS, PR, PR0, PRF.
+                        -- On ne garde que les types PR, PR0 et PRF, car les autres types ne correspondent pas à des PR "physiques".
+                        AND p.type_de_pr LIKE \'PR%%\'
+                        %s
+                    ',
+                    empty($departmentCode) ? '' : 'AND p.code_insee_du_departement = :departmentCode',
+                ),
                 [
                     'administrator' => $administrator,
                     'roadNumber' => $roadNumber,
                     'pointNumber' => $pointNumber,
+                    'departmentCode' => $departmentCode,
                     'side' => $side,
                     'abscissa' => $abscissa,
                 ],
@@ -204,7 +256,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         if (!$row) {
-            throw new GeocodingFailureException(\sprintf('no result found for roadNumber="%s", administrator="%s", pointNumber=%s', $roadNumber, $administrator, $pointNumber));
+            throw new GeocodingFailureException(\sprintf('no result found for roadNumber="%s", administrator="%s", departmentCode="%s", pointNumber=%s', $roadNumber, $administrator, $departmentCode, $pointNumber));
         }
 
         if (empty($row['geom'])) {
@@ -220,6 +272,41 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         } else {
             return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
         }
+    }
+
+    public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array
+    {
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                \sprintf(
+                    'SELECT DISTINCT p.cote AS side
+                    FROM point_de_repere AS p
+                    WHERE p.gestionnaire = :gestionnaire
+                    AND p.route = :route
+                    AND p.numero = :numero
+                    AND p.type_de_pr LIKE \'PR%%\'
+                    %s
+                    ',
+                    empty($departmentCode) ? '' : 'AND p.code_insee_du_departement = :departmentCode',
+                ),
+                [
+                    'route' => $roadNumber,
+                    'gestionnaire' => $administrator,
+                    'numero' => $pointNumber,
+                    'departmentCode' => $departmentCode,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Sides query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $sides = [];
+
+        foreach ($rows as $row) {
+            $sides[] = $row['side'];
+        }
+
+        return $sides;
     }
 
     public function findRoadNames(string $search, string $cityCode): array

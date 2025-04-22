@@ -243,9 +243,14 @@
                     {{ 'regulation.location.referencePoint.from'|trans }}
                 </legend>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form[roadType].fromPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form[roadType].fromSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                    {{ form_row(form[roadType].fromAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                    {% include 'regulation/_reference_point_fields.html.twig' with {
+                        administrator: form[roadType].administrator,
+                        roadNumber: form[roadType].roadNumber,
+                        pointNumberWithDepartmentCode: form[roadType].fromPointNumber,
+                        pointNumberWithDepartmentCodeLabel: form[roadType].fromPointNumberWithDepartmentCodeLabel,
+                        side: form[roadType].fromSide,
+                        abscissa: form[roadType].fromAbscissa,
+                    } only %}
                 </div>
             </fieldset>
             <fieldset
@@ -256,11 +261,16 @@
                     {{ 'regulation.location.referencePoint.to'|trans }}
                 </legend>
                 <div class="fr-grid-row fr-grid-row--gutters">
-                    {{ form_row(form[roadType].toPointNumber, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
-                    {{ form_row(form[roadType].toSide, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-select'}}) }}
-                    {{ form_row(form[roadType].toAbscissa, { row_attr: {class:'fr-col-12 fr-col-md-4'}, attr: {class: 'fr-input'}}) }}
+                    {% include 'regulation/_reference_point_fields.html.twig' with {
+                        administrator: form[roadType].administrator,
+                        roadNumber: form[roadType].roadNumber,
+                        pointNumberWithDepartmentCode: form[roadType].toPointNumber,
+                        pointNumberWithDepartmentCodeLabel: form[roadType].toPointNumberWithDepartmentCodeLabel,
+                        side: form[roadType].toSide,
+                        abscissa: form[roadType].toAbscissa,
+                    } only %}
                 </div>
-            </fieldset>
+            </fieldset>.
             {{ form_row(form[roadType].direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
 
             {% if regulationSubject == 'winterMaintenance' %}

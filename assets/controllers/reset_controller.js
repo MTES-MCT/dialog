@@ -7,8 +7,7 @@ export default class extends Controller {
     reset({ params }) {
         this.elementTargets.forEach(el => {
             if (this._shouldReset(params, el)) {
-                resetFormControl(el);
-                this.dispatch('reset', { target: el });
+                resetFormControl(el, (target) => this.dispatch('reset', { target }));
             }
         });
     }
