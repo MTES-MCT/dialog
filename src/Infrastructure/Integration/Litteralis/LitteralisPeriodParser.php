@@ -20,6 +20,12 @@ final class LitteralisPeriodParser
     // * 'de 21h à 6h.'
     // * 'de 8 heures à 15 heures 30'
     private const HOURS_REGEX = '/^(?:la nuit |de nuit )?(?:de )?(?P<startHour>\d{1,2}) ?(?:h|heures?) ?(?P<startMinute>\d{1,2})? (?:à|À|0) ?(?P<endHour>\d{1,2}) ?(?:h|heures?) ?(?P<endMinute>\d{1,2})?\.?$/i';
+    private const ALL_HOURS_VALUES = [
+        // <<< Litteralis Corrèze (aka CD19)
+        '24/24 7j/7j',
+        'TOUS',
+        // >>>
+    ];
 
     private $tz;
 
@@ -129,7 +135,7 @@ final class LitteralisPeriodParser
 
         $value = $this->findParameterValue($parameters, 'jours et horaires');
 
-        if (!$value) {
+        if (!$value || \in_array($value, self::ALL_HOURS_VALUES)) {
             $periodCommand->timeSlots = [];
 
             return;

@@ -85,41 +85,38 @@ Remarques
 Informations d'exécution
 -------------------------
 
-Date et heure de début : start
-Temps d'exécution : 1 min 30 s
-Nom de l'intégration : Litteralis TEST
-Organisation cible : uuid: <uuid> ; name: Test org
-integration.report.fact.example.fact1 : abc
-Date et heure de fin : end
+* Date et heure de début : start
+* Temps d'exécution : 1 min 30 s
+* Nom de l'intégration : Litteralis TEST
+* Organisation cible : uuid: <uuid> ; name: Test org
+* integration.report.fact.example.fact1 : abc
+* Date et heure de fin : end
 
 Décomptes
 ----------
 
-integration.report.count.example.total_features : 10
+* integration.report.count.example.total_features : 10
 
 Erreurs
 -------
 
 integration.report.error.example.max_speed_value_missing : 1 (dans 1 arrêtés)
-  Arrêtés :
-    arrete1 (http://testserver/arrete1)
+* Arrêté arrete1 (http://testserver/arrete1)
 
 
 Avertissements
 --------------
 
 integration.report.warning.example.missing_geometry : 2 (dans 2 arrêtés)
-  Arrêtés :
-    arrete4
-    arrete2
+* Arrêté arrete4
+* Arrêté arrete2
 
 
 Remarques
 ---------
 
 integration.report.notice.example.no_measures_found : 1 (dans 1 arrêtés)
-  Arrêtés :
-    arrete3
+* Arrêté arrete3
 
 ";
 
@@ -196,39 +193,35 @@ integration.report.notice.example.no_measures_found : 1 (dans 1 arrêtés)
 Informations d'exécution
 -------------------------
 
-integration.report.fact.example.organization : Ville exemple (orgId = 'abc123')
+* integration.report.fact.example.organization : Ville exemple (orgId = 'abc123')
 
 Décomptes
 ----------
 
-integration.report.count.example.numFeatures : 42 (numRegulations = 104)
+* integration.report.count.example.numFeatures : 42 (numRegulations = 104)
 
 Erreurs
 -------
 
 integration.report.error.example.importCommandFailed : 1 (dans 1 arrêtés)
-  Arrêtés :
-    regulation1 (message = 'oops')
+* Arrêté regulation1 (message = 'oops')
 
 
 Avertissements
 --------------
 
 integration.report.warning.example.missingGeometry : 1 (dans 1 arrêtés)
-  Arrêtés :
-    regulation1 (idemprise = 'def456')
+* Arrêté regulation1 (idemprise = 'def456')
 
 integration.report.warning.example.warningWithoutDetails : 1 (dans 1 arrêtés)
-  Arrêtés :
-    regulation1
+* Arrêté regulation1
 
 
 Remarques
 ---------
 
 integration.report.notice.example.unsupportedMeasure : 2 (dans 1 arrêtés)
-  Arrêtés :
-    regulation1 (name = 'Stationnement interdit', idemprise = 123 ; name = 'Interdiction de dépasser', idemprise = 456)
+* Arrêté regulation1 (name = 'Stationnement interdit', idemprise = 123 ; name = 'Interdiction de dépasser', idemprise = 456)
 
 ";
 
