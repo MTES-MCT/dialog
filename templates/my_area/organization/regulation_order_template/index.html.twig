@@ -41,6 +41,11 @@
                                         {% if not regulationOrderTemplate.organizationUuid %}<span class="fr-tag fr-tag--sm">DiaLog</span>{% endif %}
                                     </td>
                                     <td>
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                {{ 'common.update'|trans }}
+                                            </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
