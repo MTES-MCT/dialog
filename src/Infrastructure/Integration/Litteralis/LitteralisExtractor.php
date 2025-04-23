@@ -12,6 +12,13 @@ final class LitteralisExtractor
 {
     private array $clients;
 
+    private const MEASURES_ILIKE_ITEMS = [
+        '%circulation interdite%',
+        '%limitation de vitesse%',
+        '%interruption de circulation%',
+        '%interdiction de stationnement%',
+    ];
+
     public function __construct(
         private LitteralisClientFactory $clientFactory,
     ) {
@@ -42,10 +49,17 @@ final class LitteralisExtractor
     {
         $client = $this->getClient($name);
 
-        $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%') AND " . \sprintf(
-            "(arretefin IS NULL OR arretefin >= '%s')",
-            $laterThan->format(\DateTimeInterface::ISO8601),
-        );
+        // On ne récupère que les features remplissant certaines conditions, en utilisant
+        // la syntaxe CQL.
+        // Lien utile : fonctions CQL : https://docs.geoserver.org/latest/en/user/filter/function_reference.html#filter-function-reference
+
+        // Exemple : measures ILIKE 'circulation interdite' OR mesures ILIKE 'stationnement interdit' [...]
+        $quotedMeasureIlikeItems = array_map(fn ($i) => \sprintf("'%s'", $i), self::MEASURES_ILIKE_ITEMS);
+        $mesuresFilter = \sprintf('mesures ILIKE %s', implode(' OR mesures ILIKE ', $quotedMeasureIlikeItems));
+
+        $arreteFinFilter = \sprintf("arretefin IS NULL OR arretefin >= '%s'", $laterThan->format(\DateTimeInterface::ISO8601));
+
+        $cqlFilter = \sprintf('(%s) AND (%s)', $mesuresFilter, $arreteFinFilter);
 
         // On calcule des totaux qui seront affichés dans le rapport final
 
