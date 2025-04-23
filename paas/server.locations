@@ -1,3 +1,11 @@
+# Configuration globale pour activer gzip
+gzip on;
+gzip_comp_level 6;
+gzip_min_length 256;
+# Only text and data files. Images should not be compressed: https://stackoverflow.com/a/46662236
+gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;gzip_vary on;
+gzip_proxied any;
+
 location ~* \.(css|js|jpg|jpeg|png|svg|webp|ico|woff2|woff|eot|ttf) {
     # Cache for 1 year.
     # Caching JS and CSS is safe too, as Symfony includes hashes in build filenames.
