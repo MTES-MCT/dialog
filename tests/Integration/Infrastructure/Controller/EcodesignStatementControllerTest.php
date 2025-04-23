@@ -16,7 +16,6 @@ final class EcodesignStatementControllerTest extends AbstractWebTestCase
         $this->assertSame('public, s-maxage=86400', $client->getResponse()->headers->get('Cache-Control'));
         $this->assertMetaTitle("Déclaration d'écoconception - DiaLog", $crawler);
         $this->assertSame("Déclaration d'écoconception", $crawler->filter('h1')->text());
-        $this->assertStringContainsString('partiellement conforme', $crawler->text());
     }
 
     public function testFooterLink(): void

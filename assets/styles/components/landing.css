@@ -128,3 +128,9 @@
 .app-landing-details-moretiles > * {
     max-width: 384px;
 }
+
+.app-ecodesign-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(4 * var(--1w));
+}
