@@ -68,13 +68,16 @@ final class DuplicateMeasureCommandHandler
                 $numberedRoadCmd->administrator = $numberedRoad->getAdministrator();
                 $numberedRoadCmd->roadNumber = $numberedRoad->getRoadNumber();
                 $numberedRoadCmd->fromPointNumber = $numberedRoad->getFromPointNumber();
+                $numberedRoadCmd->fromDepartmentCode = $numberedRoad->getFromDepartmentCode();
                 $numberedRoadCmd->fromSide = $numberedRoad->getFromSide();
                 $numberedRoadCmd->fromAbscissa = $numberedRoad->getFromAbscissa();
                 $numberedRoadCmd->toPointNumber = $numberedRoad->getToPointNumber();
+                $numberedRoadCmd->toDepartmentCode = $numberedRoad->getToDepartmentCode();
                 $numberedRoadCmd->toAbscissa = $numberedRoad->getToAbscissa();
                 $numberedRoadCmd->toSide = $numberedRoad->getToSide();
                 $numberedRoadCmd->direction = $numberedRoad->getDirection();
                 $numberedRoadCmd->storageArea = $location->getStorageArea();
+                $numberedRoadCmd->prepareReferencePoints();
                 $cmd->assignNumberedRoad($numberedRoadCmd);
             } elseif ($namedStreet = $location->getNamedStreet()) {
                 $cmd->namedStreet = new SaveNamedStreetCommand();
