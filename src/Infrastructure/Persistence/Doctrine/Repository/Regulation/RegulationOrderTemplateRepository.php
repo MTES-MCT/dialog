@@ -52,4 +52,14 @@ final class RegulationOrderTemplateRepository extends ServiceEntityRepository im
             ->getResult()
         ;
     }
+
+    public function findOneByUuid(string $uuid): ?RegulationOrderTemplate
+    {
+        return $this->createQueryBuilder('rot')
+            ->where('rot.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
