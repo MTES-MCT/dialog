@@ -50,6 +50,16 @@ export default class extends Controller {
             }
         });
 
+        // Initialiser le contenu de l'éditeur avec la valeur du champ caché
+        if (this.element.value) {
+            this.quill.root.innerHTML = this.element.value;
+        }
+
+        // Mettre à jour le champ caché quand le contenu de l'éditeur change
+        this.quill.on('text-change', () => {
+            this.element.value = this.quill.root.innerHTML;
+        });
+
         if (this.variablesValue.length > 0) {
             this.addVariablesPickerHTML();
         }
