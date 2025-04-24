@@ -59,9 +59,11 @@ class AppExtension extends \Twig\Extension\AbstractExtension
     {
         // SUBTLE: Copy current date to have same daylight saving time (DST) period
         $now = new \DateTimeImmutable('now');
-        $time = \DateTimeImmutable::createFromInterface($time)->setDate((int) $now->format('Y'), (int) $now->format('m'), (int) $now->format('d'));
 
-        return $time->setTimeZone($this->clientTimezone)->format('H\hi');
+        return \DateTimeImmutable::createFromInterface($time)
+            ->setTimeZone($this->clientTimezone)
+            ->setDate((int) $now->format('Y'), (int) $now->format('m'), (int) $now->format('d'))
+            ->format('H\hi');
     }
 
     public function formatNumber(float $value, ?int $decimals = null): string
