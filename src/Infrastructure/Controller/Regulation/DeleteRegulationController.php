@@ -62,8 +62,12 @@ final class DeleteRegulationController
             throw new AccessDeniedHttpException();
         }
 
+        $redirectQueryParams = $request->query->get('_redirectQueryParams')
+            ? json_decode($request->query->get('_redirectQueryParams'), true)
+            : [];
+
         return new RedirectResponse(
-            url: $this->router->generate('app_regulations_list'),
+            url: $this->router->generate('app_regulations_list', $redirectQueryParams),
             status: Response::HTTP_SEE_OTHER,
         );
     }
