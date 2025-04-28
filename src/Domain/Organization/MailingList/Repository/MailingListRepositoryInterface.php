@@ -11,4 +11,6 @@ interface MailingListRepositoryInterface
     public function findRecipientsByOrganizationUuid(string $uuid): array;
 
     public function add(MailingList $mailingList): MailingList;
+
+    public function findOneByUuid(string $uuid): ?MailingList;
 }

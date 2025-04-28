@@ -34,4 +34,13 @@ final class MailingListRepository extends ServiceEntityRepository implements Mai
 
         return $mailingList;
     }
+
+    public function findOneByUuid(string $uuid): MailingList
+    {
+        return $this->createQueryBuilder('ml')
+            ->where('ml.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

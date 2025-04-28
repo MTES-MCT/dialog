@@ -48,7 +48,12 @@
                                     <td>
                                         {{ mailingList.role }}<br/>
                                     </td>
-                                    <td></td>
+                                    <td>
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_recipient_edit', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                            </a>
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>
