@@ -66,11 +66,11 @@
                                                 >
                                                     <d-modal-trigger modal="visa-duplicate-modal" submitValue="visa-duplicate-{{ visa.uuid }}">
                                                         <button
-                                                            class="fr-btn fr-btn--tertiary-no-outline"
+                                                            class="fr-btn fr-btn--tertiary-no-outline fr-icon-x-file-copy-line"
                                                             aria-controls="visa-duplicate-modal"
                                                             aria-label="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
                                                             title="{{ 'visa.list.duplicate'|trans({'%name%': visa.name}) }}"
-                                                        ><i class="ri-file-copy-line" style="font-size:24px"></i></button>
+                                                        ></button>
                                                     </d-modal-trigger>
                                                     <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
                                                 </form>
