@@ -27,12 +27,6 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             endDateTime: new \DateTimeImmutable('2023-10-31 22:00:00'),
             recurrenceType: 'everyDay',
         );
-        $typicalTimeSlot = new TimeSlot(
-            uuid: 'd6284665-be03-43b8-a35d-844ba302af8e',
-            period: $typicalPeriod,
-            startTime: \DateTimeImmutable::createFromFormat('H:i', '08:00'),
-            endTime: \DateTimeImmutable::createFromFormat('H:i', '22:00'),
-        );
         $publishedPeriod = new Period(
             uuid: '067164f2-cbd3-7fc6-8000-7ce25ec9c17b',
             measure: $this->getReference('publishedMeasure', Measure::class),
@@ -170,7 +164,6 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         );
 
         $manager->persist($typicalPeriod);
-        $manager->persist($typicalTimeSlot);
         $manager->persist($publishedPeriod);
         $manager->persist($publishedPeriod2);
         $manager->persist($permanentPeriod);

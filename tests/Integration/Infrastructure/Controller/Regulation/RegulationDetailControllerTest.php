@@ -50,7 +50,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Circulation interdite', $measure2Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure2Content->filter('li')->eq(0)->text());
-        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00 (09h00-23h00)', $measure2Content->filter('li')->eq(1)->text());
+        $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure2Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue Adrien Lesesne à Saint-Ouen-sur-Seine', $measure2Content->filter('li')->eq(3)->text());
         $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine', $measure2Content->filter('li')->eq(4)->text());
 
