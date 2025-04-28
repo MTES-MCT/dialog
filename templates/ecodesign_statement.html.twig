@@ -53,59 +53,81 @@
 
             * Utilisation des composants d'interfaces du système de design de l'Etat (DSFR) : ils sont accessibles et leur empreinte est minimale.
             * Navigation la plus intuitive possible, pour réduire le temps passé à trouver une information.
-            * Nombre de requêtes serveurs maximum par écran : 30.
-            * Poids des ressources maximum par écran : 300 ko.
+            * Nombre de requêtes serveurs maximum par écran : 40.
+            * Poids des ressources maximum par écran : 900 ko.
             * Le service s'adapte à toutes les tailles d'écran.
             * Utilisation limitée d'images et compression des images.
 
-            La mise en place de cette stratégie est supervisée par Florimond Manca, désigné le 23/08/2023 comme personne référente pour l'écoconception du service.
+            La mise en place de cette stratégie est supervisée par Aurélie Baton et Florimond Manca, désignés le 23 avril 2025 comme personnes référentes pour l'écoconception du service.
 
-            ## État de conformité au référentiel d'écoconception
+            ## Score d'avancement dans la mise en œuvre du référentiel général d'écoconception des services numériques (RGESN)
 
-            Le service [DiaLog]({{ path('app_landing') }}) est **partiellement conforme** en regard
-            des critères du Référentiel Général d'Écoconception des Services Numériques (RGESN) en version 2024.
-            Le taux de conformité général actuel du service est estimé à **71 %**.
+            Score d'avancement le 6 mars 2025 : 71 %
 
-            L'équipe vise une **mise en conformité progressive** du service via une démarche d'amélioration continue.
+            Score d'avancement précédent : 71 % le 4 juin 2024
 
-            ### Résultat des tests conduits sur le service
+            Le service numérique DiaLog vise une amélioration continue de ce score d'avancement pour atteindre 80 % en juin 2026.
 
-            À l'aide de [NumEcoDiag](https://ecoresponsable.numerique.gouv.fr/publications/referentiel-general-ecoconception/numecodiag/),
-            l'auto-diagnostic initial donne un taux de conformité au RGESN de 71 %.
+            <div class="app-ecodesign-results fr-mb-4w">
+            <!-- Do not indent to avoid rendering as code block -->
+            <div class="fr-card fr-enlarge-link fr-card--sm fr-card--download">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ asset('files/2025-04-23 - Déclaration écoconception DiaLog.pdf') }}" download>
+                                Déclaration d'écoconception
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            23 avril 2025
+                        </p>
+                        <div class="fr-card__end">
+                            <p class="fr-card__detail">PDF - 310 ko</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <a href="{{ asset('files/2024-06-03 - Audit RGESN DiaLog.pdf') }}">Télécharger l'audit de conformité RGESN de juin 2024 (PDF - 217 Ko)</a>
+            <div class="fr-card fr-enlarge-link fr-card--sm fr-card--download">
+                <div class="fr-card__body">
+                    <div class="fr-card__content">
+                        <h3 class="fr-card__title">
+                            <a href="{{ asset('files/2025-03-06 - Déclaration écoconception DiaLog - Détail.pdf') }}" download>
+                                Tableau d'audit RGESN
+                            </a>
+                        </h3>
+                        <p class="fr-card__desc">
+                            6 mars 2025
+                        </p>
+                        <div class="fr-card__end">
+                            <p class="fr-card__detail">PDF - 540 ko</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
 
-            Le diagnostic a porté sur l'échantillon suivant :
-
-            * Page d'accueil
-            * Liste des arrêtés
-            * Page d'un arrêté
-            * Déclaration d'accessibilité
-
-            Les outils utilisés pour évaluer certains indicateurs techniques sont
-            l'inspecteur "Réseau" des outils de développement du navigateur
-            et l'extension [Green IT Analysis](https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/greenitanalysis/)
-            (disponible sous Firefox, Chrome).
-
-            ### Evaluation du parcours avec GreenIT Analysis
+            ## Evaluation du parcours avec GreenIT Analysis
 
             L'**unité fonctionnelle** choisie pour l'évaluation du parcours est : "Saisir un arrêté temporaire de circulation".
 
-            L'évaluation du parcours a été faite le 05/06/2023 sur Firefox, après nettoyage du cache en début de parcours.
+            L'évaluation du parcours a été faite le 23 avril 2025 sur Firefox, après nettoyage du cache en début de parcours.
             Afin d'éviter l'incrémentation des résultats sur ce parcours, les données réseaux sont nettoyées entre chaque étape.
 
             Les étapes suivies sont :
 
-            * **Accéder à la page d'accueil de Dialog** : score **EcoIndex A** (26 requêtes, 328 Ko de données transférées, 180 éléments DOM) ;
-            * **Se connecter à Dialog** : score  **EcoIndex A**(7 requêtes, 119 Ko, 149 éléments DOM) ;
-            * **Accéder à la liste des arrêtés** : score **EcoIndex B** (7 requêtes, 122 Ko, 538 éléments DOM) ;
-            * **Accéder à la page de création d'un arrêté** : score **EcoIndex A** (7 requêtes, 120 Ko, 189 éléments DOM) ;
-            * **Saisir un nouvel arrêté de travaux** (circulation interdite sur 1 rue, à tous les véhicules sauf vélos et piétons) :
-            score **EcoIndex C** (33 requêtes, 350 Ko, 655 éléments DOM).
+            * **Accéder à la page d'accueil de Dialog** : score **EcoIndex B** (33 requêtes, 974 Ko de données transférées, 196 éléments DOM) ;
+            * **Se connecter à Dialog** : score  **EcoIndex A**(7 requêtes, 40 Ko, 173 éléments DOM) ;
+            * **Accéder à la liste des arrêtés** : score **EcoIndex C** (16 requêtes, 91 Ko, 880 éléments DOM) ;
+            * **Accéder à la page de création d'un arrêté** : score **EcoIndex A** (5 requêtes, 8 Ko, 235 éléments DOM) ;
+            * **Saisir les informations générales puis accéder à la page d'un nouvel arrêté de travaux** :
+            score **EcoIndex C** (12 requêtes, 70 Ko, 1093 éléments DOM) ;
+            * **Saisir une mesure dans le formulaire** (circulation interdite sur 1 rue, à tous les véhicules sauf vélos et piétons) :
+            score **EcoIndex A** (9 requêtes, 141 Ko, 240 éléments DOM).
 
             ### Date de cette déclaration de conformité
 
-            Cette déclaration est établie le 05/06/2024.
+            Cette déclaration est établie le 23 avril 2025.
 
             ### Et après ?
 

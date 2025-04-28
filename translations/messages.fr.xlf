@@ -622,7 +622,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.pointNumber.help">
                 <source>regulation.location.referencePoint.pointNumber.help</source>
-                <target>Numéro du point de repère</target>
+                <target>Numéro du PR</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.abscissa">
                 <source>regulation.location.referencePoint.abscissa</source>
@@ -2672,6 +2672,70 @@
             <trans-unit id="regulation_order_template.name">
                 <source>regulation_order_template.name</source>
                 <target>Nom</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.title">
+                <source>regulation_order_template.title</source>
+                <target>Titre de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.visaContent">
+                <source>regulation_order_template.visaContent</source>
+                <target>Contenu du visa</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.consideringContent">
+                <source>regulation_order_template.consideringContent</source>
+                <target>Contenu de la considération</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.articleContent">
+                <source>regulation_order_template.articleContent</source>
+                <target>Contenu de l'article</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.add.title">
+                <source>regulation_order_template.add.title</source>
+                <target>Ajouter un modèle</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.name.help">
+                <source>regulation_order_template.name.help</source>
+                <target>Entrez un nom, par exemple "Réglementation de vitesse"</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.title">
+                <source>regulation_order_template.variables.title</source>
+                <target>Liste des variables disponibles</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.description">
+                <source>regulation_order_template.variables.description</source>
+                <target>Copier les variables que vous souhaitez utiliser dans votre modèle d'arrêté.</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.intitule">
+                <source>regulation_order_template.variables.intitule</source>
+                <target>Intitulé</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.name">
+                <source>regulation_order_template.variables.name</source>
+                <target>Nom de la variable</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.number">
+                <source>regulation_order_template.variables.list.number</source>
+                <target>Numéro d'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.intitule">
+                <source>regulation_order_template.variables.list.intitule</source>
+                <target>Intitulé de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.start_pr">
+                <source>regulation_order_template.variables.list.start_pr</source>
+                <target>Numéro du PR de début</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.end_pr">
+                <source>regulation_order_template.variables.list.end_pr</source>
+                <target>Numéro du PR de fin</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.signatory_name">
+                <source>regulation_order_template.variables.list.signatory_name</source>
+                <target>Nom du signataire</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.national_road_number">
+                <source>regulation_order_template.variables.list.national_road_number</source>
+                <target>Numéro de la route nationale</target>
             </trans-unit>
         </body>
     </file>

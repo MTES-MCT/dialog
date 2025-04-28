@@ -18,6 +18,13 @@ final class RegulationOrderTemplateRepository extends ServiceEntityRepository im
         parent::__construct($registry, RegulationOrderTemplate::class);
     }
 
+    public function add(RegulationOrderTemplate $regulationOrderTemplate): RegulationOrderTemplate
+    {
+        $this->getEntityManager()->persist($regulationOrderTemplate);
+
+        return $regulationOrderTemplate;
+    }
+
     public function findByFilters(RegulationOrderTemplateDTO $dto): array
     {
         $query = $this->createQueryBuilder('rot');
@@ -43,6 +50,16 @@ final class RegulationOrderTemplateRepository extends ServiceEntityRepository im
         return $query
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    public function findOneByUuid(string $uuid): ?RegulationOrderTemplate
+    {
+        return $this->createQueryBuilder('rot')
+            ->where('rot.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult()
         ;
     }
 }

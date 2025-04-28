@@ -23,9 +23,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
     private ?string $administrator;
     private ?string $roadNumber;
     private string $geometry;
+    private ?string $fromDepartmentCode;
     private string $fromPointNumber;
     private string $fromSide;
     private int $fromAbscissa;
+    private ?string $toDepartmentCode;
     private string $toPointNumber;
     private string $toSide;
     private int $toAbscissa;
@@ -41,9 +43,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $this->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
         $this->administrator = 'Département de Loire-Atlantique';
         $this->roadNumber = 'D12';
+        $this->fromDepartmentCode = null;
         $this->fromPointNumber = '1';
         $this->fromSide = 'U';
         $this->fromAbscissa = 0;
+        $this->toDepartmentCode = null;
         $this->toPointNumber = '5';
         $this->toSide = 'U';
         $this->toAbscissa = 100;
@@ -75,9 +79,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
                 $this->roadType,
                 $this->administrator,
                 $this->roadNumber,
+                $this->fromDepartmentCode,
                 $this->fromPointNumber,
                 $this->fromSide,
                 $this->fromAbscissa,
+                $this->toDepartmentCode,
                 $this->toPointNumber,
                 $this->toSide,
                 $this->toAbscissa,
@@ -93,9 +99,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->fromDepartmentCode = $this->fromDepartmentCode;
         $command->fromPointNumber = $this->fromPointNumber;
         $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
+        $command->toDepartmentCode = $this->toDepartmentCode;
         $command->toPointNumber = $this->toPointNumber;
         $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;
@@ -126,9 +134,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->fromDepartmentCode = $this->fromDepartmentCode;
         $command->fromPointNumber = $this->fromPointNumber;
         $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
+        $command->toDepartmentCode = $this->toDepartmentCode;
         $command->toPointNumber = $this->toPointNumber;
         $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;
@@ -166,9 +176,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
                 $this->roadType,
                 $this->administrator,
                 $this->roadNumber,
+                $this->fromDepartmentCode,
                 $this->fromPointNumber,
                 $this->fromSide,
                 $this->fromAbscissa,
+                $this->toDepartmentCode,
                 $this->toPointNumber,
                 $this->toSide,
                 $this->toAbscissa,
@@ -184,9 +196,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->fromDepartmentCode = $this->fromDepartmentCode;
         $command->fromPointNumber = $this->fromPointNumber;
         $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
+        $command->toDepartmentCode = $this->toDepartmentCode;
         $command->toPointNumber = $this->toPointNumber;
         $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;
@@ -207,6 +221,10 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $numberedRoad = $this->createMock(NumberedRoad::class);
         $numberedRoad
             ->expects(self::exactly(2))
+            ->method('getFromDepartmentCode')
+            ->willReturn($this->fromDepartmentCode);
+        $numberedRoad
+            ->expects(self::exactly(2))
             ->method('getFromPointNumber')
             ->willReturn($this->fromPointNumber);
         $numberedRoad
@@ -217,6 +235,10 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
             ->expects(self::exactly(2))
             ->method('getFromSide')
             ->willReturn($this->fromSide);
+        $numberedRoad
+            ->expects(self::exactly(2))
+            ->method('getToDepartmentCode')
+            ->willReturn($this->toDepartmentCode);
         $numberedRoad
             ->expects(self::exactly(2))
             ->method('getToPointNumber')
@@ -255,9 +277,11 @@ final class GetNumberedRoadGeometryQueryHandlerTest extends TestCase
         $command->roadType = $this->roadType;
         $command->administrator = $this->administrator;
         $command->roadNumber = $this->roadNumber;
+        $command->fromDepartmentCode = $this->fromDepartmentCode;
         $command->fromPointNumber = $this->fromPointNumber;
         $command->fromSide = $this->fromSide;
         $command->fromAbscissa = $this->fromAbscissa;
+        $command->toDepartmentCode = $this->toDepartmentCode;
         $command->toPointNumber = $this->toPointNumber;
         $command->toSide = $this->toSide;
         $command->toAbscissa = $this->toAbscissa;

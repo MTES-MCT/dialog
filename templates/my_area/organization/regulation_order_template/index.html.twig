@@ -18,6 +18,11 @@
                 ]} %}
                 <div class="fr-grid-row">
                     <h2 id="regulation-order-template-list" class="fr-col fr-mb-0">{{ 'regulation_order_template.list.title'|trans }}</h2>
+                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                        <a href="{{ path('app_config_regulation_order_templates_add', { organizationUuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'regulation_order_template.add.title'|trans }}">
+                            {{ 'regulation_order_template.add.title'|trans }}
+                        </a>
+                    {% endif %}
                 </div>
                 <p class="fr-text--sm fr-my-2w">{{ 'regulation_order_template.list.help'|trans }}</p>
                 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
@@ -36,6 +41,11 @@
                                         {% if not regulationOrderTemplate.organizationUuid %}<span class="fr-tag fr-tag--sm">DiaLog</span>{% endif %}
                                     </td>
                                     <td>
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                {{ 'common.update'|trans }}
+                                            </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
