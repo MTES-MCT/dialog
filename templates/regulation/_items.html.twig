@@ -85,6 +85,7 @@
                                     class="fr-hidden fr-unhidden-md"
                                 >
                                     <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_redirectQueryParams" value="{{ app.request.query.all()|json_encode }}">
 
                                     <d-modal-trigger modal="regulation-delete-modal" submitValue="regulation-delete-{{ regulation.uuid }}">
                                         <button
