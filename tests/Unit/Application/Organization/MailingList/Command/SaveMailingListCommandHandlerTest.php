@@ -10,9 +10,6 @@ use App\Application\Organization\MailingList\Command\SaveMailingListCommandHandl
 use App\Domain\Organization\MailingList\MailingList;
 use App\Domain\Organization\MailingList\Repository\MailingListRepositoryInterface;
 use App\Domain\User\Organization;
-
-use function PHPUnit\Framework\never;
-
 use PHPUnit\Framework\TestCase;
 
 final class SaveMailingListCommandHandlerTest extends TestCase
@@ -72,11 +69,11 @@ final class SaveMailingListCommandHandlerTest extends TestCase
             );
 
         $mailingListRepository
-            ->expects(never())
+            ->expects(self::never())
             ->method('add');
 
         $idFactory
-            ->expects(never())
+            ->expects(self::never())
             ->method('make');
 
         $handler = new SaveMailingListCommandHandler(

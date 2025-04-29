@@ -55,27 +55,24 @@
                                             {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                                                 <a title="{{ 'common.update'|trans }}" href="{{ path('app_recipient_edit', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                                                 </a>
-    
-                                                {% if mailingList %}
-                                                        <form
-                                                            method="POST"
-                                                            action="{{ path('app_config_mailing_list_delete', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}"
-                                                            data-controller="form-submit"
-                                                            data-action="modal-trigger:submit->form-submit#submit"
-                                                        >
-                                                            <input type="hidden" name="_method" value="DELETE">
-    
-                                                            <d-modal-trigger modal="mailing-list-delete-modal" submitValue="mailing-list-delete-{{ mailingList.uuid }}">
-                                                                <button
-                                                                    class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
-                                                                    aria-controls="mailing-list-delete-modal"
-                                                                    aria-label="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
-                                                                    title="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
-                                                                ></button>
-                                                            </d-modal-trigger>
-                                                            <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
-                                                        </form>
-                                                    {% endif %}
+                                                    <form
+                                                        method="POST"
+                                                        action="{{ path('app_config_mailing_list_delete', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}"
+                                                        data-controller="form-submit"
+                                                        data-action="modal-trigger:submit->form-submit#submit"
+                                                    >
+                                                        <input type="hidden" name="_method" value="DELETE">
+
+                                                        <d-modal-trigger modal="mailing-list-delete-modal" submitValue="mailing-list-delete-{{ mailingList.uuid }}">
+                                                            <button
+                                                                class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                                                aria-controls="mailing-list-delete-modal"
+                                                                aria-label="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
+                                                                title="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
+                                                            ></button>
+                                                        </d-modal-trigger>
+                                                        <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                                                    </form>
                                             {% endif %}
                                         </div>
                                     </td>
