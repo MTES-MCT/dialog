@@ -41,6 +41,7 @@ final class FeedbackCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Avis')
             ->setEntityLabelInPlural('Avis')
+            ->setDefaultSort(['createdAt' => 'DESC'])
         ;
     }
 
