@@ -2297,6 +2297,14 @@
                 <source>recipient.add.title</source>
                 <target>Ajouter un destinataire</target>
             </trans-unit>
+            <trans-unit id="recipient.list.delete">
+                <source>recipient.list.delete</source>
+                <target>Supprimer le destinataire "%name%" de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="recipient.delete_modal.title">
+                <source>recipient.delete_modal.title</source>
+                <target>Supprimer ce destinataire ?</target>
+            </trans-unit>
             <trans-unit id="recipient.list.name">
                 <source>recipient.list.name</source>
                 <target>Destinataire</target>

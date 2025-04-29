@@ -43,4 +43,9 @@ final class MailingListRepository extends ServiceEntityRepository implements Mai
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function remove(MailingList $mailingList): void
+    {
+        $this->getEntityManager()->remove($mailingList);
+    }
 }

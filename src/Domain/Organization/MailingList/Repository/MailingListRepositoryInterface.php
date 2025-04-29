@@ -13,4 +13,6 @@ interface MailingListRepositoryInterface
     public function add(MailingList $mailingList): MailingList;
 
     public function findOneByUuid(string $uuid): ?MailingList;
+
+    public function remove(MailingList $mailingList): void;
 }
