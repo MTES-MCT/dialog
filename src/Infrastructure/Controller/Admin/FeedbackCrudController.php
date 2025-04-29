@@ -31,6 +31,7 @@ final class FeedbackCrudController extends AbstractCrudController
             EmailField::new('user.email', 'Email'),
             TextField::new('content', 'Avis'),
             BooleanField::new('consentToBeContacted', 'Je souhaite être contacté'),
+            BooleanField::new('hasBeenContacted', 'A été contacté'),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
         ];
     }

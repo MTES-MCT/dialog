@@ -6,6 +6,11 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="content" type="text" column="content" nullable="false"/>
     <field name="consentToBeContacted" type="boolean" column="consent_to_be_contacted" nullable="false"/>
+    <field name="hasBeenContacted" type="boolean" column="has_been_contacted" nullable="true">
+      <options>
+        <option name="default">false</option>
+      </options>
+    </field>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
