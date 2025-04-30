@@ -11,9 +11,10 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 final class LitteralisClient
 {
     private string $credentials;
+    private ?string $baseUrl;
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
+        private HttpClientInterface $httpClient,
     ) {
     }
 
@@ -24,6 +25,11 @@ final class LitteralisClient
         }
 
         $this->credentials = $credentials;
+    }
+
+    public function setBaseUrl(string $baseUrl): void
+    {
+        $this->baseUrl = $baseUrl;
     }
 
     private function makeRequest(string $method, string $path, array $options, ?Reporter $reporter = null): ResponseInterface
@@ -37,6 +43,11 @@ final class LitteralisClient
         }
 
         $options['auth_basic'] = $this->credentials;
+
+        if ($this->baseUrl) {
+            $options['base_uri'] = $this->baseUrl;
+        }
+
         $response = $this->httpClient->request($method, $path, $options);
 
         if ($reporter) {

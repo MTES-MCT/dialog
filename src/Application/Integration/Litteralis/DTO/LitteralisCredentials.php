@@ -13,9 +13,9 @@ final class LitteralisCredentials
         $this->credentials = [];
     }
 
-    public function add(string $name, string $orgId, string $credentials): self
+    public function add(string $name, string $orgId, string $credentials, ?string $baseUrl): self
     {
-        $this->credentials[$name] = ['orgId' => $orgId, 'credentials' => $credentials];
+        $this->credentials[$name] = ['orgId' => $orgId, 'credentials' => $credentials, 'baseUrl' => $baseUrl];
 
         return $this;
     }
@@ -33,6 +33,15 @@ final class LitteralisCredentials
     {
         if (\array_key_exists($name, $this->credentials)) {
             return $this->credentials[$name]['credentials'];
+        }
+
+        return null;
+    }
+
+    public function getBaseUrl(string $name): ?string
+    {
+        if (\array_key_exists($name, $this->credentials)) {
+            return $this->credentials[$name]['baseUrl'];
         }
 
         return null;
