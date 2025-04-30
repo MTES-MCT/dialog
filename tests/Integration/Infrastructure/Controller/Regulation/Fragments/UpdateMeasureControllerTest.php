@@ -99,6 +99,31 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
+    public function testRemoveManyLocations(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $values = $form->getPhpValues();
+
+        // Keep only 3rd location
+        $values['measure_form']['locations'] = [$values['measure_form']['locations'][2]];
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+
+        $this->assertResponseStatusCodeSame(303);
+        $crawler = $client->followRedirect();
+        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertCount(1, $measures->eq(0)->filter('[data-location-uuid]'));
+        $this->assertSame('Avenue Michelet de Allée Isabeau à Avenue Du Cimetière à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+    }
+
     public function testDeletePeriod(): void
     {
         function ensureRegularSpaces(string $text): string
