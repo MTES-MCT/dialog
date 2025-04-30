@@ -30,6 +30,21 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     public function delete(Location $location): void
     {
         $this->getEntityManager()->remove($location);
+
+        // NamedStreet etc hold a reference to the just-deleted Location object.
+        // Detach them to prevent Doctrine from re-creating the Location after the current command finishes.
+
+        if ($ns = $location->getNamedStreet()) {
+            $this->getEntityManager()->detach($ns);
+        }
+
+        if ($nr = $location->getNumberedRoad()) {
+            $this->getEntityManager()->detach($nr);
+        }
+
+        if ($rg = $location->getRawGeoJSON()) {
+            $this->getEntityManager()->detach($rg);
+        }
     }
 
     public function findOneByUuid(string $uuid): ?Location
