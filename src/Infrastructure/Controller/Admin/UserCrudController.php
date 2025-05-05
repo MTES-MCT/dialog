@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Admin;
 
 use App\Application\IdFactoryInterface;
+use App\Application\PasswordHasherInterface;
 use App\Domain\User\Enum\UserRolesEnum;
+use App\Domain\User\PasswordUser;
+use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
@@ -20,13 +23,13 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class UserCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly UserPasswordHasherInterface $userPasswordHasher,
+        private readonly PasswordHasherInterface $passwordHasher,
         private readonly IdFactoryInterface $idFactory,
+        private readonly PasswordUserRepositoryInterface $passwordUserRepository,
     ) {
     }
 
@@ -104,14 +107,28 @@ final class UserCrudController extends AbstractCrudController
         return $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function ($event) {
             $form = $event->getForm();
             $data = $form->getData();
+
             if (!$form->isValid()) {
                 return;
             }
 
             $password = $form->get('password')->getData();
             if ($password) {
-                /* @phpstan-ignore-next-line */
-                $data->setPassword($this->userPasswordHasher->hashPassword($this->getUser(), $password));
+                $hashedPassword = $this->passwordHasher->hash($password);
+
+                if ($passwordUser = $data->getPasswordUser()) {
+                    $passwordUser->setPassword($hashedPassword);
+
+                    return;
+                }
+
+                $passwordUser = new PasswordUser(
+                    uuid: $this->idFactory->make(),
+                    password: $hashedPassword,
+                    user: $data,
+                );
+                $this->passwordUserRepository->add($passwordUser);
+                $data->setPasswordUser($passwordUser);
             }
         });
     }
