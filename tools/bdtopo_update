@@ -78,19 +78,19 @@ def main(
         print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
         return 1
 
-    search_pattern = "**/1_DONNEES_LIVRAISON_*/*/TRANSPORT/*.gpkg"
-
     tables_by_name = {table.name: table for table in config.tables}
     geopackages = []
 
-    for path in directory.glob(search_pattern):
-        if path.stem in tables_by_name:
-            geopackages.append({"path": path, "table": tables_by_name[path.stem]})
+    for theme in ("TRANSPORT", "ADRESSES"):
+        search_pattern = f"**/1_DONNEES_LIVRAISON_*/*/{theme}/*.gpkg"
+
+        for path in directory.glob(search_pattern):
+            if path.stem in tables_by_name:
+                geopackages.append({"path": path, "table": tables_by_name[path.stem]})
 
     if not geopackages:
         print(
-            f"ERROR: no geopackages found at {directory} "
-            f"using pattern {search_pattern!r}",
+            f"ERROR: no matching geopackages found at {directory} ",
             file=sys.stderr,
         )
         return 1

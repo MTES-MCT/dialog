@@ -25,22 +25,21 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                '
+                <<<'SQL'
                     WITH voie_nommee as (
-                        SELECT id_pseudo_fpb
+                        SELECT identifiant_voie_ban
                         FROM voie_nommee
                         WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
-                        AND code_insee = :code_insee
+                        AND insee_commune = :insee_commune
                         LIMIT 1
                     )
-                    SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
-                    FROM troncon_de_route
-                    INNER JOIN voie_nommee ON true
-                    WHERE voie_nommee.id_pseudo_fpb = identifiant_voie_1_gauche
-                ',
+                    SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(tr.geometrie)))) AS geometry
+                    FROM troncon_de_route AS tr
+                    INNER JOIN voie_nommee AS v ON tr.cleabs IN string_to_array(v.liens_vers_supports, '/')
+                SQL,
                 [
                     'nom_minuscule' => $roadName,
-                    'code_insee' => $inseeCode,
+                    'insee_commune' => $inseeCode,
                 ],
             );
         } catch (\Exception $exc) {
@@ -317,7 +316,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                "
+                <<<'SQL'
                     SELECT INITCAP(nom_minuscule) road_name
                     FROM voie_nommee
                     WHERE (
@@ -327,7 +326,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     AND code_insee = :cityCode
                     ORDER BY ts_rank(nom_minuscule_search, to_tsquery('french', :query::text)) DESC
                     LIMIT 7
-                ",
+                SQL,
                 [
                     'cityCode' => $cityCode,
                     'query' => $query,
