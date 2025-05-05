@@ -1,0 +1,49 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{'register.meta.title'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-mt-8v fr-mt-md-14v fr-mb-2v fr-mb-md-8v">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-8">
+                <h2>{{ 'recipient.share.title'|trans }}</h2>
+                <p class="fr-text--lead">{{ 'recipient.share.title.help'|trans }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h6>{{ 'recipient.share.title'|trans }}</h6>
+                            {{ form_start(form) }}
+                                {{ form_row(form.emails, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                                <div class="fr-fieldset__element">
+                                    <p class="fr-mt-2w fr-message fr-message--info">{{ 'recipient.mailing.list.help'|trans }}</p>
+                                    <div class="fr-checkbox-group">
+                                        {{ form_widget(form.allRecipients) }}
+                                    </div>
+                                </div>
+
+                                <ul class="fr-btns-group fr-btns-group--inline fr-mt-3w">
+                                    <li>
+                                        <a href="" role="button" class="fr-btn fr-btn--tertiary">
+                                            {{ "common.cancel"|trans }}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        {{ form_widget(form.save, {attr: {class: 'fr-btn--icon-right fr-icon-send-plane-line', form: 'measure-form'}}) }}
+                                    </li>
+                                </ul>
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

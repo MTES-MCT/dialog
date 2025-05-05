@@ -2305,6 +2305,34 @@
                 <source>recipient.list.role</source>
                 <target>Fonction</target>
             </trans-unit>
+            <trans-unit id="recipient.share.title">
+                <source>recipient.share.title</source>
+                <target>Partager l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="recipient.share.title.help">
+                <source>recipient.share.title.help</source>
+                <target>Entrez les adresses emails des destinataires, ou sélectionnez dans la liste de diffusion.</target>
+            </trans-unit>
+            <trans-unit id="recipient.email">
+                <source>recipient.email</source>
+                <target>Destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.email.help">
+                <source>recipient.email.help</source>
+                <target>Entrez les adresses emails des destinataires séparées par une virgule.</target>
+            </trans-unit>
+            <trans-unit id="recipient.mailing.list.help">
+                <source>recipient.mailing.list.help</source>
+                <target>Vous pouvez définir une liste de diffusion dans les paramètres de l’organisation.</target>
+            </trans-unit>
+            <trans-unit id="recipient.mailing.list.all">
+                <source>recipient.mailing.list.all</source>
+                <target>Tous les destinataires</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share">
+                <source>mailing.list.share</source>
+                <target>Partager</target>
+            </trans-unit>
             <trans-unit id="integration.report.title">
                 <source>integration.report.title</source>
                 <target>Rapport d'intégration</target>
