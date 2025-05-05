@@ -62,4 +62,9 @@ final class RegulationOrderTemplateRepository extends ServiceEntityRepository im
             ->getOneOrNullResult()
         ;
     }
+
+    public function remove(RegulationOrderTemplate $regulationOrderTemplate): void
+    {
+        $this->getEntityManager()->remove($regulationOrderTemplate);
+    }
 }
