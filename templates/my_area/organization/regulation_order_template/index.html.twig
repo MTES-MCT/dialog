@@ -4,8 +4,10 @@
     {{'regulation_order_template.list.title'|trans }} - {{ parent() }}
 {% endblock %}
 
+{% set deleteCsrfToken = csrf_token('delete-regulation-order-template') %}
+
 {% block body %}
-    <section class="fr-container fr-py-5w" aria-labelledby="visa-list">
+    <section class="fr-container fr-py-5w" aria-labelledby="regulation-order-template-list">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-4">
                 {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
@@ -41,11 +43,33 @@
                                         {% if not regulationOrderTemplate.organizationUuid %}<span class="fr-tag fr-tag--sm">DiaLog</span>{% endif %}
                                     </td>
                                     <td>
-                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                                            <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-                                                {{ 'common.update'|trans }}
-                                            </a>
-                                        {% endif %}
+                                        <div class="fr-btns-group fr-btns-group--center fr-btns-group--inline-sm">
+                                            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                                <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                    {{ 'common.update'|trans }}
+                                                </a>
+                                                {% if regulationOrderTemplate.organizationUuid %}
+                                                    <form
+                                                        method="POST"
+                                                        action="{{ path('app_config_regulation_order_templates_delete', { uuid: regulationOrderTemplate.uuid, organizationUuid: organization.uuid }) }}"
+                                                        data-controller="form-submit"
+                                                        data-action="modal-trigger:submit->form-submit#submit"
+                                                    >
+                                                        <input type="hidden" name="_method" value="DELETE">
+
+                                                        <d-modal-trigger modal="regulation-order-template-delete-modal" submitValue="regulation-order-template-delete-{{ regulationOrderTemplate.uuid }}">
+                                                            <button
+                                                                class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                                                aria-controls="regulation-order-template-delete-modal"
+                                                                aria-label="{{ 'common.delete'|trans }}"
+                                                                title="{{ 'common.delete'|trans }}"
+                                                            ></button>
+                                                        </d-modal-trigger>
+                                                        <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                                                    </form>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -57,3 +81,14 @@
     </section>
 {% endblock %}
 
+{% block body_end %}
+    {{ parent() }}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'regulation-order-template-delete-modal',
+        title: 'regulation_order_template.delete_modal.title'|trans,
+        buttons: [
+            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
+    } only %}
+{% endblock %}

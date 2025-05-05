@@ -14,4 +14,6 @@ interface RegulationOrderTemplateRepositoryInterface
     public function findByFilters(RegulationOrderTemplateDTO $dto): array;
 
     public function findOneByUuid(string $uuid): ?RegulationOrderTemplate;
+
+    public function remove(RegulationOrderTemplate $regulationOrderTemplate): void;
 }
