@@ -27,10 +27,10 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations');
         $num = $this->countRows($crawler);
 
-        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, [
+        $client->request('DELETE', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '?_redirectQueryParams=' . json_encode(['page' => 1]), [
             '_token' => $this->generateCsrfToken($client, 'delete-regulation'),
         ]);
-        $this->assertResponseRedirects('/regulations', 303);
+        $this->assertResponseRedirects('/regulations?page=1', 303);
         $crawler = $client->followRedirect();
         // Doesn't appear in list of temporary regulations anymore.
         $this->assertEquals($num - 1, $this->countRows($crawler));

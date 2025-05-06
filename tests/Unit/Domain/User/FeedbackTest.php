@@ -22,5 +22,9 @@ final class FeedbackTest extends TestCase
         $this->assertTrue($feedback->isConsentToBeContacted());
         $this->assertSame('Ceci est un retour', $feedback->getContent());
         $this->assertSame($date, $feedback->getCreatedAt());
+        $this->assertFalse($feedback->getHasBeenContacted());
+
+        $feedback->setHasBeenContacted(true);
+        $this->assertTrue($feedback->getHasBeenContacted());
     }
 }

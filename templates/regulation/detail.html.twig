@@ -54,17 +54,26 @@
                 <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
-                            <h3 class="fr-h4 fr-mb-0">{{ 'regulation.status'|trans }}</h3>
+                            <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.status'|trans }}</h3>
                             {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
                             {% include 'regulation/_regulation_order_history.html.twig' with { latestHistory: latestHistory } %}
+                        </div>
+                    </div>
 
-                            {% if not isReadOnly %}
-                                <turbo-frame id="block_export">
-                                    {% if canPublish %}
+                    {% if not isReadOnly %}
+                        {% if canPublish %}
+                            <div class="app-card app-card--raised fr-mt-2w">
+                                <div class="app-card__content">
+                                    <turbo-frame id="block_export">
                                         {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid } only %}
-                                    {% endif %}
-                                </turbo-frame>
-                                <h3 class="fr-h4 fr-mb-0">{{ 'common.actions'|trans }}</h3>
+                                    </turbo-frame>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="app-card app-card--raised fr-mt-2w">
+                            <div class="app-card__content">
+                                <h3 class="fr-h4 fr-mb-2w">{{ 'common.actions'|trans }}</h3>
                                 <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
                                     {% if isDraft %}
                                         <li>
@@ -76,7 +85,7 @@
                                     <li>
                                         {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
                                         <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInfo.uuid })}}">
-                                            <button class="fr-btn fr-btn--secondary" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
+                                            <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-x-file-copy-line" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
                                             <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}"/>
                                         </form>
                                     </li>
@@ -103,7 +112,11 @@
                                         </form>
                                     </li>
                                 </ul>
-                            {% else %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="app-card app-card--raised fr-mt-2w">
+                            <div class="app-card__content">
                                 <h3 class="fr-h4 fr-mb-0">{{ 'public.regulation.map'|trans }}</h3>
                                 <p class="fr-text--sm fr-x-text--mention-grey fr-mt-2v">{{ 'public.regulation.map.view'|trans }}</p>
                                 <div class="fr-x-text--center">
@@ -111,9 +124,9 @@
                                         {{ 'public.regulation.map.link'|trans }}
                                     </a>
                                 </div>
-                            {% endif %}
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                 </aside>
             </div>
             <div class="fr-mt-22v">

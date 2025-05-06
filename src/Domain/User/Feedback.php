@@ -13,6 +13,7 @@ class Feedback
         private string $content,
         private bool $consentToBeContacted,
         private User $user,
+        private bool $hasBeenContacted = false,
     ) {
     }
 
@@ -29,6 +30,18 @@ class Feedback
     public function isConsentToBeContacted(): bool
     {
         return $this->consentToBeContacted;
+    }
+
+    public function getHasBeenContacted(): bool
+    {
+        return $this->hasBeenContacted;
+    }
+
+    public function setHasBeenContacted(bool $hasBeenContacted): self
+    {
+        $this->hasBeenContacted = $hasBeenContacted;
+
+        return $this;
     }
 
     public function getUser(): User

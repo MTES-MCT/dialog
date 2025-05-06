@@ -2745,6 +2745,10 @@
                 <source>regulation_order_template.variables.list.national_road_number</source>
                 <target>Numéro de la route nationale</target>
             </trans-unit>
+            <trans-unit id="regulation_order_template.delete_modal.title">
+                <source>regulation_order_template.delete_modal.title</source>
+                <target>Supprimer ce modèle ?</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
