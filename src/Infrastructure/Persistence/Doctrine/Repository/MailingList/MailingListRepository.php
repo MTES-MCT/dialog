@@ -27,4 +27,25 @@ final class MailingListRepository extends ServiceEntityRepository implements Mai
             ->getQuery()
             ->getResult();
     }
+
+    public function add(MailingList $mailingList): MailingList
+    {
+        $this->getEntityManager()->persist($mailingList);
+
+        return $mailingList;
+    }
+
+    public function findOneByUuid(string $uuid): ?MailingList
+    {
+        return $this->createQueryBuilder('ml')
+            ->where('ml.uuid = :uuid')
+            ->setParameter('uuid', $uuid)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function remove(MailingList $mailingList): void
+    {
+        $this->getEntityManager()->remove($mailingList);
+    }
 }

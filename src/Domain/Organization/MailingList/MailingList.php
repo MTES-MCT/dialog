@@ -41,4 +41,14 @@ class MailingList
     {
         return $this->organization;
     }
+
+    public function update(
+        string $name,
+        string $email,
+        string $role,
+    ): void {
+        $this->name = $name;
+        $this->email = $email;
+        $this->role = $role;
+    }
 }

@@ -2293,6 +2293,18 @@
                 <source>recipient.list.description</source>
                 <target>Ajouter les contacts des personnes à qui vous souhaiter partager vos arrêtés.</target>
             </trans-unit>
+            <trans-unit id="recipient.add.title">
+                <source>recipient.add.title</source>
+                <target>Ajouter un destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.list.delete">
+                <source>recipient.list.delete</source>
+                <target>Supprimer le destinataire "%name%" de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="recipient.delete_modal.title">
+                <source>recipient.delete_modal.title</source>
+                <target>Supprimer ce destinataire ?</target>
+            </trans-unit>
             <trans-unit id="recipient.list.name">
                 <source>recipient.list.name</source>
                 <target>Destinataire</target>
@@ -2304,6 +2316,30 @@
             <trans-unit id="recipient.list.role">
                 <source>recipient.list.role</source>
                 <target>Fonction</target>
+            </trans-unit>
+            <trans-unit id="add.recipient.form.title">
+                <source>add.recipient.form.title</source>
+                <target>Ajouter un destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.name">
+                <source>recipient.name</source>
+                <target>Nom et prénom</target>
+            </trans-unit>
+            <trans-unit id="recipient.name.help">
+                <source>recipient.name.help</source>
+                <target>Entrez le nom et prénom du destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.email">
+                <source>recipient.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="recipient.role">
+                <source>recipient.role</source>
+                <target>Fonction</target>
+            </trans-unit>
+            <trans-unit id="recipient.role.help">
+                <source>recipient.role.help</source>
+                <target>Entrez la fonction du destinataire</target>
             </trans-unit>
             <trans-unit id="integration.report.title">
                 <source>integration.report.title</source>
@@ -2412,6 +2448,10 @@
             <trans-unit id="config.menu.regulation_order_templates">
                 <source>config.menu.regulation_order_templates</source>
                 <target>Modèles d'arrêtés</target>
+            </trans-unit>
+            <trans-unit id="config.menu.mailing_list">
+                <source>config.menu.mailing_list</source>
+                <target>Liste de diffusion</target>
             </trans-unit>
             <trans-unit id="config.menu.organization.edit">
                 <source>config.menu.organization.edit</source>
