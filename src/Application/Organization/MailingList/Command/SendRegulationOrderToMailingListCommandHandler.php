@@ -17,15 +17,17 @@ final readonly class SendRegulationOrderToMailingListCommandHandler
 
     public function __invoke(SendRegulationOrderToMailingListCommand $command)
     {
-        $email = $this->stringUtils->normalizeEmail($command->email);
-
-        $this->mailer->send(
-            new Mail(
-                address: $email,
-                subject: '',
-                template: 'email/user/organization_invitation.html.twig',
-                payload: [],
-            ),
-        );
+        $recipients = $command->emails;
+        foreach ($recipients as $recipient) {
+            $this->stringUtils->normalizeEmail($recipient);
+            $this->mailer->send(
+                new Mail(
+                    address: $email,
+                    subject: '',
+                    template: 'email/user/organization_invitation.html.twig',
+                    payload: [],
+                ),
+            );
+        }
     }
 }

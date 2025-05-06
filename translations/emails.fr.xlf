@@ -50,6 +50,10 @@
                 <source>organization_invitation.join</source>
                 <target>Je rejoins cette organisation</target>
             </trans-unit>
+            <trans-unit id="confirm_user_account.subject">
+                <source>confirm_user_account.subject</source>
+                <target>Confirmez votre compte DiaLog</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

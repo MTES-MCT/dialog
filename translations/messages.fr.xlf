@@ -2325,6 +2325,10 @@
                 <source>recipient.share.title.help</source>
                 <target>Entrez les adresses emails des destinataires, ou sélectionnez dans la liste de diffusion.</target>
             </trans-unit>
+            <trans-unit id="mailing.list.share.title">
+                <source>mailing.list.share.title</source>
+                <target>Liste de diffusion</target>
+            </trans-unit>
             <trans-unit id="recipient.form.email">
                 <source>recipient.form.email</source>
                 <target>Destinataire</target>

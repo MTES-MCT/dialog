@@ -6,7 +6,6 @@ namespace App\Infrastructure\Form\Organization;
 
 use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailingListCommand;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -54,11 +53,12 @@ final class SendToMailingListFormType extends AbstractType
         $choices = [];
 
         foreach ($recipients as $recipient) {
-            $choices[sprintf('%s (%s)', $recipient['name'], $recipient['email'])] = $recipient['email'];
+            $choices[\sprintf('%s (%s)', $recipient['name'], $recipient['email'])] = $recipient['email'];
         }
 
         return $choices;
     }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation;
 
+use App\Application\CommandBusInterface;
 use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailingListCommand;
 use App\Application\Organization\MailingList\Query\GetMailingListQuery;
 use App\Application\QueryBusInterface;
@@ -20,12 +21,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SendRegulationOrderToMailingListController extends AbstractRegulationController
 {
     public function __construct(
         private FormFactoryInterface $formFactory,
         private \Twig\Environment $twig,
+        private CommandBusInterface $commandBus,
+        private TranslatorInterface $translator,
+        private RouterInterface $router,
         Security $security,
         QueryBusInterface $queryBus,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -44,19 +50,19 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $recipients = $this->queryBus->handle(new GetMailingListQuery($regulationOrderRecord->getOrganizationUuid()));
 
-        $form = $this->formFactory->create(SendToMailingListFormType::class, null, ['recipients'=> $recipients]);
+        $form = $this->formFactory->create(SendToMailingListFormType::class, null, ['recipients' => $recipients]);
         $form->handleRequest($request);
 
-        /* if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->commandBus->dispatchAsync(new SendRegulationOrderToMailingListCommand());
+                $this->commandBus->dispatchAsync(new SendRegulationOrderToMailingListCommand($recipients));
 
-                @var FlashBagAwareSessionInterface
+                /** @var FlashBagAwareSessionInterface */
                 $session = $request->getSession();
                 $session->getFlashBag()->add('success', $this->translator->trans('register.succeeded'));
 
                 return new RedirectResponse(
-                    url: $this->router->generate('app_login'),
+                    url: $this->router->generate('app_regulation_detail'),
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (OrganizationNotFoundException) {
@@ -68,7 +74,7 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
                     new FormError($this->translator->trans('register.error.already_exists')),
                 );
             }
-        } */
+        }
 
         return new Response(
             $this->twig->render(
