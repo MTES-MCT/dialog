@@ -27,6 +27,10 @@ final class RecipientsListControllerTest extends AbstractWebTestCase
         $this->assertSame('Karine Marchand', $tr0->eq(0)->text());
         $this->assertSame('email@mairie.gouv.fr', $tr0->eq(1)->text());
         $this->assertSame('Mairie', $tr0->eq(2)->text());
+        /* $action = $crawler->filter('[data-testid="update-mailing-list"]');
+        $action->filter('a');
+dd($action->filter('a'));
+        $this->assertSame('Modifier', $tr0->eq(3)->attr('button')); */
     }
 
     public function testOrganizationNotOwned(): void

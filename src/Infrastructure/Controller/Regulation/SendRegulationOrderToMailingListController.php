@@ -7,9 +7,11 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailingListCommand;
 use App\Application\Organization\MailingList\Query\GetMailingListQuery;
 use App\Application\QueryBusInterface;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Infrastructure\Form\Organization\SendToMailingListFormType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,13 +21,16 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
-final class SendRegulationOrderToMailingListController
+final class SendRegulationOrderToMailingListController extends AbstractRegulationController
 {
     public function __construct(
         private FormFactoryInterface $formFactory,
         private \Twig\Environment $twig,
-        private QueryBusInterface $queryBus,
+        Security $security,
+        QueryBusInterface $queryBus,
+        CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
     }
 
     #[Route(
@@ -36,9 +41,10 @@ final class SendRegulationOrderToMailingListController
     )]
     public function __invoke(Request $request, string $uuid): Response
     {
-        $mailingList = $this->queryBus->handle(new GetMailingListQuery($uuid));
-        dd($mailingList);
-        $form = $this->formFactory->create(SendToMailingListFormType::class);
+        $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $recipients = $this->queryBus->handle(new GetMailingListQuery($regulationOrderRecord->getOrganizationUuid()));
+
+        $form = $this->formFactory->create(SendToMailingListFormType::class, null, ['recipients'=> $recipients]);
         $form->handleRequest($request);
 
         /* if ($form->isSubmitted() && $form->isValid()) {
