@@ -40,7 +40,9 @@ class SyncOrganizationsCodesCommand extends Command
                 usleep(150000); // 150 ms de délai pour ne pas dépasser 7 req/s
                 $organization
                     ->setCode($organizationFetchedView->code)
-                    ->setCodeType($organizationFetchedView->codeType);
+                    ->setCodeType($organizationFetchedView->codeType)
+                    ->setDepartmentName($organizationFetchedView->departmentName)
+                    ->setDepartmentCode($organizationFetchedView->departmentCode);
                 $this->entityManager->flush();
                 $output->writeln(\sprintf('<info>%s - %s</info>', $organization->getSiret(), $organization->getName()));
             } catch (OrganizationNotFoundException) {

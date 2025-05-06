@@ -11,6 +11,8 @@ class Organization
     private ?string $logo;
     private ?string $code = null;
     private ?string $codeType = null;
+    private ?string $departmentName = null;
+    private ?string $departmentCode = null;
     private ?string $geometry;
     private \DateTimeInterface $createdAt;
     private ?\DateTimeInterface $updatedAt;
@@ -71,6 +73,39 @@ class Organization
         $this->siret = $siret;
 
         return $this;
+    }
+
+    public function getDepartmentName(): ?string
+    {
+        return $this->departmentName;
+    }
+
+    public function setDepartmentName(?string $departmentName): self
+    {
+        $this->departmentName = $departmentName;
+
+        return $this;
+    }
+
+    public function getDepartmentCode(): ?string
+    {
+        return $this->departmentCode;
+    }
+
+    public function setDepartmentCode(?string $departmentCode): self
+    {
+        $this->departmentCode = $departmentCode;
+
+        return $this;
+    }
+
+    public function getDepartmentCodeWithName(): ?string
+    {
+        if (!$this->departmentCode || !$this->departmentName) {
+            return null;
+        }
+
+        return \sprintf('%s (%s)', $this->getDepartmentName(), $this->getDepartmentCode());
     }
 
     public function setLogo(?string $logo): self
