@@ -29,7 +29,7 @@ final class DeleteRecipientControllerTest extends AbstractWebTestCase
     public function testNotFound(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients/55547edaa2-58d1-43de-9d33-9753bf6f4d0', [
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients/aff9a84f-d968-462d-8d58-90313407f22c', [
             '_token' => $this->generateCsrfToken($client, 'delete-mailing-list'),
         ]);
 
@@ -70,5 +70,14 @@ final class DeleteRecipientControllerTest extends AbstractWebTestCase
         $client = static::createClient();
         $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients/65c12316-e210-445d-9169-0298b13b3b30');
         $this->assertResponseRedirects('http://localhost/login', 302);
+    }
+
+    public function testNotAdministrator(): void
+    {
+        $client = $this->login();
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients/247edaa2-58d1-43de-9d33-9753bf6f4d30', [
+            '_token' => $this->generateCsrfToken($client, 'delete-mailing-list'),
+        ]);
+        $this->assertResponseStatusCodeSame(403);
     }
 }

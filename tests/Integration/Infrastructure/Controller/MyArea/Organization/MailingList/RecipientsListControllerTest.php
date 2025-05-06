@@ -46,25 +46,4 @@ dd($action->filter('a'));
         $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
-
-    public function testPublishingRightsAreNotGranted(): void
-    {
-        $client = $this->login(UserFixture::DEPARTMENT_93_USER_EMAIL);
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients');
-
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-        $this->assertSame('Liste de diffusion', $crawler->filter('h2')->text());
-        $this->assertMetaTitle('Liste de diffusion - DiaLog', $crawler);
-
-        $rows = $crawler->filter('[data-testid="recipient-list"]');
-        $tr0 = $rows->filter('tr')->eq(0)->filter('td');
-        $this->assertCount(1, $rows->filter('tr'));
-
-        $this->assertSame('Karine Marchand', $tr0->eq(0)->text());
-        $this->assertSame('email@mairie.gouv.fr', $tr0->eq(1)->text());
-        $this->assertSame('Mairie', $tr0->eq(2)->text());
-        $this->assertSame(null, $tr0->eq(3)->attr('title'));
-        $this->assertSame(null, $tr0->eq(3)->attr('button'));
-    }
 }

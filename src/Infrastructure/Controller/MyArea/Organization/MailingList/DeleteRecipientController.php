@@ -7,8 +7,7 @@ namespace App\Infrastructure\Controller\MyArea\Organization\MailingList;
 use App\Application\CommandBusInterface;
 use App\Application\Organization\MailingList\Command\DeleteMailingListCommand;
 use App\Application\QueryBusInterface;
-use App\Domain\Organization\VisaModel\Exception\VisaModelCannotBeDeletedException;
-use App\Domain\Organization\VisaModel\Exception\VisaModelNotFoundException;
+use App\Domain\Organization\MailingList\Exception\MailingListNotFoundException;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -49,7 +48,7 @@ final class DeleteRecipientController extends AbstractOrganizationController
 
         try {
             $this->commandBus->handle(new DeleteMailingListCommand($mailingListUuid));
-        } catch (VisaModelNotFoundException|VisaModelCannotBeDeletedException) {
+        } catch (MailingListNotFoundException) {
             throw new NotFoundHttpException();
         }
 

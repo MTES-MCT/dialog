@@ -70,4 +70,11 @@ final class AddRecipientsListControllerTest extends AbstractWebTestCase
         $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients/add');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
+
+    public function testNotAdministrator(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/recipients/add');
+        $this->assertResponseStatusCodeSame(403);
+    }
 }
