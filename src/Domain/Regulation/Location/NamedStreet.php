@@ -108,6 +108,7 @@ class NamedStreet
         string $direction,
         ?string $cityCode = null,
         ?string $cityLabel = null,
+        ?string $roadBanId = null,
         ?string $roadName = null,
         ?string $fromHouseNumber = null,
         ?string $fromRoadName = null,
@@ -117,6 +118,7 @@ class NamedStreet
         $this->direction = $direction;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
+        $this->roadBanId = $roadBanId;
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
         $this->fromRoadName = $fromRoadName;

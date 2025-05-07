@@ -19,9 +19,9 @@ final class GetAddressCompletionFragmentController
     }
 
     #[Route(
-        '/_fragment/address-completions',
+        '/_fragment/named-street-completions',
         methods: 'GET',
-        name: 'fragment_roadName_completion',
+        name: 'fragment_namedStreet_completion',
     )]
     public function __invoke(Request $request): Response
     {
@@ -32,13 +32,13 @@ final class GetAddressCompletionFragmentController
             throw new BadRequestHttpException();
         }
 
-        $roadNames = $this->roadGeocoder->findRoadNames($search, $cityCode);
+        $namedStreets = $this->roadGeocoder->findNamedStreets($search, $cityCode);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_road_name_completions.html.twig',
+                name: 'regulation/fragments/_named_street_completions.html.twig',
                 context: [
-                    'roadNames' => $roadNames,
+                    'namedStreets' => $namedStreets,
                 ],
             ),
         );
