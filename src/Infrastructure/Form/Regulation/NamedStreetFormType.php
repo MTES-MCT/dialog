@@ -115,6 +115,8 @@ final class NamedStreetFormType extends AbstractType
         // Credits : https://openclassrooms.com/forum/sujet/symfony-select2-tag-et-choicetype
         $builder->get('fromRoadName')->resetViewTransformers();
         $builder->get('toRoadName')->resetViewTransformers();
+
+        // TODO ajouter valeur initiale à from/toRoadName pour que le choix initial soit sélectionné
     }
 
     private function getPointTypeOptions(): array

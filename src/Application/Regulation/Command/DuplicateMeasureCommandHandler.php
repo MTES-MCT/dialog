@@ -89,8 +89,10 @@ final class DuplicateMeasureCommandHandler
                 $cmd->namedStreet->roadName = $namedStreet->getRoadName();
                 $cmd->namedStreet->roadBanId = $namedStreet->getRoadBanId();
                 $cmd->namedStreet->fromHouseNumber = $namedStreet->getFromHouseNumber();
+                $cmd->namedStreet->fromRoadBanId = $namedStreet->getFromRoadBanId();
                 $cmd->namedStreet->fromRoadName = $namedStreet->getFromRoadName();
                 $cmd->namedStreet->toHouseNumber = $namedStreet->getToHouseNumber();
+                $cmd->namedStreet->toRoadBanId = $namedStreet->getToRoadBanId();
                 $cmd->namedStreet->toRoadName = $namedStreet->getToRoadName();
             } elseif ($rawGeoJSON = $location->getRawGeoJSON()) {
                 $cmd->rawGeoJSON = new SaveRawGeoJSONCommand();

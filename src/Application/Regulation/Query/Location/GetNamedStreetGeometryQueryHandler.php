@@ -50,15 +50,16 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
 
         return $this->laneSectionMaker->computeSection(
             $fullLaneGeometry,
+            $command->roadBanId,
             $command->roadName,
             $command->cityCode,
             $command->direction,
             $command->fromCoords,
             $command->fromHouseNumber,
-            $command->fromRoadName,
+            $command->fromRoadBanId,
             $command->toCoords,
             $command->toHouseNumber,
-            $command->toRoadName,
+            $command->toRoadBanId,
         );
     }
 

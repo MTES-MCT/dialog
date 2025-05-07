@@ -10,5 +10,5 @@ interface IntersectionGeocoderInterface
 {
     public function findIntersectingNamedStreets(string $roadBanId): array;
 
-    public function computeIntersection(string $roadName, string $otherRoadName, string $cityCode): Coordinates;
+    public function computeIntersection(string $roadBanId, string $otherRoadBanId): Coordinates;
 }
