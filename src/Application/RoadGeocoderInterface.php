@@ -10,7 +10,7 @@ interface RoadGeocoderInterface
 {
     public const HIGHWAY = 'HIGHWAY';
 
-    public function computeRoadLine(string $roadName, string $inseeCode): string;
+    public function computeRoadLine(string $roadBanId): string;
 
     public function findRoads(string $search, string $roadType, string $administrator): array;
 

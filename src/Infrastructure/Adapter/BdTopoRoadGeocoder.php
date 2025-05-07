@@ -21,26 +21,17 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     ) {
     }
 
-    public function computeRoadLine(string $roadName, string $inseeCode): string
+    public function computeRoadLine(string $roadBanId): string
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 '
-                    WITH voie_nommee as (
-                        SELECT id_pseudo_fpb
-                        FROM voie_nommee
-                        WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
-                        AND code_insee = :code_insee
-                        LIMIT 1
-                    )
                     SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
                     FROM troncon_de_route
-                    INNER JOIN voie_nommee ON true
-                    WHERE voie_nommee.id_pseudo_fpb = identifiant_voie_1_gauche
+                    WHERE identifiant_voie_ban_gauche = :road_ban_id
                 ',
                 [
-                    'nom_minuscule' => $roadName,
-                    'code_insee' => $inseeCode,
+                    'road_ban_id' => $roadBanId,
                 ],
             );
         } catch (\Exception $exc) {
@@ -51,7 +42,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             return $rows[0]['geometry'];
         }
 
-        $message = \sprintf('no result found in voie_nommee for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
+        $message = \sprintf('Pas de tronçons de route trouvés pour roadBanId="%s"', $roadBanId);
         throw new GeocodingFailureException($message);
     }
 
