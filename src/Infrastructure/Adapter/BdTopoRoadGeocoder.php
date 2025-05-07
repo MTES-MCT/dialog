@@ -300,49 +300,35 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return $sides;
     }
 
-    public function findIntersectingRoadNames(string $search, string $roadName, string $cityCode): array
+    public function findIntersectingNamedStreets(string $roadBanId): array
     {
-        // Build search query
-        // https://www.postgresql.org/docs/current/datatype-textsearch.html#DATATYPE-TSQUERY
-        $query = $search ? str_replace(' ', ' & ', trim($search)) . ':*' : '';
-
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
-                \sprintf(
-                    'WITH ref AS (
-                        SELECT ogc_fid, geometrie, nom_minuscule, code_insee
-                        FROM voie_nommee
-                        WHERE code_insee = :cityCode
-                        AND f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:roadName)
-                        LIMIT 1
-                    )
-                    SELECT INITCAP(v.nom_minuscule) AS road_name
+                <<<'SQL'
+                    SELECT v.identifiant_voie_ban AS road_ban_id, v.nom_voie_ban AS road_name
                     FROM voie_nommee AS v
-                    INNER JOIN ref ON v.ogc_fid != ref.ogc_fid
-                    WHERE v.code_insee = ref.code_insee
-                    AND ST_Intersects(v.geometrie, ref.geometrie)
-                    %s
+                    WHERE ST_Intersects(v.geometrie, (SELECT v2.geometrie FROM voie_nommee AS v2 WHERE v2.identifiant_voie_ban = :road_ban_id LIMIT 1))
+                    AND v.identifiant_voie_ban <> :road_ban_id
                     ORDER BY road_name
-                    ',
-                    $query ? "AND nom_minuscule_search @@ to_tsquery('french', :query::text)" : '',
-                ),
+                SQL,
                 [
-                    'roadName' => $roadName,
-                    'cityCode' => $cityCode,
-                    'query' => $query,
+                    'road_ban_id' => $roadBanId,
                 ],
             );
         } catch (\Exception $exc) {
             throw new GeocodingFailureException(\sprintf('Intersecting road names query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        $roadNames = [];
+        $namedStreets = [];
 
         foreach ($rows as $row) {
-            $roadNames[] = $row['road_name'];
+            $namedStreets[] = [
+                'roadBanId' => $row['road_ban_id'],
+                'roadName' => $row['road_name'],
+            ];
         }
 
-        return $roadNames;
+        return $namedStreets;
     }
 
     public function computeIntersection(string $roadName, string $otherRoadName, string $cityCode): Coordinates

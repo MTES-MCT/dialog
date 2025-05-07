@@ -370,7 +370,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
      */
     public function testFindIntersectingRoads(string $search, string $roadName, string $cityCode, array $roadNames): void
     {
-        $this->assertEquals($roadNames, $this->roadGeocoder->findIntersectingRoadNames($search, $roadName, $cityCode));
+        $this->assertEquals($roadNames, $this->roadGeocoder->findIntersectingNamedStreets($search, $roadName, $cityCode));
     }
 
     private function provideTestComputeIntersection(): array
