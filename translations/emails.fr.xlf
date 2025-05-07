@@ -50,6 +50,10 @@
                 <source>organization_invitation.join</source>
                 <target>Je rejoins cette organisation</target>
             </trans-unit>
+            <trans-unit id="mailing_list.email.subject">
+                <source>mailing_list.email.subject</source>
+                <target>Arrêté de circulation publié</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
