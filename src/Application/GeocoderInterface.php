@@ -11,4 +11,6 @@ interface GeocoderInterface
     public function computeCoordinates(string $address, string $cityCode): Coordinates;
 
     public function findCities(string $search): array;
+
+    public function findNamedStreets(string $search, string $cityCode): array;
 }
