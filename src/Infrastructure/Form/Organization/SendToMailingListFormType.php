@@ -23,7 +23,7 @@ final class SendToMailingListFormType extends AbstractType
                 options: [
                     'label' => 'recipient.form.email',
                     'help' => 'recipient.form.email.help',
-                    'required' => true,
+                    'required' => false,
                 ],
             )
             ->add(
@@ -53,7 +53,7 @@ final class SendToMailingListFormType extends AbstractType
         $choices = [];
 
         foreach ($recipients as $recipient) {
-            $choices[\sprintf('%s (%s)', $recipient['name'], $recipient['email'])] = $recipient['email'];
+            $choices[\sprintf('%s (%s)', $recipient['name'], $recipient['email'])] = \sprintf('%s#%s', $recipient['name'], $recipient['email']);
         }
 
         return $choices;

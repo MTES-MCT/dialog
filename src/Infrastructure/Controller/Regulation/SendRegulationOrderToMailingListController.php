@@ -15,13 +15,11 @@ use App\Infrastructure\Form\Organization\SendToMailingListFormType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SendRegulationOrderToMailingListController extends AbstractRegulationController
@@ -31,7 +29,6 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
         private \Twig\Environment $twig,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
-        private RouterInterface $router,
         Security $security,
         QueryBusInterface $queryBus,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -49,22 +46,17 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $recipients = $this->queryBus->handle(new GetMailingListQuery($regulationOrderRecord->getOrganizationUuid()));
-
-        $form = $this->formFactory->create(SendToMailingListFormType::class, null, ['recipients' => $recipients]);
+        $command = new SendRegulationOrderToMailingListCommand();
+        $form = $this->formFactory->create(SendToMailingListFormType::class, $command, ['recipients' => $recipients]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->commandBus->dispatchAsync(new SendRegulationOrderToMailingListCommand($recipients));
+                $this->commandBus->dispatchAsync($command);
 
                 /** @var FlashBagAwareSessionInterface */
                 $session = $request->getSession();
                 $session->getFlashBag()->add('success', $this->translator->trans('register.succeeded'));
-
-                return new RedirectResponse(
-                    url: $this->router->generate('app_regulation_detail'),
-                    status: Response::HTTP_SEE_OTHER,
-                );
             } catch (OrganizationNotFoundException) {
                 $form->get('organizationSiret')->addError(
                     new FormError($this->translator->trans('register.error.organizationSiret_not_found')),
