@@ -110,6 +110,11 @@ final class NamedStreetFormType extends AbstractType
             $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value; // Prevent null if entire street is checked
             $event->setData($data);
         });
+
+        // Désactive la validation choice, car les choices des rues d'intersection sont générés dynamiquement à partir de roadName.
+        // Credits : https://openclassrooms.com/forum/sujet/symfony-select2-tag-et-choicetype
+        $builder->get('fromRoadName')->resetViewTransformers();
+        $builder->get('toRoadName')->resetViewTransformers();
     }
 
     private function getPointTypeOptions(): array
@@ -158,6 +163,7 @@ final class NamedStreetFormType extends AbstractType
             'data_class' => SaveNamedStreetCommand::class,
             'error_mapping' => [
                 'cityCode' => 'cityLabel',
+                'roadBanId' => 'roadName',
             ],
         ]);
     }

@@ -38,7 +38,7 @@
                 <option name="expression"> this.roadType === 'lane' </option>
                 <option name="constraints">
                     <constraint name="NotBlank">
-                        <option name="message">regulation.location.roadBandId.error.blank</option>
+                        <option name="message">regulation.location.roadBanId.error.blank</option>
                         <option name="groups">
                             <value>html_form</value>
                         </option>
