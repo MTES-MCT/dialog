@@ -42,7 +42,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
-        $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadName, $command->cityCode);
+        $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadBanId);
 
         if ($hasNoStart && $hasNoEnd) {
             return $fullLaneGeometry;
@@ -68,8 +68,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
 
         return !$command->namedStreet
             || $command->direction !== $command->namedStreet->getDirection()
-            || $command->cityCode !== $command->namedStreet->getCityCode()
-            || $command->roadName !== $command->namedStreet->getRoadName()
+            || $command->roadBanId !== $command->namedStreet->getRoadBanId()
             || ($command->fromHouseNumber !== $command->namedStreet->getFromHouseNumber())
             || ($command->fromRoadName !== $command->namedStreet->getFromRoadName())
             || ($command->toHouseNumber !== $command->namedStreet->getToHouseNumber())
