@@ -87,6 +87,7 @@ final class DuplicateMeasureCommandHandler
                 $cmd->namedStreet->direction = $namedStreet->getDirection();
                 $cmd->namedStreet->cityCode = $namedStreet->getCityCode();
                 $cmd->namedStreet->roadName = $namedStreet->getRoadName();
+                $cmd->namedStreet->roadBanId = $namedStreet->getRoadBanId();
                 $cmd->namedStreet->fromHouseNumber = $namedStreet->getFromHouseNumber();
                 $cmd->namedStreet->fromRoadName = $namedStreet->getFromRoadName();
                 $cmd->namedStreet->toHouseNumber = $namedStreet->getToHouseNumber();
