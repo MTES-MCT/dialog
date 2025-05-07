@@ -33,6 +33,9 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                                 'code_insee' => '44195',
                             ],
                         ],
+                        'siege' => [
+                            'departement' => '44',
+                        ],
                     ],
                 ],
             ],
