@@ -34,6 +34,10 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'roadBanId',
+                HiddenType::class,
+            )
+            ->add(
                 'roadName',
                 TextType::class,
                 options: [

@@ -309,6 +309,47 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return $sides;
     }
 
+    public function findNamedStreets(string $search, string $cityCode): array
+    {
+        // Build search query
+        // https://www.postgresql.org/docs/current/datatype-textsearch.html#DATATYPE-TSQUERY
+        $query = str_replace(' ', ' & ', trim($search)) . ':*';
+
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                "
+                    SELECT INITCAP(nom_minuscule) road_name
+                    FROM voie_nommee
+                    WHERE (
+                        nom_minuscule_search @@ to_tsquery('french', :query::text)
+                        OR :search % ANY(STRING_TO_ARRAY(f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), ' '))
+                    )
+                    AND code_insee = :cityCode
+                    ORDER BY ts_rank(nom_minuscule_search, to_tsquery('french', :query::text)) DESC
+                    LIMIT 7
+                ",
+                [
+                    'cityCode' => $cityCode,
+                    'query' => $query,
+                    'search' => $search,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Road names query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $namedStreets = [];
+
+        foreach ($rows as $row) {
+            $namedStreets[] = [
+                'roadBanId' => 'totobanid',
+                'roadName' => $row['road_name'],
+            ];
+        }
+
+        return $namedStreets;
+    }
+
     public function findRoadNames(string $search, string $cityCode): array
     {
         // Build search query

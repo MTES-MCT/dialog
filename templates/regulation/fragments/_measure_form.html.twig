@@ -419,7 +419,7 @@
                     <div
                         class="fr-x-autocomplete-wrapper"
                         data-controller="autocomplete"
-                        data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
+                        data-autocomplete-url-value="{{ path('fragment_namedStreet_completion') }}"
                         data-autocomplete-query-param-value="search"
                         data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
                         data-autocomplete-min-length-value="3"
@@ -429,6 +429,17 @@
                         data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadName"
                     >
+                        {{ form_row(form.namedStreet.roadBanId, {
+                            attr: {
+                                'data-autocomplete-target': 'hidden',
+                                'data-reset-target': 'element',
+                                'data-reset-keys': ['city']|json_encode,
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'lane',
+                                'disabled': not isLane,
+                            }
+                        }) }}
+
                         {{ form_row(form.namedStreet.roadName, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',

@@ -16,6 +16,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     public ?string $roadType = null; // Used by validation
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
+    public ?string $roadBanId = null;
     public ?string $roadName = null;
     public ?string $fromPointType = null;
     public ?string $fromHouseNumber = null;
@@ -35,6 +36,7 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     ) {
         $this->cityLabel = $namedStreet?->getCityLabel();
         $this->cityCode = $namedStreet?->getCityCode();
+        $this->roadBanId = $namedStreet?->getRoadBanId();
         $this->roadName = $namedStreet?->getRoadName();
         $this->fromPointType = $namedStreet?->getFromPointType();
         $this->fromHouseNumber = $namedStreet?->getFromHouseNumber();
