@@ -8,8 +8,6 @@ use App\Application\AsyncCommandInterface;
 
 final class SendRegulationOrderToMailingListCommand implements AsyncCommandInterface
 {
-    public function __construct(
-        public array $emails,
-    ) {
-    }
+    public array $recipients = [];
+    public string $emails;
 }

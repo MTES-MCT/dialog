@@ -2353,6 +2353,11 @@
                 <source>add.recipient.form.title</source>
                 <target>Ajouter un destinataire</target>
             </trans-unit>
+            <trans-unit id="mailing.list.share.succeeded">
+                <source>mailing.list.share.succeeded</source>
+                <target><![CDATA[<h3 class="fr-alert__title">]]>Emails de partage envoyés<![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>L’arrêté a bien été partagé aux destinataires.<![CDATA[</p>]]></target>
+            </trans-unit>
             <trans-unit id="recipient.name">
                 <source>recipient.name</source>
                 <target>Nom et prénom</target>

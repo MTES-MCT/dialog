@@ -9,11 +9,8 @@ use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailin
 use App\Application\Organization\MailingList\Query\GetMailingListQuery;
 use App\Application\QueryBusInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
-use App\Domain\User\Exception\OrganizationNotFoundException;
-use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Infrastructure\Form\Organization\SendToMailingListFormType;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,11 +24,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class SendRegulationOrderToMailingListController extends AbstractRegulationController
 {
     public function __construct(
+        private RouterInterface $router,
         private FormFactoryInterface $formFactory,
         private \Twig\Environment $twig,
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
-        private RouterInterface $router,
         Security $security,
         QueryBusInterface $queryBus,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -49,31 +46,23 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $recipients = $this->queryBus->handle(new GetMailingListQuery($regulationOrderRecord->getOrganizationUuid()));
-
-        $form = $this->formFactory->create(SendToMailingListFormType::class, null, ['recipients' => $recipients]);
+        $command = new SendRegulationOrderToMailingListCommand();
+        $form = $this->formFactory->create(SendToMailingListFormType::class, $command, ['recipients' => $recipients]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $this->commandBus->dispatchAsync(new SendRegulationOrderToMailingListCommand($recipients));
+            $this->commandBus->dispatchAsync($command);
 
-                /** @var FlashBagAwareSessionInterface */
-                $session = $request->getSession();
-                $session->getFlashBag()->add('success', $this->translator->trans('register.succeeded'));
+            /** @var FlashBagAwareSessionInterface */
+            $session = $request->getSession();
+            $session->getFlashBag()->add('success', $this->translator->trans('mailing.list.share.succeeded'));
 
-                return new RedirectResponse(
-                    url: $this->router->generate('app_regulation_detail'),
-                    status: Response::HTTP_SEE_OTHER,
-                );
-            } catch (OrganizationNotFoundException) {
-                $form->get('organizationSiret')->addError(
-                    new FormError($this->translator->trans('register.error.organizationSiret_not_found')),
-                );
-            } catch (UserAlreadyRegisteredException) {
-                $form->get('email')->addError(
-                    new FormError($this->translator->trans('register.error.already_exists')),
-                );
-            }
+            return new RedirectResponse(
+                url: $this->router->generate('app_mailing_list_share', [
+                    'uuid' => $uuid,
+                ]),
+                status: Response::HTTP_SEE_OTHER,
+            );
         }
 
         return new Response(
