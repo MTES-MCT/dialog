@@ -33,6 +33,19 @@
                 </option>
             </constraint>
         </property>
+        <property name="roadBanId">
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'lane' </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.roadBanId.error.blank</option>
+                        <option name="groups">
+                            <value>html_form</value>
+                        </option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
         <property name="roadName">
             <constraint name="When">
                 <option name="expression"> this.roadType === 'lane' </option>

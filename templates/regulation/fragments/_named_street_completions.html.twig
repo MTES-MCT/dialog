@@ -1,0 +1,7 @@
+{% for namedStreet in namedStreets %}
+    <li role="option" data-autocomplete-value="{{ namedStreet.roadBanId }}">{{ namedStreet.roadName }}</li>
+{% endfor %}
+
+<template id="status">
+    {{ 'common.autocomplete.results_count'|trans({ '%count%': namedStreets|length }) }}
+</template>

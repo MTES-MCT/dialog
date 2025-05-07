@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
-use App\Application\RoadGeocoderInterface;
+use App\Application\GeocoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -13,15 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 final class GetAddressCompletionFragmentController
 {
     public function __construct(
-        private RoadGeocoderInterface $roadGeocoder,
+        private GeocoderInterface $geocoder,
         private \Twig\Environment $twig,
     ) {
     }
 
     #[Route(
-        '/_fragment/address-completions',
+        '/_fragment/named-street-completions',
         methods: 'GET',
-        name: 'fragment_roadName_completion',
+        name: 'fragment_namedStreet_completion',
     )]
     public function __invoke(Request $request): Response
     {
@@ -32,13 +32,13 @@ final class GetAddressCompletionFragmentController
             throw new BadRequestHttpException();
         }
 
-        $roadNames = $this->roadGeocoder->findRoadNames($search, $cityCode);
+        $namedStreets = $this->geocoder->findNamedStreets($search, $cityCode);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_road_name_completions.html.twig',
+                name: 'regulation/fragments/_named_street_completions.html.twig',
                 context: [
-                    'roadNames' => $roadNames,
+                    'namedStreets' => $namedStreets,
                 ],
             ),
         );
