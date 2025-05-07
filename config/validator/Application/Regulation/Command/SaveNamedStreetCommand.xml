@@ -39,6 +39,9 @@
                 <option name="constraints">
                     <constraint name="NotBlank">
                         <option name="message">regulation.location.roadBandId.error.blank</option>
+                        <option name="groups">
+                            <value>html_form</value>
+                        </option>
                     </constraint>
                 </option>
             </constraint>

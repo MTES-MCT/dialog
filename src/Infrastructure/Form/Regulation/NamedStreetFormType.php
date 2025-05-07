@@ -66,8 +66,12 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'fromRoadBanId',
+                HiddenType::class,
+            )
+            ->add(
                 'fromRoadName',
-                TextType::class,
+                ChoiceType::class,
                 options: [
                     'label' => 'regulation.location.named_street.intersection',
                 ],
@@ -85,8 +89,12 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'toRoadBanId',
+                HiddenType::class,
+            )
+            ->add(
                 'toRoadName',
-                TextType::class,
+                ChoiceType::class,
                 options: [
                     'label' => 'regulation.location.named_street.intersection',
                 ],
@@ -146,6 +154,7 @@ final class NamedStreetFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'validation_groups' => ['Default', 'html_form'],
             'data_class' => SaveNamedStreetCommand::class,
             'error_mapping' => [
                 'cityCode' => 'cityLabel',

@@ -418,7 +418,7 @@
 
                     <div
                         class="fr-x-autocomplete-wrapper"
-                        data-controller="autocomplete"
+                        data-controller="autocomplete fetch"
                         data-autocomplete-url-value="{{ path('fragment_namedStreet_completion') }}"
                         data-autocomplete-query-param-value="search"
                         data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
@@ -426,9 +426,18 @@
                         data-autocomplete-delay-value="500"
                         data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
                         data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
-                        data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadName"
+                        data-fetch-url-value="{{ url('fragment_intersection_options') }}"
+                        data-fetch-extra-query-params-value="{{ {
+                            roadBanId: '#' ~ form.namedStreet.roadBanId.vars.id,
+                            currentOptions: ['#' ~ form.namedStreet.fromRoadBanId.vars.id, '#' ~ form.namedStreet.toRoadBanId.vars.id]|json_encode,
+                            targetIds: [form.namedStreet.fromRoadName.vars.id, form.namedStreet.toRoadName.vars.id]|json_encode,
+                        }|json_encode }}"
+                        data-fetch-required-params-value="{{ ['roadBanId']|json_encode }}"
+                        data-fetch-prefetch-value="true"
+                        data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
                     >
+                        {# TODO update after select #}
                         {{ form_row(form.namedStreet.roadBanId, {
                             attr: {
                                 'data-autocomplete-target': 'hidden',

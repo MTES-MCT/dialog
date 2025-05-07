@@ -8,7 +8,7 @@ use App\Domain\Geography\Coordinates;
 
 interface IntersectionGeocoderInterface
 {
-    public function findIntersectingRoadNames(string $search, string $roadName, string $cityCode): array;
+    public function findIntersectingNamedStreets(string $roadBanId): array;
 
     public function computeIntersection(string $roadName, string $otherRoadName, string $cityCode): Coordinates;
 }
