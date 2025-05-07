@@ -10,6 +10,8 @@ final readonly class OrganizationFetchedView
         public string $name,
         public string $code,
         public string $codeType,
+        public ?string $departmentName,
+        public ?string $departmentCode,
     ) {
     }
 }

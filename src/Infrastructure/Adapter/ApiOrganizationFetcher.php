@@ -42,6 +42,7 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
 
     public function __construct(
         private HttpClientInterface $organizationFetcherClient,
+        private HttpClientInterface $geoApiClient,
     ) {
     }
 
@@ -64,10 +65,26 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
         $result = $data['results'][0];
         ['codeType' => $codeType, 'code' => $code] = $this->getOrganizationCodes($result);
 
+        $departmentName = null;
+        $departmentCode = null;
+
+        // Récupération des code/nom du département dans le cas d'une commune ou d'un département
+        if (OrganizationCodeTypeEnum::INSEE->value === $codeType || OrganizationCodeTypeEnum::DEPARTMENT->value === $codeType) {
+            $geoResponse = $this->geoApiClient->request('GET', 'departements/' . $result['siege']['departement']);
+            $geoData = $geoResponse->toArray();
+
+            if (!empty($geoData)) {
+                $departmentName = $geoData['nom'];
+                $departmentCode = $geoData['code'];
+            }
+        }
+
         return new OrganizationFetchedView(
             name: $data['results'][0]['nom_complet'],
             code: $code,
             codeType: $codeType,
+            departmentName: $departmentName,
+            departmentCode: $departmentCode,
         );
     }
 

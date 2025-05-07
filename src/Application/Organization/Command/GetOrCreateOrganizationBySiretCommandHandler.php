@@ -46,7 +46,9 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                 ->setSiret($siret)
                 ->setName($organizationFetchedView->name)
                 ->setCode($organizationFetchedView->code)
-                ->setCodeType($organizationFetchedView->codeType);
+                ->setCodeType($organizationFetchedView->codeType)
+                ->setDepartmentCode($organizationFetchedView->departmentCode)
+                ->setDepartmentName($organizationFetchedView->departmentName);
 
             $this->organizationRepository->add($organization);
             $this->organizationRepository->flush();

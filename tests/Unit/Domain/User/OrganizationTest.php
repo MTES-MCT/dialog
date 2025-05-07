@@ -23,10 +23,15 @@ final class OrganizationTest extends TestCase
             ->setUpdatedAt($date);
 
         $this->assertSame('N/A', $organization->getCodeWithType());
+        $this->assertNull($organization->getDepartmentCodeWithName());
+        $this->assertNull($organization->getDepartmentCode());
+        $this->assertNull($organization->getDepartmentName());
 
         $organization
             ->setCode('44260')
-            ->setCodeType(OrganizationCodeTypeEnum::INSEE->value);
+            ->setCodeType(OrganizationCodeTypeEnum::INSEE->value)
+            ->setDepartmentCode('44')
+            ->setDepartmentName('Loire-Atlantique');
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $organization->getUuid());
         $this->assertEquals($date, $organization->getCreatedAt());
@@ -39,5 +44,8 @@ final class OrganizationTest extends TestCase
         $this->assertSame(OrganizationCodeTypeEnum::INSEE->value, $organization->getCodeType());
         $this->assertSame('geometry', $organization->getGeometry());
         $this->assertSame('44260 (insee)', $organization->getCodeWithType());
+        $this->assertSame('Loire-Atlantique (44)', $organization->getDepartmentCodeWithName());
+        $this->assertSame('44', $organization->getDepartmentCode());
+        $this->assertSame('Loire-Atlantique', $organization->getDepartmentName());
     }
 }

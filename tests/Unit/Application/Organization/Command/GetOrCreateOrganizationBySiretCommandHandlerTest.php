@@ -102,6 +102,8 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
         $orgName = 'Comune de Saint Ouen';
         $orgCode = '22930008201453';
         $orgCodeType = OrganizationCodeTypeEnum::INSEE->value;
+        $departmentName = 'Seine-Saint-Denis';
+        $departmentCode = '93';
 
         $this->organizationRepository
             ->expects($this->once())
@@ -113,6 +115,8 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             name: $orgName,
             code: $orgCode,
             codeType: $orgCodeType,
+            departmentName: $departmentName,
+            departmentCode: $departmentCode,
         );
 
         $this->organizationFetcher
@@ -136,7 +140,9 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->setSiret($this->siret)
             ->setName($orgName)
             ->setCode($orgCode)
-            ->setCodeType($orgCodeType);
+            ->setCodeType($orgCodeType)
+            ->setDepartmentName($departmentName)
+            ->setDepartmentCode($departmentCode);
 
         $this->organizationRepository
             ->expects($this->once())

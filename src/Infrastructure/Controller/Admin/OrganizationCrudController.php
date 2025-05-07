@@ -48,7 +48,6 @@ final class OrganizationCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $isEditPage = ($pageName === Crud::PAGE_EDIT);
         $codeTypes = array_column(OrganizationCodeTypeEnum::cases(), 'value');
 
         $fields = [
@@ -60,6 +59,9 @@ final class OrganizationCrudController extends AbstractCrudController
                 ->setChoices(array_combine($codeTypes, $codeTypes))
                 ->hideOnIndex(),
             TextField::new('codeWithType', 'Code territorial')->hideOnForm(),
+            TextField::new('departmentCodeWithName')->setLabel('Département')->hideOnForm(),
+            TextField::new('departmentCode')->setLabel('Code du département')->hideOnIndex(),
+            TextField::new('departmentName')->setLabel('Nom du département')->hideOnIndex(),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
             DateTimeField::new('updatedAt')->setLabel('Date de mise à jour du contour')->hideOnForm(),
         ];
