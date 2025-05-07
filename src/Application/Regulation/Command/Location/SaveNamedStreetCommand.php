@@ -42,11 +42,11 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
         $this->roadName = $namedStreet?->getRoadName();
         $this->fromPointType = $namedStreet?->getFromPointType();
         $this->fromHouseNumber = $namedStreet?->getFromHouseNumber();
-        $this->fromRoadBanId = $namedStreet?->getFromRoadName();
+        $this->fromRoadBanId = $namedStreet?->getFromRoadBanId();
         $this->fromRoadName = $namedStreet?->getFromRoadName();
         $this->toPointType = $namedStreet?->getToPointType();
         $this->toHouseNumber = $namedStreet?->getToHouseNumber();
-        $this->toRoadBanId = $namedStreet?->getToRoadName();
+        $this->toRoadBanId = $namedStreet?->getToRoadBanId();
         $this->toRoadName = $namedStreet?->getToRoadName();
         $this->isEntireStreetFormValue = $namedStreet ? $this->computeIsEntireStreetFormValue() : null;
         $this->roadType = $namedStreet?->getLocation()?->getRoadType();
