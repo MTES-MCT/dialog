@@ -14,6 +14,7 @@ class NamedStreet
         private string $direction,
         private ?string $cityCode = null,
         private ?string $cityLabel = null,
+        private ?string $roadBanId = null,
         private ?string $roadName = null,
         private ?string $fromHouseNumber = null,
         private ?string $fromRoadName = null,
@@ -40,6 +41,11 @@ class NamedStreet
     public function getCityLabel(): ?string
     {
         return $this->cityLabel;
+    }
+
+    public function getRoadBanId(): ?string
+    {
+        return $this->roadBanId;
     }
 
     public function getRoadName(): ?string

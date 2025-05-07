@@ -5,9 +5,13 @@
   <entity
     name="App\Domain\Regulation\Location\NamedStreet"
     table="named_street">
+    <indexes>
+      <index columns="road_ban_id"/>
+    </indexes>
     <id name="uuid" type="guid" column="uuid" />
     <field name="cityCode" type="string" column="city_code" nullable="false" length="5" />
     <field name="cityLabel" type="string" column="city_label" nullable="false" />
+    <field name="roadBanId" type="string" column="road_ban_id" nullable="true" length="20" />
     <field name="roadName" type="string" column="road_name" nullable="true" />
     <field name="fromHouseNumber" type="string" column="from_house_number" nullable="true" length="8" />
     <field name="fromRoadName" type="string" column="from_road_name" nullable="true" length="255" />
