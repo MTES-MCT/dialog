@@ -10,6 +10,7 @@ use App\Application\Organization\MailingList\Query\GetMailingListQuery;
 use App\Application\QueryBusInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Form\Organization\SendToMailingListFormType;
+use App\Infrastructure\Security\AuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,6 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class SendRegulationOrderToMailingListController extends AbstractRegulationController
 {
     public function __construct(
+        private AuthenticatedUser $authenticatedUser,
         private RouterInterface $router,
         private FormFactoryInterface $formFactory,
         private \Twig\Environment $twig,
@@ -45,13 +47,16 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+        $user = $this->authenticatedUser->getUser();
         $recipients = $this->queryBus->handle(new GetMailingListQuery($regulationOrderRecord->getOrganizationUuid()));
-        $command = new SendRegulationOrderToMailingListCommand();
-        $form = $this->formFactory->create(SendToMailingListFormType::class, $command, ['recipients' => $recipients]);
+        $command = new SendRegulationOrderToMailingListCommand($regulationOrder, $user);
+        $form = $this->formFactory->create(SendToMailingListFormType::class, $command, [
+            'recipients' => $recipients, ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->commandBus->dispatchAsync($command);
+            $this->commandBus->handle($command);
 
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();

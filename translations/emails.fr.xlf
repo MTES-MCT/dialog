@@ -54,6 +54,18 @@
                 <source>mailing_list.email.subject</source>
                 <target>Arrêté de circulation publié</target>
             </trans-unit>
+            <trans-unit id="mailing_list.email.title">
+                <source>mailing_list.email.title</source>
+                <target>%name% vous invite à voir l’arrêté N° %identifier%</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.under.title">
+                <source>mailing_list.email.under.title</source>
+                <target>%title%</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.description">
+                <source>mailing_list.email.description</source>
+                <target>Vous pouvez voir les informations de l’arrêté sur DiaLog ou les restrictions directement sur la carte.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

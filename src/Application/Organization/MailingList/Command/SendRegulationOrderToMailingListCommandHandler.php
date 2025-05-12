@@ -46,7 +46,9 @@ final readonly class SendRegulationOrderToMailingListCommandHandler
                     subject: 'mailing_list.email.subject',
                     template: 'email/mailing_list/mailing_list_email.html.twig',
                     payload: [
-                        'name' => $recipient['name'],
+                        'recipient' => $recipient,
+                        'regulationOrder' => $command->regulationOrder,
+                        'userName' => $command->user->getFullName(),
                     ],
                 ),
             );

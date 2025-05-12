@@ -2,6 +2,8 @@
 {% trans_default_domain 'emails' %}
 
 {% block body %}
-    <h1>{{ 'mailing_list.email.subject'|trans }}</h1>
-    <p>{{ 'common.hello'|trans({'%fullName%': name }) }}</p>
+    <h1>{{ 'mailing_list.email.title'|trans({'%name%': userName, '%identifier%': regulationOrder.identifier }) }}</h1>
+    <h2>{{ regulationOrder.title }}</h2>
+    <p>{{ 'mailing_list.email.description'|trans }}</p>
+    <p class="fr-footer__bottom-copy">Si vous avez des difficultés à accéder à DiaLog, écrivez-nous à : dialog@beta.gouv.fr</p>
 {% endblock %}
