@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 final class LaneSectionMakerTest extends TestCase
 {
     private $fullLaneGeometry;
+    private $roadBanId;
     private $roadName;
     private $cityCode;
     private $fromCoords;
@@ -28,6 +29,7 @@ final class LaneSectionMakerTest extends TestCase
     protected function setUp(): void
     {
         $this->fullLaneGeometry = 'geometry';
+        $this->roadBanId = '01010_1234';
         $this->roadName = 'Rue du Test';
         $this->cityCode = '01010';
         $this->fromCoords = Coordinates::fromLonLat(1, 41);
@@ -56,7 +58,7 @@ final class LaneSectionMakerTest extends TestCase
         $this->intersectionGeocoder
             ->expects(self::once())
             ->method('computeIntersection')
-            ->with($this->roadName, 'Rue de la Fin', $this->cityCode)
+            ->with($this->roadBanId, '01010_5678')
             ->willReturn($this->toCoords);
 
         $this->lineSectionMaker
@@ -67,15 +69,16 @@ final class LaneSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(
             $this->fullLaneGeometry,
+            $this->roadBanId,
             $this->roadName,
             $this->cityCode,
             $this->direction,
             fromCoords: null,
             fromHouseNumber: '1',
-            fromRoadName: null,
+            fromRoadBanId: null,
             toCoords: null,
             toHouseNumber: null,
-            toRoadName: 'Rue de la Fin',
+            toRoadBanId: '01010_5678',
         ));
     }
 
@@ -97,15 +100,16 @@ final class LaneSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(
             $this->fullLaneGeometry,
+            $this->roadBanId,
             $this->roadName,
             $this->cityCode,
             $this->direction,
             fromCoords: $this->fromCoords,
             fromHouseNumber: null,
-            fromRoadName: null,
+            fromRoadBanId: null,
             toCoords: $this->toCoords,
             toHouseNumber: null,
-            toRoadName: null,
+            toRoadBanId: null,
         ));
     }
 
@@ -148,15 +152,16 @@ final class LaneSectionMakerTest extends TestCase
 
         $this->assertSame('section', $this->laneSectionMaker->computeSection(
             $this->fullLaneGeometry,
+            $this->roadBanId,
             $this->roadName,
             $this->cityCode,
             $direction,
             fromCoords: $this->fromCoords,
             fromHouseNumber: null,
-            fromRoadName: null,
+            fromRoadBanId: null,
             toCoords: $this->toCoords,
             toHouseNumber: null,
-            toRoadName: null,
+            toRoadBanId: null,
         ));
     }
 }
