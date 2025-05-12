@@ -1484,7 +1484,7 @@
             </trans-unit>
             <trans-unit id="forgot_password.succeeded">
                 <source>forgot_password.succeeded</source>
-                <target>Si cette adresse e-mail est enregistrée chez DiaLog, vous recevrez un lien pour réinitialiser votre mot de passe.</target>
+                <target>Si cette adresse e-mail est enregistrée chez DiaLog, vous recevrez un lien pour réinitialiser votre mot de passe. N'oubliez pas de vérifier vos spams.</target>
             </trans-unit>
             <trans-unit id="forgot_password.back_to_login">
                 <source>forgot_password.back_to_login</source>
@@ -1975,7 +1975,7 @@
             </trans-unit>
             <trans-unit id="register.succeeded">
                 <source>register.succeeded</source>
-                <target>Votre compte a été créé avec succès. Veuillez consulter votre boîte de réception pour confirmer votre adresse email et finaliser l'activation de votre compte.</target>
+                <target>Votre compte a été créé avec succès. Veuillez consulter votre boîte de réception pour confirmer votre adresse email et finaliser l'activation de votre compte. N'oubliez pas de vérifier vos spams.</target>
             </trans-unit>
             <trans-unit id="register.succeeded.verified">
                 <source>register.succeeded.verified</source>
