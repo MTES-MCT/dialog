@@ -10,5 +10,7 @@ interface NamedStreetRepositoryInterface
 {
     public function add(NamedStreet $namedStreet): NamedStreet;
 
+    public function findAllWithoutRoadBanIds(): array;
+
     public function delete(NamedStreet $namedStreet): void;
 }

@@ -48,8 +48,10 @@ final class SaveNamedStreetCommandHandler
             roadBanId: $command->roadBanId,
             roadName: $command->roadName,
             fromHouseNumber: $command->fromHouseNumber,
+            fromRoadBanId: $command->fromRoadBanId,
             fromRoadName: $command->fromRoadName,
             toHouseNumber: $command->toHouseNumber,
+            toRoadBanId: $command->toRoadBanId,
             toRoadName: $command->toRoadName,
         );
 

@@ -19,6 +19,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class NamedStreetFormType extends AbstractType
 {
+    public function __construct(
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -72,9 +76,7 @@ final class NamedStreetFormType extends AbstractType
             ->add(
                 'fromRoadName',
                 ChoiceType::class,
-                options: [
-                    'label' => 'regulation.location.named_street.intersection',
-                ],
+                options: $this->getIntersectingRoadNameOptions(),
             )
             ->add(
                 'toPointType',
@@ -95,9 +97,7 @@ final class NamedStreetFormType extends AbstractType
             ->add(
                 'toRoadName',
                 ChoiceType::class,
-                options: [
-                    'label' => 'regulation.location.named_street.intersection',
-                ],
+                options: $this->getIntersectingRoadNameOptions(),
             )
             ->add('direction', ChoiceType::class, $this->getDirectionOptions())
             ->add('roadType', HiddenType::class)
@@ -115,8 +115,6 @@ final class NamedStreetFormType extends AbstractType
         // Credits : https://openclassrooms.com/forum/sujet/symfony-select2-tag-et-choicetype
         $builder->get('fromRoadName')->resetViewTransformers();
         $builder->get('toRoadName')->resetViewTransformers();
-
-        // TODO ajouter valeur initiale à from/toRoadName pour que le choix initial soit sélectionné
     }
 
     private function getPointTypeOptions(): array
@@ -155,6 +153,20 @@ final class NamedStreetFormType extends AbstractType
             'choices' => $choices,
             'label' => 'regulation.location.direction',
             'help' => 'regulation.location.direction.help',
+        ];
+    }
+
+    private function getIntersectingRoadNameOptions($options = []): array
+    {
+        $choices = [];
+
+        foreach ($options as $option) {
+            $choices[$option['roadName']] = $option['roadBanId'];
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.location.named_street.intersection',
         ];
     }
 
