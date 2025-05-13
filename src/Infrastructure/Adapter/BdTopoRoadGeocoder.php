@@ -18,6 +18,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 {
     public function __construct(
         private Connection $bdtopoConnection,
+        private Connection $bdtopo2023Connection,
     ) {
     }
 
@@ -43,6 +44,72 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         $message = \sprintf('Pas de tronçons de route trouvés pour roadBanId="%s"', $roadBanId);
+        throw new GeocodingFailureException($message);
+    }
+
+    public function computeRoadLine2023(string $roadName, string $inseeCode): string
+    {
+        try {
+            $rows = $this->bdtopo2023Connection->fetchAllAssociative(
+                <<<'SQL'
+                    SELECT ST_AsGeoJSON(geometrie) AS geometry
+                    FROM voie_nommee
+                    WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
+                    AND code_insee = :code_insee
+                    LIMIT 1
+                SQL,
+                [
+                    'nom_minuscule' => $roadName,
+                    'code_insee' => $inseeCode,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Road line 2023 query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if ($rows && $rows[0]['geometry']) {
+            return $rows[0]['geometry'];
+        }
+
+        $message = \sprintf('no result found in voie_nommee 2023 for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
+        throw new GeocodingFailureException($message);
+    }
+
+    // Cette fonction est utilisée pour calculer dans la BDTOPO 2025 l'identifiant voie BAN (road BAN ID)
+    // d'une voie présente dans la BDTOPO 2023, dans laquelle ces identifiants n'étaient pas encore renseigné
+    // On procède à un rapprochement géométrique comme l'a suggéré l'IGN suite à nos questions sur la nouvelle version de la table voie_nommee.
+    public function computeRoadBanId(string $roadName, string $inseeCode): string
+    {
+        $roadLine2023 = $this->computeRoadLine2023($roadName, $inseeCode);
+
+        try {
+            $rows = $this->bdtopoConnection->fetchAllAssociative(
+                <<<'SQL'
+                    SELECT v.identifiant_voie_ban AS road_ban_id
+                    FROM voie_nommee AS v,
+                    (
+                        SELECT MIN(ST_Distance(v1.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:geom), 4326))) AS min_distance
+                        FROM voie_nommee AS v1
+                        WHERE v1.insee_commune = :city_code
+                        GROUP BY v1.geometrie
+                    ) AS md
+                    WHERE ST_Distance(v.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:geom), 4326)) = md.min_distance
+                    AND v.insee_commune = :city_code
+                SQL,
+                [
+                    'geom' => $roadLine2023,
+                    'city_code' => $inseeCode,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if ($rows && $rows[0]['road_ban_id']) {
+            return $rows[0]['road_ban_id'];
+        }
+
+        $message = \sprintf('No road_ban_id found for roadName="%s" and inseeCode="%s"', $roadName, $inseeCode);
         throw new GeocodingFailureException($message);
     }
 
@@ -300,6 +367,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return $sides;
     }
 
+    // TODO : remettre le filtre $inseeCode
     public function findIntersectingNamedStreets(string $roadBanId): array
     {
         try {
@@ -308,6 +376,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     SELECT v.identifiant_voie_ban AS road_ban_id, v.nom_voie_ban AS road_name
                     FROM voie_nommee AS v
                     WHERE ST_Intersects(v.geometrie, (SELECT v2.geometrie FROM voie_nommee AS v2 WHERE v2.identifiant_voie_ban = :road_ban_id LIMIT 1))
+                    AND v.identifiant_voie_ban IS NOT NULL
+                    AND v.identifiant_voie_ban <> ''
                     AND v.identifiant_voie_ban <> :road_ban_id
                     ORDER BY road_name
                 SQL,

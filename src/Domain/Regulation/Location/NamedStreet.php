@@ -67,7 +67,7 @@ class NamedStreet
         }
 
         // TODO
-        if ($this->fromRoadName) {
+        if ($this->fromRoadBanId) {
             return PointTypeEnum::INTERSECTION->value;
         }
 
@@ -96,7 +96,7 @@ class NamedStreet
         }
 
         // TODO
-        if ($this->toRoadName) {
+        if ($this->toRoadBanId) {
             return PointTypeEnum::INTERSECTION->value;
         }
 
