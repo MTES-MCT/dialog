@@ -52,7 +52,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $rows = $this->bdtopo2023Connection->fetchAllAssociative(
                 <<<'SQL'
-                    SELECT ST_AsGeoJSON(geometrie) AS geometry
+                    SELECT ST_AsGeoJSON(geometrie) AS geom
                     FROM voie_nommee
                     WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
                     AND code_insee = :code_insee
@@ -67,8 +67,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingFailureException(\sprintf('Road line 2023 query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        if ($rows && $rows[0]['geometry']) {
-            return $rows[0]['geometry'];
+        if ($rows && $rows[0]['geom']) {
+            return $rows[0]['geom'];
         }
 
         $message = \sprintf('no result found in voie_nommee 2023 for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
@@ -85,19 +85,21 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
                 <<<'SQL'
-                    SELECT v.identifiant_voie_ban AS road_ban_id
-                    FROM voie_nommee AS v,
-                    (
-                        SELECT MIN(ST_Distance(v1.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:geom), 4326))) AS min_distance
-                        FROM voie_nommee AS v1
-                        WHERE v1.insee_commune = :city_code
-                        GROUP BY v1.geometrie
-                    ) AS md
-                    WHERE ST_Distance(v.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:geom), 4326)) = md.min_distance
-                    AND v.insee_commune = :city_code
+                    SELECT v.identifiant_voie_ban AS road_ban_id, ST_AsGeoJSON(v.geometrie) AS geom
+                    FROM voie_nommee AS v
+                    WHERE v.insee_commune = :city_code
+                    -- ST_HausdorffDistance() indique à quel point deux géométries sont "similaires".
+                    -- La distance de Hausdorff entre deux géométries A et B est définie comme la plus grande distance
+                    -- qui sépare deux points de A et B.
+                    -- La distance euclidienne utilisée par ST_Distance() ne convenait pas car au contraire,
+                    -- elle renvoie la plus petite des distances entre deux points de A et B.
+                    -- Or deux géométries peuvent avoir des points très proches mais être très différentes (le reste des points sont très éloignés).
+                    -- https://postgis.net/docs/ST_HausdorffDistance.html
+                    ORDER BY ST_HausdorffDistance(v.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:road_line_2023), 4326)) ASC
+                    LIMIT 1
                 SQL,
                 [
-                    'geom' => $roadLine2023,
+                    'road_line_2023' => $roadLine2023,
                     'city_code' => $inseeCode,
                 ],
             );

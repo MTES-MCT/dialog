@@ -30,19 +30,18 @@ final class UpdateNamedStreetsWithoutRoadBanIdsCommandHandler
             $namedStreetCommand = new SaveNamedStreetCommand($namedStreet);
 
             try {
-                $namedStreetCommand->roadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->roadName, $namedStreetCommand->cityCode);
+                if (!$namedStreetCommand->roadBanId) {
+                    $namedStreetCommand->roadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->roadName, $namedStreetCommand->cityCode);
+                }
 
-                $namedStreetCommand->fromRoadBanId =
-                    $namedStreetCommand->fromRoadName
-                    ? $this->roadGeocoder->computeRoadBanId($namedStreetCommand->fromRoadName, $namedStreetCommand->cityCode)
-                    : null;
+                if ($namedStreetCommand->fromRoadName && !$namedStreetCommand->fromRoadBanId) {
+                    $namedStreetCommand->fromRoadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->fromRoadName, $namedStreetCommand->cityCode);
+                }
 
-                $namedStreetCommand->toRoadBanId =
-                    $namedStreetCommand->toRoadName
-                    ? $this->roadGeocoder->computeRoadBanId($namedStreetCommand->toRoadName, $namedStreetCommand->cityCode)
-                    : null;
+                if ($namedStreetCommand->toRoadName && !$namedStreetCommand->toRoadBanId) {
+                    $namedStreetCommand->toRoadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->toRoadName, $namedStreetCommand->cityCode);
+                }
 
-                dump($namedStreetCommand->roadBanId, $namedStreetCommand->fromRoadBanId, $namedStreetCommand->toRoadBanId);
                 $this->commandBus->handle($namedStreetCommand);
                 $updatedUuids[] = $namedStreet->getUuid();
             } catch (GeocodingFailureException $exc) {

@@ -26,6 +26,8 @@ final class NamedStreetRepository extends ServiceEntityRepository implements Nam
     public function findAllWithoutRoadBanIds(): array
     {
         return $this->createQueryBuilder('ns')
+            ->addSelect('l')
+            ->innerJoin('ns.location', 'l')
             ->where('ns.roadBanId IS NULL OR (ns.fromRoadName IS NOT NULL AND ns.fromRoadBanId IS NULL) OR (ns.toRoadName IS NOT NULL AND ns.toRoadBanId IS NULL)')
             ->getQuery()
             ->getResult()
