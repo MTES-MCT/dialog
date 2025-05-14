@@ -418,17 +418,37 @@
 
                     <div
                         class="fr-x-autocomplete-wrapper"
-                        data-controller="autocomplete"
-                        data-autocomplete-url-value="{{ path('fragment_roadName_completion') }}"
+                        data-controller="autocomplete fetch"
+                        data-autocomplete-url-value="{{ path('fragment_namedStreet_completion') }}"
                         data-autocomplete-query-param-value="search"
                         data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
                         data-autocomplete-min-length-value="3"
                         data-autocomplete-delay-value="500"
                         data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
                         data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
-                        data-action="autocomplete.change->reset#reset"
                         data-reset-key-param="roadName"
+                        data-fetch-url-value="{{ url('fragment_intersection_options') }}"
+                        data-fetch-extra-query-params-value="{{ {
+                            roadBanId: '#' ~ form.namedStreet.roadBanId.vars.id,
+                            cityCode: '#' ~ form.namedStreet.cityCode.vars.id,
+                            currentOptions: [form.namedStreet.fromRoadBanId.vars.value, form.namedStreet.toRoadBanId.vars.value]|json_encode,
+                            targetIds: [form.namedStreet.fromRoadName.vars.id, form.namedStreet.toRoadName.vars.id]|json_encode,
+                        }|json_encode }}"
+                        data-fetch-required-params-value="{{ ['roadBanId']|json_encode }}"
+                        data-fetch-prefetch-value="true"
+                        data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
                     >
+                        {{ form_row(form.namedStreet.roadBanId, {
+                            attr: {
+                                'data-autocomplete-target': 'hidden',
+                                'data-reset-target': 'element',
+                                'data-reset-keys': ['city']|json_encode,
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'lane',
+                                'disabled': not isLane,
+                            }
+                        }) }}
+
                         {{ form_row(form.namedStreet.roadName, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
@@ -483,7 +503,24 @@
                                 <div class="fr-hint-text help-text">
                                     {{ 'regulation.location.named_street.points.description'|trans }}
                                 </div>
-                                {% include 'location/named_street/points_form.html.twig' with { form } only %}
+                                {% include 'regulation/_named_street_point_fields.html.twig' with {
+                                    legend: 'regulation.location.named_street.from_point'|trans,
+                                    pointType: form.namedStreet.fromPointType,
+                                    pointHouseNumber: form.namedStreet.fromHouseNumber,
+                                    pointRoadBanId: form.namedStreet.fromRoadBanId,
+                                    pointRoadName: form.namedStreet.fromRoadName,
+                                } only %}
+                                {% include 'regulation/_named_street_point_fields.html.twig' with {
+                                    legend: 'regulation.location.named_street.to_point'|trans,
+                                    pointType: form.namedStreet.toPointType,
+                                    pointHouseNumber: form.namedStreet.toHouseNumber,
+                                    pointRoadBanId: form.namedStreet.toRoadBanId,
+                                    pointRoadName: form.namedStreet.toRoadName,
+                                } only %}
+                                {{ form_row(form.namedStreet.direction, {
+                                    group_class: 'fr-select-group',
+                                    widget_class: 'fr-select',
+                                }) }}
                             </fieldset>
                         </div>
                     </fieldset>

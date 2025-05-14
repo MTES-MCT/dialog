@@ -14,10 +14,13 @@ class NamedStreet
         private string $direction,
         private ?string $cityCode = null,
         private ?string $cityLabel = null,
+        private ?string $roadBanId = null,
         private ?string $roadName = null,
         private ?string $fromHouseNumber = null,
+        private ?string $fromRoadBanId = null,
         private ?string $fromRoadName = null,
         private ?string $toHouseNumber = null,
+        private ?string $toRoadBanId = null,
         private ?string $toRoadName = null,
     ) {
     }
@@ -42,6 +45,11 @@ class NamedStreet
         return $this->cityLabel;
     }
 
+    public function getRoadBanId(): ?string
+    {
+        return $this->roadBanId;
+    }
+
     public function getRoadName(): ?string
     {
         return $this->roadName;
@@ -58,7 +66,7 @@ class NamedStreet
             return PointTypeEnum::HOUSE_NUMBER->value;
         }
 
-        if ($this->fromRoadName) {
+        if ($this->fromRoadBanId) {
             return PointTypeEnum::INTERSECTION->value;
         }
 
@@ -68,6 +76,11 @@ class NamedStreet
     public function getFromHouseNumber(): ?string
     {
         return $this->fromHouseNumber;
+    }
+
+    public function getFromRoadBanId(): ?string
+    {
+        return $this->fromRoadBanId;
     }
 
     public function getFromRoadName(): ?string
@@ -81,7 +94,7 @@ class NamedStreet
             return PointTypeEnum::HOUSE_NUMBER->value;
         }
 
-        if ($this->toRoadName) {
+        if ($this->toRoadBanId) {
             return PointTypeEnum::INTERSECTION->value;
         }
 
@@ -93,6 +106,11 @@ class NamedStreet
         return $this->toHouseNumber;
     }
 
+    public function getToRoadBanId(): ?string
+    {
+        return $this->toRoadBanId;
+    }
+
     public function getToRoadName(): ?string
     {
         return $this->toRoadName;
@@ -102,19 +120,25 @@ class NamedStreet
         string $direction,
         ?string $cityCode = null,
         ?string $cityLabel = null,
+        ?string $roadBanId = null,
         ?string $roadName = null,
         ?string $fromHouseNumber = null,
+        ?string $fromRoadBanId = null,
         ?string $fromRoadName = null,
         ?string $toHouseNumber = null,
+        ?string $toRoadBanId = null,
         ?string $toRoadName = null,
     ): void {
         $this->direction = $direction;
         $this->cityCode = $cityCode;
         $this->cityLabel = $cityLabel;
+        $this->roadBanId = $roadBanId;
         $this->roadName = $roadName;
         $this->fromHouseNumber = $fromHouseNumber;
+        $this->fromRoadBanId = $fromRoadBanId;
         $this->fromRoadName = $fromRoadName;
         $this->toHouseNumber = $toHouseNumber;
+        $this->toRoadBanId = $toRoadBanId;
         $this->toRoadName = $toRoadName;
     }
 }

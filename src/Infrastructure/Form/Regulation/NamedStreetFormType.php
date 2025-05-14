@@ -34,6 +34,10 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'roadBanId',
+                HiddenType::class,
+            )
+            ->add(
                 'roadName',
                 TextType::class,
                 options: [
@@ -62,9 +66,14 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'fromRoadBanId',
+                HiddenType::class,
+            )
+            ->add(
                 'fromRoadName',
-                TextType::class,
+                ChoiceType::class,
                 options: [
+                    'choices' => [], // Rempli par un fetch côté client
                     'label' => 'regulation.location.named_street.intersection',
                 ],
             )
@@ -81,9 +90,14 @@ final class NamedStreetFormType extends AbstractType
                 ],
             )
             ->add(
+                'toRoadBanId',
+                HiddenType::class,
+            )
+            ->add(
                 'toRoadName',
-                TextType::class,
+                ChoiceType::class,
                 options: [
+                    'choices' => [], // Rempli par un fetch côté client
                     'label' => 'regulation.location.named_street.intersection',
                 ],
             )
@@ -98,6 +112,11 @@ final class NamedStreetFormType extends AbstractType
             $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value; // Prevent null if entire street is checked
             $event->setData($data);
         });
+
+        // Désactive la vérification des 'choices' des rues d'intersection, car ils sont générés dynamiquement côté client à partir du roadName.
+        // Credits : https://openclassrooms.com/forum/sujet/symfony-select2-tag-et-choicetype
+        $builder->get('fromRoadName')->resetViewTransformers();
+        $builder->get('toRoadName')->resetViewTransformers();
     }
 
     private function getPointTypeOptions(): array
@@ -142,9 +161,13 @@ final class NamedStreetFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'validation_groups' => ['Default', 'html_form'],
             'data_class' => SaveNamedStreetCommand::class,
             'error_mapping' => [
                 'cityCode' => 'cityLabel',
+                'roadBanId' => 'roadName',
+                'fromRoadBanId' => 'fromRoadName',
+                'toRoadBanId' => 'toRoadName',
             ],
         ]);
     }

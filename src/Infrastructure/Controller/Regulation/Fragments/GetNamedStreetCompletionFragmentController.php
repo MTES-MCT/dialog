@@ -4,42 +4,41 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
-use App\Application\IntersectionGeocoderInterface;
+use App\Application\GeocoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetIntersectionCompletionFragmentController
+final class GetNamedStreetCompletionFragmentController
 {
     public function __construct(
-        private IntersectionGeocoderInterface $intersectionGeocoder,
+        private GeocoderInterface $geocoder,
         private \Twig\Environment $twig,
     ) {
     }
 
     #[Route(
-        '/_fragment/intersection-completions',
+        '/_fragment/named-street-completions',
         methods: 'GET',
-        name: 'fragment_intersection_completion',
+        name: 'fragment_namedStreet_completion',
     )]
     public function __invoke(Request $request): Response
     {
-        $search = $request->query->get('search', '');
-        $roadName = $request->query->get('roadName');
+        $search = $request->query->get('search');
         $cityCode = $request->query->get('cityCode');
 
-        if (!$roadName || !$cityCode) {
+        if (!$search || !$cityCode) {
             throw new BadRequestHttpException();
         }
 
-        $roadNames = $this->intersectionGeocoder->findIntersectingRoadNames($search, $roadName, $cityCode);
+        $namedStreets = $this->geocoder->findNamedStreets($search, $cityCode);
 
         return new Response(
             $this->twig->render(
-                name: 'regulation/fragments/_intersection_completions.html.twig',
+                name: 'regulation/fragments/_named_street_completions.html.twig',
                 context: [
-                    'roadNames' => $roadNames,
+                    'namedStreets' => $namedStreets,
                 ],
             ),
         );
