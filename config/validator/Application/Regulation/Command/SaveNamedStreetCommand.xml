@@ -91,6 +91,12 @@
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet() and this.fromPointType === 'intersection'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
         </property>
         <property name="toHouseNumber">
             <constraint name="Length">
@@ -122,6 +128,12 @@
         <property name="toRoadName">
             <constraint name="Length">
                 <option name="max">255</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet() and this.toPointType === 'intersection'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
             </constraint>
         </property>
     </class>
