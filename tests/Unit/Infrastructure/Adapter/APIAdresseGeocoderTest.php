@@ -233,4 +233,44 @@ final class APIAdresseGeocoderTest extends TestCase
         $this->assertEquals([['code' => '93007', 'label' => 'Blanc Mesnil (93150)']], $cities);
         $this->assertEquals(1, $http->getRequestsCount());
     }
+
+    public function testFindNamedStreets(): void
+    {
+        $features = [
+            [
+                'properties' => [
+                    'citycode' => '59606',
+                    'id' => '59606_1480',
+                    'street' => 'Rue de Famars',
+                ],
+            ],
+            [
+                'properties' => [
+                    'citycode' => '59606',
+                    'id' => '59606_3190',
+                    'street' => 'Rue du Quesnoy',
+                ],
+            ],
+        ];
+
+        $response = new MockResponse(json_encode(['features' => $features]), ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+        $geocoder = new APIAdresseGeocoder($http);
+
+        $this->assertEquals([
+            ['roadBanId' => '59606_1480', 'roadName' => 'Rue de Famars'],
+            ['roadBanId' => '59606_3190', 'roadName' => 'Rue du Quesnoy'],
+        ], $geocoder->findNamedStreets('Rue', '59606'));
+
+        $this->assertEquals([], $geocoder->findNamedStreets('aa', '59606'));
+    }
+
+    public function testFindNamedStreetsError(): void
+    {
+        $response = new MockResponse('...', ['http_code' => 500]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $this->assertEquals([], $geocoder->findNamedStreets('Rue Test', '59606'));
+    }
 }

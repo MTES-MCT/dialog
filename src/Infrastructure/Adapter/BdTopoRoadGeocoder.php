@@ -43,7 +43,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             return $rows[0]['geometry'];
         }
 
-        $message = \sprintf('Pas de tronçons de route trouvés pour roadBanId="%s"', $roadBanId);
+        $message = \sprintf('no result found for roadBanId="%s"', $roadBanId);
         throw new GeocodingFailureException($message);
     }
 

@@ -179,10 +179,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
             $namedStreets = [];
 
             foreach ($data['features'] as $feature) {
-                if (\in_array($feature['properties']['citycode'], self::IGNORE_CITY_CODES)) {
-                    continue;
-                }
-
                 $namedStreets[] = [
                     'roadBanId' => $feature['properties']['id'],
                     'roadName' => $feature['properties']['street'],

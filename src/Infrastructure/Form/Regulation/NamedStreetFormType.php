@@ -19,10 +19,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class NamedStreetFormType extends AbstractType
 {
-    public function __construct(
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -76,7 +72,9 @@ final class NamedStreetFormType extends AbstractType
             ->add(
                 'fromRoadName',
                 ChoiceType::class,
-                options: $this->getIntersectingRoadNameOptions(),
+                options: [
+                    'label' => 'regulation.location.named_street.intersection',
+                ],
             )
             ->add(
                 'toPointType',
@@ -97,7 +95,9 @@ final class NamedStreetFormType extends AbstractType
             ->add(
                 'toRoadName',
                 ChoiceType::class,
-                options: $this->getIntersectingRoadNameOptions(),
+                options: [
+                    'label' => 'regulation.location.named_street.intersection',
+                ],
             )
             ->add('direction', ChoiceType::class, $this->getDirectionOptions())
             ->add('roadType', HiddenType::class)
@@ -156,20 +156,6 @@ final class NamedStreetFormType extends AbstractType
         ];
     }
 
-    private function getIntersectingRoadNameOptions($options = []): array
-    {
-        $choices = [];
-
-        foreach ($options as $option) {
-            $choices[$option['roadName']] = $option['roadBanId'];
-        }
-
-        return [
-            'choices' => $choices,
-            'label' => 'regulation.location.named_street.intersection',
-        ];
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -178,6 +164,8 @@ final class NamedStreetFormType extends AbstractType
             'error_mapping' => [
                 'cityCode' => 'cityLabel',
                 'roadBanId' => 'roadName',
+                'fromRoadBanId' => 'fromRoadName',
+                'toRoadBanId' => 'toRoadName',
             ],
         ]);
     }
