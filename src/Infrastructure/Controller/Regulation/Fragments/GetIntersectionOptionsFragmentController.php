@@ -27,10 +27,11 @@ final class GetIntersectionOptionsFragmentController
     public function __invoke(
         Request $request,
         #[MapQueryParameter] string $roadBanId,
+        #[MapQueryParameter] string $cityCode,
         #[MapQueryParameter] string $currentOptions,
         #[MapQueryParameter] string $targetIds,
     ): Response {
-        $namedStreets = $this->intersectionGeocoder->findIntersectingNamedStreets($roadBanId);
+        $namedStreets = $this->intersectionGeocoder->findIntersectingNamedStreets($roadBanId, $cityCode);
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

@@ -369,8 +369,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return $sides;
     }
 
-    // TODO : remettre le filtre $inseeCode
-    public function findIntersectingNamedStreets(string $roadBanId): array
+    public function findIntersectingNamedStreets(string $roadBanId, string $cityCode): array
     {
         try {
             $rows = $this->bdtopoConnection->fetchAllAssociative(
@@ -378,13 +377,14 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     SELECT v.identifiant_voie_ban AS road_ban_id, v.nom_voie_ban AS road_name
                     FROM voie_nommee AS v
                     WHERE ST_Intersects(v.geometrie, (SELECT v2.geometrie FROM voie_nommee AS v2 WHERE v2.identifiant_voie_ban = :road_ban_id LIMIT 1))
-                    AND v.identifiant_voie_ban IS NOT NULL
-                    AND v.identifiant_voie_ban <> ''
+                    AND LENGTH(v.identifiant_voie_ban) > 0
                     AND v.identifiant_voie_ban <> :road_ban_id
+                    AND v.insee_commune = :city_code
                     ORDER BY road_name
                 SQL,
                 [
                     'road_ban_id' => $roadBanId,
+                    'city_code' => $cityCode,
                 ],
             );
         } catch (\Exception $exc) {
