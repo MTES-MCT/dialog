@@ -151,6 +151,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_0074';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
@@ -207,6 +208,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '44195_0137';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
@@ -237,7 +239,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59368';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'La Madeleine (59110)';
-        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '12345_6789';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue inconnue';
         $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
@@ -262,6 +265,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '44195_0137';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromPointType'] = 'houseNumber';
@@ -294,6 +298,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '44195_0137';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromPointType'] = 'intersection';
@@ -311,7 +316,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
+        $this->assertSame('Veuillez choisir une voie parmi la liste. Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
     }
 
     public function testAddLaneWithBlankToRoadName(): void
@@ -330,6 +335,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '44195_0137';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromPointType'] = 'houseNumber';
@@ -347,7 +353,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
+        $this->assertSame('Veuillez choisir une voie parmi la liste. Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
     }
 
     public function testAddLaneWithUnknownHouseNumbers(): void
@@ -367,6 +373,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '44195';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Savenay (44260)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '44195_0137';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Route du Grand Brossais';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '15';
@@ -397,6 +404,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59606';
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Valenciennes (59300)';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '59606_1500';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue du Faubourg de Paris';
         unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '80';
@@ -1127,22 +1135,25 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = str_repeat('a', 6);
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = str_repeat('a', 256);
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = str_repeat('a', 21);
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = str_repeat('a', 256);
         unset($values['location_form']['namedStreet']['isEntireStreet']);
         $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['namedStreet']['fromRoadBanId'] = str_repeat('a', 21);
         $values['measure_form']['locations'][0]['namedStreet']['fromRoadName'] = str_repeat('a', 256);
         $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = str_repeat('a', 9);
+        $values['measure_form']['locations'][0]['namedStreet']['toRoadBanId'] = str_repeat('a', 21);
         $values['measure_form']['locations'][0]['namedStreet']['toRoadName'] = str_repeat('a', 256);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne doit avoir exactement 5 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
     }
 
     public function testFieldsTooLongDepartmentalRoad(): void
