@@ -47,10 +47,18 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
-    public function computeRoadLine2023(string $roadName, string $inseeCode): string
+    public function computeRoadBanId(string $roadName, string $inseeCode): string
     {
+        // Dans la BDTOPO à partir de janvier 2025, la table voie_nommee a été remodelée. La colonne 'nom_minuscule'
+        // sur laquelle on se basait pour trouver une voie nommée a disparu. Dans la nouvelle table on doit utiliser la colonne
+        // 'identifiant_voie_ban'. Les géométries n'ont pas changé, mais aucune clé d'interopérabilité n'a été conservée entre ces
+        // deux tables qui permettrait de trouver l'identifiant_voie_ban d'une ancienne voie nommée. L'IGN nous a suggéré de faire
+        // un "rapprochement géométrique" : on trouve la nouvelle voie nommée dont la géométrie est la plus proche de l'ancienne.
+
+        // D'abord on récupère le linéaire de la voie tel que calculé auparavant, avec nom_minuscule.
+
         try {
-            $rows = $this->bdtopo2023Connection->fetchAllAssociative(
+            $row = $this->bdtopo2023Connection->fetchAssociative(
                 <<<'SQL'
                     SELECT ST_AsGeoJSON(geometrie) AS geom
                     FROM voie_nommee
@@ -67,34 +75,28 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingFailureException(\sprintf('Road line 2023 query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        if ($rows && $rows[0]['geom']) {
-            return $rows[0]['geom'];
+        if (empty($row['geom'])) {
+            $message = \sprintf('no result found in voie_nommee 2023 for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
+            throw new GeocodingFailureException($message);
         }
 
-        $message = \sprintf('no result found in voie_nommee 2023 for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
-        throw new GeocodingFailureException($message);
-    }
+        $roadLine2023 = $row['geom'];
 
-    // Cette fonction est utilisée pour calculer dans la BDTOPO 2025 l'identifiant voie BAN (road BAN ID)
-    // d'une voie présente dans la BDTOPO 2023, dans laquelle ces identifiants n'étaient pas encore renseigné
-    // On procède à un rapprochement géométrique comme l'a suggéré l'IGN suite à nos questions sur la nouvelle version de la table voie_nommee.
-    public function computeRoadBanId(string $roadName, string $inseeCode): string
-    {
-        $roadLine2023 = $this->computeRoadLine2023($roadName, $inseeCode);
+        // On trouve ensuite l'identifiant voie BAN de la voie nommée dont la géométrie est la plus proche.
 
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $row = $this->bdtopoConnection->fetchAssociative(
                 <<<'SQL'
-                    SELECT v.identifiant_voie_ban AS road_ban_id, ST_AsGeoJSON(v.geometrie) AS geom
+                    SELECT v.identifiant_voie_ban AS road_ban_id
                     FROM voie_nommee AS v
                     WHERE v.insee_commune = :city_code
-                    -- ST_HausdorffDistance() indique à quel point deux géométries sont "similaires".
-                    -- La distance de Hausdorff entre deux géométries A et B est définie comme la plus grande distance
-                    -- qui sépare deux points de A et B.
-                    -- La distance euclidienne utilisée par ST_Distance() ne convenait pas car au contraire,
-                    -- elle renvoie la plus petite des distances entre deux points de A et B.
-                    -- Or deux géométries peuvent avoir des points très proches mais être très différentes (le reste des points sont très éloignés).
+                    -- ST_HausdorffDistance() donne un indice de la "similarité" entre deux géométries.
+                    -- C'est la plus grande distance qui sépare deux points de deux géométries A et B.
+                    -- Donc A et B sont similaires si leur distance de Hausdorff est petite.
                     -- https://postgis.net/docs/ST_HausdorffDistance.html
+                    -- (On ne pouvait pas utiliser ST_Distance() car elle renvoie au contraire la plus *petite* des
+                    -- distances entre deux points de A et B. Or deux géométries peuvent avoir quelques points très proches
+                    -- mais être très différentes pour le reste...)
                     ORDER BY ST_HausdorffDistance(v.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:road_line_2023), 4326)) ASC
                     LIMIT 1
                 SQL,
@@ -107,12 +109,12 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingFailureException(\sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        if ($rows && $rows[0]['road_ban_id']) {
-            return $rows[0]['road_ban_id'];
+        if (empty($row['road_ban_id'])) {
+            $message = \sprintf('No road_ban_id found for roadName="%s" and inseeCode="%s"', $roadName, $inseeCode);
+            throw new GeocodingFailureException($message);
         }
 
-        $message = \sprintf('No road_ban_id found for roadName="%s" and inseeCode="%s"', $roadName, $inseeCode);
-        throw new GeocodingFailureException($message);
+        return $row['road_ban_id'];
     }
 
     public function findRoads(string $search, string $roadType, string $administrator): array
