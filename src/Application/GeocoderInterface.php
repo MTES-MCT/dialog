@@ -13,4 +13,6 @@ interface GeocoderInterface
     public function findCities(string $search): array;
 
     public function findNamedStreets(string $search, string $cityCode): array;
+
+    public function getRoadBanIdOrError(string $search, string $cityCode): string;
 }

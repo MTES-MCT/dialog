@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-final class GetAddressCompletionFragmentController
+final class GetNamedStreetCompletionFragmentController
 {
     public function __construct(
         private GeocoderInterface $geocoder,

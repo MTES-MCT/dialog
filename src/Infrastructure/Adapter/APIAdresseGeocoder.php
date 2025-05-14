@@ -192,4 +192,15 @@ final class APIAdresseGeocoder implements GeocoderInterface
             return [];
         }
     }
+
+    public function getRoadBanIdOrError(string $search, string $cityCode): string
+    {
+        $namedStreets = $this->findNamedStreets($search, $cityCode);
+
+        if (empty($namedStreets)) {
+            throw new GeocodingFailureException(\sprintf("no named street found for search='%s' and cityCode='%s'", $search, $cityCode));
+        }
+
+        return $namedStreets[0]['roadBanId'];
+    }
 }

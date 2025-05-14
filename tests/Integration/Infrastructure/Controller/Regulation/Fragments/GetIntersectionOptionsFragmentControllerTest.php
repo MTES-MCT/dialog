@@ -38,9 +38,9 @@ final class GetIntersectionOptionsFragmentControllerTest extends AbstractWebTest
     }
 
     /**
-     * @dataProvider provideTestBadRequest
+     * @dataProvider provideTestParamMissing
      */
-    public function testBadRequest(string $url): void
+    public function testParamMissing(string $url): void
     {
         $client = $this->login();
         $client->request('GET', $url);
