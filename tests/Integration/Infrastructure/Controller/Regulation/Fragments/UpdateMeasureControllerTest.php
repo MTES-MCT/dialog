@@ -86,6 +86,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_0074';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
@@ -111,7 +112,11 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
 
         // Keep only 3rd location
-        $values['measure_form']['locations'] = [$values['measure_form']['locations'][2]];
+        $loc = $values['measure_form']['locations'][2];
+        // Choice is initially empty because it is managed via client-side JS. Need to set it back for the test.
+        $loc['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $loc['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values['measure_form']['locations'] = [$loc];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
@@ -253,7 +258,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
-        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['measure_form[locations][0][namedStreet][roadBanId]'] = '12345_6789';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue inconnue';
         $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
         $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
 
@@ -311,9 +317,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][2]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][2]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][2]['namedStreet']['roadBanId'] = '93070_4185';
         $values['measure_form']['locations'][2]['namedStreet']['roadName'] = 'Rue Des Graviers';
         unset($values['measure_form']['locations'][2]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadBanId'] = '93070_0013';
         $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Rue Adrien Lesesne';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadBanId'] = '93070_7170';
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Rue Des Poissonniers';
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
@@ -339,6 +348,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '93070';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Saint-Ouen-sur-Seine';
+        $form['measure_form[locations][0][namedStreet][roadBanId]'] = '93070_3185';
         $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue Eugène Berthoud';
         $form['measure_form[locations][0][namedStreet][isEntireStreet]'] = '1';
         $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
@@ -538,6 +548,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_3185';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Eugène Berthoud';
         $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
 

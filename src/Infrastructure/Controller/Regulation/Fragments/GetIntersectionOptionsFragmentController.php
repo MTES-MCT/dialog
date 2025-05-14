@@ -28,8 +28,8 @@ final class GetIntersectionOptionsFragmentController
         Request $request,
         #[MapQueryParameter] string $roadBanId,
         #[MapQueryParameter] string $cityCode,
-        #[MapQueryParameter] string $currentOptions,
         #[MapQueryParameter] string $targetIds,
+        #[MapQueryParameter] string $currentOptions = '[null, null]',
     ): Response {
         $namedStreets = $this->intersectionGeocoder->findIntersectingNamedStreets($roadBanId, $cityCode);
 

@@ -73,6 +73,7 @@ final class NamedStreetFormType extends AbstractType
                 'fromRoadName',
                 ChoiceType::class,
                 options: [
+                    'choices' => [], // Rempli par un fetch côté client
                     'label' => 'regulation.location.named_street.intersection',
                 ],
             )
@@ -96,6 +97,7 @@ final class NamedStreetFormType extends AbstractType
                 'toRoadName',
                 ChoiceType::class,
                 options: [
+                    'choices' => [], // Rempli par un fetch côté client
                     'label' => 'regulation.location.named_street.intersection',
                 ],
             )
@@ -111,7 +113,7 @@ final class NamedStreetFormType extends AbstractType
             $event->setData($data);
         });
 
-        // Désactive la validation choice, car les choices des rues d'intersection sont générés dynamiquement à partir de roadName.
+        // Désactive la vérification des 'choices' des rues d'intersection, car ils sont générés dynamiquement côté client à partir du roadName.
         // Credits : https://openclassrooms.com/forum/sujet/symfony-select2-tag-et-choicetype
         $builder->get('fromRoadName')->resetViewTransformers();
         $builder->get('toRoadName')->resetViewTransformers();
