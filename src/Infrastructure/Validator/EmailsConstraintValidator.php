@@ -35,7 +35,7 @@ class EmailsConstraintValidator extends ConstraintValidator
             $errors = $this->validator->validate($email, $emailConstraint);
 
             if (\count($errors) > 0) {
-                $this->context->buildViolation($constraint->message)
+                $this->context->buildViolation($emailConstraint->message)
                     ->setParameter('%value%', $email)
                     ->addViolation();
             }
