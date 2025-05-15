@@ -16,13 +16,17 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 final class ApiOrganizationFetcherTest extends TestCase
 {
     private MockObject $organizationFetcherClient;
+    private MockObject $geoApiClient;
     private ApiOrganizationFetcher $apiOrganizationFetcher;
 
     protected function setUp(): void
     {
         $this->organizationFetcherClient = $this->createMock(HttpClientInterface::class);
+        $this->geoApiClient = $this->createMock(HttpClientInterface::class);
+
         $this->apiOrganizationFetcher = new ApiOrganizationFetcher(
             $this->organizationFetcherClient,
+            $this->geoApiClient,
         );
     }
 
@@ -43,9 +47,26 @@ final class ApiOrganizationFetcherTest extends TestCase
                                 'code_insee' => '44195',
                             ],
                         ],
+                        'siege' => [
+                            'departement' => '44',
+                        ],
                     ],
                 ],
             ]);
+
+        $mockGeoResponse = $this->createMock(ResponseInterface::class);
+        $mockGeoResponse
+            ->expects($this->once())
+            ->method('toArray')
+            ->willReturn([
+                'nom' => 'Loire-Atlantique',
+                'code' => '44',
+            ]);
+
+        $this->geoApiClient
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn($mockGeoResponse);
 
         $this->organizationFetcherClient
             ->expects($this->once())
@@ -58,6 +79,8 @@ final class ApiOrganizationFetcherTest extends TestCase
         $this->assertEquals('COMMUNE DE SAVENAY', $result->name);
         $this->assertEquals('44195', $result->code);
         $this->assertEquals(OrganizationCodeTypeEnum::INSEE->value, $result->codeType);
+        $this->assertEquals('Loire-Atlantique', $result->departmentName);
+        $this->assertEquals('44', $result->departmentCode);
     }
 
     public function testFindBySiretForDepartment(): void
@@ -79,6 +102,20 @@ final class ApiOrganizationFetcherTest extends TestCase
                 ],
             ]);
 
+        $mockGeoResponse = $this->createMock(ResponseInterface::class);
+        $mockGeoResponse
+            ->expects($this->once())
+            ->method('toArray')
+            ->willReturn([
+                'nom' => 'Seine-Saint-Denis',
+                'code' => '93',
+            ]);
+
+        $this->geoApiClient
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn($mockGeoResponse);
+
         $this->organizationFetcherClient
             ->expects($this->once())
             ->method('request')
@@ -90,6 +127,8 @@ final class ApiOrganizationFetcherTest extends TestCase
         $this->assertEquals('DEPARTEMENT DE LA SEINE SAINT DENIS', $result->name);
         $this->assertEquals('93', $result->code);
         $this->assertEquals(OrganizationCodeTypeEnum::DEPARTMENT->value, $result->codeType);
+        $this->assertEquals('Seine-Saint-Denis', $result->departmentName);
+        $this->assertEquals('93', $result->departmentCode);
     }
 
     public function testFindBySiretForRegion(): void
@@ -115,6 +154,10 @@ final class ApiOrganizationFetcherTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->willReturn($mockResponse);
+
+        $this->geoApiClient
+            ->expects($this->never())
+            ->method('request');
 
         $result = $this->apiOrganizationFetcher->findBySiret('23750007900312');
 
@@ -142,6 +185,10 @@ final class ApiOrganizationFetcherTest extends TestCase
                     ],
                 ],
             ]);
+
+        $this->geoApiClient
+            ->expects($this->never())
+            ->method('request');
 
         $this->organizationFetcherClient
             ->expects($this->once())
@@ -172,6 +219,10 @@ final class ApiOrganizationFetcherTest extends TestCase
             ->method('request')
             ->willReturn($mockResponse);
 
+        $this->geoApiClient
+            ->expects($this->never())
+            ->method('request');
+
         $this->expectException(OrganizationNotFoundException::class);
         $this->apiOrganizationFetcher->findBySiret('12345678901234');
     }
@@ -179,6 +230,10 @@ final class ApiOrganizationFetcherTest extends TestCase
     public function testFindBySiretUnsupportedOrganizationType(): void
     {
         $this->expectException(OrganizationNotFoundException::class);
+
+        $this->geoApiClient
+            ->expects($this->never())
+            ->method('request');
 
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse
