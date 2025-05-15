@@ -75,6 +75,7 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
                 name: 'regulation/send_to_mailing_list.html.twig',
                 context: [
                     'form' => $form->createView(),
+                    'uuid' => $uuid,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid())

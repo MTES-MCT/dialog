@@ -46,6 +46,8 @@ final class SendRegulationOrderToMailingListControllerTest extends AbstractWebTe
         $crawler = $client->submit($form);
 
         $this->assertResponseStatusCodeSame(422);
+
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#send_to_mailing_list_form_emails_error')->text());
     }
 
     public function testBadValues(): void
@@ -60,6 +62,6 @@ final class SendRegulationOrderToMailingListControllerTest extends AbstractWebTe
         $crawler = $client->submit($form);
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#send_to_mailing_list_form_error')->text());
+        $this->assertSame($form['send_to_mailing_list_form[emails]']->getValue() . ' n\'est pas une adresse email valide.', $crawler->filter('#send_to_mailing_list_form_emails_error')->text());
     }
 }
