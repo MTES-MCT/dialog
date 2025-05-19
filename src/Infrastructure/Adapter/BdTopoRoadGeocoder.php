@@ -47,6 +47,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
+    // Pour la migration BDTOPO 2023 -> 2025
     public function computeRoadBanId(string $roadName, string $inseeCode): string
     {
         // Dans la BDTOPO à partir de janvier 2025, la table voie_nommee a été remodelée. La colonne 'nom_minuscule'

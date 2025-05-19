@@ -230,9 +230,9 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
-        $roadBanId = $this->geocoder->getRoadBanIdOrError($roadName, $cityCode);
-        $fromRoadBanId = $fromRoadName ? $this->geocoder->getRoadBanIdOrError($fromRoadName, $cityCode) : null;
-        $toRoadBanId = $toRoadName ? $this->geocoder->getRoadBanIdOrError($toRoadName, $cityCode) : null;
+        $roadBanId = $this->geocoder->getRoadBanId($roadName, $cityCode);
+        $fromRoadBanId = $fromRoadName ? $this->geocoder->getRoadBanId($fromRoadName, $cityCode) : null;
+        $toRoadBanId = $toRoadName ? $this->geocoder->getRoadBanId($toRoadName, $cityCode) : null;
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->organization = $organization;

@@ -14,5 +14,8 @@ interface GeocoderInterface
 
     public function findNamedStreets(string $search, string $cityCode): array;
 
-    public function getRoadBanIdOrError(string $search, string $cityCode): string;
+    /**
+     * @throws Exception\GeocodingFailureException
+     */
+    public function getRoadBanId(string $search, string $cityCode): string;
 }

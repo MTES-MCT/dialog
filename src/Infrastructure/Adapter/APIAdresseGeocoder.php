@@ -193,7 +193,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
         }
     }
 
-    public function getRoadBanIdOrError(string $search, string $cityCode): string
+    public function getRoadBanId(string $search, string $cityCode): string
     {
         $namedStreets = $this->findNamedStreets($search, $cityCode);
 

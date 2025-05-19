@@ -29,7 +29,7 @@ final class GetIntersectionOptionsFragmentController
         #[MapQueryParameter] string $roadBanId,
         #[MapQueryParameter] string $cityCode,
         #[MapQueryParameter] string $targetIds,
-        #[MapQueryParameter] string $currentOptions = '[null, null]',
+        #[MapQueryParameter] ?string $currentOptions = null,
     ): Response {
         $namedStreets = $this->intersectionGeocoder->findIntersectingNamedStreets($roadBanId, $cityCode);
 
@@ -40,7 +40,7 @@ final class GetIntersectionOptionsFragmentController
                 name: 'regulation/fragments/_intersection_options.html.twig',
                 context: [
                     'namedStreets' => $namedStreets,
-                    'currentOptions' => json_decode($currentOptions, true),
+                    'currentOptions' => $currentOptions ? json_decode($currentOptions, true) : null,
                     'targetIds' => json_decode($targetIds, true),
                 ],
             ),

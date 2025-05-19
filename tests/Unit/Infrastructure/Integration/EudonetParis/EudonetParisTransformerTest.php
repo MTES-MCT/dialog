@@ -133,7 +133,7 @@ final class EudonetParisTransformerTest extends TestCase
         $geocoder = $this->createMock(GeocoderInterface::class);
         $geocoder
             ->expects(self::exactly(2))
-            ->method('getRoadBanIdOrError')
+            ->method('getRoadBanId')
             ->with($roadName, '75118')
             ->willReturn('93070_3185');
 
@@ -177,7 +177,7 @@ final class EudonetParisTransformerTest extends TestCase
         $geocoder = $this->createMock(GeocoderInterface::class);
         $geocoder
             ->expects(self::never())
-            ->method('getRoadBanIdOrError');
+            ->method('getRoadBanId');
 
         $transformer = new EudonetParisTransformer($geocoder);
 
@@ -240,7 +240,7 @@ final class EudonetParisTransformerTest extends TestCase
         $geocoder = $this->createMock(GeocoderInterface::class);
         $geocoder
             ->expects(self::never())
-            ->method('getRoadBanIdOrError');
+            ->method('getRoadBanId');
 
         $transformer = new EudonetParisTransformer($geocoder);
 
@@ -372,7 +372,7 @@ final class EudonetParisTransformerTest extends TestCase
         $geocoder = $this->createMock(GeocoderInterface::class);
         $geocoder
             ->expects(self::never())
-            ->method('getRoadBanIdOrError');
+            ->method('getRoadBanId');
 
         $transformer = new EudonetParisTransformer($geocoder);
 
@@ -438,7 +438,7 @@ final class EudonetParisTransformerTest extends TestCase
         $geocoder = $this->createMock(GeocoderInterface::class);
         $geocoder
             ->expects(self::never())
-            ->method('getRoadBanIdOrError');
+            ->method('getRoadBanId');
 
         $transformer = new EudonetParisTransformer($geocoder);
 
@@ -493,7 +493,7 @@ final class EudonetParisTransformerTest extends TestCase
         $geocoder = $this->createMock(GeocoderInterface::class);
         $geocoder
             ->expects(self::never())
-            ->method('getRoadBanIdOrError');
+            ->method('getRoadBanId');
 
         $transformer = new EudonetParisTransformer($geocoder);
 
