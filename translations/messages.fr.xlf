@@ -2749,6 +2749,14 @@
                 <source>regulation_order_template.delete_modal.title</source>
                 <target>Supprimer ce modèle ?</target>
             </trans-unit>
+            <trans-unit id="regulation_order_template.duplicated.success">
+                <source>regulation_order_template.duplicated.success</source>
+                <target>Le modèle d'arrêté a bien été dupliqué.</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.duplicate_modal.title">
+                <source>regulation_order_template.duplicate_modal.title</source>
+                <target>Dupliquer ce modèle ?</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
