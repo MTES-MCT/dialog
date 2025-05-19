@@ -17,15 +17,15 @@ use Doctrine\DBAL\Connection;
 final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeocoderInterface
 {
     public function __construct(
+        private Connection $bdtopo2025Connection,
         private Connection $bdtopoConnection,
-        private Connection $bdtopo2023Connection,
     ) {
     }
 
     public function computeRoadLine(string $roadBanId): string
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
                     SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
                     FROM troncon_de_route
@@ -59,7 +59,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         // D'abord on récupère le linéaire de la voie tel que calculé auparavant, avec nom_minuscule.
 
         try {
-            $row = $this->bdtopo2023Connection->fetchAssociative(
+            $row = $this->bdtopoConnection->fetchAssociative(
                 <<<'SQL'
                     SELECT ST_AsGeoJSON(geometrie) AS geom
                     FROM voie_nommee
@@ -86,7 +86,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         // On trouve ensuite l'identifiant voie BAN de la voie nommée dont la géométrie est la plus proche.
 
         try {
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 <<<'SQL'
                     SELECT v.identifiant_voie_ban AS road_ban_id
                     FROM voie_nommee AS v
@@ -131,7 +131,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
                     SELECT numero
                     FROM route_numerotee_ou_nommee
@@ -168,7 +168,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         $typeDeRoute = $roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value ? 'Départementale' : 'Nationale';
 
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
                     SELECT ST_AsGeoJSON(ST_LineMerge(geometrie)) AS geometry
                     FROM route_numerotee_ou_nommee
@@ -203,7 +203,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function findReferencePoints(string $search, string $administrator, string $roadNumber): array
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 'SELECT
                     DISTINCT p.numero AS point_number,
                     p.numero::integer AS _point_number_int, -- Must be selected because appears in ORDER BY
@@ -257,7 +257,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     ): Coordinates {
         try {
             // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 \sprintf(
                     'SELECT ST_AsGeoJSON(
                         ST_GeometryN(
@@ -340,7 +340,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 \sprintf(
                     'SELECT DISTINCT p.cote AS side
                     FROM point_de_repere AS p
@@ -375,7 +375,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function findIntersectingNamedStreets(string $roadBanId, string $cityCode): array
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 <<<'SQL'
                     SELECT v.identifiant_voie_ban AS road_ban_id, v.nom_voie_ban AS road_name
                     FROM voie_nommee AS v
@@ -409,7 +409,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function computeIntersection(string $roadBanId, string $otherRoadBanId): Coordinates
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 \sprintf(
                     'SELECT
                         ST_X(ST_Centroid(ST_Intersection(v1.geometrie, v2.geometrie))) AS x,
@@ -461,7 +461,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         try {
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 \sprintf(
                     'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(%s)))) AS geom
                     FROM troncon_de_route AS t
@@ -494,7 +494,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function convertPolygonRoadToLines(string $geometry): string
     {
         try {
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 // ST_ApproximateMedialAxis permet de calculer la "ligne centrale" d'un polygone
                 // https://postgis.net/docs/ST_ApproximateMedialAxis.html
                 // Ici on l'utilise pour approximer le linéaire de voie à partir d'un polygone qui définit l'enveloppe de cette voie.

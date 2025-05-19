@@ -29,17 +29,33 @@ final class UpdateNamedStreetsWithoutRoadBanIdsCommandHandler
         foreach ($namedStreets as $namedStreet) {
             $namedStreetCommand = new SaveNamedStreetCommand($namedStreet);
 
+            if (!$namedStreetCommand->roadName) {
+                // Some historical data contains roadName = NULL, but this is now prohibited by validation
+                // Skip updating them since there's no road to compute, this also avoids validation errors.
+                continue;
+            }
+
             try {
+                $changed = false;
+
                 if (!$namedStreetCommand->roadBanId) {
                     $namedStreetCommand->roadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->roadName, $namedStreetCommand->cityCode);
+                    $changed = true;
                 }
 
                 if ($namedStreetCommand->fromRoadName && !$namedStreetCommand->fromRoadBanId) {
                     $namedStreetCommand->fromRoadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->fromRoadName, $namedStreetCommand->cityCode);
+                    $changed = true;
                 }
 
                 if ($namedStreetCommand->toRoadName && !$namedStreetCommand->toRoadBanId) {
                     $namedStreetCommand->toRoadBanId = $this->roadGeocoder->computeRoadBanId($namedStreetCommand->toRoadName, $namedStreetCommand->cityCode);
+                    $changed = true;
+                }
+
+                if (!$changed) {
+                    // Speed up: don't execute update command if no changes
+                    continue;
                 }
 
                 $this->commandBus->handle($namedStreetCommand);
