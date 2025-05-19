@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% set deleteCsrfToken = csrf_token('delete-regulation-order-template') %}
+{% set duplicateCsrfToken = csrf_token('duplicate-regulation-order-template') %}
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-order-template-list">
@@ -48,6 +49,20 @@
                                                 <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                                                     {{ 'common.update'|trans }}
                                                 </a>
+                                                <form
+                                                    method="POST"
+                                                    action="{{ path('app_config_regulation_order_templates_duplicate', { uuid: regulationOrderTemplate.uuid, organizationUuid: organization.uuid }) }}"
+                                                    data-controller="form-submit"
+                                                    data-action="modal-trigger:submit->form-submit#submit"
+                                                >
+                                                    <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
+                                                    <d-modal-trigger modal="regulation-order-template-duplicate-modal" submitValue="regulation-order-template-duplicate-{{ regulationOrderTemplate.uuid }}">
+                                                        <button
+                                                            class="fr-btn fr-btn--tertiary-no-outline fr-icon-x-file-copy-line"
+                                                            aria-controls="regulation-order-template-duplicate-modal"
+                                                        ></button>
+                                                    </d-modal-trigger>
+                                                </form>
                                                 {% if regulationOrderTemplate.organizationUuid %}
                                                     <form
                                                         method="POST"
@@ -89,6 +104,14 @@
         buttons: [
             { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
             { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
+    } only %}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'regulation-order-template-duplicate-modal',
+        title: 'regulation_order_template.duplicate_modal.title'|trans,
+        buttons: [
+            { label: 'common.duplicate'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_duplicate'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
         ]
     } only %}
 {% endblock %}
