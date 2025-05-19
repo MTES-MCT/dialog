@@ -9,6 +9,7 @@ use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailin
 use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailingListCommandHandler;
 use App\Domain\Mail;
 use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\User;
 use App\Infrastructure\Adapter\StringUtils;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
     public function testSendEmails(): void
     {
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $user = $this->createMock(User::class);
         $stringUtils = $this->createMock(StringUtils::class);
         $mail = $this->createMock(MailerInterface::class);
@@ -40,6 +42,12 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
             ->willReturn('Mathieu MARCHOIS');
         $command->user = $user;
 
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('4044a292-4875-4717-8adc-53196b12f910');
+        $command->regulationOrderRecord = $regulationOrderRecord;
+
         $mail
             ->expects(self::once())
             ->method('send')
@@ -56,6 +64,7 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
                             ],
                             'regulationOrder' => $regulationOrder,
                             'userName' => 'Mathieu MARCHOIS',
+                            'uuid' => '4044a292-4875-4717-8adc-53196b12f910',
                         ],
                     ),
                 ),
@@ -67,6 +76,7 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
     public function testSendEmailToMailingList(): void
     {
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $user = $this->createMock(User::class);
         $stringUtils = $this->createMock(StringUtils::class);
         $mail = $this->createMock(MailerInterface::class);
@@ -83,12 +93,18 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
             ->with($recipient[1])
             ->willReturn('mathieu@fairness.coop');
 
-        $command->regulationOrder = $regulationOrder;
-
         $user
             ->expects(self::once())
             ->method('getFullName')
             ->willReturn('Mathieu MARCHOIS');
+
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('4044a292-4875-4717-8adc-53196b12f910');
+
+        $command->regulationOrder = $regulationOrder;
+        $command->regulationOrderRecord = $regulationOrderRecord;
         $command->user = $user;
 
         $mail
@@ -107,6 +123,7 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
                             ],
                             'regulationOrder' => $regulationOrder,
                             'userName' => 'Mathieu MARCHOIS',
+                            'uuid' => '4044a292-4875-4717-8adc-53196b12f910',
                         ],
                     ),
                 ),

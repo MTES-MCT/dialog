@@ -66,6 +66,18 @@
                 <source>mailing_list.email.description</source>
                 <target>Vous pouvez voir les informations de l’arrêté sur DiaLog ou les restrictions directement sur la carte.</target>
             </trans-unit>
+            <trans-unit id="mailing_list.email.btn.detail">
+                <source>mailing_list.email.btn.detail</source>
+                <target>Voir l’arrêté DiaLog</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.btn.map">
+                <source>mailing_list.email.btn.map</source>
+                <target>Voir sur la carte</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.help">
+                <source>mailing_list.email.help</source>
+                <target>Si vous avez des difficultés à accéder à DiaLog, écrivez-nous à : dialog@beta.gouv.fr</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

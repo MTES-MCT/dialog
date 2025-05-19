@@ -50,7 +50,7 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $user = $this->authenticatedUser->getUser();
         $recipients = $this->queryBus->handle(new GetMailingListQuery($regulationOrderRecord->getOrganizationUuid()));
-        $command = new SendRegulationOrderToMailingListCommand($regulationOrder, $user);
+        $command = new SendRegulationOrderToMailingListCommand($regulationOrder, $regulationOrderRecord, $user);
         $form = $this->formFactory->create(SendToMailingListFormType::class, $command, [
             'recipients' => $recipients, ]);
         $form->handleRequest($request);

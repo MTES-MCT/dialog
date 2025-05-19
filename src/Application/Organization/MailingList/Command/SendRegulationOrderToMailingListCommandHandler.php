@@ -49,6 +49,7 @@ final readonly class SendRegulationOrderToMailingListCommandHandler
                         'recipient' => $recipient,
                         'regulationOrder' => $command->regulationOrder,
                         'userName' => $command->user->getFullName(),
+                        'uuid' => $command->regulationOrderRecord->getUuid(),
                     ],
                 ),
             );
