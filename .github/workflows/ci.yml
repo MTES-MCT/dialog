@@ -66,7 +66,6 @@ jobs:
         # .env directly.
         run: |
           echo "DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
-          echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_DATABASE_URL }}" >> .env
           echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
           echo "METABASE_DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog" >> .env
           echo "REDIS_URL=redis://localhost:6379" >> .env
