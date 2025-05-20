@@ -10,6 +10,7 @@ final readonly class CifsFilterSet
         public array $allowedSources = [],
         public array $excludedIdentifiers = [],
         public array $allowedLocationIds = [],
+        public array $excludedOrgUuids = [],
     ) {
     }
 }

@@ -31,6 +31,7 @@ class CifsFilterSetEnvVarProcessor implements EnvVarProcessorInterface
             allowedSources: $value['allowed_sources'] ?? [],
             excludedIdentifiers: $value['excluded_identifiers'] ?? [],
             allowedLocationIds: $value['allowed_location_ids'] ?? [],
+            excludedOrgUuids: $value['excluded_org_uuids'] ?? [],
         );
     }
 
