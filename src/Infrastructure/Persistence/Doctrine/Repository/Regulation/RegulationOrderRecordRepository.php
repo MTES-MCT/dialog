@@ -305,6 +305,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         array $allowedSources = [],
         array $excludedIdentifiers = [],
         array $allowedLocationIds = [],
+        array $excludedOrgUuids = [],
     ): array {
         return $this->createQueryBuilder('roc')
             ->addSelect('ro', 'loc', 'm', 'p', 'd', 't', 'sa')
@@ -324,6 +325,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 $allowedSources ? 'roc.source in (:allowedSources)' : null,
                 $excludedIdentifiers ? 'ro.identifier NOT IN (:excludedIdentifiers)' : null,
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
+                $excludedOrgUuids ? 'roc.organization NOT IN (:excludedOrgUuids)' : null,
                 'm.type = :measureType',
                 'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
             )
@@ -331,6 +333,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ...($allowedSources ? ['allowedSources' => $allowedSources] : []),
                 ...($excludedIdentifiers ? ['excludedIdentifiers' => $excludedIdentifiers] : []),
                 ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
+                ...($excludedOrgUuids ? ['excludedOrgUuids' => $excludedOrgUuids] : []),
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'measureType' => MeasureTypeEnum::NO_ENTRY->value,
                 'today' => $this->dateUtils->getNow(),

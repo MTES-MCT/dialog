@@ -635,7 +635,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('findRegulationOrdersForCifsIncidentFormat')
-            ->with(['my_source'], ['identifier1'], ['591b83d1-c70d-4b18-85be-091acd73b087'])
+            ->with(['my_source'], ['identifier1'], ['591b83d1-c70d-4b18-85be-091acd73b087'], ['1f368233-b63b-4ca9-a021-83ba997499d1'])
             ->willReturn([]); // Don't care, we just test that the filters were passed to the repository method
 
         $handler = new GetCifsIncidentsQueryHandler(
@@ -646,6 +646,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 allowedSources: ['my_source'],
                 excludedIdentifiers: ['identifier1'],
                 allowedLocationIds: ['591b83d1-c70d-4b18-85be-091acd73b087'],
+                excludedOrgUuids: ['1f368233-b63b-4ca9-a021-83ba997499d1'],
             ),
         );
         $incidents = $handler(new GetCifsIncidentsQuery());

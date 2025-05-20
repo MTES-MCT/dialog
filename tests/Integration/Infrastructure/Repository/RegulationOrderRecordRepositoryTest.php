@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Infrastructure\Repository;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -62,5 +63,11 @@ class RegulationOrderRecordRepositoryTest extends KernelTestCase
             [LocationFixture::UUID_CIFS_NAMED_STREET],
             array_map(fn ($loc) => $loc->getUuid(), $regulationOrderRecords[0]->getRegulationOrder()->getMeasures()[0]->getLocations()->toArray()),
         );
+    }
+
+    public function testCifsFiltersExcludedOrgUuids(): void
+    {
+        $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat(excludedOrgUuids: [OrganizationFixture::SEINE_SAINT_DENIS_ID]);
+        $this->assertEquals([], $regulationOrderRecords);
     }
 }
