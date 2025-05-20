@@ -8,6 +8,12 @@
     <div class="fr-container fr-px-md-0 fr-py-10v">
         <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
+                { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': identifier }), url: path('app_regulation_detail', {uuid}), generatedPath: true },
+                { title: 'mailing.list.share.breadcrumb'|trans({ '%identifier%': identifier }) }
+                ]} %}
+
                 <h4>{{ 'recipient.share.title'|trans }}</h4>
                 <p>{{ 'recipient.share.title.help'|trans }}</p>
                 {{ form_start(form) }}
@@ -15,7 +21,9 @@
                     <hr class="fr-mt-3w">
                     <div>
                         <span>{{ 'mailing.list.share.title'|trans }}</span>
-                        <p class="fr-my-2w fr-message fr-message--info">{{ 'recipient.mailing.list.help'|trans }}</p>
+                        <p class="fr-my-2w fr-message fr-message--info">{{ 'recipient.mailing.list.help'|trans }}
+                            <a href="{{ path('app_my_area') }}">{{ 'recipient.mailing.list.link'|trans }} </a>
+                        </p>
                         <div class="fr-checkbox-group">
                             {{ form_widget(form.recipients) }}
                         </div>
@@ -35,4 +43,5 @@
             </div>
         </div>
     </div>
+    </section>
 {% endblock %}

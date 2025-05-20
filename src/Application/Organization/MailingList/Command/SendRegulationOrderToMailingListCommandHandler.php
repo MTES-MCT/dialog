@@ -28,6 +28,7 @@ final readonly class SendRegulationOrderToMailingListCommandHandler
                 ];
             }
         }
+
         if (!empty($command->recipients)) {
             $recipientList = $command->recipients;
             foreach ($recipientList as $recipient) {

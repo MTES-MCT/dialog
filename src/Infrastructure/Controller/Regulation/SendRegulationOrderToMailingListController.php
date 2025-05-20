@@ -76,6 +76,7 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
                 context: [
                     'form' => $form->createView(),
                     'uuid' => $uuid,
+                    'identifier' => $regulationOrder->getIdentifier(),
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid())
