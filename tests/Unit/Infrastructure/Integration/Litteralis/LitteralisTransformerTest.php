@@ -180,6 +180,65 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertSame('[MEL] - Arrêté permanent (URL : https://dl.sogelink.fr/?n3omzTyS)', $command->generalInfoCommand->title);
     }
 
+    public function testTransformLocalisationsEmpty(): void
+    {
+        $feature = str_replace('"localisations": " RUE DE LA MARLACQUE (FROMELLES) ENTRE LES PR0+066 ET PR0+750"', '"localisations": null', self::feature);
+        $features = [json_decode($feature, associative: true)];
+        $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
+        $this->assertSame('Localisation sans description', $command->measureCommands[0]->locations[0]->rawGeoJSON->label);
+    }
+
+    public function testTransformMeasureNoEntryOtherForms(): void
+    {
+        $feature = str_replace(
+            '"mesures": "Limitation de vitesse"',
+            '"mesures": "Limitation tonnage (Arrêté Permanent)"',
+            self::feature,
+        );
+        $feature = str_replace(
+            '"parametresmesures": "Limitation de vitesse | limite de vitesse : 70 km/h"',
+            '"parametresmesures": ""',
+            $feature,
+        );
+        $features = [json_decode($feature, associative: true)];
+        $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
+        $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $command->measureCommands[0]->type);
+    }
+
+    public function testTransformMeasureSpeedLimitOtherForms(): void
+    {
+        $feature = str_replace(
+            '"mesures": "Limitation de vitesse"',
+            '"mesures": "Limitation de vitesse (Arrêté Permanent)"',
+            self::feature,
+        );
+        $feature = str_replace(
+            '"parametresmesures": "Limitation de vitesse | limite de vitesse : 70 km/h"',
+            '"parametresmesures": "Limitation de vitesse (Arrêté Permanent) | limite de vitesse : 70km/h"',
+            $feature,
+        );
+        $features = [json_decode($feature, associative: true)];
+        $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
+        $this->assertSame(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[0]->type);
+    }
+
+    public function testTransformMeasureParkingProhibited(): void
+    {
+        $feature = str_replace(
+            '"mesures": "Limitation de vitesse"',
+            '"mesures": "Interdiction de stationnement"',
+            self::feature,
+        );
+        $feature = str_replace(
+            '"parametresmesures": "Limitation de vitesse | limite de vitesse : 70 km/h"',
+            '"parametresmesures": ""',
+            $feature,
+        );
+        $features = [json_decode($feature, associative: true)];
+        $command = $this->transformer->transform($this->reporter, 'identifier', $features, $this->organization);
+        $this->assertSame(MeasureTypeEnum::PARKING_PROHIBITED->value, $command->measureCommands[0]->type);
+    }
+
     public function testTransformComplexMeasures(): void
     {
         // Values chosen to maximize test coverage

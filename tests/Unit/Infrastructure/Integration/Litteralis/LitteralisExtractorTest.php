@@ -81,7 +81,7 @@ final class LitteralisExtractorTest extends TestCase
             ->with('testpassword')
             ->willReturn($this->client);
 
-        $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%') AND (arretefin IS NULL OR arretefin >= '2024-08-01T00:00:00+0000')";
+        $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%' OR mesures ILIKE '%interdiction de stationnement%') AND (arretefin IS NULL OR arretefin >= '2024-08-01T00:00:00+0000')";
 
         $this->client
             ->expects(self::exactly(2))

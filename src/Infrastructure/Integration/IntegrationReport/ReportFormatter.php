@@ -100,7 +100,7 @@ final class ReportFormatter
                 $value = $this->arrayEncode($value);
             }
 
-            $line = \sprintf('%s : %s', $verboseName, $value);
+            $line = \sprintf('* %s : %s', $verboseName, $value);
 
             if (!empty($context[CommonRecordEnum::ATTR_DETAILS->value])) {
                 $line = $this->addDetails($line, $context[CommonRecordEnum::ATTR_DETAILS->value]);
@@ -118,7 +118,7 @@ final class ReportFormatter
         foreach ($this->findRecordsByType(RecordTypeEnum::COUNT->value, $records) as [$name, $context]) {
             $verboseName = $this->translator->trans(\sprintf('integration.report.count.%s', $name));
             $value = $context['value'];
-            $line = \sprintf('%s : %s', $verboseName, $value);
+            $line = \sprintf('* %s : %s', $verboseName, $value);
 
             if (\array_key_exists('regulationsCount', $context)) {
                 $line = \sprintf(
@@ -206,10 +206,8 @@ final class ReportFormatter
                 );
 
                 // Affichage des arrêtés concernés
-                $lines[] = \sprintf('  %s :', $this->translator->trans('integration.report.regulations'));
-
                 foreach ($info['regulations'] as $id) {
-                    $line = \sprintf('    %s', $id);
+                    $line = \sprintf('* %s', $this->translator->trans('integration.report.regulation', ['%id%' => $id]));
 
                     if (!empty($info['urls']) && \array_key_exists($id, $info['urls'])) {
                         $url = $info['urls'][$id];
