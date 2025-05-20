@@ -31,7 +31,7 @@ final class CifsFilterSetEnvVarProcessorTest extends TestCase
 
     public function testGetEnvValid(): void
     {
-        $value = $this->processor->getEnv('', 'APP_CIFS_FILTERS', fn () => '{"allowed_sources": ["source1"], "excluded_identifiers": ["identifier1"], "allowed_location_ids": ["locationId1"]}');
+        $value = $this->processor->getEnv('', 'APP_CIFS_FILTERS', fn () => '{"allowed_sources": ["source1"], "excluded_identifiers": ["identifier1"], "allowed_location_ids": ["locationId1"], "excluded_org_uuids": ["orgUuid1"]}');
 
         $this->assertEquals(
             $value,
@@ -39,6 +39,7 @@ final class CifsFilterSetEnvVarProcessorTest extends TestCase
                 allowedSources: ['source1'],
                 excludedIdentifiers: ['identifier1'],
                 allowedLocationIds: ['locationId1'],
+                excludedOrgUuids: ['orgUuid1'],
             ),
         );
     }
