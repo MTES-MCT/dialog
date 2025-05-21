@@ -273,4 +273,42 @@ final class APIAdresseGeocoderTest extends TestCase
         $geocoder = new APIAdresseGeocoder($http);
         $this->assertEquals([], $geocoder->findNamedStreets('Rue Test', '59606'));
     }
+
+    public function testGetRoadBanId(): void
+    {
+        $features = [
+            [
+                'properties' => [
+                    'citycode' => '59606',
+                    'id' => '59606_3210',
+                    'street' => 'Rue des Récollets',
+                ],
+            ],
+            [
+                'properties' => [
+                    'citycode' => '59606',
+                    'id' => '59606_12345',
+                    'street' => 'Rue des Ricola',
+                ],
+            ],
+        ];
+        $response = new MockResponse(json_encode(['features' => $features]), ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $this->assertSame('59606_3210', $geocoder->getRoadBanId('Recolet', '59606'));
+    }
+
+    public function testGetRoadBanIdNoResults(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+        $this->expectExceptionMessageMatches('/^no named street found/');
+
+        $features = [];
+        $response = new MockResponse(json_encode(['features' => $features]), ['http_code' => 200]);
+        $http = new MockHttpClient([$response]);
+
+        $geocoder = new APIAdresseGeocoder($http);
+        $geocoder->getRoadBanId('Récollets', '59606');
+    }
 }

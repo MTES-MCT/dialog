@@ -48,11 +48,11 @@ class SyncNamedStreetRoadBanIdsCommand extends Command
             ]));
         }
 
-        foreach ($result->exceptions as $locationUuid => $excItem) {
+        foreach ($result->exceptions as $uuid => $excItem) {
             $output->writeln(json_encode([
                 'level' => 'ERROR',
                 'message' => 'geocoding failed',
-                'location_uuid' => $locationUuid,
+                'uuid' => $uuid,
                 'exc' => $excItem->getMessage(),
             ]));
         }
