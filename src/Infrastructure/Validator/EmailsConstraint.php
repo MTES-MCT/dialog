@@ -8,8 +8,6 @@ use Symfony\Component\Validator\Constraint;
 
 class EmailsConstraint extends Constraint
 {
-    public string $message = 'invalid.emails';
-
     public function getTargets(): string
     {
         return self::PROPERTY_CONSTRAINT;

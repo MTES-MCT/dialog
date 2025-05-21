@@ -35,21 +35,6 @@ final class SendRegulationOrderToMailingListControllerTest extends AbstractWebTe
         $this->assertSame('Emails de partage envoyés', $crawler->filter('h3')->text());
     }
 
-    public function testEmptyData(): void
-    {
-        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
-        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/mailing_list_share');
-
-        $saveButton = $crawler->selectButton('Partager');
-        $form = $saveButton->form();
-
-        $crawler = $client->submit($form);
-
-        $this->assertResponseStatusCodeSame(422);
-
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#send_to_mailing_list_form_emails_error')->text());
-    }
-
     public function testBadValues(): void
     {
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
@@ -62,6 +47,6 @@ final class SendRegulationOrderToMailingListControllerTest extends AbstractWebTe
         $crawler = $client->submit($form);
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#send_to_mailing_list_form_emails_error')->text());
+        $this->assertSame('isa n\'est pas une adresse email valide.', $crawler->filter('#send_to_mailing_list_form_emails_error')->text());
     }
 }

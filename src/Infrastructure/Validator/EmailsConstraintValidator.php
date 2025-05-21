@@ -11,11 +11,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EmailsConstraintValidator extends ConstraintValidator
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(private ValidatorInterface $validator)
     {
-        $this->validator = $validator;
     }
 
     public function validate($value, Constraint $constraint)
@@ -35,7 +32,7 @@ class EmailsConstraintValidator extends ConstraintValidator
             $errors = $this->validator->validate($email, $emailConstraint);
 
             if (\count($errors) > 0) {
-                $this->context->buildViolation($emailConstraint->message)
+                $this->context->buildViolation('invalid.emails')
                     ->setParameter('%value%', $email)
                     ->addViolation();
             }
