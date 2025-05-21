@@ -23,7 +23,7 @@ final class LineSectionMakerTest extends KernelTestCase
     {
         $container = self::getContainer();
 
-        $this->bdtopoConnection = $container->get('doctrine.dbal.bdtopo_2025_connection');
+        $this->bdtopoConnection = $container->get('doctrine.dbal.bdtopo2025_connection');
 
         $lineStrings = [
             /*

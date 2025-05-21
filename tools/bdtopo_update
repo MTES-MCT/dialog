@@ -89,7 +89,7 @@ def main(
                 geopackages.append({"path": path, "table": tables_by_name[path.stem]})
 
     if not geopackages:
-        print(f"ERROR: no geopackages found at {directory} ", file=sys.stderr)
+        print(f"ERROR: no geopackages found at {directory}", file=sys.stderr)
         return 1
 
     # Improve pg disk usage by importing smallest packages first.
@@ -184,11 +184,7 @@ def main(
                     "-t_srs",
                     "EPSG:4326",
                     # Append to existing data, or overwrite for faster re-ingestion
-                    (
-                        "-overwrite"
-                        if overwrite and table.name not in tables_seen
-                        else "-append"
-                    ),
+                    "-overwrite" if overwrite and table.name not in tables_seen else "-append",
                     # Use provided SQL statement, if any, to only import certain columns
                     # (In this case, progress bar won't be available due a limitation of the ogr2ogr Postgres driver)
                     *(["-sql", table.select_sql] if table.select_sql else []),
@@ -255,7 +251,8 @@ def main(
 
             if overwrite:
                 print(
-                    "===> NOTE: run 'make bdtopo_migrate_redo' " "to recreate indexes"
+                    "===> NOTE: run 'make bdtopo_migrate_redo' "
+                    "to recreate indexes"
                 )
         except KeyboardInterrupt:
             # ogr2ogr already manages most of the cleanup for us, nothing to do.
@@ -283,9 +280,7 @@ if __name__ == "__main__":
         help="Path to directory containing BD TOPO data",
     )
     parser.add_argument(
-        "--prod",
-        action="store_true",
-        help="Confirm deployment to 'dialog-bdtopo-2025' app",
+        "--prod", action="store_true", help="Confirm deployment to 'dialog-bdtopo-2025' app"
     )
     parser.add_argument(
         "--url",

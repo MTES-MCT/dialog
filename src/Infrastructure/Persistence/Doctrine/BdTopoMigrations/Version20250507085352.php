@@ -19,9 +19,9 @@ final class Version20250507085352 extends AbstractMigration
         $this->addSql('CREATE EXTENSION IF NOT EXISTS postgis');
         $this->addSql('CREATE INDEX IF NOT EXISTS route_numerotee_ou_nommee_numero_gestionnaire_idx ON route_numerotee_ou_nommee (numero, gestionnaire);');
         $this->addSql('CREATE INDEX IF NOT EXISTS point_de_repere_route_numero_gestionnaire_cote_idx ON point_de_repere (route, numero, gestionnaire, cote);');
-        $this->addSql('CREATE INDEX voie_nommee_identifiant_voie_ban_idx ON voie_nommee (identifiant_voie_ban)');
-        $this->addSql('CREATE INDEX voie_nommee_insee_commune_idx ON voie_nommee (insee_commune)');
-        $this->addSql('CREATE INDEX troncon_de_route_identifiant_voie_ban_gauche_idx ON troncon_de_route (identifiant_voie_ban_gauche)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS voie_nommee_identifiant_voie_ban_idx ON voie_nommee (identifiant_voie_ban)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS voie_nommee_insee_commune_idx ON voie_nommee (insee_commune)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS troncon_de_route_identifiant_voie_ban_gauche_idx ON troncon_de_route (identifiant_voie_ban_gauche)');
         $this->addSql('CREATE EXTENSION IF NOT EXISTS postgis_sfcgal');
         $this->addSql('CREATE INDEX IF NOT EXISTS point_de_repere_identifiant_de_section_idx ON point_de_repere (identifiant_de_section);');
 
