@@ -34,6 +34,7 @@ final class GetCifsIncidentsQueryHandler
             $this->cifsFilterSet->allowedSources,
             $this->cifsFilterSet->excludedIdentifiers,
             $this->cifsFilterSet->allowedLocationIds,
+            $this->cifsFilterSet->excludedOrgUuids,
         );
 
         $uuids = [];

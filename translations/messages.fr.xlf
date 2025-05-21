@@ -2345,9 +2345,9 @@
                 <source>integration.report.title</source>
                 <target>Rapport d'intégration</target>
             </trans-unit>
-            <trans-unit id="integration.report.regulations">
-                <source>integration.report.regulations</source>
-                <target>Arrêtés</target>
+            <trans-unit id="integration.report.regulation">
+                <source>integration.report.regulation</source>
+                <target>Arrêté %id%</target>
             </trans-unit>
             <trans-unit id="integration.report.section.fact.title">
                 <source>integration.report.section.fact.title</source>
@@ -2748,6 +2748,14 @@
             <trans-unit id="regulation_order_template.delete_modal.title">
                 <source>regulation_order_template.delete_modal.title</source>
                 <target>Supprimer ce modèle ?</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.duplicated.success">
+                <source>regulation_order_template.duplicated.success</source>
+                <target>Le modèle d'arrêté a bien été dupliqué.</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.duplicate_modal.title">
+                <source>regulation_order_template.duplicate_modal.title</source>
+                <target>Dupliquer ce modèle ?</target>
             </trans-unit>
         </body>
     </file>

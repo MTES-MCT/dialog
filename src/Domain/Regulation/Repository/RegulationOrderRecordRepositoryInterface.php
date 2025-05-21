@@ -32,6 +32,7 @@ interface RegulationOrderRecordRepositoryInterface
         array $allowedSources = [],
         array $excludedIdentifiers = [],
         array $allowedLocationIds = [],
+        array $excludedOrgUuids = [],
     ): array;
 
     public function findRegulationOrdersForLitteralisCleanUp(string $organizationId, \DateTimeInterface $laterThan): array;
