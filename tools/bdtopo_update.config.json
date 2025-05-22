@@ -1,7 +1,8 @@
 {
     "tables": [
         {
-            "name": "voie_nommee"
+            "name": "voie_nommee",
+            "select_sql": "SELECT cleabs, identifiant_voie_ban, nom_voie_ban, insee_commune, nom_commune, type_voie, geometrie FROM voie_nommee"
         },
         {
             "name": "route_numerotee_ou_nommee"
@@ -13,7 +14,8 @@
             "name": "section_de_points_de_repere"
         },
         {
-            "name": "troncon_de_route"
+            "name": "troncon_de_route",
+            "select_sql": "SELECT cleabs, nature, identifiant_voie_ban_gauche, identifiant_voie_ban_droite, sens_de_circulation, geometrie FROM troncon_de_route"
         }
     ]
 }

@@ -53,7 +53,7 @@ class RegulationOrder
         return $this->title;
     }
 
-    public function getSubject(): string
+    public function getSubject(): ?string
     {
         return $this->subject;
     }

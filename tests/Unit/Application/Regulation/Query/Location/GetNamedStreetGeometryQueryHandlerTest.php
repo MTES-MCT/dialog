@@ -23,6 +23,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 {
     private string $cityCode;
     private string $cityLabel;
+    private string $roadBanId;
     private string $roadName;
     private string $direction;
     private string $fromHouseNumber;
@@ -39,6 +40,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
         $this->roadName = 'Route du Grand Brossais';
+        $this->roadBanId = '44195_0137';
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
         $this->direction = DirectionEnum::BOTH->value;
@@ -53,13 +55,25 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
-            ->with($this->roadName, $this->cityCode)
+            ->with($this->roadBanId)
             ->willReturn('fullLaneGeometry');
 
         $this->laneSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $this->direction, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
+            ->with(
+                'fullLaneGeometry',
+                $this->roadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                null,
+                $this->fromHouseNumber,
+                null,
+                null,
+                $this->toHouseNumber,
+                null,
+            )
             ->willReturn($this->geometry);
 
         $handler = new GetNamedStreetGeometryQueryHandler(
@@ -72,6 +86,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
         $saveNamedStreetCommand->toHouseNumber = $this->toHouseNumber;
@@ -110,8 +125,8 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $namedStreet = $this->createMock(NamedStreet::class);
         $namedStreet
             ->expects(self::once())
-            ->method('getRoadName')
-            ->willReturn('Route de Paris'); // Changed
+            ->method('getRoadBanId')
+            ->willReturn('44195_1234'); // Changed
         $namedStreet
             ->expects(self::once())
             ->method('getFromHouseNumber')
@@ -124,13 +139,25 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
-            ->with($this->roadName, $this->cityCode)
+            ->with($this->roadBanId)
             ->willReturn('fullLaneGeometry');
 
         $this->laneSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $this->direction, null, $this->fromHouseNumber, null, null, $this->toHouseNumber, null)
+            ->with(
+                'fullLaneGeometry',
+                $this->roadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                null,
+                $this->fromHouseNumber,
+                null,
+                null,
+                $this->toHouseNumber,
+                null,
+            )
             ->willReturn($this->geometry);
 
         $handler = new GetNamedStreetGeometryQueryHandler(
@@ -143,6 +170,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
         $saveNamedStreetCommand->toHouseNumber = $this->toHouseNumber;
@@ -162,16 +190,8 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $namedStreet = $this->createMock(NamedStreet::class);
         $namedStreet
             ->expects(self::exactly(2))
-            ->method('getRoadName')
-            ->willReturn($this->roadName);
-        $namedStreet
-            ->expects(self::exactly(2))
-            ->method('getCityCode')
-            ->willReturn($this->cityCode);
-        $namedStreet
-            ->expects(self::once())
-            ->method('getCityLabel')
-            ->willReturn($this->cityLabel);
+            ->method('getRoadBanId')
+            ->willReturn($this->roadBanId);
         $namedStreet
             ->expects(self::exactly(2))
             ->method('getFromHouseNumber')
@@ -198,6 +218,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
         $saveNamedStreetCommand->toHouseNumber = $this->toHouseNumber;
@@ -214,13 +235,25 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
-            ->with($this->roadName, $this->cityCode)
+            ->with($this->roadBanId)
             ->willReturn('fullLaneGeometry');
 
         $this->laneSectionMaker
             ->expects(self::once())
             ->method('computeSection')
-            ->with('fullLaneGeometry', $this->roadName, $this->cityCode, $this->direction, $fromCoords, null, null, $toCoords, null, null)
+            ->with(
+                'fullLaneGeometry',
+                $this->roadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                $fromCoords,
+                null,
+                null,
+                $toCoords,
+                null,
+                null,
+            )
             ->willReturn($this->geometry);
 
         $handler = new GetNamedStreetGeometryQueryHandler(
@@ -233,6 +266,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromCoords = $fromCoords;
         $saveNamedStreetCommand->toCoords = $toCoords;
@@ -265,6 +299,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->direction = $this->direction;
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = null;
         $saveNamedStreetCommand->roadName = null;
         $saveNamedStreetCommand->fromCoords = null;
         $saveNamedStreetCommand->toCoords = null;

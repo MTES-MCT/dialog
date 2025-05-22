@@ -10,6 +10,9 @@ doctrine:
             bdtopo:
                 url: '%env(BDTOPO_DATABASE_URL)%'
                 use_savepoints: true
+            bdtopo2025:
+                url: '%env(BDTOPO_2025_DATABASE_URL)%'
+                use_savepoints: true
             metabase:
                 url: '%env(METABASE_DATABASE_URL)%'
                 use_savepoints: true
@@ -36,6 +39,8 @@ doctrine:
                         alias: 'App\Domain'
             bdtopo:
                 connection: bdtopo
+            bdtopo2025:
+                connection: bdtopo2025
             metabase:
                 connection: metabase
 

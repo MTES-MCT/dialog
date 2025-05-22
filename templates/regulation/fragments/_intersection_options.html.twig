@@ -1,0 +1,11 @@
+{% for index, targetId in targetIds %}
+    <turbo-stream action="update" target="{{ targetId }}">
+        <template>
+            {% for namedStreet in namedStreets %}
+                <option data-value="{{ namedStreet.roadBanId }}" {% if currentOptions and namedStreet.roadBanId == currentOptions[index] %}selected{% endif %}>
+                    {{ namedStreet.roadName }}
+                </option>
+            {% endfor %}
+        </template>
+    </turbo-stream>
+{% endfor %}
