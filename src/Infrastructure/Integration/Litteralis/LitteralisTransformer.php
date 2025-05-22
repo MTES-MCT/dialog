@@ -26,8 +26,11 @@ final readonly class LitteralisTransformer
     private const MEASURE_MAP = [
         'SOGELINK - Circulation interdite' => MeasureTypeEnum::NO_ENTRY->value,
         'Circulation interdite' => MeasureTypeEnum::NO_ENTRY->value,
+        'Limitation tonnage (Arrêté Permanent)' => MeasureTypeEnum::NO_ENTRY->value,
         'SOGELINK - Limitation de vitesse' => MeasureTypeEnum::SPEED_LIMITATION->value,
         'Limitation de vitesse' => MeasureTypeEnum::SPEED_LIMITATION->value,
+        'Limitation de vitesse (Arrêté Permanent)' => MeasureTypeEnum::SPEED_LIMITATION->value,
+        'Interdiction de stationnement' => MeasureTypeEnum::PARKING_PROHIBITED->value,
     ];
 
     public function __construct(
@@ -163,7 +166,8 @@ final readonly class LitteralisTransformer
         $items = $this->parseSeparatedString($properties['parametresarrete'], ';');
 
         foreach ($items as $item) {
-            [$key, $value] = explode(' : ', $item, 2);
+            [$key, $value] = explode(' :', $item, 2);
+            $value = trim($value);
             $parameters[] = [$key, $value];
         }
 
@@ -173,7 +177,7 @@ final readonly class LitteralisTransformer
     private function parseLocation(array $feature, Organization $organization): SaveLocationCommand
     {
         $properties = $feature['properties'];
-        $label = trim($properties['localisations']);
+        $label = trim($properties['localisations'] ?? 'Localisation sans description');
 
         // Selon la collectivité, la géométrie peut être de plusieurs sortes :
         // * (Cas par défaut) Un linéaire, sous forme de LINESTRING ou MULTILINESTRING => on importe tel quel.

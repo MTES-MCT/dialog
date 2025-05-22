@@ -2390,9 +2390,9 @@
                 <source>integration.report.title</source>
                 <target>Rapport d'intégration</target>
             </trans-unit>
-            <trans-unit id="integration.report.regulations">
-                <source>integration.report.regulations</source>
-                <target>Arrêtés</target>
+            <trans-unit id="integration.report.regulation">
+                <source>integration.report.regulation</source>
+                <target>Arrêté %id%</target>
             </trans-unit>
             <trans-unit id="integration.report.section.fact.title">
                 <source>integration.report.section.fact.title</source>

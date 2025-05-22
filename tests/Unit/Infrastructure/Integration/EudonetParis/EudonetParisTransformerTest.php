@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Integration\EudonetParis;
 
+use App\Application\GeocoderInterface;
 use App\Application\Integration\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
@@ -93,6 +94,7 @@ final class EudonetParisTransformerTest extends TestCase
         $locationCommand1->namedStreet->roadType = 'lane';
         $locationCommand1->namedStreet->cityCode = '75118';
         $locationCommand1->namedStreet->cityLabel = 'Paris';
+        $locationCommand1->namedStreet->roadBanId = '93070_3185';
         $locationCommand1->namedStreet->roadName = $roadName;
 
         $locationCommand2 = new SaveLocationCommand();
@@ -102,6 +104,7 @@ final class EudonetParisTransformerTest extends TestCase
         $locationCommand2->namedStreet->roadType = 'lane';
         $locationCommand2->namedStreet->cityCode = '75118';
         $locationCommand2->namedStreet->cityLabel = 'Paris';
+        $locationCommand2->namedStreet->roadBanId = '93070_3185';
         $locationCommand2->namedStreet->roadName = $roadName;
         $locationCommand2->namedStreet->fromHouseNumber = '12';
         $locationCommand2->namedStreet->fromCoords = Coordinates::fromLonLat(3, 45);
@@ -127,7 +130,14 @@ final class EudonetParisTransformerTest extends TestCase
         $importCommand = new ImportEudonetParisRegulationCommand($generalInfoCommand, [$measureCommand]);
         $result = new EudonetParisTransformerResult($importCommand, []);
 
-        $transformer = new EudonetParisTransformer();
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::exactly(2))
+            ->method('getRoadBanId')
+            ->with($roadName, '75118')
+            ->willReturn('93070_3185');
+
+        $transformer = new EudonetParisTransformer($geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
@@ -164,7 +174,12 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ]);
 
-        $transformer = new EudonetParisTransformer();
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::never())
+            ->method('getRoadBanId');
+
+        $transformer = new EudonetParisTransformer($geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
@@ -222,7 +237,12 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ]);
 
-        $transformer = new EudonetParisTransformer();
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::never())
+            ->method('getRoadBanId');
+
+        $transformer = new EudonetParisTransformer($geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
@@ -349,7 +369,12 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ]);
 
-        $transformer = new EudonetParisTransformer();
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::never())
+            ->method('getRoadBanId');
+
+        $transformer = new EudonetParisTransformer($geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
@@ -410,7 +435,12 @@ final class EudonetParisTransformerTest extends TestCase
 
         $result = new EudonetParisTransformerResult(null, $errors);
 
-        $transformer = new EudonetParisTransformer();
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::never())
+            ->method('getRoadBanId');
+
+        $transformer = new EudonetParisTransformer($geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
@@ -439,7 +469,6 @@ final class EudonetParisTransformerTest extends TestCase
             ],
         ];
 
-        $transformer = new EudonetParisTransformer();
         $result = new EudonetParisTransformerResult(
             null,
             [
@@ -460,6 +489,13 @@ final class EudonetParisTransformerTest extends TestCase
                 ],
             ],
         );
+
+        $geocoder = $this->createMock(GeocoderInterface::class);
+        $geocoder
+            ->expects(self::never())
+            ->method('getRoadBanId');
+
+        $transformer = new EudonetParisTransformer($geocoder);
 
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }

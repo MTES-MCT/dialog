@@ -31,7 +31,7 @@ def main(secrets_env: str, env_pattern: str) -> int:
 
     with open(".env.local", "a") as f:
         for name, value in org_secrets.items():
-            f.write(f"{name}={value}\n")
+            f.write(f'{name}="{value}"\n')
 
     return 0
 

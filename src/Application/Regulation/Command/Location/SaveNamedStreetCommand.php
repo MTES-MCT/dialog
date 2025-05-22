@@ -16,13 +16,16 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     public ?string $roadType = null; // Used by validation
     public ?string $cityCode = null;
     public ?string $cityLabel = null;
+    public ?string $roadBanId = null;
     public ?string $roadName = null;
     public ?string $fromPointType = null;
     public ?string $fromHouseNumber = null;
+    public ?string $fromRoadBanId = null;
     public ?string $fromRoadName = null;
     public ?Coordinates $fromCoords = null;
     public ?string $toPointType = null;
     public ?string $toHouseNumber = null;
+    public ?string $toRoadBanId = null;
     public ?string $toRoadName = null;
     public ?Coordinates $toCoords = null;
     private ?bool $isEntireStreetFormValue = null;
@@ -35,12 +38,15 @@ final class SaveNamedStreetCommand implements RoadCommandInterface
     ) {
         $this->cityLabel = $namedStreet?->getCityLabel();
         $this->cityCode = $namedStreet?->getCityCode();
+        $this->roadBanId = $namedStreet?->getRoadBanId();
         $this->roadName = $namedStreet?->getRoadName();
         $this->fromPointType = $namedStreet?->getFromPointType();
         $this->fromHouseNumber = $namedStreet?->getFromHouseNumber();
+        $this->fromRoadBanId = $namedStreet?->getFromRoadBanId();
         $this->fromRoadName = $namedStreet?->getFromRoadName();
         $this->toPointType = $namedStreet?->getToPointType();
         $this->toHouseNumber = $namedStreet?->getToHouseNumber();
+        $this->toRoadBanId = $namedStreet?->getToRoadBanId();
         $this->toRoadName = $namedStreet?->getToRoadName();
         $this->isEntireStreetFormValue = $namedStreet ? $this->computeIsEntireStreetFormValue() : null;
         $this->roadType = $namedStreet?->getLocation()?->getRoadType();

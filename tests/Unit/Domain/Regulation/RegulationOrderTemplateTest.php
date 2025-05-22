@@ -15,16 +15,15 @@ final class RegulationOrderTemplateTest extends TestCase
         $organization = $this->createMock(Organization::class);
         $createdAt = new \DateTimeImmutable('2025-04-07');
 
-        $regulationOrderTemplate = new RegulationOrderTemplate(
-            '6598fd41-85cb-42a6-9693-1bc45f4dd392',
-            'Restriction de vitesse',
-            'Arrete temporaire n°[numero_arrete]',
-            'VU ...',
-            'CONSIDERANT ...',
-            'ARTICLES ...',
-            $createdAt,
-            $organization,
-        );
+        $regulationOrderTemplate = new RegulationOrderTemplate('6598fd41-85cb-42a6-9693-1bc45f4dd392');
+        $regulationOrderTemplate
+            ->setName('Restriction de vitesse')
+            ->setTitle('Arrete temporaire n°[numero_arrete]')
+            ->setVisaContent('VU ...')
+            ->setConsideringContent('CONSIDERANT ...')
+            ->setArticleContent('ARTICLES ...')
+            ->setOrganization($organization)
+            ->setCreatedAt($createdAt);
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $regulationOrderTemplate->getUuid());
         $this->assertSame('Restriction de vitesse', $regulationOrderTemplate->getName());
