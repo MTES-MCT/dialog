@@ -34,7 +34,6 @@ jobs:
 
       - name: Init environment variables
         run: |
-          echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_MIGRATIONS_DATABASE_URL }}" >> .env
           echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
 
       - name: CI
