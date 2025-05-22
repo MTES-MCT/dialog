@@ -35,6 +35,7 @@ final class RegulationOrderTest extends TestCase
         $this->assertEmpty($regulationOrder->getMeasures()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getRegulationOrderRecord()); // Automatically set by Doctrine
         $this->assertEmpty($regulationOrder->getOtherCategoryText());
+        $this->assertNull($regulationOrder->getSubject());
         $this->assertFalse($regulationOrder->isPermanent());
         $this->assertSame($visaModel, $regulationOrder->getVisaModel());
         $this->assertSame(['vu que 1'], $regulationOrder->getAdditionalVisas());
