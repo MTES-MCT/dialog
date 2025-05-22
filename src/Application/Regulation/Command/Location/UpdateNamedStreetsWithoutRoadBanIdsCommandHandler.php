@@ -18,13 +18,11 @@ final class UpdateNamedStreetsWithoutRoadBanIdsCommandHandler
     ) {
     }
 
-    public function __invoke(UpdateNamedStreetsWithoutRoadBanIdsCommand $command): mixed
+    public function __invoke(UpdateNamedStreetsWithoutRoadBanIdsCommand $command): int
     {
         $namedStreets = $this->namedStreetRepository->findAllWithoutRoadBanIds();
 
         $numNamedStreets = \count($namedStreets);
-        $updatedUuids = [];
-        $exceptions = [];
 
         foreach ($namedStreets as $namedStreet) {
             $namedStreetCommand = new SaveNamedStreetCommand($namedStreet);
@@ -59,12 +57,12 @@ final class UpdateNamedStreetsWithoutRoadBanIdsCommandHandler
                 }
 
                 $this->commandBus->handle($namedStreetCommand);
-                $updatedUuids[] = $namedStreet->getUuid();
+                $command->onEvent(['level' => 'DEBUG', 'message' => 'updated', 'named_street_uuid' => $namedStreet->getUuid()]);
             } catch (GeocodingFailureException $exc) {
-                $exceptions[$namedStreet->getUuid()] = $exc;
+                $command->onEvent(['level' => 'ERROR', 'message' => 'geocoding failed', 'named_street_uuid' => $namedStreet->getUuid(), 'exc' => $exc->getMessage()]);
             }
         }
 
-        return new UpdateNamedStreetsWithoutRoadBanIdsCommandResult($numNamedStreets, $updatedUuids, $exceptions);
+        return $numNamedStreets;
     }
 }

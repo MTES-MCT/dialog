@@ -6,9 +6,18 @@ namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandInterface;
 
-final class UpdateNamedStreetsWithoutRoadBanIdsCommand implements CommandInterface
+final readonly class UpdateNamedStreetsWithoutRoadBanIdsCommand implements CommandInterface
 {
-    public function __construct()
+    private mixed $onEventCallback;
+
+    public function __construct(
+        callable $onEventCallback,
+    ) {
+        $this->onEventCallback = $onEventCallback;
+    }
+
+    public function onEvent(array $event)
     {
+        \call_user_func($this->onEventCallback, $event);
     }
 }

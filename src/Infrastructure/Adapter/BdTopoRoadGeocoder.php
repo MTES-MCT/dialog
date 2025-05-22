@@ -43,7 +43,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             return $rows[0]['geometry'];
         }
 
-        $message = \sprintf('no result found for roadBanId="%s"', $roadBanId);
+        $message = \sprintf("no result found for roadBanId='%s'", $roadBanId);
         throw new GeocodingFailureException($message);
     }
 
@@ -77,7 +77,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         if (empty($row['geom'])) {
-            $message = \sprintf('no result found in voie_nommee 2023 for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
+            $message = \sprintf("no result found in voie_nommee 2023 for roadName='%s', inseeCode='%s'", $roadName, $inseeCode);
             throw new GeocodingFailureException($message);
         }
 
@@ -111,7 +111,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         if (empty($row['road_ban_id'])) {
-            $message = \sprintf('No road_ban_id found for roadName="%s" and inseeCode="%s"', $roadName, $inseeCode);
+            $message = \sprintf("No road_ban_id found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
             throw new GeocodingFailureException($message);
         }
 

@@ -77,11 +77,11 @@ final class SyncNamedStreetRoadBanIdsCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful($commandTester->getDisplay());
         $rows = array_map(fn ($line) => json_decode($line, true), explode(PHP_EOL, trim($commandTester->getDisplay())));
         $this->assertCount(2, $rows);
-        $this->assertSame(2, $rows[0]['num_candidates']);
-        $this->assertSame(1, $rows[0]['num_updated']);
-        $this->assertSame(0, $rows[0]['num_errors']);
-        $this->assertSame('updated', $rows[1]['message']);
-        $this->assertSame($namedStreet->getUuid(), $rows[1]['uuid']);
+        $this->assertSame('updated', $rows[0]['message']);
+        $this->assertSame($namedStreet->getUuid(), $rows[0]['named_street_uuid']);
+        $this->assertSame(2, $rows[1]['num_total']);
+        $this->assertSame(1, $rows[1]['num_updated']);
+        $this->assertSame(0, $rows[1]['num_errors']);
 
         // Check data after migration
         $this->assertEquals([], $em->getConnection()->fetchAllAssociative('SELECT road_name FROM named_street WHERE road_name IS NOT NULL AND road_ban_id IS NULL'));
@@ -129,10 +129,10 @@ final class SyncNamedStreetRoadBanIdsCommandTest extends KernelTestCase
         $this->assertSame($command::FAILURE, $commandTester->getStatusCode(), $commandTester->getDisplay());
         $rows = array_map(fn ($line) => json_decode($line, true), explode(PHP_EOL, trim($commandTester->getDisplay())));
         $this->assertCount(2, $rows);
-        $this->assertSame(2, $rows[0]['num_candidates']);
-        $this->assertSame(0, $rows[0]['num_updated']);
-        $this->assertSame(1, $rows[0]['num_errors']);
-        $this->assertSame('geocoding failed', $rows[1]['message']);
-        $this->assertSame($namedStreet->getUuid(), $rows[1]['uuid']);
+        $this->assertSame('geocoding failed', $rows[0]['message']);
+        $this->assertSame($namedStreet->getUuid(), $rows[0]['named_street_uuid']);
+        $this->assertSame(2, $rows[1]['num_total']);
+        $this->assertSame(0, $rows[1]['num_updated']);
+        $this->assertSame(1, $rows[1]['num_errors']);
     }
 }

@@ -6,7 +6,6 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\Location\UpdateNamedStreetsWithoutRoadBanIdsCommand;
-use App\Application\Regulation\Command\Location\UpdateNamedStreetsWithoutRoadBanIdsCommandResult;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,35 +26,32 @@ class SyncNamedStreetRoadBanIdsCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var UpdateNamedStreetsWithoutRoadBanIdsCommandResult */
-        $result = $this->commandBus->handle(new UpdateNamedStreetsWithoutRoadBanIdsCommand());
+        $numUpdated = 0;
+        $numErrors = 0;
 
-        $isSuccess = empty($result->exceptions);
+        $command = new UpdateNamedStreetsWithoutRoadBanIdsCommand(function (array $event) use ($output, &$numUpdated, &$numErrors): void {
+            if ($event['message'] === 'updated') {
+                ++$numUpdated;
+            }
+
+            if ($event['level'] === 'ERROR') {
+                ++$numErrors;
+            }
+
+            $output->writeln(json_encode($event));
+        });
+
+        $numNamedStreets = $this->commandBus->handle($command);
+
+        $isSuccess = $numErrors === 0;
 
         $output->writeln(json_encode([
             'level' => $isSuccess ? 'INFO' : 'ERROR',
             'message' => $isSuccess ? 'success' : 'some road BAN IDs failed to be found',
-            'num_candidates' => $result->numNamedStreets,
-            'num_updated' => \count($result->updatedUuids),
-            'num_errors' => \count($result->exceptions),
+            'num_total' => $numNamedStreets,
+            'num_updated' => $numUpdated,
+            'num_errors' => $numErrors,
         ]));
-
-        foreach ($result->updatedUuids as $uuid) {
-            $output->writeln(json_encode([
-                'level' => 'DEBUG',
-                'message' => 'updated',
-                'uuid' => $uuid,
-            ]));
-        }
-
-        foreach ($result->exceptions as $uuid => $excItem) {
-            $output->writeln(json_encode([
-                'level' => 'ERROR',
-                'message' => 'geocoding failed',
-                'uuid' => $uuid,
-                'exc' => $excItem->getMessage(),
-            ]));
-        }
 
         return $isSuccess ? Command::SUCCESS : Command::FAILURE;
     }
