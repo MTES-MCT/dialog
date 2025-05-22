@@ -1,0 +1,18 @@
+{% block _RegulationOrderTemplate_rich_textarea_widget %}
+    {% set variables = [
+        { label: 'Numéro d\'arrêté', value: '[numero_arrete]' },
+        { label: 'Intitulé de l\'arrêté', value: '[intitule_arrete]' },
+        { label: 'Numéro PR début', value: '[numero_pr_debut]' },
+        { label: 'Numéro PR fin', value: '[numero_pr_fin]' },
+        { label: 'Nom du signataire', value: '[nom_signataire]' },
+        { label: 'Numéro RN', value: '[numero_rn]' }
+    ] %}
+
+    {{ form_widget(form, {
+        attr: {
+            'data-controller': 'rich-text',
+            'data-rich-text-height-value': 300,
+            'data-rich-text-variables-value': variables|json_encode|raw
+        }
+    }) }}
+{% endblock %}
