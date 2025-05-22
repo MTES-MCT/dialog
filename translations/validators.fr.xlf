@@ -18,6 +18,10 @@
                 <source>regulation.location.cityCode.error.blank</source>
                 <target>Veuillez choisir une ville ou un code postal parmi la liste.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.roadBanId.error.blank">
+                <source>regulation.location.roadBanId.error.blank</source>
+                <target>Veuillez choisir une voie parmi la liste.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.pointNumber.error.blank">
                 <source>regulation.location.pointNumber.error.blank</source>
                 <target>Veuillez choisir un PR parmi la liste.</target>

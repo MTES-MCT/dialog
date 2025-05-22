@@ -33,6 +33,22 @@
                 </option>
             </constraint>
         </property>
+        <property name="roadBanId">
+            <constraint name="Length">
+                <option name="max">20</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression"> this.roadType === 'lane' </option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.roadBanId.error.blank</option>
+                        <option name="groups">
+                            <value>html_form</value>
+                        </option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
         <property name="roadName">
             <constraint name="When">
                 <option name="expression"> this.roadType === 'lane' </option>
@@ -55,6 +71,22 @@
                 </option>
             </constraint>
         </property>
+        <property name="fromRoadBanId">
+            <constraint name="Length">
+                <option name="max">20</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet() and this.fromPointType === 'intersection'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.roadBanId.error.blank</option>
+                        <option name="groups">
+                            <value>html_form</value>
+                        </option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
         <property name="fromRoadName">
             <constraint name="Length">
                 <option name="max">255</option>
@@ -74,6 +106,22 @@
                 <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet() and this.toPointType === 'houseNumber'</option>
                 <option name="constraints">
                     <constraint name="NotBlank" />
+                </option>
+            </constraint>
+        </property>
+        <property name="toRoadBanId">
+            <constraint name="Length">
+                <option name="max">20</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and !this.getIsEntireStreet() and this.toPointType === 'intersection'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.roadBanId.error.blank</option>
+                        <option name="groups">
+                            <value>html_form</value>
+                        </option>
+                    </constraint>
                 </option>
             </constraint>
         </property>

@@ -153,4 +153,54 @@ final class APIAdresseGeocoder implements GeocoderInterface
             return [];
         }
     }
+
+    public function findNamedStreets(string $search, string $cityCode): array
+    {
+        if (\strlen($search) < 3) {
+            // APIAdresse returns error if search string has length strictly less than 3.
+            return [];
+        }
+
+        $response = $this->apiAdresseClient->request('GET', '/search/', [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+            'query' => [
+                'q' => $search,
+                'autocomplete' => '1',
+                'limit' => 7,
+                'type' => 'street',
+                'citycode' => $cityCode,
+            ],
+        ]);
+
+        try {
+            $data = $response->toArray(throw: true);
+            $namedStreets = [];
+
+            foreach ($data['features'] as $feature) {
+                $namedStreets[] = [
+                    'roadBanId' => $feature['properties']['id'],
+                    'roadName' => $feature['properties']['street'],
+                ];
+            }
+
+            return $namedStreets;
+        } catch (\Exception $exc) {
+            \Sentry\captureException($exc);
+
+            return [];
+        }
+    }
+
+    public function getRoadBanId(string $search, string $cityCode): string
+    {
+        $namedStreets = $this->findNamedStreets($search, $cityCode);
+
+        if (empty($namedStreets)) {
+            throw new GeocodingFailureException(\sprintf("no named street found for search='%s' and cityCode='%s'", $search, $cityCode));
+        }
+
+        return $namedStreets[0]['roadBanId'];
+    }
 }

@@ -72,7 +72,7 @@ services:
 
   gdal:
     # https://github.com/OSGeo/gdal/tree/master/docker
-    image: ghcr.io/osgeo/gdal:alpine-small-latest
+    image: ghcr.io/osgeo/gdal:alpine-small-3.8.5
     container_name: gdal
     profiles: [gdal]
     init: true # Forward signals such as Ctrl+C, see: https://docs.docker.com/compose/compose-file/05-services/#init

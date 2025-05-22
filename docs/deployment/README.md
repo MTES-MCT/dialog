@@ -53,7 +53,7 @@ L'infrastructure d'un environnement est déployée et gérée par Scalingo et s'
 * Le serveur PHP communique avec la base de données Redis, notamment pour le stockage des sessions utilisateurs.
 * Le serveur PHP communique avec des services tiers :
   * API Adresse : géocodage d'adresses.
-  * [BD TOPO](../tools/bdtopo.md) : données géographiques (hébergées sur l'app `dialog-bdtopo`).
+  * [BD TOPO](../tools/bdtopo.md) : données géographiques (hébergées sur l'app `dialog-bdtopo-2025`).
   * [Sentry](../tools/monitoring.md) : collecte et analyse des erreurs applicatives.
   * [Matomo](../tools/analytics.md) : collecte et analyse de données de trafic utilisateur.
   * [Metabase](../tools/metabase.md) : statistiques et suivi d'indicateurs (hébergé sur l'app `dialog-metabase`).
@@ -61,7 +61,7 @@ L'infrastructure d'un environnement est déployée et gérée par Scalingo et s'
 Diagramme :
 
 ```
-                                            dialog-bdtopo
+                                          dialog-bdtopo-2025
                                              ┌ - - - - ┐
                                         ┌----  BD TOPO
                                         |    └ - - - - ┘
@@ -91,7 +91,8 @@ Voici, à date, une liste des ressources utilisées dans un environnement.
 | Base de données PostgreSQL | Scalingo BetaGouv (`dialog`, add-on) | tristan.robert[ @ ]beta.gouv.fr |
 | Serveur Redis | Scalingo BetaGouv (`dialog`, add-on) | tristan.robert[ @ ]beta.gouv.fr |
 | Enregistrement DNS | Zone DNS de BetaGouv | tristan.robert[ @ ]beta.gouv.fr |
-| BD TOPO | Scalingo BetaGouv (`dialog-bdtopo`) |  tristan.robert[ @ ]beta.gouv.fr
+| BD TOPO 2025 | Scalingo BetaGouv (`dialog-bdtopo-2025`) |  tristan.robert[ @ ]beta.gouv.fr
+| BD TOPO (legacy) | Scalingo BetaGouv (`dialog-bdtopo`) |  tristan.robert[ @ ]beta.gouv.fr
 | Projet Sentry | [Sentry de BetaGouv](https://sentry.incubateur.net) | tristan.robert[ @ ]beta.gouv.fr |
 | Site Matomo | [Matomo BetaGouv](https://stats.beta.gouv.fr) | ~incubateur-ops |
 | Metabase et son PostgreSQL | Scalingo BetaGouv (`dialog-metabase`) |  tristan.robert[ @ ]beta.gouv.fr |
@@ -103,7 +104,8 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | Variable d'environnement | Description | Valeur par défaut | Notes |
 |--------------------------|-------------|--------|-------|
 | `API_ADRESSE_BASE_URL` | URL de l'instance API Adresse à utiliser | `https://api-adresse.data.gouv.fr` | |
-| `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
+| `BDTOPO_2025_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
+| `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) (legacy) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
 | `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet-partage.apps.paris.fr | |
 | `APP_EUDONET_PARIS_ORG_ID` | Utiliser l'UUID de l'organisation Ville de Paris | _Vide_ | |
 | `APP_JOP_ORG_ID` | UUID de l'organisation où intégrer les données JOP | _Vide_ | |

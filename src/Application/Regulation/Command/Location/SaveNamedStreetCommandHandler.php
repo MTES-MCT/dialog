@@ -28,6 +28,7 @@ final class SaveNamedStreetCommandHandler
                     direction: $command->direction,
                     cityLabel: $command->cityLabel,
                     cityCode: $command->cityCode,
+                    roadBanId: $command->roadBanId,
                     roadName: $command->roadName,
                     fromHouseNumber: $command->fromHouseNumber,
                     fromRoadName: $command->fromRoadName,
@@ -44,10 +45,13 @@ final class SaveNamedStreetCommandHandler
             direction: $command->direction,
             cityCode: $command->cityCode,
             cityLabel: $command->cityLabel,
+            roadBanId: $command->roadBanId,
             roadName: $command->roadName,
             fromHouseNumber: $command->fromHouseNumber,
+            fromRoadBanId: $command->fromRoadBanId,
             fromRoadName: $command->fromRoadName,
             toHouseNumber: $command->toHouseNumber,
+            toRoadBanId: $command->toRoadBanId,
             toRoadName: $command->toRoadName,
         );
 

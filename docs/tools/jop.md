@@ -14,7 +14,7 @@ Si `zones.geojson` change ou si l'arrêté `JOP2024-ZONES` doit être recalculé
 
 1. Récupérer le UUID de l'organisation "Préfecture de Police de Paris" (PP) en prod. Pour cela demander à un super-admin : l'UUID est visible dans l'URL de la page de l'organisation dans l'admin.
 2. Créer un fichier `.env.prod.local` vide, et y définir :
-    * `BDTOPO_DATABASE_URL`
+    * `BDTOPO_2025_DATABASE_URL`
     * `APP_JOP_ORG_ID=ID`, où `ID` est l'UUID de la PP que vous venez de récupérer.
 3. Ouvrir un [tunnel](./db.md#utiliser-une-db-scalingo-en-local) vers la DB de prod :
 

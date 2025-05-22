@@ -32,7 +32,7 @@ class EudonetParisImportCommand extends Command
 
         try {
             $this->eudonetParisExecutor->execute(laterThanUTC: $nowUTC);
-        } catch (EudonetParisException) {
+        } catch (EudonetParisException $exc) {
             return Command::FAILURE;
         }
 

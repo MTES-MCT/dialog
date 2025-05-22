@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Integration\EudonetParis;
 
+use App\Application\GeocoderInterface;
 use App\Application\Integration\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
@@ -24,6 +25,10 @@ final class EudonetParisTransformer
     private const ARRONDISSEMENT_REGEX = '/^(?<arrondissement>\d+)(er|e|ème|eme)\s+arrondissement$/i';
     private const CITY_CODE_TEMPLATE = '751%s';
     private const CITY_LABEL = 'Paris';
+
+    public function __construct(private GeocoderInterface $geocoder)
+    {
+    }
 
     public function transform(array $row, Organization $organization): EudonetParisTransformerResult
     {
@@ -225,6 +230,10 @@ final class EudonetParisTransformer
             return [null, $error];
         }
 
+        $roadBanId = $this->geocoder->getRoadBanId($roadName, $cityCode);
+        $fromRoadBanId = $fromRoadName ? $this->geocoder->getRoadBanId($fromRoadName, $cityCode) : null;
+        $toRoadBanId = $toRoadName ? $this->geocoder->getRoadBanId($toRoadName, $cityCode) : null;
+
         $locationCommand = new SaveLocationCommand();
         $locationCommand->organization = $organization;
         $locationCommand->roadType = RoadTypeEnum::LANE->value;
@@ -232,11 +241,14 @@ final class EudonetParisTransformer
         $locationCommand->namedStreet->roadType = RoadTypeEnum::LANE->value;
         $locationCommand->namedStreet->cityCode = $cityCode;
         $locationCommand->namedStreet->cityLabel = self::CITY_LABEL;
+        $locationCommand->namedStreet->roadBanId = $roadBanId;
         $locationCommand->namedStreet->roadName = $roadName;
         $locationCommand->namedStreet->fromHouseNumber = $fromHouseNumber;
+        $locationCommand->namedStreet->fromRoadBanId = $fromRoadBanId;
         $locationCommand->namedStreet->fromRoadName = $fromRoadName;
         $locationCommand->namedStreet->fromCoords = empty($row['fromCoords']) ? null : $row['fromCoords'];
         $locationCommand->namedStreet->toHouseNumber = $toHouseNumber;
+        $locationCommand->namedStreet->toRoadBanId = $toRoadBanId;
         $locationCommand->namedStreet->toRoadName = $toRoadName;
         $locationCommand->namedStreet->toCoords = empty($row['toCoords']) ? null : $row['toCoords'];
 

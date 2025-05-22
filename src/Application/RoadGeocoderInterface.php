@@ -10,7 +10,10 @@ interface RoadGeocoderInterface
 {
     public const HIGHWAY = 'HIGHWAY';
 
-    public function computeRoadLine(string $roadName, string $inseeCode): string;
+    public function computeRoadLine(string $roadBanId): string;
+
+    // Pour la migration BDTOPO 2023 -> 2025
+    public function computeRoadBanId(string $roadName, string $inseeCode): string;
 
     public function findRoads(string $search, string $roadType, string $administrator): array;
 
@@ -29,8 +32,6 @@ interface RoadGeocoderInterface
     ): Coordinates;
 
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array;
-
-    public function findRoadNames(string $search, string $cityCode): array;
 
     public function findSectionsInArea(string $areaGeometry, array $excludeTypes = [], ?bool $clipToArea = false): string;
 

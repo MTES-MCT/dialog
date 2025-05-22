@@ -11,4 +11,11 @@ interface GeocoderInterface
     public function computeCoordinates(string $address, string $cityCode): Coordinates;
 
     public function findCities(string $search): array;
+
+    public function findNamedStreets(string $search, string $cityCode): array;
+
+    /**
+     * @throws Exception\GeocodingFailureException
+     */
+    public function getRoadBanId(string $search, string $cityCode): string;
 }
