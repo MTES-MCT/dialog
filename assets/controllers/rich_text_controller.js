@@ -19,7 +19,6 @@ export default class extends Controller {
         const containerOptions = [
             ['bold', 'italic', 'underline'],
             [{ 'header': [1, 2, 3, false] }],
-            [{ 'size': [] }],
             [{ 'align': [] }],
             [{ 'indent': '-1' }, { 'indent': '+1' }],
             [{ 'color': [] }, { 'background': [] }]
