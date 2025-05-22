@@ -1,0 +1,73 @@
+<fieldset
+    class="fr-fieldset fr-mt-3w fr-mb-0"
+    aria-labelledby="{{ pointType.vars.id }}-fields"
+>
+    <legend id="{{ pointType.vars.id }}-fields" class="fr-fieldset__legend">
+        {{ legend }}
+    </legend>
+
+    <div
+        class="fr-fieldset__element fr-grid-row fr-grid-row--gutters fr-mb-0"
+        data-controller="form-reveal"
+    >
+        {{ form_row(pointType, {
+            group_class: 'fr-select-group',
+            widget_class: 'fr-select',
+            row_attr: {
+                class: 'fr-col-12 fr-col-sm-6 fr-mb-0',
+            },
+            attr: {
+                'data-action': 'change->form-reveal#openByValue reset:reset->form-reveal#openByValue',
+                'data-reset-target': 'element',
+                'data-reset-keys': ['city']|json_encode,
+            },
+        }) }}
+
+        {{ form_row(pointHouseNumber, {
+            group_class: 'fr-input-group',
+            widget_class: 'fr-input',
+            row_attr: {
+                class: 'fr-col-12 fr-col-sm-6 fr-mb-0',
+                'data-form-reveal-target': 'section',
+                'data-value': 'houseNumber',
+                'hidden': pointType.vars.value != 'houseNumber',
+            },
+            attr: {
+                'data-form-reveal-target': 'formControl',
+                'data-value': 'houseNumber',
+                'data-reset-target': 'element',
+                'data-reset-keys': ['city', 'roadName']|json_encode,
+                'disabled': pointType.vars.value != 'houseNumber',
+            },
+        }) }}
+
+        <div
+            class="fr-col-12 fr-col-sm-6 fr-mb-0"
+            data-form-reveal-target="section"
+            data-value="intersection"
+            data-controller="hidden-select"
+            {% if pointType.vars.value != 'intersection' %}hidden{% endif %}
+        >
+            {{ form_row(pointRoadBanId, {
+                attr: {
+                    'data-form-reveal-target': 'formControl',
+                    'data-value': 'intersection',
+                    'data-hidden-select-target': 'hidden',
+                    'disabled': pointType.vars.value != 'intersection',
+                }
+            }) }}
+
+            {{ form_row(pointRoadName, {
+                attr: {
+                    class: 'fr-select',
+                    'data-form-reveal-target': 'formControl',
+                    'data-value': 'intersection',
+                    'data-reset-target': 'element',
+                    'data-reset-keys': ['city', 'roadName']|json_encode,
+                    'data-hidden-select-target': 'select',
+                    'disabled': pointType.vars.value != 'intersection',
+                },
+            }) }}
+        </div>
+    </div>
+</fieldset>

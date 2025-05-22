@@ -4,7 +4,7 @@ DiaLog héberge une partie de la [BD TOPO](https://geoservices.ign.fr/bdtopo) po
 
 ## Démarrage rapide
 
-Pour le développement local, demandez la `BDTOPO_DATABASE_URL` à un membre de l'équipe et ajoutez-là à votre `.env.local` (créer ce fichier à la racine du projet si nécessaire).
+Pour le développement local, demandez la `BDTOPO_2025_DATABASE_URL` à un membre de l'équipe et ajoutez-les à votre `.env.local` (créer ce fichier à la racine du projet si nécessaire).
 
 Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voir [Mettre à jour les données](#mettre-à-jour-les-données).
 
@@ -12,9 +12,9 @@ Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voi
 
 Les requêtes à la BD TOPO se font par une connexion dédiée, configurée dans la configuration doctrine (`config/packages/doctrine.yaml`).
 
-L'URL de connexion est configurée par la variable d'environnement `BDTOPO_DATABASE_URL`.
+L'URL de connexion est configurée par la variable d'environnement `BDTOPO_2025_DATABASE_URL`.
 
-Cette connexion dispose de ses propres migrations, séparées des migrations applicatives de DiaLog. Cela permet de [configurer des indexes], fonctions et autres objets PostgreSQL spécifiquement dédiés à l'optimisation des requêtes adressées aux tables BD TOPO.
+Cette connexion dispose de ses propres migrations, séparées des migrations applicatives de DiaLog. Cela permet de configurer des indexes, fonctions et autres objets PostgreSQL spécifiquement dédiés à l'optimisation des requêtes adressées aux tables BD TOPO.
 
 ## Guides
 
@@ -28,11 +28,11 @@ use Doctrine\DBAL\Connection;
 
 class ExampleService {
     public function __construct(
-        private readonly Connection $bdtopoConnection, // Attention à la casse : "bdtopo" et pas "bdTopo"
+        private readonly Connection $bdtopo2025Connection, // Attention à la casse : "bdtopo" et pas "bdTopo"
     ) {}
 
     public function findAllStreetsInCity(string $cityCode): array {
-        $rows = $this->connection->fetchAllAssociative(
+        $rows = $this->bdtopo2025Connection->fetchAllAssociative(
             'SELECT ST_AsGeoJSON(geometrie) AS geometry FROM voie_nommee WHERE code_insee = :code_insee',
             ['code_insee' => $cityCode],
         );
@@ -47,28 +47,6 @@ class ExampleService {
 Pour intégrer une nouvelle table, mettez à jour le fichier `tools/bdtopo_update.config.json` puis suivez le guide [Mettre à jour les données](#mettre-à-jour-les-données) pour ajouter la table à notre hébergement de la BD TOPO.
 
 De même, pour retirer une table qui n'est plus utilisée, retirez-la du fichier de configuration puis mettez à jour les données.
-
-### Intégrer de nouvelles colonnes dans la BD TOPO
-
-Pour les plus grosses tables comme `troncon_de_route`, on n'intègre que les colonnes dont on a besoin afin de limiter la taille de la BD TOPO sur le disque.
-
-Si vous avez besoin d'intégrer une nouvelle colonne, mettez à jour `tools/bdtopo_update.config.json`, puis [mettez à jour les données](#mettre-à-jour-les-données) mais ajoutez l'option `--overwrite` lors de l'exécution du script de mise à jour :
-
-```bash
-./tools/bdtopo_update ~/path/to/bdtopo --prod --overwrite
-```
-
-Cette option va supprimer les tables et refaire un import de zéro.
-
-Il faut ensuite recréer les indexes en réexecutant les migrations :
-
-```bash
-make bdtopo_migrate_redo
-```
-
-Ensuite elle réexécute les migrations BD TOPO afin de recréer les indexes.
-
-Cet import de zéro est nécessaire car sinon la nouvelle colonne sera ignorée, seul le contenu des colonnes existantes sera mis à jour.
 
 ### Configurer des indexes
 
@@ -88,55 +66,51 @@ Une fois la PR mergée, les migrations seront exécutées par GitHub Actions gr�
 
 **Prérequis** : [Accès SSH aux DB Scalingo](./db.md#utiliser-une-db-scalingo-en-local)
 
-La BD TOPO est millésimée, c'est-à-dire qu'une nouvelle version sort environ une fois par an.
+La BD TOPO est millésimée. Une nouvelle version sort environ tous les 3 mois.
 
 Pour mettre à jour les données, suivez ces étapes :
 
-1. Téléchargez chaque partie du [Thème transport par territoire format Geopackage projection légale](https://geoservices.ign.fr/bdtopo#telechargementtransportter) 
-    * 1 fichier zip "France Métropolitaine"
-    * 1 fichier zip par DROM-COM (Guadeleoupe, etc),
+1. Téléchargez chaque partie du [BD TOPO Tous Thèmes France entière format GeoPackage WGS84](https://geoservices.ign.fr/bdtopo#telechargementgpkgfra) : ce sont des parties d'un fichier compressé avec 7Zip. Total compressé : 40 Go environ
+2. Décompressez :
+    1. Assurez-vous d'avoir 7zip installé : `sudo apt install p7zip-full`
+    2. Placez les fichiers `.7z.001`, `.7z.002`, etc dans le même dossier
+    3. Double-cliquez sur le fichier numéro 001 pour lancer la décompression.
 
-2. Décompressez l'entièreté de chaque fichier zip et regroupez-les dans un même dossier, appelé ci-dessous `~/path/to/bdtopo`.
+    Total décompressé : 130 Go environ.
 
-    Exemple de structure du dossier :
+3. Testez sur une BD TOPO locale :
 
-    ```console
-    $ tree ~/path/to/bdtopo
-    /home/user/path/to/bdtopo
-    ├── BDTOPO_3-3_TRANSPORT_GPKG_LAMB93_FXX_2023-12-15
-    │   └── BDTOPO
-    │       └── ...
-    ├── BDTOPO_3-3_TRANSPORT_GPKG_RGAF09UTM20_BLM_2023-12-15
-    │   └── BDTOPO
-    │       └── ...
-    └── ...
-    ```
+    1. Créez une base de données locale avec `docker-compose exec database createdb -U dialog dialog_bdtopo`
+    2. Installez-y postgis : `make dbshell` puis `\c dialog_bdtopo` puis `create extension postgis;`
+    3. Lancez le script suivant pour importer les données BD TOPO en local (prend plusieurs minutes) :
 
-3. Lancez le script suivant :
+      ```bash
+      ./tools/bdtopo_update ~/path/to/bdtopo --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
+      ```
+
+    4. Modifiez votre .env.local avec `BDTOPO_2025_DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog_bdtopo` puis naviguez sur DiaLog en local pour voir si le géocodage fonctionne comme prévu. Lancez aussi les tests d'intégration.
+
+4. Une fois que tout semble OK, vous pouvez mettre à jour la BD TOPO de prod.
+
+  :warning: **Attention** : le faire à une heure de faible trafic car cela prendra typiquement une heure voire plus. Pendant ce temps le géocodage sera indisponible, les utilisateurs peuvent rencontrer des plantages.
 
     ```bash
     ./tools/bdtopo_update ~/path/to/bdtopo --prod
     ```
 
-    Ce script va mettre à jour le contenu de notre hébergement BD TOPO à partir des fichiers locaux.
+5. Une fois l'exécution réussie, vérifiez le bon fonctionnement en se connectant à staging et en modifiant par exemple la voie nommée d'une localisation.
 
-    L'exécution prend typiquement plusieurs minutes (temps de transfert des données vers Scalingo, variable selon la qualité de la connexion).
+6. (Optionnel) Si des indexes doivent être ajoutés aux tables, suivez la section [Configurer des indexes](#configurer-des-indexes).
 
-4. Une fois l'exécution réussie, vérifiez le bon fonctionnement en se connectant à staging et en modifiant par exemple la voie nommée d'une localisation.
+### Configurer des indexes
 
-5. (Optionnel) Si des indexes doivent être ajoutés aux tables, suivez la section [Configurer des indexes](#configurer-des-indexes).
+Les indexes sont gérés via des migrations dédiées à la BDTOPO (dossier `BdTopoMigrations`).
 
-### (Avancé) Utiliser une BD TOPO locale
+Pour créer une migration vide, utiliser `make bdtopo_migration`.
 
-Il est possible de télécharger la BD TOPO et de l'ingérer dans une base de données PostgreSQL locale.
+Pour tester une migration sur une BD TOPO locale, configurer  `BDTOPO_2025_DATABASE_URL` dans votre `.env.local` pour pointer sur la BD TOPO locale, puis utiliser `make bdtopo_migrate`.
 
-Cela peut être utile pour tester une nouvelle version de la BD TOPO par exemple.
-
-Pour cela, téléchargez les fichiers BD TOPO comme indiqué dans [Mettre à jour les données](#mettre-à-jour-les-données), puis lancez le script de mise à jour en pointant sur votre base locale :
-
-```bash
-./tools/bdtopo_update ~/path/to/bdtopo --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
-```
+Pour exécuter une migration en prod, faire une PR avec la migration et la merger. Un job GitHub Actions lancera la migration.
 
 ## Référence
 
@@ -144,9 +118,10 @@ Pour cela, téléchargez les fichiers BD TOPO comme indiqué dans [Mettre à jou
 
 On entend par "déploiement" une base de données PostgreSQL où sont ingérées les [tables BD TOPO utilisées par DiaLog](#liste-des-tables-bd-topo-utilisées-par-dialog).
 
-| App Scalingo | Utilisateur | Utilisable par | URL de connexion |
-|---|---|---|---|
-| `dialog-bdtopo` | `dialog_app` (utilisateur avec accès en lecture seule créé sur Scalingo) | Tous les environnements | Secret, demander à un membre de l'équipe |
+| App Scalingo | Utilisable par | URL de connexion |
+|---|---|---|
+| `dialog-bdtopo-2025` | Tous les environnements | Secret, demander à un membre de l'équipe |
+| `dialog-bdtopo` | Tous les environnements | Secret, demander à un membre de l'équipe |
 
 ### Liste des tables BD TOPO utilisées par DiaLog
 
@@ -156,18 +131,18 @@ Voir la liste `"tables"` dans [`tools/bdtopo_update.config.json`](../../tools/bd
 
 Ce script Python permet de déployer les tables de la BD TOPO sur une base PostgreSQL.
 
-Fonctionnement : ce script intègre à la base PostgreSQL cible les tables configurées dans le fichier de configuration `tools/bdtopo_update.config.json`. Pour cela, il ingère les données BD TOPO (format GeoPackage) à l'aide de `ogr2ogr` dans des tables temporaires, puis remplace les éventuelles anciennes tables par ces nouvelles.
+Fonctionnement : ce script intègre à la base PostgreSQL cible les tables configurées dans le fichier de configuration `tools/bdtopo_update.config.json`. Pour cela, il ingère les données BD TOPO (format GeoPackage) à l'aide de **`ogr2ogr`** dans des tables temporaires, puis remplace les éventuelles anciennes tables par ces nouvelles.
 
 Par défaut le script pointe sur notre hébergement de la BD TOPO, mais peut aussi importer dans une base locale avec l'option `--url`.
 
 Utilisation typique :
 
 ```bash
-# Pour déployer les tables en production (dialog-bdtopo)
-./tools/bdtopo_update ~/path/to/bdtopo_transport --prod
+# Pour déployer les tables en production
+./tools/bdtopo_update ~/path/to/bdtopo --prod
 
 # Pour déployer les tables dans une base locale
-./tools/bdtopo_update ~/path/to/bdtopo_transport --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
+./tools/bdtopo_update ~/path/to/bdtopo --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
 ```
 
 Documentation :
@@ -181,7 +156,7 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  --prod                Confirm deployment to 'dialog-bdtopo' app
+  --prod                Confirm deployment to 'dialog-bdtopo-2025' app
   --url URL             Deploy to a PostgreSQL database identified by this
                         database URL
   -y, --yes             Accept all prompts
@@ -194,13 +169,8 @@ options:
 
 Le fichier de configuration du script, par défaut `tools/bdtopo_update.config.json`, peut contenir ces paramètres :
 
-* `tables` - Type `string[]` :
-  * La liste des tables de la BD TOPO à intégrer. Les tables possibles sont référencées dans le document [Descrpitif de contenu BD TOPO](https://geoservices.ign.fr/documentation/donnees/vecteur/bdtopo).
-* `custom_indexes` _(Optionnel)_ - Type `array` :
-  * Une liste de définitions d'indexes personnalisés à configurer en fin de déploiement.
-  * Définition d'un index :
-    * `name` - Type `string` : le nom de l'index
-    * `create` - Type `string` : la commande SQL à utiliser pour créer l'index. Utilisez `$name` pour faire référence au nom de l'index.
+* `tables` - Type `{"name": string, "select_sql": string}[]` :
+  * La liste des tables de la BD TOPO à intégrer. Les tables possibles sont référencées dans le document [Descrpitif de contenu BD TOPO](https://geoservices.ign.fr/documentation/donnees/vecteur/bdtopo). Le champ `select_sql` permet de ne sélectionner qu'une sous-partie des colonnes.
 
 ## Liens utiles
 

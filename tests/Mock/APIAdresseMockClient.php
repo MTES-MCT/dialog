@@ -70,8 +70,16 @@ final class APIAdresseMockClient extends MockHttpClient
             ['street', 'Rue Eugène Berthoud'] => [
                 [
                     'properties' => [
-                        'name' => 'Rue Eugène Berthoud',
-                        'label' => 'Rue Eugène Berthoud, 93400 Saint-Ouen-sur-Seine',
+                        'id' => '93070_3185',
+                        'street' => 'Rue Eugène Berthoud',
+                    ],
+                ],
+            ],
+            ['street', "Boulevard de l'Hôpital"] => [
+                [
+                    'properties' => [
+                        'id' => '75113_4649',
+                        'street' => "Boulevard de l'Hôpital",
                     ],
                 ],
             ],

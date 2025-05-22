@@ -13,7 +13,7 @@ use Doctrine\DBAL\Connection;
 class StorageAreaMigrationGenerator
 {
     public function __construct(
-        private readonly Connection $bdtopoConnection,
+        private readonly Connection $bdtopo2025Connection,
         private RoadGeocoderInterface $roadGeocoder,
         private readonly RoadSectionMakerInterface $roadSectionMaker,
     ) {
@@ -25,7 +25,7 @@ class StorageAreaMigrationGenerator
         // Tous les gestionnaires dans le CSV sont des DIR. Et dans la BDTOPO, il n'existe qu'un gestionnaire DIR par nationale.
         // On retrouve donc le gestionnaire BDTOPO à partir du numéro de nationale.
 
-        $row = $this->bdtopoConnection->fetchAssociative(
+        $row = $this->bdtopo2025Connection->fetchAssociative(
             'SELECT gestionnaire FROM route_numerotee_ou_nommee WHERE numero = :numero AND gestionnaire LIKE \'DIR%\'',
             ['numero' => $roadNumber],
         );
