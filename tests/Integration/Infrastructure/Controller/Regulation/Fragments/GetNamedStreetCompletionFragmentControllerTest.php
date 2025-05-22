@@ -6,12 +6,12 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
-final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCase
+final class GetNamedStreetCompletionFragmentControllerTest extends AbstractWebTestCase
 {
     public function testStreetAutoComplete(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/address-completions?search=Rue Eugène Berthoud&cityCode=93070');
+        $crawler = $client->request('GET', '/_fragment/named-street-completions?search=Rue Eugène Berthoud&cityCode=93070');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -25,7 +25,7 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
     public function testBadRequest(): void
     {
         $client = $this->login();
-        $client->request('GET', '/_fragment/address-completions');
+        $client->request('GET', '/_fragment/named-street-completions');
         $client->getResponse();
 
         $this->assertResponseStatusCodeSame(400);
@@ -34,7 +34,7 @@ final class GetAddressCompletionFragmentControllerTest extends AbstractWebTestCa
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/_fragment/address-completions?search=Test');
+        $client->request('GET', '/_fragment/named-street-completions?search=Test');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }

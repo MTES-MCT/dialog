@@ -20,6 +20,7 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
 {
     private string $cityCode;
     private string $cityLabel;
+    private string $roadBanId;
     private string $roadName;
     private string $fromHouseNumber;
     private string $toHouseNumber;
@@ -36,6 +37,7 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
 
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
+        $this->roadBanId = '44195_0137';
         $this->roadName = 'Route du Grand Brossais';
         $this->fromHouseNumber = '15';
         $this->toHouseNumber = '37bis';
@@ -71,6 +73,7 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
                         direction: $this->direction,
                         cityCode: $this->cityCode,
                         cityLabel: $this->cityLabel,
+                        roadBanId: $this->roadBanId,
                         roadName: $this->roadName,
                         fromHouseNumber: $this->fromHouseNumber,
                         toHouseNumber: $this->toHouseNumber,
@@ -89,6 +92,7 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
         $command->direction = DirectionEnum::BOTH->value;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
+        $command->roadBanId = $this->roadBanId;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
         $command->toHouseNumber = $this->toHouseNumber;
@@ -129,10 +133,13 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
                 $this->direction,
                 $this->cityCode,
                 $this->cityLabel,
+                $this->roadBanId,
                 $this->roadName,
                 $this->fromHouseNumber,
                 null,
+                null,
                 $this->toHouseNumber,
+                null,
                 null,
             );
 
@@ -154,11 +161,13 @@ final class SaveNamedStreetCommandHandlerTest extends TestCase
         $command->direction = $this->direction;
         $command->cityCode = $this->cityCode;
         $command->cityLabel = $this->cityLabel;
+        $command->roadBanId = $this->roadBanId;
         $command->roadName = $this->roadName;
         $command->fromHouseNumber = $this->fromHouseNumber;
+        $command->fromRoadBanId = null;
         $command->fromRoadName = null;
         $command->toHouseNumber = $this->toHouseNumber;
-        $command->toRoadName = null;
+        $command->toRoadBanId = null;
 
         $this->assertSame($namedStreet, $handler($command));
     }
