@@ -33,16 +33,14 @@ final class SaveRegulationOrderTemplateCommandHandler
         }
 
         return $this->regulationOrderTemplateRepository->add(
-            new RegulationOrderTemplate(
-                uuid: $this->idFactory->make(),
-                name: $command->name,
-                title: $command->title,
-                visaContent: $command->visaContent,
-                consideringContent: $command->consideringContent,
-                articleContent: $command->articleContent,
-                createdAt: $this->dateUtils->getNow(),
-                organization: $command->organization,
-            ),
+            (new RegulationOrderTemplate($this->idFactory->make()))
+                ->setName($command->name)
+                ->setTitle($command->title)
+                ->setVisaContent($command->visaContent)
+                ->setConsideringContent($command->consideringContent)
+                ->setArticleContent($command->articleContent)
+                ->setOrganization($command->organization)
+                ->setCreatedAt($this->dateUtils->getNow()),
         );
     }
 }

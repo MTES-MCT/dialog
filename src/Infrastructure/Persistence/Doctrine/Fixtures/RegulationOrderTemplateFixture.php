@@ -14,26 +14,24 @@ final class RegulationOrderTemplateFixture extends Fixture implements DependentF
 {
     public function load(ObjectManager $manager): void
     {
-        $globalRegulationOrderTemplate = new RegulationOrderTemplate(
-            uuid: 'ba023736-35f6-49f4-a118-dc94f90ef42e',
-            name: 'Restriction de vitesse sur route nationale',
-            title: 'Arrete permanent n°[numero_arrete]',
-            visaContent: 'VU ...',
-            consideringContent: 'CONSIDERANT ...',
-            articleContent: 'ARTICLES ...',
-            createdAt: new \DateTime('2023-01-01'),
-        );
+        $globalRegulationOrderTemplate = new RegulationOrderTemplate('ba023736-35f6-49f4-a118-dc94f90ef42e');
+        $globalRegulationOrderTemplate
+            ->setName('Restriction de vitesse sur route nationale')
+            ->setTitle('Arrete permanent n°[numero_arrete]')
+            ->setVisaContent('VU ...')
+            ->setConsideringContent('CONSIDERANT ...')
+            ->setArticleContent('ARTICLES ...')
+            ->setCreatedAt(new \DateTime('2023-01-01'));
 
-        $regulationOrderTemplate = new RegulationOrderTemplate(
-            uuid: '54eacea0-e1e0-4823-828d-3eae72b76da8',
-            name: 'Réglementation de vitesse en agglomération',
-            title: 'Arrete temporaire n°[numero_arrete]',
-            visaContent: 'VU ...',
-            consideringContent: 'CONSIDERANT ...',
-            articleContent: 'ARTICLES ...',
-            createdAt: new \DateTime('2025-04-08'),
-            organization: $this->getReference('seineSaintDenisOrg', Organization::class),
-        );
+        $regulationOrderTemplate = new RegulationOrderTemplate('54eacea0-e1e0-4823-828d-3eae72b76da8');
+        $regulationOrderTemplate
+            ->setName('Réglementation de vitesse en agglomération')
+            ->setTitle('Arrete temporaire n°[numero_arrete]')
+            ->setVisaContent('VU ...')
+            ->setConsideringContent('CONSIDERANT ...')
+            ->setArticleContent('ARTICLES ...')
+            ->setCreatedAt(new \DateTime('2025-04-08'))
+            ->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
 
         $manager->persist($globalRegulationOrderTemplate);
         $manager->persist($regulationOrderTemplate);

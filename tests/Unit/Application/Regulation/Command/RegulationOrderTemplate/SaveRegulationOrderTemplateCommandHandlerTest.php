@@ -31,16 +31,15 @@ final class SaveRegulationOrderTemplateCommandHandlerTest extends TestCase
     {
         $organization = $this->createMock(Organization::class);
 
-        $regulationOrderTemplate = new RegulationOrderTemplate(
-            uuid: '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
-            name: 'Restriction de vitesse',
-            title: 'Arrete temporaire n°[numero_arrete]',
-            visaContent: 'VU ...',
-            consideringContent: 'CONSIDERANT ...',
-            articleContent: 'ARTICLES ...',
-            createdAt: new \DateTimeImmutable('2025-04-07'),
-            organization: $organization,
-        );
+        $regulationOrderTemplate = new RegulationOrderTemplate('9cebe00d-04d8-48da-89b1-059f6b7bfe44');
+        $regulationOrderTemplate
+            ->setName('Restriction de vitesse')
+            ->setTitle('Arrete temporaire n°[numero_arrete]')
+            ->setVisaContent('VU ...')
+            ->setConsideringContent('CONSIDERANT ...')
+            ->setArticleContent('ARTICLES ...')
+            ->setOrganization($organization)
+            ->setCreatedAt(new \DateTimeImmutable('2025-04-07'));
 
         $this->regulationOrderTemplateRepository
             ->expects(self::once())
