@@ -46,9 +46,11 @@
                                     <td>
                                         <div class="fr-btns-group fr-btns-group--center fr-btns-group--inline-sm">
                                             {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                                                <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-                                                    {{ 'common.update'|trans }}
-                                                </a>
+                                                {% if regulationOrderTemplate.organizationUuid %}
+                                                    <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_order_template_edit', { uuid: organization.uuid, regulationOrderTemplateUuid: regulationOrderTemplate.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                        {{ 'common.update'|trans }}
+                                                    </a>
+                                                {% endif %}
                                                 <form
                                                     method="POST"
                                                     action="{{ path('app_config_regulation_order_templates_duplicate', { uuid: regulationOrderTemplate.uuid, organizationUuid: organization.uuid }) }}"
