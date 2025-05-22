@@ -1,0 +1,21 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <h1>{{ 'mailing_list.email.title'|trans({'%name%': userName, '%identifier%': regulationOrder.identifier }) }}</h1>
+    <h2>{{ regulationOrder.title }}</h2>
+    <p>{{ 'mailing_list.email.description'|trans }}</p>
+    <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-mt-3w">
+        <li>
+            <a href="{{ baseUrl ~ path('app_regulation_detail', {uuid}) }}" role="button" class="fr-btn fr-btn--tertiary">
+                {{ 'mailing_list.email.btn.detail'|trans }}
+            </a>
+        </li>
+        <li>
+            <a href="{{ baseUrl ~ path('app_carto') }}" role="button" class="fr-btn fr-btn--icon-right fr-icon-road-map-line">
+                {{ 'mailing_list.email.btn.map'|trans }}
+            </a>
+        </li>
+    </ul>
+    <p class="fr-footer__bottom-copy">{{ 'mailing_list.email.help'|trans }}</p>
+{% endblock %}

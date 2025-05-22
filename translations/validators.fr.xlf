@@ -98,6 +98,10 @@
                 <source>regulation.location.error.organization_cannot_intervene_on_geometry</source>
                 <target>L'organisation "%organizationName%" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S'il s'agit d'une erreur, vous pouvez contacter le support DiaLog.</target>
             </trans-unit>
+            <trans-unit id="invalid.emails">
+                <source>invalid.emails</source>
+                <target>%value% n'est pas une adresse email valide.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

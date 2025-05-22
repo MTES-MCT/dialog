@@ -149,6 +149,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $crawler->selectButton('Supprimer')->count());
         $this->assertSame(0, $crawler->selectButton('Dupliquer')->count());
         $this->assertSame(0, $crawler->selectButton('Modifier')->count());
+        $this->assertSame(0, $crawler->selectButton('Partager')->count());
 
         $this->assertResponseStatusCodeSame(200);
     }

@@ -82,6 +82,12 @@
                                             </div>
                                         </li>
                                     {% endif %}
+                                    {% if not isDraft %}
+                                        <li>
+                                            <a href="{{ path('app_mailing_list_share', { uuid: regulationOrderRecord.uuid })}}" role="button" class="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-send-plane-line">{{ 'common.share'|trans }}</a>
+                                            <hr class="fr-mt-1w">
+                                        </li>
+                                    {% endif %}
                                     <li>
                                         {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
                                         <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInfo.uuid })}}">
