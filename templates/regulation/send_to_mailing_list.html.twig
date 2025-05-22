@@ -1,0 +1,46 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{'recipient.share.title'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-px-md-0 fr-py-10v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                {% include "common/breadcrumb.html.twig" with { items: [
+                { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
+                { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': identifier }), url: path('app_regulation_detail', {uuid}), generatedPath: true },
+                { title: 'mailing.list.share.breadcrumb'|trans({ '%identifier%': identifier }) }
+                ]} %}
+
+                <h4>{{ 'recipient.share.title'|trans }}</h4>
+                <p>{{ 'recipient.share.title.help'|trans }}</p>
+                {{ form_start(form) }}
+                    {{ form_row(form.emails, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                    <hr class="fr-mt-3w">
+                    <div>
+                        <span>{{ 'mailing.list.share.title'|trans }}</span>
+                        <p class="fr-my-2w fr-message fr-message--info">{{ 'recipient.mailing.list.help'|trans({'%href%': path('app_my_area')})|raw }}
+                        </p>
+                        <div class="fr-checkbox-group">
+                            {{ form_widget(form.recipients) }}
+                        </div>
+                    </div>
+                    <hr class="fr-mt-3w">
+                    <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-mt-3w">
+                        <li>
+                            <a href="{{ path('app_regulation_detail', {uuid}) }}" role="button" class="fr-btn fr-btn--tertiary">
+                                {{ "common.cancel"|trans }}
+                            </a>
+                        </li>
+                        <li class="fr-btn">
+                            {{ form_widget(form.save, {attr: {class: 'fr-btn--icon-right fr-icon-send-plane-line'}}) }}
+                        </li>
+                    </ul>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+    </section>
+{% endblock %}

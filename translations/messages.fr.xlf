@@ -74,6 +74,10 @@
                 <source>common.see</source>
                 <target>Voir le détail</target>
             </trans-unit>
+            <trans-unit id="common.share">
+                <source>common.share</source>
+                <target>Partager</target>
+            </trans-unit>
             <trans-unit id="common.duplicate">
                 <source>common.duplicate</source>
                 <target>Dupliquer</target>
@@ -2317,9 +2321,50 @@
                 <source>recipient.list.role</source>
                 <target>Fonction</target>
             </trans-unit>
+            <trans-unit id="recipient.share.title">
+                <source>recipient.share.title</source>
+                <target>Partager l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="recipient.share.title.help">
+                <source>recipient.share.title.help</source>
+                <target>Entrez les adresses emails des destinataires, ou sélectionnez dans la liste de diffusion.</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share.title">
+                <source>mailing.list.share.title</source>
+                <target>Liste de diffusion</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share.breadcrumb">
+                <source>mailing.list.share.breadcrumb</source>
+                <target>Partager l'arrêté %identifier%</target>
+            </trans-unit>
+            <trans-unit id="recipient.form.email">
+                <source>recipient.form.email</source>
+                <target>Destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.form.email.help">
+                <source>recipient.form.email.help</source>
+                <target>Entrez les adresses emails des destinataires séparées par une virgule.</target>
+            </trans-unit>
+            <trans-unit id="recipient.mailing.list.help">
+                <source>recipient.mailing.list.help</source>
+                <target>Vous pouvez définir une liste de diffusion dans les paramètres de l’organisation : <![CDATA[<a href="%href%">]]> mon espace<![CDATA[</a>]]></target>
+            </trans-unit>
+            <trans-unit id="recipient.mailing.list.all">
+                <source>recipient.mailing.list.all</source>
+                <target>Tous les destinataires</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share">
+                <source>mailing.list.share</source>
+                <target>Partager</target>
+            </trans-unit>
             <trans-unit id="add.recipient.form.title">
                 <source>add.recipient.form.title</source>
                 <target>Ajouter un destinataire</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share.succeeded">
+                <source>mailing.list.share.succeeded</source>
+                <target><![CDATA[<h3 class="fr-alert__title">]]>Emails de partage envoyés<![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>L’arrêté a bien été partagé aux destinataires.<![CDATA[</p>]]></target>
             </trans-unit>
             <trans-unit id="recipient.name">
                 <source>recipient.name</source>

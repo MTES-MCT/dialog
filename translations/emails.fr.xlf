@@ -50,6 +50,34 @@
                 <source>organization_invitation.join</source>
                 <target>Je rejoins cette organisation</target>
             </trans-unit>
+            <trans-unit id="mailing_list.email.subject">
+                <source>mailing_list.email.subject</source>
+                <target>Arrêté de circulation publié</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.title">
+                <source>mailing_list.email.title</source>
+                <target>%name% vous invite à voir l’arrêté N° %identifier%</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.under.title">
+                <source>mailing_list.email.under.title</source>
+                <target>%title%</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.description">
+                <source>mailing_list.email.description</source>
+                <target>Vous pouvez voir les informations de l’arrêté sur DiaLog ou les restrictions directement sur la carte.</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.btn.detail">
+                <source>mailing_list.email.btn.detail</source>
+                <target>Voir l’arrêté DiaLog</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.btn.map">
+                <source>mailing_list.email.btn.map</source>
+                <target>Voir sur la carte</target>
+            </trans-unit>
+            <trans-unit id="mailing_list.email.help">
+                <source>mailing_list.email.help</source>
+                <target>Si vous avez des difficultés à accéder à DiaLog, écrivez-nous à : dialog@beta.gouv.fr</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
