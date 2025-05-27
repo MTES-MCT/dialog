@@ -6,8 +6,10 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="path" type="string" column="path" nullable="true"/>
     <field name="url" type="string" column="url" nullable="true"/>
-    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="storageRegulationOrder">
-      <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder">
+      <join-columns>
+        <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+    </join-columns>
     </one-to-one>
   </entity>
 </doctrine-mapping>
