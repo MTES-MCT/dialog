@@ -1,0 +1,20 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+     - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        {{ form_start(form, { attr: { 'data-controller': 'form-submit' }}) }}
+            {{ form_row(form.file, {
+                attr: {
+                    'data-action': 'change->form-submit#submit',
+                },
+                file_button_enabled: true,
+                file_button_label: 'Parcourir',
+                file_button_icon: 'fr-icon-upload-fill',
+            }) }}
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

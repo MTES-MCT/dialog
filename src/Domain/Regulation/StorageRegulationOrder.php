@@ -33,4 +33,11 @@ class StorageRegulationOrder
     {
         return $this->url;
     }
+
+    public function setPath(?string $path): self
+    {
+        $this->path = $path;
+
+        return $this;
+    }
 }
