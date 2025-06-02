@@ -491,6 +491,14 @@
                 <source>regulation.general_info.visas.help</source>
                 <target>Ajouter les visas que vous souhaitez voir dans votre arrêté. Par exemple, “Vu le code de la route...”.</target>
             </trans-unit>
+            <trans-unit id="regulation.general_info.regulation_order_template">
+                <source>regulation.general_info.regulation_order_template</source>
+                <target>Modèle de l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.regulation_order_template.placeholder">
+                <source>regulation.general_info.regulation_order_template.placeholder</source>
+                <target>Sélectionner un modèle de l'arrêté</target>
+            </trans-unit>
             <trans-unit id="regulation.general_info.reasons.help">
                 <source>regulation.general_info.reasons.help</source>
                 <target>Ajouter les motifs que vous souhaitez voir dans votre arrêté. Par exemple, “Considérant qu'en raison du déroulement des travaux de...”.</target>
@@ -2756,7 +2764,7 @@
             </trans-unit>
             <trans-unit id="regulation_order_template.variables.description">
                 <source>regulation_order_template.variables.description</source>
-                <target>Copier les variables que vous souhaitez utiliser dans votre modèle d'arrêté.</target>
+                <target>Copiez les variables que vous souhaitez utiliser dans votre modèle d’arrêté. Elles seront remplacées par les bonnes données au moment de l'export du document.</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.variables.intitule">
                 <source>regulation_order_template.variables.intitule</source>
@@ -2766,29 +2774,29 @@
                 <source>regulation_order_template.variables.name</source>
                 <target>Nom de la variable</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.number">
-                <source>regulation_order_template.variables.list.number</source>
+            <trans-unit id="regulation_order_template.variables.list.numero_arrete">
+                <source>regulation_order_template.variables.list.numero_arrete</source>
                 <target>Numéro d'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.intitule">
-                <source>regulation_order_template.variables.list.intitule</source>
+            <trans-unit id="regulation_order_template.variables.list.intitule_arrete">
+                <source>regulation_order_template.variables.list.intitule_arrete</source>
                 <target>Intitulé de l'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.start_pr">
-                <source>regulation_order_template.variables.list.start_pr</source>
-                <target>Numéro du PR de début</target>
+            <trans-unit id="regulation_order_template.variables.list.pouvoir_de_signature">
+                <source>regulation_order_template.variables.list.pouvoir_de_signature</source>
+                <target>Pouvoir de signature (ex: le maire)</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.end_pr">
-                <source>regulation_order_template.variables.list.end_pr</source>
-                <target>Numéro du PR de fin</target>
+            <trans-unit id="regulation_order_template.variables.list.nom_commune">
+                <source>regulation_order_template.variables.list.nom_commune</source>
+                <target>Nom de la commune</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.signatory_name">
-                <source>regulation_order_template.variables.list.signatory_name</source>
-                <target>Nom du signataire</target>
+            <trans-unit id="regulation_order_template.variables.list.nom_signataire">
+                <source>regulation_order_template.variables.list.nom_signataire</source>
+                <target>Nom du signataire effectif (ex: l'adjoint au maire)</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.national_road_number">
-                <source>regulation_order_template.variables.list.national_road_number</source>
-                <target>Numéro de la route nationale</target>
+            <trans-unit id="regulation_order_template.variables.list.mesures">
+                <source>regulation_order_template.variables.list.mesures</source>
+                <target>Mesures (restrictions, localisations, périodes, etc.)</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.delete_modal.title">
                 <source>regulation_order_template.delete_modal.title</source>
