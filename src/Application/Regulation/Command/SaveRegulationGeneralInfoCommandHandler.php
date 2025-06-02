@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
@@ -34,6 +35,10 @@ final class SaveRegulationGeneralInfoCommandHandler
             ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
             : null;
 
+        $regulationOrderTemplate = $command->regulationOrderTemplateUuid
+            ? $this->queryBus->handle(new GetRegulationOrderTemplateQuery($command->regulationOrderTemplateUuid))
+            : null;
+
         // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
         if (!$command->regulationOrderRecord instanceof RegulationOrderRecord) {
             $regulationOrder = $this->regulationOrderRepository->add(
@@ -47,6 +52,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                     additionalVisas: $command->additionalVisas,
                     additionalReasons: $command->additionalReasons,
                     visaModel: $visaModel,
+                    regulationOrderTemplate: $regulationOrderTemplate,
                 ),
             );
             $regulationOrderRecord = $this->regulationOrderRecordRepository->add(
@@ -78,6 +84,7 @@ final class SaveRegulationGeneralInfoCommandHandler
             additionalVisas: $command->additionalVisas,
             additionalReasons: $command->additionalReasons,
             visaModel: $visaModel,
+            regulationOrderTemplate: $regulationOrderTemplate,
         );
 
         $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value));

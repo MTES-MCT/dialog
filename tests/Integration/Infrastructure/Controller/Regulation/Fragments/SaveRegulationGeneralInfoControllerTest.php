@@ -60,6 +60,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
         $values['general_info_form']['otherCategoryText'] = 'Travaux';
+        $values['general_info_form']['regulationOrderTemplateUuid'] = 'ba023736-35f6-49f4-a118-dc94f90ef42e';
         $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
         $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
         $values['general_info_form']['additionalReasons'][0] = 'Motif 1';

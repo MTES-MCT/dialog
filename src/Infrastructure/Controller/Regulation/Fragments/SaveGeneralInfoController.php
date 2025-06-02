@@ -8,6 +8,8 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Query\GetRegulationOrderTemplatesQuery;
+use App\Domain\Regulation\DTO\RegulationOrderTemplateDTO;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
@@ -47,6 +49,10 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($organizationUuid));
 
+        $dto = new RegulationOrderTemplateDTO();
+        $dto->organizationUuid = $organizationUuid;
+        $regulationOrderTemplates = $this->queryBus->handle(new GetRegulationOrderTemplatesQuery($dto));
+
         $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
 
         $form = $this->formFactory->create(
@@ -55,6 +61,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
             options: [
                 'organizations' => $user->getUserOrganizations(),
                 'visaModels' => $visaModels,
+                'regulationOrderTemplates' => $regulationOrderTemplates,
                 'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
                 'save_options' => [
                     'label' => 'common.form.validate',
