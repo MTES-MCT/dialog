@@ -56,7 +56,7 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->commandBus->handle($command);
+            $this->commandBus->dispatchAsync($command);
 
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();
