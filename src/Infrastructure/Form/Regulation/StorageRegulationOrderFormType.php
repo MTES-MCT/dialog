@@ -38,6 +38,7 @@ final class StorageRegulationOrderFormType extends AbstractType
                 SubmitType::class,
                 options: [
                     'label' => 'common.form.apply',
+                    'attr' => ['class' => 'fr-btn'],
                 ],
             )
         ;
