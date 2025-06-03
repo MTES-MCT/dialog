@@ -22,6 +22,7 @@ class RegulationOrder
         private ?string $subject = null,
         private ?string $otherCategoryText = null,
         private ?VisaModel $visaModel = null,
+        private ?RegulationOrderTemplate $regulationOrderTemplate = null,
         private ?array $additionalVisas = [],
         private ?array $additionalReasons = [],
     ) {
@@ -85,6 +86,11 @@ class RegulationOrder
         return $this->visaModel;
     }
 
+    public function getRegulationOrderTemplate(): ?RegulationOrderTemplate
+    {
+        return $this->regulationOrderTemplate;
+    }
+
     public function getAdditionalVisas(): array
     {
         return $this->additionalVisas ?? [];
@@ -104,6 +110,7 @@ class RegulationOrder
         array $additionalVisas = [],
         array $additionalReasons = [],
         ?VisaModel $visaModel = null,
+        ?RegulationOrderTemplate $regulationOrderTemplate = null,
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;
@@ -113,5 +120,6 @@ class RegulationOrder
         $this->additionalVisas = $additionalVisas;
         $this->additionalReasons = $additionalReasons;
         $this->visaModel = $visaModel;
+        $this->regulationOrderTemplate = $regulationOrderTemplate;
     }
 }

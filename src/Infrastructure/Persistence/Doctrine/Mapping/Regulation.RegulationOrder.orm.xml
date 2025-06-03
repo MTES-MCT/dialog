@@ -18,5 +18,10 @@
           <join-column name="visa_model_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
       </join-columns>
   </many-to-one>
+  <many-to-one field="regulationOrderTemplate" target-entity="App\Domain\Regulation\RegulationOrderTemplate">
+    <join-columns>
+      <join-column name="regulation_order_template_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
+    </join-columns>
+  </many-to-one>
   </entity>
 </doctrine-mapping>

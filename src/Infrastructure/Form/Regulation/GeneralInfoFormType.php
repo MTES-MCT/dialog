@@ -66,6 +66,11 @@ final class GeneralInfoFormType extends AbstractType
                 options: $this->getVisaModels($options['visaModels']),
             )
             ->add(
+                'regulationOrderTemplateUuid',
+                ChoiceType::class,
+                options: $this->getRegulationOrderTemplates($options['regulationOrderTemplates']),
+            )
+            ->add(
                 'otherCategoryText',
                 TextType::class,
                 options: [
@@ -204,16 +209,35 @@ final class GeneralInfoFormType extends AbstractType
         ];
     }
 
+    private function getRegulationOrderTemplates(array $regulationOrderTemplates = []): array
+    {
+        $choices = [
+            'regulation.general_info.regulation_order_template.placeholder' => '',
+        ];
+
+        foreach ($regulationOrderTemplates as $regulationOrderTemplate) {
+            $choices[$regulationOrderTemplate->name] = $regulationOrderTemplate->uuid;
+        }
+
+        return [
+            'choices' => $choices,
+            'label' => 'regulation.general_info.regulation_order_template',
+            'required' => false,
+        ];
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'organizations' => [],
             'visaModels' => [],
+            'regulationOrderTemplates' => [],
             'save_options' => [],
         ]);
         $resolver->setAllowedTypes('organizations', 'array');
         $resolver->setAllowedTypes('visaModels', 'array');
+        $resolver->setAllowedTypes('regulationOrderTemplates', 'array');
         $resolver->setAllowedTypes('save_options', 'array');
     }
 }
