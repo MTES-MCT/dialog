@@ -54,7 +54,16 @@
                         <div class="fr-tile__body">
                             <div class="fr-tile__content">
                                 <h3 class="fr-tile__title">
-                                    <a href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}">{{ organization.name }}</a>
+                                    {% if organization.completed %}
+                                        <span class="fr-badge fr-badge--success fr-badge--sm fr-text--xs fr-mb-1w">
+                                            {{ 'organization.completed'|trans }}
+                                        </span>
+                                    {% else %}
+                                        <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mb-1w">
+                                            {{ 'organization.not_completed'|trans }}
+                                        </span>
+                                    {% endif %}
+                                    <a class="fr-x-block" href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}">{{ organization.name }}</a>
                                 </h3>
                                 <p class="fr-tile__detail">
                                     {% for role in organization.roles %}
