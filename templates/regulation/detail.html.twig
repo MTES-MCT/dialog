@@ -73,6 +73,31 @@
 
                         <div class="app-card app-card--raised fr-mt-2w">
                             <div class="app-card__content">
+                                <h3 class="fr-h4 fr-mb-2w">Ressources</h3>
+                                <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
+                                    <li>
+                                        <div id="block_ressources">
+                                            {% set deleteCsrfToken = csrf_token('delete-storage') %}
+                                            <form method="POST" action="{{ path('app_config_regulation_delete_storage', { uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <d-modal-trigger modal="regulation-delete-modal" submitValue="delete">
+                                                    <button
+                                                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
+                                                        aria-controls="regulation-delete-modal"
+                                                    >
+                                                        {{'common.delete'|trans}}
+                                                    </button>
+                                                </d-modal-trigger>
+                                                <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                                            </form>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="app-card app-card--raised fr-mt-2w">
+                            <div class="app-card__content">
                                 <h3 class="fr-h4 fr-mb-2w">{{ 'common.actions'|trans }}</h3>
                                 <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
                                     {% if isDraft %}
