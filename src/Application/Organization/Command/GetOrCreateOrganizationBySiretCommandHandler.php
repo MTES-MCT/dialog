@@ -10,6 +10,8 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\Organization\View\OrganizationFetchedView;
+use App\Domain\Organization\Establishment\Establishment;
+use App\Domain\Organization\Establishment\Repository\EstablishmentRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
@@ -20,6 +22,7 @@ final class GetOrCreateOrganizationBySiretCommandHandler
     public function __construct(
         private IdFactoryInterface $idFactory,
         private OrganizationRepositoryInterface $organizationRepository,
+        private EstablishmentRepositoryInterface $establishmentRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private DateUtilsInterface $dateUtils,
         private ApiOrganizationFetcherInterface $organizationFetcher,
@@ -49,6 +52,24 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                 ->setCodeType($organizationFetchedView->codeType)
                 ->setDepartmentCode($organizationFetchedView->departmentCode)
                 ->setDepartmentName($organizationFetchedView->departmentName);
+
+            if ($organizationFetchedView->establishmentAddress
+                && $organizationFetchedView->establishmentZipCode
+                && $organizationFetchedView->establishmentCity
+            ) {
+                $establishment = new Establishment(
+                    uuid: $this->idFactory->make(),
+                    address: $organizationFetchedView->establishmentAddress,
+                    zipCode: $organizationFetchedView->establishmentZipCode,
+                    city: $organizationFetchedView->establishmentCity,
+                    organization: $organization,
+                    addressComplement: $organizationFetchedView->establishmentAddressComplement,
+                );
+
+                $organization->setEstablishment($establishment);
+                $this->establishmentRepository->add($establishment);
+                $this->establishmentRepository->flush();
+            }
 
             $this->organizationRepository->add($organization);
             $this->organizationRepository->flush();

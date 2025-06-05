@@ -14,6 +14,8 @@ use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\Organization\View\OrganizationFetchedView;
 use App\Application\User\View\OrganizationUserView;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
+use App\Domain\Organization\Establishment\Establishment;
+use App\Domain\Organization\Establishment\Repository\EstablishmentRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
@@ -26,6 +28,7 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
     private MockObject $idFactory;
     private MockObject $organizationRepository;
     private MockObject $organizationUserRepository;
+    private MockObject $establishmentRepository;
     private MockObject $dateUtils;
     private MockObject $organizationFetcher;
     private MockObject $commandBus;
@@ -38,6 +41,7 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
         $this->organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
+        $this->establishmentRepository = $this->createMock(EstablishmentRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->organizationFetcher = $this->createMock(ApiOrganizationFetcherInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
@@ -45,6 +49,7 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
         $this->handler = new GetOrCreateOrganizationBySiretCommandHandler(
             $this->idFactory,
             $this->organizationRepository,
+            $this->establishmentRepository,
             $this->organizationUserRepository,
             $this->dateUtils,
             $this->organizationFetcher,
@@ -117,6 +122,10 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             codeType: $orgCodeType,
             departmentName: $departmentName,
             departmentCode: $departmentCode,
+            establishmentAddress: ' 7 Pl. de la République',
+            establishmentZipCode: '93406',
+            establishmentCity: 'Saint-Ouen-sur-Seine',
+            establishmentAddressComplement: null,
         );
 
         $this->organizationFetcher
@@ -131,9 +140,9 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->willReturn($now);
 
         $this->idFactory
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('make')
-            ->willReturn($orgUuid);
+            ->willReturnOnConsecutiveCalls($orgUuid, '123e4567-e89b-12d3-a456-426614174000');
 
         $expectedOrganization = (new Organization($orgUuid))
             ->setCreatedAt($now)
@@ -143,6 +152,20 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->setCodeType($orgCodeType)
             ->setDepartmentName($departmentName)
             ->setDepartmentCode($departmentCode);
+
+        $establishment = new Establishment(
+            uuid: '123e4567-e89b-12d3-a456-426614174000',
+            address: $organizationFetchedView->establishmentAddress,
+            zipCode: $organizationFetchedView->establishmentZipCode,
+            city: $organizationFetchedView->establishmentCity,
+            organization: $expectedOrganization,
+        );
+        $expectedOrganization->setEstablishment($establishment);
+
+        $this->establishmentRepository
+            ->expects($this->once())
+            ->method('add')
+            ->with($establishment);
 
         $this->organizationRepository
             ->expects($this->once())
@@ -195,6 +218,10 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
             ->method('make');
 
         $this->organizationRepository
+            ->expects($this->never())
+            ->method('add');
+
+        $this->establishmentRepository
             ->expects($this->never())
             ->method('add');
 
