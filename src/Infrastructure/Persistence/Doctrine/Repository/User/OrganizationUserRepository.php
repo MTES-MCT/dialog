@@ -36,6 +36,12 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
                 'NEW %s(
                     o.uuid,
                     o.name,
+                    CASE
+                        WHEN
+                            o.logo IS NOT NULL AND (SELECT COUNT(sa) FROM App\Domain\Organization\SigningAuthority\SigningAuthority sa WHERE sa.organization = o.uuid) > 0
+                        THEN true
+                        ELSE false
+                    END,
                     ou.roles
                 )',
                 UserOrganizationView::class,

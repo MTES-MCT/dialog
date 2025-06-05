@@ -2025,6 +2025,14 @@
                 <source>organization.name</source>
                 <target>Organisation</target>
             </trans-unit>
+            <trans-unit id="organization.completed">
+                <source>organization.completed</source>
+                <target>Complété</target>
+            </trans-unit>
+            <trans-unit id="organization.not_completed">
+                <source>organization.not_completed</source>
+                <target>À compléter</target>
+            </trans-unit>
             <trans-unit id="organization.logo">
                 <source>organization.logo</source>
                 <target>Logo</target>
@@ -2582,9 +2590,9 @@
                 <source>visas.form.visas.help</source>
                 <target>Définissez le texte qui apparaîtra en tant que visas (Vu...) dans les arrêtés</target>
             </trans-unit>
-            <trans-unit id="myarea.title">
-                <source>myarea.title</source>
-                <target>Mon espace</target>
+            <trans-unit id="myorganization.title">
+                <source>myorganization.title</source>
+                <target>Mes organisations</target>
             </trans-unit>
             <trans-unit id="visa.delete_modal.title">
                 <source>visa.delete_modal.title</source>

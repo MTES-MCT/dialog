@@ -39,7 +39,7 @@
                                 </li>
                                 <li>
                                     <a class="fr-btn fr-icon-account-circle-fill" href="{{ path('app_my_area') }}">
-                                        {{ 'myarea.title'|trans }}
+                                        {{ app.user.fullName }}
                                     </a>
                                 </li>
                             {% else %}

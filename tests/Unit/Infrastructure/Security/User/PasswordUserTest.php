@@ -15,7 +15,7 @@ class PasswordUserTest extends TestCase
 {
     public function testUser()
     {
-        $organizationUser = new UserOrganizationView('133fb411-7754-4749-9590-ce05a2abe108', 'Mairie de Savenay', []);
+        $organizationUser = new UserOrganizationView('133fb411-7754-4749-9590-ce05a2abe108', 'Mairie de Savenay', true, []);
 
         $userPasswordUser = $this->createMock(UserPasswordUser::class);
         $userPasswordUser->expects(self::once())->method('getPassword')->willReturn('password');
