@@ -40,4 +40,11 @@ class StorageRegulationOrder
 
         return $this;
     }
+
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
+
+        return $this;
+    }
 }

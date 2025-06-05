@@ -9,4 +9,8 @@ use App\Domain\Regulation\StorageRegulationOrder;
 interface StorageRegulationOrderRepositoryInterface
 {
     public function add(StorageRegulationOrder $storageRegulationOrder): StorageRegulationOrder;
+
+    public function findOneByRegulationOrderUuid(string $uuid): ?StorageRegulationOrder;
+
+    public function remove(StorageRegulationOrder $storageRegulationOrder): void;
 }
