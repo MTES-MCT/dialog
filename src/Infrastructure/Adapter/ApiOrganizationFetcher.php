@@ -87,7 +87,7 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
             codeType: $codeType,
             departmentName: $departmentName,
             departmentCode: $departmentCode,
-            establishmentAddress: \sprintf('%s %s', $siege['numero_voie'], $siege['libelle_voie']),
+            establishmentAddress: \sprintf('%s %s %s', $siege['numero_voie'], $siege['type_voie'], $siege['libelle_voie']),
             establishmentZipCode: $siege['code_postal'],
             establishmentCity: $siege['libelle_commune'],
             establishmentAddressComplement: $siege['complement_adresse'] ?? null,

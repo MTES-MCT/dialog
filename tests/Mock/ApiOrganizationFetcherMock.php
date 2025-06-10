@@ -36,7 +36,8 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'siege' => [
                             'departement' => '44',
                             'numero_voie' => '7',
-                            'libelle_voie' => 'Rue de la République',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
                             'complement_adresse' => 'Bâtiment A',
                             'code_postal' => '44195',
                             'libelle_commune' => 'Savenay',
@@ -54,7 +55,8 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'siege' => [
                             'departement' => '93',
                             'numero_voie' => '7',
-                            'libelle_voie' => 'Rue de la République',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
                             'complement_adresse' => 'Bâtiment A',
                             'code_postal' => '93406',
                             'libelle_commune' => 'Saint-Ouen-sur-Seine',
@@ -72,7 +74,8 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'siege' => [
                             'epci' => '200054781',
                             'numero_voie' => '7',
-                            'libelle_voie' => 'Rue de la République',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
                             'complement_adresse' => 'Bâtiment A',
                             'code_postal' => '93406',
                             'libelle_commune' => 'Saint-Ouen-sur-Seine',
@@ -90,7 +93,8 @@ final class ApiOrganizationFetcherMock extends MockHttpClient
                         'siege' => [
                             'region' => '11',
                             'numero_voie' => '7',
-                            'libelle_voie' => 'Rue de la République',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
                             'complement_adresse' => 'Bâtiment A',
                             'code_postal' => '93406',
                             'libelle_commune' => 'Saint-Ouen-sur-Seine',
