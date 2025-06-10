@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\ApiOrganizationFetcherInterface;
+use App\Application\IdFactoryInterface;
 use App\Application\Organization\View\OrganizationFetchedView;
+use App\Domain\Organization\Establishment\Establishment;
+use App\Domain\Organization\Establishment\Repository\EstablishmentRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,6 +27,8 @@ class SyncOrganizationsCodesCommand extends Command
     public function __construct(
         private OrganizationRepositoryInterface $organizationRepository,
         private ApiOrganizationFetcherInterface $organizationFetcher,
+        private EstablishmentRepositoryInterface $establishmentRepository,
+        private IdFactoryInterface $idFactory,
         private EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -43,6 +48,29 @@ class SyncOrganizationsCodesCommand extends Command
                     ->setCodeType($organizationFetchedView->codeType)
                     ->setDepartmentName($organizationFetchedView->departmentName)
                     ->setDepartmentCode($organizationFetchedView->departmentCode);
+
+                if ($organizationFetchedView->establishmentAddress && $organizationFetchedView->establishmentZipCode && $organizationFetchedView->establishmentCity) {
+                    if ($establishment = $organization->getEstablishment()) {
+                        $establishment->update(
+                            address: $organizationFetchedView->establishmentAddress,
+                            zipCode: $organizationFetchedView->establishmentZipCode,
+                            city: $organizationFetchedView->establishmentCity,
+                            addressComplement: $organizationFetchedView->establishmentAddressComplement,
+                        );
+                    } else {
+                        $establishment = new Establishment(
+                            uuid: $this->idFactory->make(),
+                            address: $organizationFetchedView->establishmentAddress,
+                            zipCode: $organizationFetchedView->establishmentZipCode,
+                            city: $organizationFetchedView->establishmentCity,
+                            organization: $organization,
+                            addressComplement: $organizationFetchedView->establishmentAddressComplement,
+                        );
+                        $this->establishmentRepository->add($establishment);
+                        $organization->setEstablishment($establishment);
+                    }
+                }
+
                 $this->entityManager->flush();
                 $output->writeln(\sprintf('<info>%s - %s</info>', $organization->getSiret(), $organization->getName()));
             } catch (OrganizationNotFoundException) {

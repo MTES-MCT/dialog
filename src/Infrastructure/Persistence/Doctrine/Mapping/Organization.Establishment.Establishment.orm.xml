@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Organization\Establishment\Establishment"
+    table="establishment">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="address" type="string" nullable="false"/>
+    <field name="zipCode" length="6" type="string" nullable="false"/>
+    <field name="city" length="100" type="string" nullable="false"/>
+    <field name="addressComplement" type="string" nullable="true"/>
+    <one-to-one field="organization" target-entity="App\Domain\User\Organization" inversed-by="establishment">
+      <join-column name="organization_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>
