@@ -21,6 +21,7 @@
         <option name="srid">4326</option>
       </options>
     </field>
+    <one-to-one field="establishment" target-entity="App\Domain\Organization\Establishment\Establishment" mapped-by="organization" />
     <unique-constraints>
         <unique-constraint columns="siret" name="organization_siret" />
     </unique-constraints>
