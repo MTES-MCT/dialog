@@ -47,4 +47,10 @@ class StorageRegulationOrder
 
         return $this;
     }
+
+    public function update(?string $path, ?string $url): void
+    {
+        $this->path = $path;
+        $this->url = $url;
+    }
 }

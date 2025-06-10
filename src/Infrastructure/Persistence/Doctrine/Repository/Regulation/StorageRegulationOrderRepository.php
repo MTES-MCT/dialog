@@ -26,10 +26,10 @@ final class StorageRegulationOrderRepository extends ServiceEntityRepository imp
     public function findOneByRegulationOrderUuid(string $uuid): ?StorageRegulationOrder
     {
         return $this->createQueryBuilder('sro')
-            ->select('sro.uuid, sro.regulationOrder, sro.path, sro.url')
-            ->where('sro.regulationOrderUuid = :uuid')
+            ->where('sro.regulationOrder = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('sro.regulationOrder', 'ro')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }

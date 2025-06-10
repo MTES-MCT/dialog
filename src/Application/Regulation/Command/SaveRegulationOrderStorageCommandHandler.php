@@ -23,16 +23,17 @@ final class SaveRegulationOrderStorageCommandHandler
         if ($command->file !== null || $command->url !== null) {
             $folder = \sprintf('regulationOrder/%s', $command->regulationOrder->getUuid());
 
-            $regulationOrderUuid = $command->regulationOrder->getUuid();
-            $storageRegulationOrder = $this->storageRegulationOrderRepository->findOneByRegulationOrderUuid($regulationOrderUuid);
-
-            if ($path = $storageRegulationOrder->getPath()) {
-                $this->storage->delete($path);
-                $storageRegulationOrder->setPath(null);
-            }
-
-            if ($url = $storageRegulationOrder->getUrl()) {
-                $storageRegulationOrder->setUrl(null);
+            if ($storageRegulationOrder = $command->storageRegulationOrder) {
+                /* $regulationOrderUuid = $command->regulationOrder->getUuid();
+                $storageRegulationOrder = $this->storageRegulationOrderRepository->findOneByRegulationOrderUuid($regulationOrderUuid); */
+                if ($command->file !== null) {
+                    $path = $storageRegulationOrder->getPath();
+                    $this->storage->delete($path);
+                    $storageRegulationOrder->setPath($this->storage->write($folder, $command->file));
+                }
+                if ($command->url !== null) {
+                    $storageRegulationOrder->setUrl($command->url);
+                }
             }
 
             $this->storageRegulationOrderRepository->add(

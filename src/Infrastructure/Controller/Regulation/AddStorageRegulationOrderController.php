@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 
-final class EditStorageRegulationOrderController extends AbstractRegulationController
+final class AddStorageRegulationOrderController extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
