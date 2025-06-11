@@ -21,7 +21,7 @@ final class IndexControllerTest extends AbstractWebTestCase
 
         $organizations = $crawler->filter('[data-testid="organization-list"]');
         $this->assertCount(2, $organizations->filter('[data-testid="organization-detail"]'));
-        $this->assertSame('Département de Seine-Saint-Denis Contributeur', $organizations->filter('[data-testid="organization-detail"]')->text());
+        $this->assertSame('Complété Département de Seine-Saint-Denis Contributeur', $organizations->filter('[data-testid="organization-detail"]')->text());
         $this->assertCount(0, $crawler->filter('[data-testid="admin-link"]'));
     }
 

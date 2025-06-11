@@ -49,7 +49,7 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
         }
 
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
-        $command = new SaveRegulationOrderStorageCommand($regulationOrder);
+        $command = new SaveRegulationOrderStorageCommand($regulationOrder, null);
         $form = $this->formFactory->create(StorageRegulationOrderFormType::class, $command);
         $form->handleRequest($request);
 

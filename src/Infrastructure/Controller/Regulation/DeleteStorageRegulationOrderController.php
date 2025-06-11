@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationOrderStorageCommand;
+use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -46,8 +47,9 @@ final class DeleteStorageRegulationOrderController extends AbstractRegulationCon
         }
 
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+        $storageRegulationOrder = $this->queryBus->handle(new GetStorageRegulationOrderQuery($regulationOrder));
 
-        $this->commandBus->handle(new DeleteRegulationOrderStorageCommand($regulationOrder));
+        $this->commandBus->handle(new DeleteRegulationOrderStorageCommand($storageRegulationOrder));
 
         return new RedirectResponse(
             url: $this->router->generate('app_config_organization_edit_logo', ['uuid' => $uuid]),

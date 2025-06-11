@@ -17,22 +17,13 @@ final class DeleteRegulationOrderStorageCommandHandler
 
     public function __invoke(DeleteRegulationOrderStorageCommand $command): void
     {
-        $regulationOrderUuid = $command->regulationOrder->getUuid();
-        $storageRegulationOrder = $this->storageRegulationOrderRepository->findOneByRegulationOrderUuid($regulationOrderUuid);
-
-        if (!$storageRegulationOrder) {
-            return;
-        }
+        $storageRegulationOrder = $command->storageRegulationOrder;
 
         $path = $storageRegulationOrder->getPath();
-        $url = $storageRegulationOrder->getUrl();
-
-        if ($path !== null && $url !== null) {
+        if ($path !== null) {
             $this->storage->delete($path);
             $storageRegulationOrder->setPath(null);
         }
-        if ($path !== null && $url === null || $path === null && $url !== null) {
-            $this->storageRegulationOrderRepository->remove($storageRegulationOrder);
-        }
+        $this->storageRegulationOrderRepository->remove($storageRegulationOrder);
     }
 }
