@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationOrderStorageCommand;
+use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Form\Regulation\StorageRegulationOrderFormType;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 
-final class AddStorageRegulationOrderController extends AbstractRegulationController
+final class EditStorageRegulationOrderController extends AbstractRegulationController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -35,8 +36,8 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
     }
 
     #[Route(
-        '/regulations/{uuid}/storage/add',
-        name: 'app_config_regulation_add_storage',
+        '/regulations/{uuid}/storage/edit',
+        name: 'app_config_regulation_edit_storage',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
@@ -49,7 +50,9 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
         }
 
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
-        $command = new SaveRegulationOrderStorageCommand($regulationOrder, null);
+        $storageRegulationOrder = $this->queryBus->handle(new GetStorageRegulationOrderQuery($regulationOrder));
+
+        $command = new SaveRegulationOrderStorageCommand($regulationOrder, $storageRegulationOrder);
         $form = $this->formFactory->create(StorageRegulationOrderFormType::class, $command);
         $form->handleRequest($request);
 
