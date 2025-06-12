@@ -23,27 +23,29 @@ final class SaveRegulationOrderStorageCommandHandler
         if ($command->file !== null || $command->url !== null) {
             $folder = \sprintf('regulationOrder/%s', $command->regulationOrder->getUuid());
 
-            /* if ($storageRegulationOrder = $command->storageRegulationOrder) {
-                $regulationOrderUuid = $command->regulationOrder->getUuid();
-                $storageRegulationOrder = $this->storageRegulationOrderRepository->findOneByRegulationOrderUuid($regulationOrderUuid);
-                if ($command->file !== null) {
+            if ($storageRegulationOrder = $command->storageRegulationOrder) {
+                /* if ($command->file !== null) {
                     $path = $storageRegulationOrder->getPath();
                     $this->storage->delete($path);
                     $storageRegulationOrder->setPath($this->storage->write($folder, $command->file));
-                }
-                if ($command->url !== null) {
-                    $storageRegulationOrder->setUrl($command->url);
-                }
-            } */
+                }*/
 
-            $this->storageRegulationOrderRepository->add(
-                new StorageRegulationOrder(
-                    uuid: $this->idFactory->make(),
-                    regulationOrder: $command->regulationOrder,
-                    path: $command->file !== null ? $this->storage->write($folder, $command->file) : $command->file,
+                $storageRegulationOrder->update(
+                    path: $command->path,
                     url: $command->url,
-                ),
-            );
+                );
+            }
+
+            if (!$command->storageRegulationOrder instanceof StorageRegulationOrder) {
+                $this->storageRegulationOrderRepository->add(
+                    new StorageRegulationOrder(
+                        uuid: $this->idFactory->make(),
+                        regulationOrder: $command->regulationOrder,
+                        path: $command->file !== null ? $this->storage->write($folder, $command->file) : $command->file,
+                        url: $command->url,
+                    ),
+                );
+            }
         }
     }
 }

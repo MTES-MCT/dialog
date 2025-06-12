@@ -399,6 +399,18 @@
                 <source>regulation.export.doc.mention</source>
                 <target>DOCX - moins de 100ko</target>
             </trans-unit>
+            <trans-unit id="regulation.import">
+                <source>regulation.import</source>
+                <target>Ressources</target>
+            </trans-unit>
+            <trans-unit id="regulation.import.description">
+                <source>regulation.import.description</source>
+                <target>Importer un fichier ou ajouter un lien vers le document d’arrêté officiel.</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage">
+                <source>regulation.storage</source>
+                <target>Ajouter un fichier</target>
+            </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
                 <target>Commune</target>
