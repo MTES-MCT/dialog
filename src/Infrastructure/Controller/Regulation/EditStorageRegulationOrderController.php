@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class EditStorageRegulationOrderController extends AbstractRegulationController
 {
@@ -65,9 +66,11 @@ final class EditStorageRegulationOrderController extends AbstractRegulationContr
             );
         }
 
+        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
         return new Response(
             content: $this->twig->render(
-                name: 'regulation/storage_regulation_order.html.twig',
+                name: 'regulation/fragments/_storage.regulation.stream.html.twig',
                 context: [
                     'form' => $form->createView(),
                 ],

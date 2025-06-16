@@ -1,24 +1,16 @@
-{% extends 'layouts/layout.html.twig' %}
-
-{% block title %}
-     - {{ parent() }}
-{% endblock %}
-
-{% block body %}
-    <section class="fr-container fr-py-5w">
-        {{ form_start(form, { attr: { 'data-controller': 'form-submit' }}) }}
-            {{ form_row(form.file, {
-                group_class: 'fr-input-group',
-                widget_class: 'fr-input',
-                file_button_enabled: true,
-                file_button_label: 'regulation.storage' |trans,
-                file_button_icon: 'fr-icon-upload-fill',
-            }) }}
-            {{ form_row(form.url, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-            {{ form_widget(form.save, {
-                attr: {
-                    'data-action': 'change->form-submit#submit',
-                },}) }}
-        {{ form_end(form) }}
-    </section>
-{% endblock %}
+<section class="fr-container fr-py-5w">
+    {{ form_start(form, { attr: { 'data-controller': 'form-submit' }}) }}
+        {{ form_row(form.file, {
+            group_class: 'fr-input-group',
+            widget_class: 'fr-input',
+            file_button_enabled: true,
+            file_button_label: 'regulation.storage' |trans,
+            file_button_icon: 'fr-icon-upload-fill',
+        }) }}
+        {{ form_row(form.url, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+        {{ form_widget(form.save, {
+            attr: {
+                'data-action': 'change->form-submit#submit',
+            },}) }}
+    {{ form_end(form) }}
+</section>
