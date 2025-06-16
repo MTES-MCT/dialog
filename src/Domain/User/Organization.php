@@ -190,4 +190,13 @@ class Organization
         $this->name = $name;
         $this->siret = $siret;
     }
+
+    public function getEstablishmentAddress(): ?string
+    {
+        if (!$this->establishment) {
+            return null;
+        }
+
+        return (string) $this->establishment;
+    }
 }

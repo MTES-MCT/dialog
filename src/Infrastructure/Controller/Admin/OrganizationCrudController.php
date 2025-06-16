@@ -63,7 +63,8 @@ final class OrganizationCrudController extends AbstractCrudController
             TextField::new('departmentCodeWithName')->setLabel('Département')->hideOnForm(),
             TextField::new('departmentCode')->setLabel('Code du département')->hideOnIndex(),
             TextField::new('departmentName')->setLabel('Nom du département')->hideOnIndex(),
-            AssociationField::new('establishment')->setLabel('Adresse de l\'établissement')->setFormTypeOption('disabled', true),
+            TextField::new('establishmentAddress', 'Adresse de l\'établissement')->setFormTypeOption('disabled', true)->hideOnForm(),
+            AssociationField::new('establishment')->setLabel('Adresse de l\'établissement')->setFormTypeOption('disabled', true)->hideOnIndex(),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
             DateTimeField::new('updatedAt')->setLabel('Date de mise à jour du contour')->hideOnForm(),
         ];
