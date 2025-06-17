@@ -101,24 +101,14 @@
                                         </div>
                                     </li>
                                     <li>
-                                        {# <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_regulation_edit_storage', { uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-                                        </a> #}
-                                        {# <a
-                                            href="{{ path('app_config_regulation_edit_storage', { uuid }) }}"
-                                            data-action="click->modal-loader#openModal"
-                                            data-modal-loader-target="trigger"
-                                            data-modal-loader-url-value="{{ path('app_config_regulation_edit_storage', { uuid }) }}"
-                                            data-modal-loader-target-id-value="edit-storage-modal-content"
-                                            data-modal-loader-modal-id-value="edit-storage-modal"
-                                            class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline"
-                                            title="{{ 'common.update'|trans }}"
-                                        >
-                                        </a> #}
-                                        <turbo-frame id='edit-storage-modal-content' src='{{ path('app_config_regulation_edit_storage', { uuid }) }}'>
-                                        <p>loading</p>
-                                        </turbo-frame>
-                                        
-
+                                        <d-modal-trigger modal="upload-form-modal" submitValue="upload">
+                                            <button
+                                                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-upload-2-line"
+                                                aria-controls="upload-form-modal"
+                                            >
+                                                {{ 'regulation.upload'|trans }}
+                                            </button>
+                                        </d-modal-trigger>
                                     </li>
                                 </ul>
                             </div>
@@ -240,15 +230,12 @@
             ],
         } only %}
 
-        {% include "common/confirmation_modal.html.twig" with {
-            id: 'storage-delete-modal',
-            title: 'regulation.delete_modal.title'|trans,
-            buttons: [
-                { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
-                { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
-            ],
+
+        {# Modal avec turbo-frame pour upload #}
+        {% include "common/form-modal.html.twig" with {
+            id: 'upload-form-modal',
+            frameId: 'upload-form-frame',
+            src: path('app_config_regulation_edit_storage', { uuid }),
         } only %}
-
-
     {% endif %}
 {% endblock %}

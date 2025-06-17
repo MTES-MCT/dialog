@@ -54,7 +54,13 @@ final class EditStorageRegulationOrderController extends AbstractRegulationContr
         $storageRegulationOrder = $this->queryBus->handle(new GetStorageRegulationOrderQuery($regulationOrder));
 
         $command = new SaveRegulationOrderStorageCommand($regulationOrder, $storageRegulationOrder);
-        $form = $this->formFactory->create(StorageRegulationOrderFormType::class, $command);
+        $form = $this->formFactory->create(
+            StorageRegulationOrderFormType::class,
+            $command,
+            [
+                'action' => $this->router->generate('app_config_regulation_edit_storage', ['uuid' => $uuid]),
+            ]
+        );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

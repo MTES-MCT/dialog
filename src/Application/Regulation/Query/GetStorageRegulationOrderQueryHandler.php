@@ -14,7 +14,7 @@ final class GetStorageRegulationOrderQueryHandler
     ) {
     }
 
-    public function __invoke(GetStorageRegulationOrderQuery $query): StorageRegulationOrder
+    public function __invoke(GetStorageRegulationOrderQuery $query): ?StorageRegulationOrder
     {
         $regulationOrderUuid = $query->regulationOrder->getUuid();
 
