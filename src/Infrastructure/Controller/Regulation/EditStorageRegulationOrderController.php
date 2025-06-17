@@ -59,7 +59,7 @@ final class EditStorageRegulationOrderController extends AbstractRegulationContr
             $command,
             [
                 'action' => $this->router->generate('app_config_regulation_edit_storage', ['uuid' => $uuid]),
-            ]
+            ],
         );
         $form->handleRequest($request);
 

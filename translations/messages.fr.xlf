@@ -407,6 +407,10 @@
                 <source>regulation.import.description</source>
                 <target>Importer un fichier ou ajouter un lien vers le document d’arrêté officiel.</target>
             </trans-unit>
+            <trans-unit id="regulation.import.storage.description">
+                <source>regulation.import.storage.description</source>
+                <target>Importer le document d’arrêté initial.</target>
+            </trans-unit>
             <trans-unit id="regulation.storage">
                 <source>regulation.storage</source>
                 <target>Ajouter un fichier</target>
