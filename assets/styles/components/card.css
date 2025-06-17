@@ -27,9 +27,13 @@
     column-gap: 0;
 }
 
-.app-card--with-head-background .app-card__header {
+.app-card--with-head-background {
     background: var(--alt-blue-france);
     padding: 1.5rem;
+}
+
+.app-card--with-background {
+    background: var(--alt-blue-france);
 }
 
 .app-card--content-only {

@@ -2025,6 +2025,34 @@
                 <source>organization.name</source>
                 <target>Organisation</target>
             </trans-unit>
+            <trans-unit id="organization.organizationName">
+                <source>organization.organizationName</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.annuaire">
+                <source>organization.annuaire</source>
+                <target>Annuaire des entreprises</target>
+            </trans-unit>
+            <trans-unit id="organization.description">
+                <source>organization.description</source>
+                <target>Certaines informations telles que le nom, l’adresse, le logo, l’autorité signataire apparaîtront dans l’export de l’arrêté DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="organization.geometry">
+                <source>organization.geometry</source>
+                <target>Périmètre géographique</target>
+            </trans-unit>
+            <trans-unit id="organization.geometry.help">
+                <source>organization.geometry.help</source>
+                <target>Si le contour ne correspond pas à votre découpage administratif, contactez-nous par email à : dialog@beta.gouv.fr.</target>
+            </trans-unit>
+            <trans-unit id="organization.establishmentAddress">
+                <source>organization.establishmentAddress</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="organization.departmentName">
+                <source>organization.departmentName</source>
+                <target>Département</target>
+            </trans-unit>
             <trans-unit id="organization.completed">
                 <source>organization.completed</source>
                 <target>Complété</target>
