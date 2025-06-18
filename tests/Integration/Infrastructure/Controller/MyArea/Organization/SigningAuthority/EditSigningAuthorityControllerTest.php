@@ -25,11 +25,8 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['signing_authority_form']['name'] = 'Madame la maire de Pau';
-        $values['signing_authority_form']['roadName'] = '3 rue de la Concertation';
-        $values['signing_authority_form']['cityCode'] = '75018';
-        $values['signing_authority_form']['cityLabel'] = 'Paris';
-        $values['signing_authority_form']['signatoryName'] = 'Madame X, maire de Pau';
-        $values['signing_authority_form']['placeOfSignature'] = 'Savenay';
+        $values['signing_authority_form']['role'] = 'Adjoint au maire';
+        $values['signing_authority_form']['signatoryName'] = 'Madame X';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $client->followRedirect();
@@ -49,28 +46,22 @@ final class EditSigningAuthorityControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $values['signing_authority_form']['name'] = '';
-        $values['signing_authority_form']['roadName'] = '';
-        $values['signing_authority_form']['cityCode'] = '';
-        $values['signing_authority_form']['cityLabel'] = '';
+        $values['signing_authority_form']['role'] = '';
         $values['signing_authority_form']['signatoryName'] = '';
-        $values['signing_authority_form']['placeOfSignature'] = '';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_name_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_roadName_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_cityCode_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_cityLabel_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_placeOfSignature_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_role_error')->text());
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#signing_authority_form_signatoryName_error')->text());
 
         $values['signing_authority_form']['name'] = str_repeat('a', 101);
+        $values['signing_authority_form']['role'] = str_repeat('a', 101);
         $values['signing_authority_form']['signatoryName'] = str_repeat('a', 101);
-        $values['signing_authority_form']['placeOfSignature'] = str_repeat('a', 101);
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_name_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_placeOfSignature_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_role_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_signatoryName_error')->text());
     }
 

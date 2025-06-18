@@ -5,11 +5,7 @@
     table="signing_authority">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" length="100" nullable="false"/>
-    <field name="address" type="string" nullable="true"/>
-    <field name="roadName" type="string" nullable="true"/>
-    <field name="cityCode" type="string" nullable="true"/>
-    <field name="cityLabel" type="string" nullable="true"/>
-    <field name="placeOfSignature" type="string" length="100" nullable="false"/>
+    <field name="role" type="string" length="100" nullable="false"/>
     <field name="signatoryName" type="string" length="100" nullable="false"/>
     <many-to-one field="organization" target-entity="App\Domain\User\Organization">
       <join-columns>
