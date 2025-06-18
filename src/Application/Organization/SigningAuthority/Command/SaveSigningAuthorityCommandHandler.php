@@ -21,11 +21,7 @@ final class SaveSigningAuthorityCommandHandler
         if ($signingAuthority = $command->signingAuthority) {
             $signingAuthority->update(
                 name: $command->name,
-                address: $command->address,
-                roadName: $command->roadName,
-                cityCode: $command->cityCode,
-                cityLabel: $command->cityLabel,
-                placeOfSignature: $command->placeOfSignature,
+                role: $command->role,
                 signatoryName: $command->signatoryName,
             );
 
@@ -36,11 +32,7 @@ final class SaveSigningAuthorityCommandHandler
             new SigningAuthority(
                 uuid: $this->idFactory->make(),
                 name: $command->name,
-                address: $command->address,
-                roadName: $command->roadName,
-                cityCode: $command->cityCode,
-                cityLabel: $command->cityLabel,
-                placeOfSignature: $command->placeOfSignature,
+                role: $command->role,
                 signatoryName: $command->signatoryName,
                 organization: $command->organization,
             ),
