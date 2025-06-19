@@ -33,6 +33,7 @@ final class SaveRegulationOrderStorageCommandHandler
                 $storageRegulationOrder->update(
                     path: $command->path,
                     url: $command->url,
+                    title: $command->title,
                 );
             }
 
@@ -43,6 +44,7 @@ final class SaveRegulationOrderStorageCommandHandler
                         regulationOrder: $command->regulationOrder,
                         path: $command->file !== null ? $this->storage->write($folder, $command->file) : $command->file,
                         url: $command->url,
+                        title: $command->title,
                     ),
                 );
             }

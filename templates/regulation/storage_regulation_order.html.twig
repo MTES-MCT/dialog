@@ -7,11 +7,11 @@
             file_button_label: 'regulation.storage' |trans,
             file_button_icon: 'fr-icon-upload-fill',
         }) }}
+	{{ form_row(form.title, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
 	{{ form_row(form.url, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
 	{{ form_widget(form.save, {
             attr: {
                 'data-action': 'change->form-submit#submit',
             },}) }}
 	{{ form_end(form) }}
-
 </section>

@@ -7,6 +7,7 @@ namespace App\Infrastructure\Form\Regulation;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -30,6 +31,14 @@ final class StorageRegulationOrderFormType extends AbstractType
                 options: [
                     'label' => 'URL du lien',
                     'help' => 'Entrez l’URL vers au format https://www.mondocument.pdf',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'title',
+                TextType::class,
+                [
+                    'label' => 'Titre du lien',
                     'required' => false,
                 ],
             )

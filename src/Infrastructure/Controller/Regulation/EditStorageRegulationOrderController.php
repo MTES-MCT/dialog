@@ -13,7 +13,6 @@ use App\Infrastructure\Form\Regulation\StorageRegulationOrderFormType;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -65,11 +64,6 @@ final class EditStorageRegulationOrderController extends AbstractRegulationContr
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
-
-            return new RedirectResponse(
-                url: $this->router->generate('app_config_organization_edit_logo', ['uuid' => $uuid]),
-                status: Response::HTTP_SEE_OTHER,
-            );
         }
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);

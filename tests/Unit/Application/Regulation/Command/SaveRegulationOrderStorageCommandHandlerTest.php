@@ -61,17 +61,21 @@ final class SaveRegulationOrderStorageCommandHandlerTest extends TestCase
                         regulationOrder: $regulationOrder,
                         path: 'regulationOrder/496bd752-c217-4625-ba0c-7454dc218516/storageRegulationOrder.pdf',
                         url: 'https://www.herault.gouv.fr/content/download/21272/158268/file/arrete_circulation_vtm.pdf',
+                        title: 'Titre test',
                     ),
                 ),
             );
 
         $handler = new SaveRegulationOrderStorageCommandHandler(
-            $this->storage, $this->storageRegulationOrderRepository, $this->idFactory,
+            $this->storage,
+            $this->storageRegulationOrderRepository,
+            $this->idFactory,
         );
 
         $command = new SaveRegulationOrderStorageCommand($regulationOrder, null);
         $command->file = $file;
         $command->url = 'https://www.herault.gouv.fr/content/download/21272/158268/file/arrete_circulation_vtm.pdf';
+        $command->title = 'Titre test';
 
         $handler($command);
     }

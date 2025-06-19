@@ -39,7 +39,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->idFactory = $this->createMock(originalClassName: IdFactoryInterface::class);
+        $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);

@@ -19,6 +19,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class AddStorageRegulationOrderController extends AbstractRegulationController
 {
@@ -50,17 +51,25 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
 
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $command = new SaveRegulationOrderStorageCommand($regulationOrder, null);
-        $form = $this->formFactory->create(StorageRegulationOrderFormType::class, $command);
+        $form = $this->formFactory->create(
+            StorageRegulationOrderFormType::class,
+            $command,
+            [
+                'action' => $this->router->generate('app_config_regulation_add_storage', ['uuid' => $uuid]),
+            ],
+        );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_config_organization_edit_logo', ['uuid' => $uuid]),
+                url: $this->router->generate('app_regulation_detail', ['uuid' => $uuid]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }
+
+        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
         return new Response(
             content: $this->twig->render(

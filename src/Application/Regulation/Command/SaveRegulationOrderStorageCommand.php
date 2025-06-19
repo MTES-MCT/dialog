@@ -14,6 +14,7 @@ final class SaveRegulationOrderStorageCommand implements CommandInterface
     public ?UploadedFile $file = null;
     public ?string $path = null;
     public ?string $url = null;
+    public ?string $title = null;
 
     public function __construct(
         public readonly RegulationOrder $regulationOrder,
@@ -21,5 +22,6 @@ final class SaveRegulationOrderStorageCommand implements CommandInterface
     ) {
         $this->path = $storageRegulationOrder?->getPath();
         $this->url = $storageRegulationOrder?->getUrl();
+        $this->title = $storageRegulationOrder?->getTitle();
     }
 }
