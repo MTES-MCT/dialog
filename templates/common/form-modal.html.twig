@@ -1,0 +1,24 @@
+{% set modalId = id %}
+
+{% use "common/form/dsfr_theme.html.twig" %}
+
+<dialog
+    id="{{ modalId }}"
+    class="app-modal"
+    role="dialog"
+    aria-labelledby="{{ modalId }}-title"
+>
+    <div class="fr-container">
+        <button class="fr-mb-2w fr-link fr-link--close" aria-controls="{{ modalId }}">
+            {{ 'common.close'|trans }}
+        </button>
+        <turbo-frame id="{{ frameId }}" src="{{ src }}" loading="lazy">
+            <div class="fr-text--center fr-py-4w">
+                <div class="fr-mb-2w">
+                    <i class="fr-icon-refresh-line fr-icon--lg" aria-hidden="true"></i>
+                </div>
+                <p>{{ 'common.loading'|trans }}</p>
+            </div>
+        </turbo-frame>
+    </div>
+</dialog>

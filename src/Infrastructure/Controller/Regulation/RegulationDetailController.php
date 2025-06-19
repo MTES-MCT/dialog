@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderHistoryQuery;
+use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\ArrayRegulationMeasures;
@@ -56,6 +57,8 @@ final class RegulationDetailController extends AbstractRegulationController
         }
 
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid, requireUserSameOrg: false);
+        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+        $storageRegulationOrder = $this->queryBus->handle(new GetStorageRegulationOrderQuery($regulationOrder));
         $regulationOrderUuid = $regulationOrderRecord->getRegulationOrder()->getUuid();
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
@@ -74,6 +77,7 @@ final class RegulationDetailController extends AbstractRegulationController
             'measures' => $measures,
             'regulationOrderRecord' => $regulationOrderRecord,
             'latestHistory' => $latestHistory,
+            'storageRegulationOrder' => $storageRegulationOrder,
         ];
 
         return new Response(
