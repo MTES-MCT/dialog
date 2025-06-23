@@ -229,16 +229,9 @@
         } only %}
 
 		{% include "common/form-modal.html.twig" with {
-            id: 'create-form-modal',
-            frameId: 'create-form-frame',
-            src: path('app_config_regulation_add_storage', { uuid }),
-        } only %}
-
-		{# Modal avec turbo-frame pour edit l'upload #}
-		{% include "common/form-modal.html.twig" with {
-            id: 'upload-form-modal',
+            id: not storageRegulationOrder?'create-form-modal':'upload-form-modal',
             frameId: 'upload-form-frame',
-            src: path('app_config_regulation_edit_storage', { uuid }),
+            src: not storageRegulationOrder?path('app_config_regulation_add_storage', { uuid }):path('app_config_regulation_edit_storage', { uuid }),
         } only %}
 	{% endif %}
 {% endblock %}

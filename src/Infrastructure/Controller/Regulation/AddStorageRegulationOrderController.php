@@ -73,7 +73,7 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
 
         return new Response(
             content: $this->twig->render(
-                name: 'regulation/storage_regulation_order.html.twig',
+                name: 'regulation/fragments/_storage.regulation.stream.html.twig',
                 context: [
                     'form' => $form->createView(),
                 ],
