@@ -9,7 +9,7 @@
                 <option name="max">100</option>
             </constraint>
         </property>
-        <property name="placeOfSignature">
+        <property name="role">
             <constraint name="NotBlank"/>
             <constraint name="Length">
                 <option name="max">100</option>
@@ -20,15 +20,6 @@
             <constraint name="Length">
                 <option name="max">100</option>
             </constraint>
-        </property>
-        <property name="roadName">
-            <constraint name="NotBlank"/>
-        </property>
-        <property name="cityCode">
-            <constraint name="NotBlank"/>
-        </property>
-        <property name="cityLabel">
-            <constraint name="NotBlank"/>
         </property>
     </class>
 </constraint-mapping>

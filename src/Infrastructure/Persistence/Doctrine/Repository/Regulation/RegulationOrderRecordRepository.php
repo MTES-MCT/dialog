@@ -206,6 +206,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     org.name as organizationName,
                     org.uuid as organizationUuid,
                     org.logo as organizationLogo,
+                    est.address as organizationAddress,
+                    est.zipCode as organizationZipCode,
+                    est.city as organizationCity,
+                    est.addressComplement as organizationAddressComplement,
                     roc.status,
                     ro.uuid as regulationOrderUuid,
                     ro.category,
@@ -222,6 +226,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.uuid = :uuid')
             ->setParameter('uuid', $uuid)
             ->innerJoin('roc.organization', 'org')
+            ->leftJoin('org.establishment', 'est')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->getQuery()
             ->getOneOrNullResult()

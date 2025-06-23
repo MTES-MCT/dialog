@@ -11,13 +11,9 @@ class SigningAuthority
     public function __construct(
         private string $uuid,
         private string $name,
-        private string $placeOfSignature,
+        private string $role,
         private string $signatoryName,
         private Organization $organization,
-        private ?string $roadName = null,
-        private ?string $cityCode = null,
-        private ?string $cityLabel = null,
-        private ?string $address = null,
     ) {
     }
 
@@ -31,29 +27,9 @@ class SigningAuthority
         return $this->name;
     }
 
-    public function getAddress(): ?string
+    public function getRole(): string
     {
-        return $this->address;
-    }
-
-    public function getRoadName(): ?string
-    {
-        return $this->roadName;
-    }
-
-    public function getCityCode(): ?string
-    {
-        return $this->cityCode;
-    }
-
-    public function getCityLabel(): ?string
-    {
-        return $this->cityLabel;
-    }
-
-    public function getPlaceOfSignature(): string
-    {
-        return $this->placeOfSignature;
+        return $this->role;
     }
 
     public function getSignatoryName(): string
@@ -68,19 +44,11 @@ class SigningAuthority
 
     public function update(
         string $name,
-        string $placeOfSignature,
+        string $role,
         string $signatoryName,
-        ?string $roadName,
-        ?string $cityCode,
-        ?string $cityLabel,
-        ?string $address,
     ): void {
         $this->name = $name;
-        $this->placeOfSignature = $placeOfSignature;
+        $this->role = $role;
         $this->signatoryName = $signatoryName;
-        $this->roadName = $roadName;
-        $this->cityCode = $cityCode;
-        $this->cityLabel = $cityLabel;
-        $this->address = $address;
     }
 }

@@ -23,33 +23,11 @@ final class SigningAuthorityFormType extends AbstractType
                 ],
             )
             ->add(
-                'roadName',
+                'role',
                 TextType::class,
                 options: [
-                    'label' => 'signing_authority.roadName',
-                    'help' => 'signing_authority.roadName.help',
-                ],
-            )
-            ->add(
-                'cityCode',
-                TextType::class,
-                options: [
-                    'label' => 'signing_authority.cityCode',
-                ],
-            )
-            ->add(
-                'cityLabel',
-                TextType::class,
-                options: [
-                    'label' => 'signing_authority.cityLabel',
-                ],
-            )
-            ->add(
-                'placeOfSignature',
-                TextType::class,
-                options: [
-                    'label' => 'signing_authority.placeOfSignature',
-                    'help' => 'signing_authority.placeOfSignature.help',
+                    'label' => 'signing_authority.role',
+                    'help' => 'signing_authority.role.help',
                 ],
             )
             ->add(

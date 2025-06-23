@@ -15,6 +15,7 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
         public string $organizationName,
         public ?string $organizationLogo,
         public ?string $organizationUuid,
+        public ?AddressView $organizationAddress,
         public string $status,
         public string $regulationOrderUuid,
         public string $category,

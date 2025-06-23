@@ -1,9 +1,11 @@
 {% set startDate = generalInfo.startDate %}
 {% set endDate = generalInfo.endDate %}
 
-{% if signingAuthority %}
+{% if generalInfo.organizationAddress %}
 ::: {custom-style="Dialog_AligneDroite"}
-[{{ signingAuthority.address|raw|nl2br }}]{custom-style="Dialog_ACompleter"}
+[{{ generalInfo.organizationAddress.address|raw|nl2br }}]{custom-style="Dialog_ACompleter"}
+[{{ generalInfo.organizationAddress.zipCode }} {{ generalInfo.organizationAddress.city|raw|nl2br }}]{custom-style="Dialog_ACompleter"}
+[{{ generalInfo.organizationAddress.addressComplement|raw|nl2br }}]{custom-style="Dialog_ACompleter"}
 :::
 {% endif %}
 
@@ -85,7 +87,7 @@ Arrête
 
 {% if signingAuthority %}
 ::: {custom-style="Dialog_AligneDroite"}
-Fait à [{{ signingAuthority.placeOfSignature}}, le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
+Le {{ 'now'|date('d/m/Y')}}]{custom-style="Dialog_ACompleter"}
 
 [{{ signingAuthority.signatoryName }}]{custom-style="Dialog_ACompleter"}
 
