@@ -24,6 +24,7 @@ final class DeleteRegulationOrderStorageCommandHandler
             $this->storage->delete($path);
             $storageRegulationOrder->setPath(null);
         }
+
         $this->storageRegulationOrderRepository->remove($storageRegulationOrder);
     }
 }

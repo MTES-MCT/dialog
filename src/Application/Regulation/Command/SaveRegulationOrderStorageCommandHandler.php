@@ -20,29 +20,29 @@ final class SaveRegulationOrderStorageCommandHandler
 
     public function __invoke(SaveRegulationOrderStorageCommand $command): void
     {
-        if ($command->file !== null || $command->url !== null) {
+        if ($command->file !== null) {
             $folder = \sprintf('regulationOrder/%s', $command->regulationOrder->getUuid());
+        }
 
-            if ($storageRegulationOrder = $command->storageRegulationOrder) {
-                /* if ($command->file !== null) {
-                    $path = $storageRegulationOrder->getPath();
-                    $this->storage->delete($path);
-                    $storageRegulationOrder->setPath($this->storage->write($folder, $command->file));
-                }*/
-
-                $storageRegulationOrder->update(
-                    path: $command->path,
-                    url: $command->url,
-                    title: $command->title,
-                );
+        if ($storageRegulationOrder = $command->storageRegulationOrder) {
+            if ($command->file !== null) {
+                $path = $storageRegulationOrder->getPath();
+                $this->storage->delete($path);
+                $storageRegulationOrder->setPath($this->storage->write($folder, $command->file));
             }
+
+            $storageRegulationOrder->update(
+                path: $command->path,
+                url: $command->url,
+                title: $command->title,
+            );
 
             if (!$command->storageRegulationOrder instanceof StorageRegulationOrder) {
                 $this->storageRegulationOrderRepository->add(
                     new StorageRegulationOrder(
                         uuid: $this->idFactory->make(),
                         regulationOrder: $command->regulationOrder,
-                        path: $command->file !== null ? $this->storage->write($folder, $command->file) : $command->file,
+                        path: $command->file !== null ? $this->storage->write($folder, $command->file) : null,
                         url: $command->url,
                         title: $command->title,
                     ),

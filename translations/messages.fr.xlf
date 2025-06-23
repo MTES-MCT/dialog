@@ -415,6 +415,22 @@
                 <source>regulation.storage</source>
                 <target>Ajouter un fichier</target>
             </trans-unit>
+            <trans-unit id="regulation.storage.form.file.help">
+                <source>regulation.storage.form.file.help</source>
+                <target>Taille maximale : 1 Mo. Formats supportés : docx, odt, jpg, pdf.</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url">
+                <source>regulation.storage.form.url</source>
+                <target>URL du lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url.help">
+                <source>regulation.storage.form.url.help</source>
+                <target>Entrez l’URL vers au format https://www.mondocument.pdf</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.title">
+                <source>regulation.storage.form.title</source>
+                <target>Titre du lien</target>
+            </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
                 <target>Commune</target>

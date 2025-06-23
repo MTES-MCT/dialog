@@ -102,6 +102,14 @@
                 <source>invalid.emails</source>
                 <target>%value% n'est pas une adresse email valide.</target>
             </trans-unit>
+            <trans-unit id="regulation.storage.form.title.error">
+                <source>regulation.storage.form.title.error</source>
+                <target>Cette chaîne est trop longue. Elle doit avoir au maximum %value% caractères.</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url.error">
+                <source>regulation.storage.form.url.error</source>
+                <target>L’URL n’est pas valide. Veuillez vérifier que l’URL commence par https://</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

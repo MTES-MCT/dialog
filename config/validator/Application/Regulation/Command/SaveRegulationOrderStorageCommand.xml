@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Regulation\Command\SaveRegulationOrderStorageCommand">
+        <property name="file">
+            <constraint name="File">
+                <option name="maxSize">1000k</option>
+                <option name="extensions">
+                    <value>pdf</value>
+                    <value>jpg</value>
+                    <value>docx</value>
+                    <value>odt</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="url">
+            <constraint name="When">
+                <option name="expression"> this.url != null </option>
+                <option name="constraints">
+                    <constraint name="Url">
+                        <option name="protocols">
+                            <value>https</value>
+                        </option>
+                        <option name="message">regulation.storage.form.url.error</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="title">
+            <constraint name="When">
+                <option name="expression"> this.title != null </option>
+                <option name="constraints">
+                    <constraint name="Length">
+                        <option name="max">30</option>
+                        <option name="message">regulation.storage.form.title.error</option>
+                        <option name="groups">
+                            <value>html_form</value>
+                        </option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>

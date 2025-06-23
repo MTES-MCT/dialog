@@ -20,8 +20,8 @@ final class StorageRegulationOrderFormType extends AbstractType
                 'file',
                 FileType::class,
                 options: [
-                    'label' => 'Ajouter un fichier',
-                    'help' => 'Taille maximale : 1 Mo. Formats supportés : docx, odt, jpg, pdf.',
+                    'label' => 'regulation.storage',
+                    'help' => 'regulation.storage.form.file.help',
                     'required' => false,
                 ],
             )
@@ -29,8 +29,8 @@ final class StorageRegulationOrderFormType extends AbstractType
                 'url',
                 UrlType::class,
                 options: [
-                    'label' => 'URL du lien',
-                    'help' => 'Entrez l’URL vers au format https://www.mondocument.pdf',
+                    'label' => 'regulation.storage.form.url',
+                    'help' => 'regulation.storage.form.url.help',
                     'required' => false,
                 ],
             )
@@ -38,7 +38,7 @@ final class StorageRegulationOrderFormType extends AbstractType
                 'title',
                 TextType::class,
                 [
-                    'label' => 'Titre du lien',
+                    'label' => 'regulation.storage.form.title',
                     'required' => false,
                 ],
             )

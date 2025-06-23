@@ -52,7 +52,7 @@ final class DeleteStorageRegulationOrderController extends AbstractRegulationCon
         $this->commandBus->handle(new DeleteRegulationOrderStorageCommand($storageRegulationOrder));
 
         return new RedirectResponse(
-            url: $this->router->generate('app_config_organization_edit_logo', ['uuid' => $uuid]),
+            url: $this->router->generate('app_regulation_detail', ['uuid' => $uuid]),
             status: Response::HTTP_SEE_OTHER,
         );
     }
