@@ -22,7 +22,6 @@
                         <option name="protocols">
                             <value>https</value>
                         </option>
-                        <option name="message">regulation.storage.form.url.error</option>
                     </constraint>
                 </option>
             </constraint>
@@ -33,10 +32,6 @@
                 <option name="constraints">
                     <constraint name="Length">
                         <option name="max">30</option>
-                        <option name="message">regulation.storage.form.title.error</option>
-                        <option name="groups">
-                            <value>html_form</value>
-                        </option>
                     </constraint>
                 </option>
             </constraint>

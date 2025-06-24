@@ -37,17 +37,17 @@ final class SaveRegulationOrderStorageCommandHandler
                 title: $command->title,
             );
 
-            if (!$command->storageRegulationOrder instanceof StorageRegulationOrder) {
-                $this->storageRegulationOrderRepository->add(
-                    new StorageRegulationOrder(
-                        uuid: $this->idFactory->make(),
-                        regulationOrder: $command->regulationOrder,
-                        path: $command->file !== null ? $this->storage->write($folder, $command->file) : null,
-                        url: $command->url,
-                        title: $command->title,
-                    ),
-                );
-            }
+            return;
         }
+
+        $this->storageRegulationOrderRepository->add(
+            new StorageRegulationOrder(
+                uuid: $this->idFactory->make(),
+                regulationOrder: $command->regulationOrder,
+                path: $command->file !== null ? $this->storage->write($folder, $command->file) : null,
+                url: $command->url,
+                title: $command->title,
+            ),
+        );
     }
 }
