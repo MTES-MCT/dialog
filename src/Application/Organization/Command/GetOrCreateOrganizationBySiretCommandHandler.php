@@ -53,6 +53,8 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                 ->setDepartmentCode($organizationFetchedView->departmentCode)
                 ->setDepartmentName($organizationFetchedView->departmentName);
 
+            $this->organizationRepository->add($organization);
+
             if ($organizationFetchedView->establishmentAddress
                 && $organizationFetchedView->establishmentZipCode
                 && $organizationFetchedView->establishmentCity
@@ -65,13 +67,12 @@ final class GetOrCreateOrganizationBySiretCommandHandler
                     organization: $organization,
                     addressComplement: $organizationFetchedView->establishmentAddressComplement,
                 );
-
                 $organization->setEstablishment($establishment);
                 $this->establishmentRepository->add($establishment);
+                $this->organizationRepository->flush();
                 $this->establishmentRepository->flush();
             }
 
-            $this->organizationRepository->add($organization);
             $this->organizationRepository->flush();
             $this->commandBus->dispatchAsync(new SyncOrganizationAdministrativeBoundariesCommand($organization->getUuid()));
         }
