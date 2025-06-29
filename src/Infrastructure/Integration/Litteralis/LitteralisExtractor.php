@@ -30,7 +30,8 @@ final class LitteralisExtractor
 
         foreach ($enabledOrgs as $name) {
             $orgCredentials = $credentials->getCredentials($name);
-            $clients[$name] = $this->clientFactory->create($orgCredentials);
+            $baseUrl = $credentials->getBaseUrl($name);
+            $clients[$name] = $this->clientFactory->create($orgCredentials, $baseUrl);
         }
 
         $this->clients = $clients;
