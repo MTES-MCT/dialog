@@ -67,6 +67,44 @@
                     </div>
                 </div>
 
+                <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                    {{ 'signing_authority.form.title'|trans }}
+                </h3>
+
+                <div class="app-card">
+                    <div class="app-card__content">
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-5">
+                                <b>{{ 'signing_authority.name'|trans }}</b>
+                                {% if signingAuthority %}
+                                    <p>{{ signingAuthority.name }}</p>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                                        {{ 'organization.not_completed'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-4">
+                                <b>{{ 'signing_authority.signatoryName'|trans }}</b>
+                                {% if signingAuthority %}
+                                    <p>{{ signingAuthority.signatoryName }} ({{ signingAuthority.role }})</p>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                                        {{ 'organization.not_completed'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-3">
+                                {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                    <a href="{{ path('app_config_signing_authority_edit', { uuid: organization.uuid }) }}" class="fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                                        {{ 'common.update'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {% if organization.geometry %}
                     <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
                         {{ 'organization.geometry'|trans }}

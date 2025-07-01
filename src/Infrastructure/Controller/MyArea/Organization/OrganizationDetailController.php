@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\MyArea\Organization;
 
+use App\Application\Organization\SigningAuthority\Query\GetSigningAuthorityByOrganizationQuery;
 use App\Application\QueryBusInterface;
 use App\Application\StorageInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,6 +33,7 @@ final class OrganizationDetailController extends AbstractOrganizationController
     {
         $organization = $this->getOrganization($uuid);
         $logo = $organization->getLogo() ? $this->storage->getUrl($organization->getLogo()) : null;
+        $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($uuid));
 
         return new Response(
             content: $this->twig->render(
@@ -39,6 +41,7 @@ final class OrganizationDetailController extends AbstractOrganizationController
                 context: [
                     'organization' => $organization,
                     'logo' => $logo,
+                    'signingAuthority' => $signingAuthority,
                 ],
             ),
         );
