@@ -63,10 +63,24 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
 
-            return new RedirectResponse(
-                url: $this->router->generate('app_regulation_detail', ['uuid' => $uuid]),
-                status: Response::HTTP_SEE_OTHER,
-            );
+            $redirectUrl = $this->router->generate('app_regulation_detail', ['uuid' => $uuid]);
+
+            if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
+                return new Response(
+                    \sprintf(
+                        '<turbo-stream action="update" target="upload-form-frame">
+                            <template>
+                                <script>window.top.location = "%s";</script>
+                            </template>
+                        </turbo-stream>',
+                        $redirectUrl,
+                    ),
+                    Response::HTTP_OK,
+                    ['Content-Type' => 'text/vnd.turbo-stream.html'],
+                );
+            }
+
+            return new RedirectResponse($redirectUrl, Response::HTTP_SEE_OTHER);
         }
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
