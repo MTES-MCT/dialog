@@ -1,5 +1,9 @@
 <turbo-stream action="update" target="upload-form-frame">
     <template>
-        {% include 'regulation/storage_regulation_order.html.twig'%}
+        {% if redirectUrl is defined %}
+            <script>window.top.location = "{{ redirectUrl }}";</script>
+        {% else %}
+            {% include 'regulation/storage_regulation_order.html.twig'%}
+        {% endif %}
     </template>
 </turbo-stream>

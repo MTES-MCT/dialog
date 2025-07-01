@@ -67,13 +67,11 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
 
             if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
                 return new Response(
-                    \sprintf(
-                        '<turbo-stream action="update" target="upload-form-frame">
-                            <template>
-                                <script>window.top.location = "%s";</script>
-                            </template>
-                        </turbo-stream>',
-                        $redirectUrl,
+                    $this->twig->render(
+                        'regulation/fragments/_storage.regulation.stream.html.twig',
+                        [
+                            'redirectUrl' => $redirectUrl,
+                        ],
                     ),
                     Response::HTTP_OK,
                     ['Content-Type' => 'text/vnd.turbo-stream.html'],
