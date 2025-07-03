@@ -29,10 +29,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 '
                     SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
                     FROM troncon_de_route
-                    WHERE identifiant_voie_ban_gauche = :road_ban_id
+                    WHERE identifiant_voie_ban_gauche IN (:road_ban_id_lower, :road_ban_id_upper)
                 ',
                 [
-                    'road_ban_id' => $roadBanId,
+                    'road_ban_id_lower' => strtolower($roadBanId),
+                    'road_ban_id_upper' => strtoupper($roadBanId),
                 ],
             );
         } catch (\Exception $exc) {
