@@ -67,7 +67,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame($duplicateForm->getMethod(), 'POST');
 
         $btnsDelete = $crawler->filter('aside')->selectButton('Supprimer');
-        $formDelete = $btnsDelete->eq(1)->form();
+        $formDelete = $btnsDelete->eq(0)->form();
         $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
         $this->assertSame($formDelete->getMethod(), 'POST');
         $this->assertSame($formDelete->get('_method')->getValue(), 'DELETE');
@@ -83,7 +83,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('/regulations', $goBackLink->extract(['href'])[0]);
 
         // Ressources
-        $deleteStorageForm = $btnsDelete->eq(0)->form();
+        $btnDelete = $crawler->filter('[data-testid="delete"]');
+        $deleteStorageForm = $btnDelete->form();
         $this->assertSame($deleteStorageForm->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/storage/delete');
         $this->assertSame($deleteStorageForm->getMethod(), 'POST');
         $this->assertSame($deleteStorageForm->get('_method')->getValue(), 'DELETE');

@@ -22,14 +22,14 @@ final class EditStorageRegulationOrderControllerTest extends AbstractWebTestCase
             __DIR__ . '/../../../../fixtures/file_too_large.pdf',
             'file_too_large.pdf',
         );
-        $saveButton = $crawler->selectButton('Ajouter un fichier');
+        $saveButton = $crawler->selectButton('Ajouter');
         $form = $saveButton->form();
-        $form['storage_regulation_order_form[file]'] = $uploadedFile;
         $form['storage_regulation_order_form[title]'] = 'Test';
+        $form['storage_regulation_order_form[file]'] = $uploadedFile;
         $form['storage_regulation_order_form[url]'] = 'https://example.com/storage1.pdf';
         $client->submit($form);
-        $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_config_regulation_edit_storage');
+        $this->assertResponseStatusCodeSame(303);
     }
 
     public function testBadFormValues(): void
@@ -41,18 +41,18 @@ final class EditStorageRegulationOrderControllerTest extends AbstractWebTestCase
             __DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv',
             'aires_de_stockage_test.csv',
         );
-        $saveButton = $crawler->selectButton('Ajouter un fichier');
+        $saveButton = $crawler->selectButton('Ajouter');
         $form = $saveButton->form();
 
         $values = $form->getPhpValues();
-        $values['storage_regulation_order_form']['file'] = $uploadedFile;
         $values['storage_regulation_order_form']['title'] = str_repeat('a', 35);
+        $values['storage_regulation_order_form']['file'] = $uploadedFile;
         $values['storage_regulation_order_form']['url'] = 'example.com/storage1.pdf';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 30 caractères.', $crawler->filter('#storage_regulation_order_form_title_error')->text());
-        $this->assertSame('L’URL n’est pas valide. Veuillez vérifier que l’URL commence par https://', $crawler->filter('#storage_regulation_order_form_url_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une URL valide.', $crawler->filter('#storage_regulation_order_form_url_error')->text());
     }
 
     public function testWithoutAuthenticatedUser(): void

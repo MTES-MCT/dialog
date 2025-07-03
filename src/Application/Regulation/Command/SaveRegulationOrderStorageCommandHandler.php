@@ -25,14 +25,14 @@ final class SaveRegulationOrderStorageCommandHandler
         }
 
         if ($storageRegulationOrder = $command->storageRegulationOrder) {
+            $path = null;
             if ($command->file !== null) {
-                $path = $storageRegulationOrder->getPath();
-                $this->storage->delete($path);
-                $storageRegulationOrder->setPath($this->storage->write($folder, $command->file));
+                $this->storage->delete($command->path);
+                $path = $this->storage->write($folder, $command->file);
             }
 
             $storageRegulationOrder->update(
-                path: $command->path,
+                path: $path ?? $command->path,
                 url: $command->url,
                 title: $command->title,
             );

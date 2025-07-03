@@ -93,29 +93,27 @@
 									<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
 										{{ 'regulation.import.storage.description'|trans }}
 									</div>
-										<div class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--center">
-											<p class="fr-link fr-mt-2w">
-												{{ storageRegulationOrder.title|u.truncate(14, '...')}}
-											</p>
+									<a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="/storage/{{ storageRegulationOrder.path }}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
+									<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+										{{ 'storageRegulationOrder.export.pdf.mention'|trans }}
+									</div>
+									<div class="fr-btns-group fr-btns-group--inline-sm">
+										<d-modal-trigger modal="upload-form-modal" submitvalue="upload">
+											<button class="fr-btn fr-btn--tertiary fr-icon-edit-line" aria-controls="upload-form-modal"></button>
+										</d-modal-trigger>
 
-											<d-modal-trigger modal="upload-form-modal" submitvalue="upload">
-												<button class="fr-btn fr-btn--tertiary fr-icon-edit-line" aria-controls="upload-form-modal">
-												</button>
+										{% set deleteToken = csrf_token('delete-storage') %}
+										<form method="POST" action="{{ path('app_config_regulation_delete_storage', { uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
+											<input type="hidden" name="_method" value="DELETE">
+											<d-modal-trigger modal="storage-delete-modal" submitvalue="delete">
+												<button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line" aria-controls="storage-delete-modal" data-testid="delete"></button>
 											</d-modal-trigger>
-
-												{% set deleteToken = csrf_token('delete-storage') %}
-												<form method="POST" action="{{ path('app_config_regulation_delete_storage', { uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
-													<input type="hidden" name="_method" value="DELETE">
-													<d-modal-trigger modal="storage-delete-modal" submitvalue="delete">
-														<button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line" aria-controls="storage-delete-modal">
-														</button>
-													</d-modal-trigger>
-													<input type="hidden" name="_token" value="{{ deleteToken }}"/>
-												</form>
-										</div>
+											<input type="hidden" name="_token" value="{{ deleteToken }}"/>
+										</form>
+									</div>
 								{% endif %}
 							</div>
-                        </div>
+						</div>
 
 						<div class="app-card app-card--raised fr-mt-2w" data-testid="actions">
 							<div class="app-card__content">

@@ -23,7 +23,7 @@ final class AddStorageRegulationOrderControllerTest extends AbstractWebTestCase
             __DIR__ . '/../../../../fixtures/file_too_large.pdf',
             'file_too_large.pdf',
         );
-        $saveButton = $crawler->selectButton('Ajouter un fichier');
+        $saveButton = $crawler->selectButton('Ajouter');
         $form = $saveButton->form();
         $form['storage_regulation_order_form[file]'] = $uploadedFile;
         $form['storage_regulation_order_form[title]'] = 'Test';
