@@ -20,7 +20,7 @@ final class StorageRegulationOrderFormType extends AbstractType
                 'file',
                 FileType::class,
                 options: [
-                    'label' => 'regulation.storage',
+                    'label' => 'regulation.storage.form.file.title',
                     'help' => 'regulation.storage.form.file.help',
                     'required' => false,
                 ],
@@ -39,14 +39,14 @@ final class StorageRegulationOrderFormType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'regulation.storage.form.title',
-                    'required' => false,
+                    'required' => true,
                 ],
             )
             ->add(
                 'save',
                 SubmitType::class,
                 options: [
-                    'label' => 'common.form.apply',
+                    'label' => 'regulation.storage.form.save',
                     'attr' => ['class' => 'fr-btn'],
                 ],
             )
