@@ -26,7 +26,7 @@ final class LoginControllerTest extends AbstractWebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
         $crawler = $client->followRedirect();
-        $this->assertSame('Votre avis Mathieu MARCHOIS', $crawler->filter('[data-testid="user-links"]')->text());
+        $this->assertSame('Votre avis Mes organisations Mathieu MARCHOIS Mathieu MARCHOIS mathieu.marchois@beta.gouv.fr Mon compte Se déconnecter', $crawler->filter('[data-testid="user-links"]')->text());
     }
 
     public function testLoginAsAdminSuccessfully(): void
@@ -43,7 +43,7 @@ final class LoginControllerTest extends AbstractWebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(302);
         $crawler = $client->followRedirect();
-        $this->assertSame('Votre avis Mathieu FERNANDEZ', $crawler->filter('[data-testid="user-links"]')->text());
+        $this->assertSame('Votre avis Mes organisations Mathieu FERNANDEZ Mathieu FERNANDEZ mathieu.fernandez@beta.gouv.fr Mon compte Administration Se déconnecter', $crawler->filter('[data-testid="user-links"]')->text());
     }
 
     public function testLoginWithUnknownAccount(): void
