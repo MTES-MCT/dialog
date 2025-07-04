@@ -38,9 +38,41 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="fr-btn fr-icon-account-circle-fill" href="{{ path('app_my_area') }}">
-                                        {{ app.user.fullName }}
+                                    <a class="fr-btn fr-icon-x-government fr-x-icon--sm" href="{{ path('app_my_organizations') }}">
+                                        {{ 'organization.list.title'|trans }}
                                     </a>
+                                </li>
+                                <li class="user-dropdown" data-controller="user-dropdown">
+                                    <button
+                                        class="user-dropdown-btn fr-btn fr-btn--tertiary-no-outline"
+                                        data-action="click->user-dropdown#toggle"
+                                        data-user-dropdown-target="button"
+                                        aria-expanded="false"
+                                        aria-controls="userDropdownMenu"
+                                        type="button"
+                                    >
+                                        <span class="icon fr-icon--sm fr-icon-account-circle-fill"></span>
+                                        {{ app.user.fullName }}
+                                        <span class="chevron" data-user-dropdown-target="chevron"></span>
+                                    </button>
+                                    <div class="user-dropdown-menu" id="userDropdownMenu" data-user-dropdown-target="menu" hidden>
+                                        <div class="user-dropdown-header">
+                                            <div class="user-dropdown-name">{{ app.user.fullName }}</div>
+                                            <div class="user-dropdown-email">{{ app.user.userIdentifier }}</div>
+                                        </div>
+                                        <hr class="user-dropdown-separator">
+                                        <a class="fr-link fr-icon-account-circle-line fr-link--icon-left" href="{{ path('app_profile') }}">
+                                            {{ 'profile.title'|trans }}
+                                        </a>
+                                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                            <a class="fr-link fr-icon-settings-5-line fr-link--icon-left" href="{{ path('app_admin') }}">
+                                                {{ 'common.admin'|trans }}
+                                            </a>
+                                        {% endif %}
+                                        <a class="fr-btn fr-btn--icon-left fr-icon-logout-box-r-line fr-btn--secondary user-dropdown-logout" href="{{ path('app_logout') }}" data-testid="logout-link">
+                                            {{ 'common.logout'|trans }}
+                                        </a>
+                                    </div>
                                 </li>
                             {% else %}
                                 <li>

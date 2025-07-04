@@ -57,7 +57,7 @@ final class DeleteInvitationController
             $session->getFlashBag()->add('error', $this->translator->trans('invitation.delete.error'));
 
             return new RedirectResponse(
-                url: $this->router->generate('app_my_area'),
+                url: $this->router->generate('app_my_organizations'),
                 status: Response::HTTP_SEE_OTHER,
             );
         }
