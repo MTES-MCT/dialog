@@ -38,7 +38,7 @@ final class DeleteInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertEquals(['error' => ['Vous n\'avez pas les droits pour supprimer cette invitation.']], $this->getFlashes($crawler));
         $this->assertResponseStatusCodeSame(200);
-        $this->assertRouteSame('app_my_area');
+        $this->assertRouteSame('app_my_organizations');
     }
 
     public function testOrganizationOrUserNotFound(): void

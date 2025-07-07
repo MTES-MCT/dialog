@@ -2241,9 +2241,13 @@
                 <source>jop.regulation_order.title</source>
                 <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
             </trans-unit>
-            <trans-unit id="organization.list.title">
-                <source>organization.list.title</source>
+            <trans-unit id="user.myorganizations">
+                <source>user.myorganizations</source>
                 <target>Mes organisations</target>
+            </trans-unit>
+            <trans-unit id="organization.list.description">
+                <source>organization.list.description</source>
+                <target>Visualiser les informations de votre organisation. Pour chaque organisation, vous pouvez définir un logo, ajouter des utilisateurs, créer une liste de diffusion, créer des modèles d’arrêtés, etc.</target>
             </trans-unit>
             <trans-unit id="roles.ROLE_ORGA_CONTRIBUTOR">
                 <source>roles.ROLE_ORGA_CONTRIBUTOR</source>
