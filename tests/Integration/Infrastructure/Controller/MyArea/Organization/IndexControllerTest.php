@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Controller\MyArea;
+namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization;
 
-use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class IndexControllerTest extends AbstractWebTestCase
@@ -12,12 +11,12 @@ final class IndexControllerTest extends AbstractWebTestCase
     public function testIndex(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/mon-espace');
+        $crawler = $client->request('GET', '/mon-espace/organizations');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Mon espace', $crawler->filter('h2')->text());
-        $this->assertMetaTitle('Mon espace - DiaLog', $crawler);
+        $this->assertSame('Mes organisations', $crawler->filter('h2')->text());
+        $this->assertMetaTitle('Mes organisations - DiaLog', $crawler);
 
         $organizations = $crawler->filter('[data-testid="organization-list"]');
         $this->assertCount(2, $organizations->filter('[data-testid="organization-detail"]'));
@@ -25,19 +24,10 @@ final class IndexControllerTest extends AbstractWebTestCase
         $this->assertCount(0, $crawler->filter('[data-testid="admin-link"]'));
     }
 
-    public function testIndexAsAdmin(): void
-    {
-        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
-        $crawler = $client->request('GET', '/mon-espace');
-
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertCount(1, $crawler->filter('[data-testid="admin-link"]'));
-    }
-
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/mon-espace');
+        $client->request('GET', '/mon-espace/organizations');
         $this->assertResponseRedirects('http://localhost/login', 302);
     }
 }
