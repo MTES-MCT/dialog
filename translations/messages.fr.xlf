@@ -2241,8 +2241,8 @@
                 <source>jop.regulation_order.title</source>
                 <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
             </trans-unit>
-            <trans-unit id="organization.list.title">
-                <source>organization.list.title</source>
+            <trans-unit id="user.myorganizations">
+                <source>user.myorganizations</source>
                 <target>Mes organisations</target>
             </trans-unit>
             <trans-unit id="organization.list.description">

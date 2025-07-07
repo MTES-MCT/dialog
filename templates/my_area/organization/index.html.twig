@@ -1,12 +1,12 @@
 {% extends 'layouts/layout.html.twig' %}
 
 {% block title %}
-    {{'organization.list.title'|trans}} - {{ parent() }}
+    {{'user.myorganizations'|trans}} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="myarea">
-        <h2 id="myarea" data-testid="organization-list">{{ 'organization.list.title'|trans }}</h2>
+        <h2 id="myarea" data-testid="organization-list">{{ 'user.myorganizations'|trans }}</h2>
         <p>{{ 'organization.list.description'|trans }}</p>
 
         <div class="fr-grid-row fr-grid-row--gutters" data-testid="organization-list">

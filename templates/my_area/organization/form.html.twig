@@ -12,7 +12,7 @@
             </div>
             <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_organizations'},
+                    { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
                     { title: organization.name, url: path('app_config_organization_detail', { uuid: organization.uuid }), generatedPath: true },
                     { title: metaTitle },
                 ]} %}
