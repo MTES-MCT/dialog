@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
-use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Query\GetRegulationOrderIdentifierQuery;
@@ -47,7 +46,6 @@ final class AddRegulationController
         $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
 
         $command = SaveRegulationGeneralInfoCommand::create(null, $identifier);
-        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
 
         $dto = new RegulationOrderTemplateDTO();
         $dto->organizationUuid = $organizationUuid;
@@ -58,7 +56,6 @@ final class AddRegulationController
             data: $command,
             options: [
                 'organizations' => $user->getUserOrganizations(),
-                'visaModels' => $visaModels,
                 'regulationOrderTemplates' => $regulationOrderTemplates,
                 'action' => $this->router->generate('app_regulation_add'),
                 'save_options' => [

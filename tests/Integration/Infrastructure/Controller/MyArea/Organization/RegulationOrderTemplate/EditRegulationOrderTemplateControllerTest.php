@@ -17,7 +17,7 @@ final class EditRegulationOrderTemplateControllerTest extends AbstractWebTestCas
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Réglementation de vitesse en agglomération', $crawler->filter('h2')->text());
+        $this->assertSame('Réglementation de vitesse en agglomération', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Réglementation de vitesse en agglomération - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');

@@ -1,0 +1,15 @@
+<turbo-frame id="block_signing_authority">
+    {{ form_start(form) }}
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--end fr-mb-2w">
+        <div class="fr-col-12 fr-col-md-6">
+            {{ form_row(form.name, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">
+        {{ form_row(form.role, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+            {{ form_row(form.signatoryName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+        </div>
+    </div>
+    {{ form_widget(form.save) }}
+    <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-ml-1w">{{ "common.cancel"|trans }}</a>
+    {{ form_end(form) }}
+</turbo-frame>
