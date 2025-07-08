@@ -1,5 +1,6 @@
 {% extends 'layouts/layout.html.twig' %}
 {% set metaTitle = organization.name %}
+{% set establishment = organization.establishment %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
@@ -12,31 +13,115 @@
             </div>
             <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
                     { title: metaTitle },
                 ]} %}
-                <div class="fr-grid-row fr-x-gap-2w">
-                    <div class="fr-x-grow-32w">
-                        <h2 class="fr-mb-0">{{ metaTitle }}</h2>
-                        <p>{{ 'organization.siret'|trans }} : {{ organization.siret|default('N/D') }}</p>
-                        {% if logo %}
-                            <img class="fr-x-max-w-32w" src="{{ logo }}" alt="{{ 'organization.logo'|trans }}" />
-                        {% endif %}
-                        {% if organization.geometry %}
+
+                <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                    {{ 'organization.name'|trans }}
+                </h3>
+                <p class="fr-x-text">
+                    {{ 'organization.description'|trans }}
+                </p>
+                <div class="app-card app-card--no-header app-card--with-background">
+                    <div class="app-card__content">
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-5">
+                                <b>{{ 'organization.organizationName'|trans }}</b>
+                                <p>{{ organization.name }}</p>
+
+                                <b>{{ 'organization.siret'|trans|upper }}</b>
+                                <p class="fr-mb-0">{{ organization.siret|default('N/D') }}</p>
+                                <p>
+                                    <a class="fr-link" href="https://annuaire-entreprises.data.gouv.fr" target="_blank">
+                                        {{ 'organization.annuaire'|trans }}
+                                    </a>
+                                </p>
+                                {% if establishment %}
+                                    <b>{{ 'organization.establishmentAddress'|trans }}</b>
+                                    <p class="fr-mb-0">{{ establishment.address }}</p>
+                                    {% if establishment.addressComplement %}
+                                        <p class="fr-mb-0">{{ establishment.addressComplement }}</p>
+                                    {% endif %}
+                                    <p>{{ establishment.zipCode }} {{ establishment.city }}</p>
+                                {% endif %}
+
+                                {% if organization.departmentName %}
+                                    <b>{{ 'organization.departmentName'|trans }}</b>
+                                    <p class="fr-mb-0">{{ organization.departmentName }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-4">
+                                {% if logo %}
+                                    <img class="fr-x-max-w-16w" src="{{ logo }}" alt="{{ 'organization.logo'|trans }}" />
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-3">
+                                {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}
+                                    <a href="{{ path('app_config_organization_edit', { uuid: organization.uuid }) }}" class="fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                                        {{ 'common.update'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                    {{ 'signing_authority.form.title'|trans }}
+                </h3>
+
+                <div class="app-card">
+                    <div class="app-card__content">
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12 fr-col-md-5">
+                                <b>{{ 'signing_authority.name'|trans }}</b>
+                                {% if signingAuthority %}
+                                    <p>{{ signingAuthority.name }}</p>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                                        {{ 'organization.not_completed'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-4">
+                                <b>{{ 'signing_authority.signatoryName'|trans }}</b>
+                                {% if signingAuthority %}
+                                    <p>{{ signingAuthority.signatoryName }} ({{ signingAuthority.role }})</p>
+                                {% else %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                                        {{ 'organization.not_completed'|trans }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-12 fr-col-md-3">
+                                {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                    <a href="{{ path('app_config_signing_authority_edit', { uuid: organization.uuid }) }}" class="fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                                        {{ 'common.update'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if organization.geometry %}
+                    <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                        {{ 'organization.geometry'|trans }}
+                    </h3>
+
+                    <div class="app-card">
+                        <div class="app-card__content">
                             <div data-controller="polygon-map" data-polygon-map-geojson-value='{{ organization.geometry }}'>
                                 <div data-polygon-map-target="container"></div>
                                 <div data-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
                             </div>
-                        {% endif %}
+                            <p class="fr-x-text--default-grey fr-mt-2w">
+                                {{ 'organization.geometry.help'|trans }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="fr-mb-3w">
-                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}
-                            <a href="{{ path('app_config_organization_edit', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
-                                {{ 'common.update'|trans }}
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </section>

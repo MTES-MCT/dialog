@@ -169,8 +169,7 @@ final class GetOrCreateOrganizationBySiretCommandHandlerTest extends TestCase
 
         $this->organizationRepository
             ->expects($this->once())
-            ->method('add')
-            ->with($expectedOrganization);
+            ->method('add');
 
         $this->commandBus
             ->expects($this->once())

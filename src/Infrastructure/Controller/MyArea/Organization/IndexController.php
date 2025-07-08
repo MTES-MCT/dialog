@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\MyArea;
+namespace App\Infrastructure\Controller\MyArea\Organization;
 
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -18,8 +18,8 @@ final class IndexController
     }
 
     #[Route(
-        '',
-        name: 'app_my_area',
+        '/organizations',
+        name: 'app_my_organizations',
         methods: ['GET'],
     )]
     public function __invoke(): Response
@@ -28,7 +28,7 @@ final class IndexController
         $user = $this->security->getUser();
 
         return new Response($this->twig->render(
-            name: 'my_area/index.html.twig',
+            name: 'my_area/organization/index.html.twig',
             context: [
                 'organizations' => $user->getUserOrganizations(),
             ],

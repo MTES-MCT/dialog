@@ -12,7 +12,7 @@
             </div>
             <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: 'user.myarea'|trans, path: 'app_my_organizations'},
                     { title: metaTitle },
                 ]} %}
                 <div class="fr-grid-row fr-x-gap-2w" data-testid="signing_authority">
@@ -23,9 +23,7 @@
                         </p>
                         <ul>
                             <li><b>{{ 'signing_authority.name'|trans }}</b> : {{ signingAuthority.name|default('N/D') }}</li>
-                            <li><b>{{ 'signing_authority.address'|trans }}</b> : {{ signingAuthority.roadName|default('N/D') }} {{ signingAuthority.cityCode|default('N/D') }}
-                            {{ signingAuthority.cityLabel|default('N/D') }}</li>
-                            <li><b>{{ 'signing_authority.placeOfSignature'|trans }}</b> : {{ signingAuthority.placeOfSignature|default('N/D') }}</li>
+                            <li><b>{{ 'signing_authority.role'|trans }}</b> : {{ signingAuthority.role|default('N/D') }}</li>
                             <li><b>{{ 'signing_authority.signatoryName'|trans }}</b>  : {{ signingAuthority.signatoryName|default('N/D') }}</li>
                         </ul>
                     </div>

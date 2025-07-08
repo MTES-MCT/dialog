@@ -12,7 +12,7 @@
             </div>
             <div class="fr-col-12 fr-col-md-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_area'},
+                    { title: 'user.myarea'|trans, path: 'app_my_organizations'},
                     { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
                     { title: metaTitle },
                 ]} %}
@@ -21,18 +21,7 @@
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--end fr-mb-2w">
                         <div class="fr-col-12 fr-col-md-6">
                             {{ form_row(form.name, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-                            {{ form_row(form.roadName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-                            
-                                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--end fr-mb-2w">
-                                    <div class="fr-col-12 fr-col-xl-4">
-                                        {{ form_row(form.cityCode, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-                                    </div>
-                                    <div class="fr-col-12 fr-col-xl-8">
-                                        {{ form_row(form.cityLabel, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
-                                    </div>
-                                </div>
-
-                            {{ form_row(form.placeOfSignature, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                            {{ form_row(form.role, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                             {{ form_row(form.signatoryName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                         </div>
                         <div class="fr-col-12 fr-col-md-6 fr-pl-md-3w">

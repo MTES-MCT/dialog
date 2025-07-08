@@ -16,10 +16,11 @@ final class OrganizationDetailControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Département de Seine-Saint-Denis', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Département de Seine-Saint-Denis - DiaLog', $crawler);
 
-        $this->assertSame($crawler->filter('h2')->text(), 'Département de Seine-Saint-Denis');
+        $this->assertSame($crawler->filter('h3')->eq(0)->text(), 'Organisation');
+        $this->assertSame($crawler->filter('h3')->eq(1)->text(), 'Autorité signataire');
+        $this->assertSame($crawler->filter('h3')->eq(2)->text(), 'Périmètre géographique');
     }
 
     public function testNotAdministrator(): void

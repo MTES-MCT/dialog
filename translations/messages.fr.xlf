@@ -2077,6 +2077,34 @@
                 <source>organization.name</source>
                 <target>Organisation</target>
             </trans-unit>
+            <trans-unit id="organization.organizationName">
+                <source>organization.organizationName</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.annuaire">
+                <source>organization.annuaire</source>
+                <target>Annuaire des entreprises</target>
+            </trans-unit>
+            <trans-unit id="organization.description">
+                <source>organization.description</source>
+                <target>Certaines informations telles que le nom, l’adresse, le logo, l’autorité signataire apparaîtront dans l’export de l’arrêté DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="organization.geometry">
+                <source>organization.geometry</source>
+                <target>Périmètre géographique</target>
+            </trans-unit>
+            <trans-unit id="organization.geometry.help">
+                <source>organization.geometry.help</source>
+                <target>Si le contour ne correspond pas à votre découpage administratif, contactez-nous par email à : dialog@beta.gouv.fr.</target>
+            </trans-unit>
+            <trans-unit id="organization.establishmentAddress">
+                <source>organization.establishmentAddress</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="organization.departmentName">
+                <source>organization.departmentName</source>
+                <target>Département</target>
+            </trans-unit>
             <trans-unit id="organization.completed">
                 <source>organization.completed</source>
                 <target>Complété</target>
@@ -2265,9 +2293,13 @@
                 <source>jop.regulation_order.title</source>
                 <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
             </trans-unit>
-            <trans-unit id="organization.list.title">
-                <source>organization.list.title</source>
+            <trans-unit id="user.myorganizations">
+                <source>user.myorganizations</source>
                 <target>Mes organisations</target>
+            </trans-unit>
+            <trans-unit id="organization.list.description">
+                <source>organization.list.description</source>
+                <target>Visualiser les informations de votre organisation. Pour chaque organisation, vous pouvez définir un logo, ajouter des utilisateurs, créer une liste de diffusion, créer des modèles d’arrêtés, etc.</target>
             </trans-unit>
             <trans-unit id="roles.ROLE_ORGA_CONTRIBUTOR">
                 <source>roles.ROLE_ORGA_CONTRIBUTOR</source>
@@ -2668,55 +2700,31 @@
             </trans-unit>
             <trans-unit id="signing_authority.name">
                 <source>signing_authority.name</source>
-                <target>Intitulé du signataire</target>
+                <target>Intitulé du pouvoir de signature</target>
             </trans-unit>
             <trans-unit id="signing_authority.help">
                 <source>signing_authority.help</source>
-                <target>L'autorité signataire est gérée par les administrateurs de votre organisation. Si elle ne convient pas, contactez l’administrateur de votre organisation.</target>
+                <target>Entrez l’intitulé du pouvoir de signature, par exemple “Le maire de Paris”</target>
             </trans-unit>
             <trans-unit id="signing_authority.name.help">
                 <source>signing_authority.name.help</source>
                 <target>Entrez l'intitulé du signataire, par exemple "Madame le maire de XX"</target>
             </trans-unit>
-            <trans-unit id="signing_authority.address">
-                <source>signing_authority.address</source>
-                <target>Adresse de l'établissement</target>
+            <trans-unit id="signing_authority.role">
+                <source>signing_authority.role</source>
+                <target>Rôle du signataire effectif</target>
             </trans-unit>
-            <trans-unit id="signing_authority.address.help">
-                <source>signing_authority.address.help</source>
-                <target>Entrez l'adresse de l'établissement, par exemple de la mairie</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.roadName">
-                <source>signing_authority.roadName</source>
-                <target>Adresse de l'établissement</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.roadName.help">
-                <source>signing_authority.roadName.help</source>
-                <target>Numéro et voie</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.cityCode">
-                <source>signing_authority.cityCode</source>
-                <target>Code postal</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.cityLabel">
-                <source>signing_authority.cityLabel</source>
-                <target>Ville</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.placeOfSignature">
-                <source>signing_authority.placeOfSignature</source>
-                <target>Fait à</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.placeOfSignature.help">
-                <source>signing_authority.placeOfSignature.help</source>
-                <target>Entrez le nom de la ville ou a été rédigé l'arrếté</target>
+            <trans-unit id="signing_authority.role.help">
+                <source>signing_authority.role.help</source>
+                <target>Entrez l’intitulé du signataire effectif par exemple “Adjoint au maire de XXX”</target>
             </trans-unit>
             <trans-unit id="signing_authority.signatoryName">
                 <source>signing_authority.signatoryName</source>
-                <target>Nom du signataire</target>
+                <target>Nom du signataire effectif</target>
             </trans-unit>
             <trans-unit id="signing_authority.signatoryName.help">
                 <source>signing_authority.signatoryName.help</source>
-                <target>Entrez le nom du signataire de l'arrếté</target>
+                <target>Entrez le nom et le prénom du signataire effectif</target>
             </trans-unit>
             <trans-unit id="signing_authority.form.image_description">
                 <source>signing_authority.form.image_description</source>
