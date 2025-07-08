@@ -33,6 +33,37 @@ final class AddStorageRegulationOrderControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(303);
     }
 
+    public function testBadFormValues(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/storage/add');
+
+        $uploadedFile = new UploadedFile(
+            __DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv',
+            'aires_de_stockage_test.csv',
+        );
+        $saveButton = $crawler->selectButton('Ajouter');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['storage_regulation_order_form']['title'] = '';
+        $values['storage_regulation_order_form']['file'] = $uploadedFile;
+        $values['storage_regulation_order_form']['url'] = 'example.com/storage1.pdf';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#storage_regulation_order_form_title_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une URL valide.', $crawler->filter('#storage_regulation_order_form_url_error')->text());
+    }
+
+    public function testAddAsContributor(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/storage/add');
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();

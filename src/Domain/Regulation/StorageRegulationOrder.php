@@ -40,27 +40,6 @@ class StorageRegulationOrder
         return $this->title;
     }
 
-    public function setPath(?string $path): self
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-    public function setUrl(?string $url): self
-    {
-        $this->url = $url;
-
-        return $this;
-    }
-
-    public function setTitle(?string $title): self
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
     public function update(?string $path, ?string $url, ?string $title = null): void
     {
         $this->path = $path;

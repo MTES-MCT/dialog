@@ -22,7 +22,6 @@ final class DeleteRegulationOrderStorageCommandHandler
         $path = $storageRegulationOrder->getPath();
         if ($path !== null) {
             $this->storage->delete($path);
-            $storageRegulationOrder->setPath(null);
         }
 
         $this->storageRegulationOrderRepository->remove($storageRegulationOrder);

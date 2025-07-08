@@ -27,13 +27,9 @@
             </constraint>
         </property>
         <property name="title">
-            <constraint name="When">
-                <option name="expression"> this.title != null </option>
-                <option name="constraints">
-                    <constraint name="Length">
-                        <option name="max">30</option>
-                    </constraint>
-                </option>
+            <constraint name="NotBlank" />
+            <constraint name="Length">
+                <option name="max">30</option>
             </constraint>
         </property>
     </class>

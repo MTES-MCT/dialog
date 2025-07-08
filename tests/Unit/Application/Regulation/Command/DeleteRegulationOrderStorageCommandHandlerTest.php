@@ -36,11 +36,6 @@ final class DeleteRegulationOrderStorageCommandHandlerTest extends TestCase
             ->method('delete')
             ->with('regulationOrder/496bd752-c217-4625-ba0c-7454dc218516/storageRegulationOrder.pdf');
 
-        $this->storageRegulationOrder
-            ->expects(self::once())
-            ->method('setPath')
-            ->with(null);
-
         $this->storageRegulationOrderRepository
             ->expects(self::once())
             ->method('remove')
