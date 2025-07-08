@@ -30,7 +30,11 @@ final class AddStorageRegulationOrderControllerTest extends AbstractWebTestCase
         $form['storage_regulation_order_form[url]'] = 'https://example.com/storage1.pdf';
         $client->submit($form);
 
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
+        $streams = $crawler->filter('turbo-stream');
+
+        $this->assertSame($streams->eq(0)->attr('action'), 'update');
+        $this->assertSame($streams->eq(0)->attr('target'), 'upload-form-frame');
     }
 
     public function testBadFormValues(): void

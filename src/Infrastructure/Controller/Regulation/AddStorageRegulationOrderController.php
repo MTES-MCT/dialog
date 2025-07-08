@@ -12,7 +12,6 @@ use App\Infrastructure\Form\Regulation\StorageRegulationOrderFormType;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -59,29 +58,22 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
             ],
         );
         $form->handleRequest($request);
+        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
-
             $redirectUrl = $this->router->generate('app_regulation_detail', ['uuid' => $uuid]);
 
-            if (TurboBundle::STREAM_FORMAT === $request->getPreferredFormat()) {
-                return new Response(
-                    $this->twig->render(
-                        'regulation/fragments/_storage.regulation.stream.html.twig',
-                        [
-                            'redirectUrl' => $redirectUrl,
-                        ],
-                    ),
-                    Response::HTTP_OK,
-                    ['Content-Type' => 'text/vnd.turbo-stream.html'],
-                );
-            }
-
-            return new RedirectResponse($redirectUrl, Response::HTTP_SEE_OTHER);
+            return new Response(
+                $this->twig->render(
+                    'regulation/fragments/_storage.regulation.stream.html.twig',
+                    [
+                        'redirectUrl' => $redirectUrl,
+                    ],
+                ),
+                Response::HTTP_OK,
+            );
         }
-
-        $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
         return new Response(
             content: $this->twig->render(

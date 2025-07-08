@@ -168,6 +168,17 @@
 								</div>
 							</div>
 						</div>
+						{% if storageRegulationOrder %}
+							<div class="app-card app-card--raised fr-mt-2w">
+								<div class="app-card__content">
+									<h3 class="fr-h4 fr-mb-2w">{{ 'regulation.import'|trans }}</h3>
+									<a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="/storage/{{ storageRegulationOrder.path }}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
+									<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+										{{ 'storageRegulationOrder.export.pdf.mention'|trans }}
+									</div>
+								</div>
+							</div>
+						{% endif %}
 					{% endif %}
 				</aside>
 			</div>
