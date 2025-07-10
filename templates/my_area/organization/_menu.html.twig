@@ -30,16 +30,6 @@
                     <button class="fr-sidemenu__btn" aria-expanded="{{ 'app_config_visa' in routeName or 'app_config_organization_edit_logo' in routeName or 'app_config_signing_authority' in routeName ? 'true' : 'false' }}" aria-controls="sidemenu-config">{{ 'config.menu.regulations'|trans }}</button>
                     <div class="fr-collapse" id="sidemenu-config">
                         <ul class="fr-sidemenu__list">
-                            <li class="fr-sidemenu__item">
-                                <a class="fr-sidemenu__link" href="{{ path('app_config_visa_models_list', { uuid: organization.uuid }) }}" aria-current="{{ 'app_config_visa_models' in routeName  ? 'true' : 'false' }}">
-                                    {{ 'config.menu.visas'|trans }}
-                                </a>
-                            </li>
-                            <li class="fr-sidemenu__item">
-                                <a class="fr-sidemenu__link" href="{{ path('app_config_signing_authority_detail', {uuid: organization.uuid}) }}" aria-current="{{ 'app_config_signing_authority' in routeName  ? 'true' : 'false' }}">
-                                    {{ 'config.menu.authority'|trans }}
-                                </a>
-                            </li>
                             {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                                 <li class="fr-sidemenu__item">
                                     <a class="fr-sidemenu__link" href="{{ path('app_config_organization_edit_logo', {uuid: organization.uuid}) }}" aria-current="{{ 'app_config_organization_edit_logo' in routeName  ? 'true' : 'false' }}">

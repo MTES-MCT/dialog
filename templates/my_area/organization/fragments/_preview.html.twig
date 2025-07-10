@@ -1,0 +1,44 @@
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-12 fr-col-md-5">
+        <b>{{ 'organization.organizationName'|trans }}</b>
+        <p>{{ organization.name }}</p>
+
+        <b>{{ 'organization.siret'|trans|upper }}</b>
+        <p class="fr-mb-0">{{ organization.siret|default('N/D') }}</p>
+        <p>
+            <a class="fr-link" href="https://annuaire-entreprises.data.gouv.fr" target="_blank">
+                {{ 'organization.directory'|trans }}
+            </a>
+        </p>
+        {% if establishment %}
+            <b>{{ 'organization.establishmentAddress'|trans }}</b>
+            <p class="fr-mb-0">{{ establishment.address }}</p>
+            {% if establishment.addressComplement %}
+                <p class="fr-mb-0">{{ establishment.addressComplement }}</p>
+            {% endif %}
+            <p>{{ establishment.zipCode }} {{ establishment.city }}</p>
+        {% endif %}
+
+        {% if organization.departmentName %}
+            <b>{{ 'organization.departmentName'|trans }}</b>
+            <p class="fr-mb-0">{{ organization.departmentName }}</p>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-4">
+        <b>{{ 'organization.logo'|trans }}</b><br/>
+        {% if logo %}
+            <img class="fr-x-max-w-16w" src="{{ logo }}" alt="{{ 'organization.logo'|trans }}" />
+        {% else %}
+             <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                {{ 'organization.not_completed'|trans }}
+            </span>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-3">
+        {# if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}
+            <a href="{{ path('app_config_organization_edit', { uuid: organization.uuid }) }}" class="fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                {{ 'common.update'|trans }}
+            </a>
+        {% endif #}
+    </div>
+</div>

@@ -35,5 +35,6 @@ class ProConnectUserTest extends TestCase
         $this->assertEmpty($passwordUser->eraseCredentials());
         $this->assertTrue($passwordUser->isVerified());
         $this->assertSame('proconnect', $passwordUser->getAuthOrigin());
+        $this->assertTrue($passwordUser->isOrganizationsCompleted());
     }
 }
