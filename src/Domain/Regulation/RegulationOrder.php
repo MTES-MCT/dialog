@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,10 +20,7 @@ class RegulationOrder
         private string $title,
         private ?string $subject = null,
         private ?string $otherCategoryText = null,
-        private ?VisaModel $visaModel = null,
         private ?RegulationOrderTemplate $regulationOrderTemplate = null,
-        private ?array $additionalVisas = [],
-        private ?array $additionalReasons = [],
     ) {
         $this->measures = new ArrayCollection();
     }
@@ -81,24 +77,9 @@ class RegulationOrder
         return $this->category === RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
     }
 
-    public function getVisaModel(): ?VisaModel
-    {
-        return $this->visaModel;
-    }
-
     public function getRegulationOrderTemplate(): ?RegulationOrderTemplate
     {
         return $this->regulationOrderTemplate;
-    }
-
-    public function getAdditionalVisas(): array
-    {
-        return $this->additionalVisas ?? [];
-    }
-
-    public function getAdditionalReasons(): array
-    {
-        return $this->additionalReasons ?? [];
     }
 
     public function update(
@@ -107,9 +88,6 @@ class RegulationOrder
         string $title,
         ?string $subject = null,
         ?string $otherCategoryText = null,
-        array $additionalVisas = [],
-        array $additionalReasons = [],
-        ?VisaModel $visaModel = null,
         ?RegulationOrderTemplate $regulationOrderTemplate = null,
     ): void {
         $this->identifier = $identifier;
@@ -117,9 +95,6 @@ class RegulationOrder
         $this->title = $title;
         $this->subject = $subject;
         $this->otherCategoryText = $otherCategoryText;
-        $this->additionalVisas = $additionalVisas;
-        $this->additionalReasons = $additionalReasons;
-        $this->visaModel = $visaModel;
         $this->regulationOrderTemplate = $regulationOrderTemplate;
     }
 }

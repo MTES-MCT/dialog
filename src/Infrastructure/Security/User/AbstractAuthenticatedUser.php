@@ -74,6 +74,17 @@ abstract class AbstractAuthenticatedUser implements UserInterface
         return $uuids;
     }
 
+    public function isOrganizationsCompleted(): bool
+    {
+        foreach ($this->userOrganizations as $org) {
+            if (!$org->completed) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function eraseCredentials(): void
     {
     }

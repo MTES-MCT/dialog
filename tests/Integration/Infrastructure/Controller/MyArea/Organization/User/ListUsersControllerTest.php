@@ -17,7 +17,7 @@ final class ListUsersControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Utilisateurs', $crawler->filter('h2')->text());
+        $this->assertSame('Utilisateurs', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Utilisateurs - DiaLog', $crawler);
 
         $users = $crawler->filter('[data-testid="user-list"]');

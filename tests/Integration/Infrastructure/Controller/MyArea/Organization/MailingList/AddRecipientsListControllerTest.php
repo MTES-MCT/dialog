@@ -17,7 +17,7 @@ final class AddRecipientsListControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Ajouter un destinataire', $crawler->filter('h2')->text());
+        $this->assertSame('Ajouter un destinataire', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Ajouter un destinataire - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');

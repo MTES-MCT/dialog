@@ -28,15 +28,6 @@ Arrếté n°[{{ generalInfo.identifier }}]{custom-style="Dialog_Variable"}
 :::
 {% endif %}
 
-{% for visa in visasAndReasons.visas %}
-[{{ visa|raw|app_capfirst }}]{custom-style="Dialog_ACompleter"}
-
-{% endfor %}
-{% for reason in visasAndReasons.reasons %}
-[{{ reason|raw|app_capfirst }}]{custom-style="Dialog_ACompleter"}
-
-{% endfor %}
-
 ::: {custom-style="Dialog_ArreteTitre"}
 Arrête
 :::

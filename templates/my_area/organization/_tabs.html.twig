@@ -1,0 +1,24 @@
+{% set routeName = app.request.get('_route') %}
+
+<ul class="fr-tabs__list" role="tablist" aria-label="{{'config.menu.organization'|trans}}">
+    <li role="presentation">
+        <a class="fr-tabs__tab" role="tab" href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}" {% if 'app_config_organization_detail' in routeName or 'app_config_organization_edit' == routeName %} aria-selected="true" {% endif%} aria-controls="tab-1-panel">
+            {{ 'config.menu.organization'|trans }}
+        </a>
+    </li>
+    <li role="presentation">
+        <a class="fr-tabs__tab" role="tab" href="{{ path('app_users_list', { uuid: organization.uuid }) }}" {% if 'app_users' in routeName %} aria-selected="true" {% endif%} aria-controls="tab-1-panel">
+            {{ 'config.menu.users'|trans }}
+        </a>
+    </li>
+    <li role="presentation">
+        <a class="fr-tabs__tab" role="tab" href="{{ path('app_config_recipients_list', { uuid: organization.uuid }) }}" {% if 'app_config_recipients_list' in routeName %} aria-selected="true" {% endif%} aria-controls="tab-1-panel">
+            {{ 'config.menu.mailing_list'|trans }}
+        </a>
+    </li>
+    <li role="presentation">
+        <a class="fr-tabs__tab" role="tab" href="{{ path('app_config_regulation_order_templates_list', { uuid: organization.uuid }) }}" {% if 'app_config_regulation_order_template' in routeName %} aria-selected="true" {% endif%} aria-controls="tab-1-panel">
+            {{ 'config.menu.regulation_order_templates'|trans }}
+        </a>
+    </li>
+</ul>
