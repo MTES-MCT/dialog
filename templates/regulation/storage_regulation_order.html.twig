@@ -1,0 +1,16 @@
+<section class="fr-container fr-py-5w">
+    <h1 class="fr-h3">{{ 'regulation.storage.title' |trans }}</h1>
+	{{ form_start(form, { attr: { 'data-controller': 'form-submit' }}) }}
+    {{ form_row(form.title, { group_class: 'fr-input-group', widget_class: 'fr-input app-form-title' }) }}
+	{{ form_row(form.file, {
+            group_class: 'fr-input-group',
+        }) }}
+    <hr>
+    <span class="app-form-title">{{ 'regulation.storage.url.title' |trans }}</span>
+	{{ form_row(form.url, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+	{{ form_widget(form.save, {
+            attr: {
+                'data-action': 'change->form-submit#submit',
+            },}) }}
+	{{ form_end(form) }}
+</section>
