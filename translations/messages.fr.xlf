@@ -2021,8 +2021,8 @@
                 <source>organization.organizationName</source>
                 <target>Nom de l'organisation</target>
             </trans-unit>
-            <trans-unit id="organization.annuaire">
-                <source>organization.annuaire</source>
+            <trans-unit id="organization.directory">
+                <source>organization.directory</source>
                 <target>Annuaire des entreprises</target>
             </trans-unit>
             <trans-unit id="organization.description">
