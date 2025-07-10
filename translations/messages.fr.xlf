@@ -399,6 +399,58 @@
                 <source>regulation.export.doc.mention</source>
                 <target>DOCX - moins de 100ko</target>
             </trans-unit>
+            <trans-unit id="regulation.import">
+                <source>regulation.import</source>
+                <target>Ressources</target>
+            </trans-unit>
+            <trans-unit id="regulation.import.description">
+                <source>regulation.import.description</source>
+                <target>Importer un fichier ou ajouter un lien vers le document d’arrêté officiel.</target>
+            </trans-unit>
+            <trans-unit id="regulation.import.storage.description">
+                <source>regulation.import.storage.description</source>
+                <target>Importer le document d’arrêté initial.</target>
+            </trans-unit>
+            <trans-unit id="storageRegulationOrder.export.pdf.mention">
+                <source>storageRegulationOrder.export.pdf.mention</source>
+                <target>PDF - moins de 1Mo</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.title">
+                <source>regulation.storage.title</source>
+                <target>Ajouter un fichier ou un lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage">
+                <source>regulation.storage</source>
+                <target>Ajouter un fichier</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.file.title">
+                <source>regulation.storage.form.file.title</source>
+                <target>Importer un fichier</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.file.help">
+                <source>regulation.storage.form.file.help</source>
+                <target>Taille maximale : 1 Mo. Formats supportés : docx, odt, jpg, pdf.</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.url.title">
+                <source>regulation.storage.url.title</source>
+                <target>Ajouter un lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url">
+                <source>regulation.storage.form.url</source>
+                <target>URL du lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url.help">
+                <source>regulation.storage.form.url.help</source>
+                <target>Entrez l’URL vers au format https://www.mondocument.pdf</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.title">
+                <source>regulation.storage.form.title</source>
+                <target>Titre du document</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.save">
+                <source>regulation.storage.form.save</source>
+                <target>Ajouter</target>
+            </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
                 <target>Commune</target>
