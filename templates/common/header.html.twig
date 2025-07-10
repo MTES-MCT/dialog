@@ -40,6 +40,9 @@
                                 <li>
                                     <a class="fr-btn fr-icon-x-government fr-x-icon--sm" href="{{ path('app_my_organizations') }}">
                                         {{ 'user.myorganizations'|trans }}
+                                        {% if not app.user.isOrganizationsCompleted %}
+                                            <span class="notification-dot" title="{{ 'user.organizations_incomplete'|trans }}"></span>
+                                        {% endif %}
                                     </a>
                                 </li>
                                 <li class="user-dropdown" data-controller="user-dropdown">
