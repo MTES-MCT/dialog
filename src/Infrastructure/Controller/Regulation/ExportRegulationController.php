@@ -8,7 +8,6 @@ use App\Application\Organization\SigningAuthority\Query\GetSigningAuthorityByOrg
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
-use App\Application\Regulation\Query\Visa\GetVisasAndReasonsByRegulationOrderQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -45,7 +44,6 @@ final class ExportRegulationController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
-        $visasAndReasons = $this->queryBus->handle(new GetVisasAndReasonsByRegulationOrderQuery($generalInfo->regulationOrderUuid));
         $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($generalInfo->organizationUuid));
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
 
@@ -61,7 +59,6 @@ final class ExportRegulationController extends AbstractRegulationController
         $content = $this->twig->render(
             name: 'regulation/export.md.twig',
             context: [
-                'visasAndReasons' => $visasAndReasons,
                 'generalInfo' => $generalInfo,
                 'measures' => $measures,
                 'signingAuthority' => $signingAuthority,

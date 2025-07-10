@@ -17,7 +17,7 @@ final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Ajouter un modèle', $crawler->filter('h2')->text());
+        $this->assertSame('Ajouter un modèle', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Ajouter un modèle - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');

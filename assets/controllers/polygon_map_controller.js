@@ -96,7 +96,7 @@ export default class extends Controller {
         const mapOptions = {
             container: this.containerTarget,
             style: this.styleValue,
-            interactive: true,
+            interactive: false,
             attributionControl: false,
         };
 

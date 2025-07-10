@@ -54,17 +54,4 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
         return \sprintf('%s-%d', $identifier, $nextNumber);
     }
-
-    public function findVisasAndReasonsByRegulationOrderUuid(string $uuid): array
-    {
-        return $this->createQueryBuilder('ro')
-            ->select('visaModel.visas, ro.additionalVisas, ro.additionalReasons')
-            ->leftJoin('ro.visaModel', 'visaModel')
-            ->where('ro.uuid = :uuid')
-            ->setParameter('uuid', $uuid)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
 }

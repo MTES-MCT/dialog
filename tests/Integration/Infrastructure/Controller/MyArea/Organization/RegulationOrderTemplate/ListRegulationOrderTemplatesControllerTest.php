@@ -17,7 +17,7 @@ final class ListRegulationOrderTemplatesControllerTest extends AbstractWebTestCa
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Modèles d\'arrêtés', $crawler->filter('h2')->text());
+        $this->assertSame('Modèles d\'arrêtés', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Modèles d\'arrêtés - DiaLog', $crawler);
 
         $rows = $crawler->filter('[data-testid="regulation-order-template-list"]');

@@ -17,8 +17,8 @@ final class EditRecipientControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Ajouter un destinataire', $crawler->filter('h2')->text());
-        $this->assertMetaTitle('Ajouter un destinataire - DiaLog', $crawler);
+        $this->assertSame('Karine Marchand', $crawler->filter('h3')->text());
+        $this->assertMetaTitle('Karine Marchand - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');
         $form = $saveButton->form();

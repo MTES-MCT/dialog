@@ -17,7 +17,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Inviter un utilisateur', $crawler->filter('h2')->text());
+        $this->assertSame('Inviter un utilisateur', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Inviter un utilisateur - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Inviter');

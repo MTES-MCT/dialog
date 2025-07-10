@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\MyArea\Organization\MailingList;
+namespace App\Infrastructure\Controller\MyArea\Organization\SigningAuthority\Fragments;
 
 use App\Application\CommandBusInterface;
-use App\Application\Organization\MailingList\Command\SaveMailingListCommand;
-use App\Application\Organization\MailingList\Query\GetRecipientQuery;
+use App\Application\Organization\SigningAuthority\Command\SaveSigningAuthorityCommand;
+use App\Application\Organization\SigningAuthority\Query\GetSigningAuthorityByOrganizationQuery;
 use App\Application\QueryBusInterface;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
-use App\Infrastructure\Form\Organization\MailingListFormType;
+use App\Infrastructure\Form\Organization\SigningAuthorityFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
-use Http\Discovery\Exception\NotFoundException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 
-final class EditRecipientController extends AbstractOrganizationController
+final class SaveSigningAuthorityFragmentController extends AbstractOrganizationController
 {
     public function __construct(
         private \Twig\Environment $twig,
@@ -36,12 +35,12 @@ final class EditRecipientController extends AbstractOrganizationController
     }
 
     #[Route(
-        '/organizations/{uuid}/recipients/{mailingListUuid}/edit',
-        name: 'app_config_recipients_list_edit',
-        requirements: ['uuid' => Requirement::UUID, 'mailingListUuid' => Requirement::UUID],
+        '/_fragment/organizations/{uuid}/signing_authority/save',
+        name: 'fragment_organizations_signing_authority_save',
+        requirements: ['uuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]
-    public function __invoke(Request $request, string $uuid, string $mailingListUuid): Response
+    public function __invoke(Request $request, string $uuid): Response
     {
         $organization = $this->getOrganization($uuid);
 
@@ -49,32 +48,30 @@ final class EditRecipientController extends AbstractOrganizationController
             throw new AccessDeniedHttpException();
         }
 
-        $mailingList = $this->queryBus->handle(new GetRecipientQuery($mailingListUuid));
-
-        if (!$mailingList) {
-            throw new NotFoundException();
-        }
-
-        $command = new SaveMailingListCommand($organization, $mailingList);
-        $form = $this->formFactory->create(MailingListFormType::class, $command);
+        $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($uuid));
+        $command = new SaveSigningAuthorityCommand($organization, $signingAuthority);
+        $form = $this->formFactory->create(SigningAuthorityFormType::class, $command, [
+            'action' => $this->router->generate('fragment_organizations_signing_authority_save', ['uuid' => $uuid]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
 
             return new RedirectResponse(
-                url: $this->router->generate('app_config_recipients_list', ['uuid' => $uuid]),
+                url: $this->router->generate('fragment_organizations_signing_authority_preview', [
+                    'uuid' => $uuid,
+                ]),
                 status: Response::HTTP_SEE_OTHER,
             );
         }
 
         return new Response(
             content: $this->twig->render(
-                name: 'my_area/organization/mailing_list/form.html.twig',
+                name: 'my_area/organization/signing_authority/fragments/_form.html.twig',
                 context: [
-                    'organization' => $organization,
-                    'mailingList' => $mailingList,
                     'form' => $form->createView(),
+                    'cancelUrl' => $this->router->generate('fragment_organizations_signing_authority_preview', ['uuid' => $uuid]),
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid())

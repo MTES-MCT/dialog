@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
-use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Query\GetRegulationOrderTemplatesQuery;
@@ -47,7 +46,6 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
-        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery($organizationUuid));
 
         $dto = new RegulationOrderTemplateDTO();
         $dto->organizationUuid = $organizationUuid;
@@ -60,7 +58,6 @@ final class SaveGeneralInfoController extends AbstractRegulationController
             data: $command,
             options: [
                 'organizations' => $user->getUserOrganizations(),
-                'visaModels' => $visaModels,
                 'regulationOrderTemplates' => $regulationOrderTemplates,
                 'action' => $this->router->generate('fragment_regulations_general_info_form', ['uuid' => $uuid]),
                 'save_options' => [

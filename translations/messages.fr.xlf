@@ -531,18 +531,6 @@
                 <source>regulation.general_info</source>
                 <target>Informations générales</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visas_and_reasons">
-                <source>regulation.general_info.visas_and_reasons</source>
-                <target>Visas et motifs</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visas">
-                <source>regulation.general_info.visas</source>
-                <target>Visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visas.help">
-                <source>regulation.general_info.visas.help</source>
-                <target>Ajouter les visas que vous souhaitez voir dans votre arrêté. Par exemple, “Vu le code de la route...”.</target>
-            </trans-unit>
             <trans-unit id="regulation.general_info.regulation_order_template">
                 <source>regulation.general_info.regulation_order_template</source>
                 <target>Modèle de l'arrêté</target>
@@ -550,54 +538,6 @@
             <trans-unit id="regulation.general_info.regulation_order_template.placeholder">
                 <source>regulation.general_info.regulation_order_template.placeholder</source>
                 <target>Sélectionner un modèle de l'arrêté</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reasons.help">
-                <source>regulation.general_info.reasons.help</source>
-                <target>Ajouter les motifs que vous souhaitez voir dans votre arrêté. Par exemple, “Considérant qu'en raison du déroulement des travaux de...”.</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa_model">
-                <source>regulation.general_info.visa_model</source>
-                <target>Modèle de visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa_model.placeholder">
-                <source>regulation.general_info.visa_model.placeholder</source>
-                <target>Sélectionner un modèle de visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa_model.help">
-                <source>regulation.general_info.visa_model.help</source>
-                <target>Sélectionnez le modèle de visa qui correspond à votre arrếté.</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa.add">
-                <source>regulation.general_info.visa.add</source>
-                <target>Ajoutez les visas que vous souhaitez voir dans votre arrếté. Par exemple, "Vu le code de la route...".</target>
-            </trans-unit>
-            <trans-unit id="regulation.visa_models.management_notice">
-                <source>regulation.visa_models.management_notice</source>
-                <target>Les %visa_models% sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
-            </trans-unit>
-            <trans-unit id="regulation.visa_models.management_notice.visa_models">
-                <source>regulation.visa_models.management_notice.visa_models</source>
-                <target>modèles de visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reasons.add">
-                <source>regulation.general_info.reasons.add</source>
-                <target>Ajouter un motif</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.additional_visas.entry">
-                <source>regulation.general_info.additional_visas.entry</source>
-                <target>Visa (Vu ...)</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reason">
-                <source>regulation.general_info.reason</source>
-                <target>Motif (Considérant ...)</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reasons">
-                <source>regulation.general_info.reasons</source>
-                <target>Motifs</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visas_and_reasons.description">
-                <source>regulation.general_info.visas_and_reasons.description</source>
-                <target>Vous pouvez exporter votre arrêté de circulation à partir de DiaLog, pour cela vous devez spécifier les visas (Vu le ...) et les motifs (Considérant...).</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
@@ -2081,8 +2021,8 @@
                 <source>organization.organizationName</source>
                 <target>Nom de l'organisation</target>
             </trans-unit>
-            <trans-unit id="organization.annuaire">
-                <source>organization.annuaire</source>
+            <trans-unit id="organization.directory">
+                <source>organization.directory</source>
                 <target>Annuaire des entreprises</target>
             </trans-unit>
             <trans-unit id="organization.description">
@@ -2328,6 +2268,10 @@
             <trans-unit id="user.list.title">
                 <source>user.list.title</source>
                 <target>Utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="user.list.description">
+                <source>user.list.description</source>
+                <target>Ajouter les contacts des personnes à qui vous souhaiter partager vos arrêtés. Pour plus d’information, consultez l’aide en ligne.</target>
             </trans-unit>
             <trans-unit id="user.list.delete">
                 <source>user.list.delete</source>
@@ -2610,10 +2554,6 @@
                 <source>config.menu.users</source>
                 <target>Utilisateurs</target>
             </trans-unit>
-            <trans-unit id="config.menu.visas">
-                <source>config.menu.visas</source>
-                <target>Modèles de visas</target>
-            </trans-unit>
             <trans-unit id="config.menu.authority">
                 <source>config.menu.authority</source>
                 <target>Autorité signataire</target>
@@ -2622,77 +2562,9 @@
                 <source>config.menu.logo</source>
                 <target>Logo</target>
             </trans-unit>
-            <trans-unit id="visa.list.title">
-                <source>visa.list.title</source>
-                <target>Modèles de visas</target>
-            </trans-unit>
-            <trans-unit id="visa.list.help">
-                <source>visa.list.help</source>
-                <target>Créer des modèles de visas à utiliser par les agents dans les arrếtés de circulation créés dans DiaLog.</target>
-            </trans-unit>
-            <trans-unit id="visa.duplicated.success">
-                <source>visa.duplicated.success</source>
-                <target>Le modèle de visa a bien été dupliqué.</target>
-            </trans-unit>
-            <trans-unit id="visa.name">
-                <source>visa.name</source>
-                <target>Nom du modèle</target>
-            </trans-unit>
-            <trans-unit id="visa.name.help">
-                <source>visa.name.help</source>
-                <target>Entrez un nom, par exemple "Réglementation de vitesse"</target>
-            </trans-unit>
-            <trans-unit id="visa.description">
-                <source>visa.description</source>
-                <target>Description</target>
-            </trans-unit>
-            <trans-unit id="visa.detail.title">
-                <source>visa.detail.title</source>
-                <target>Modèles de visas</target>
-            </trans-unit>
-            <trans-unit id="visa.add.title">
-                <source>visa.add.title</source>
-                <target>Ajouter un modèle</target>
-            </trans-unit>
-            <trans-unit id="visa.add">
-                <source>visa.add</source>
-                <target>Ajouter un visa</target>
-            </trans-unit>
-            <trans-unit id="visa.remove">
-                <source>visa.remove</source>
-                <target>Supprimer</target>
-            </trans-unit>
-            <trans-unit id="visas.form.visa">
-                <source>visas.form.visa</source>
-                <target>Visa (Vu...)</target>
-            </trans-unit>
-            <trans-unit id="visas.form.visas">
-                <source>visas.form.visas</source>
-                <target>Visas</target>
-            </trans-unit>
-            <trans-unit id="visas.form.visas.help">
-                <source>visas.form.visas.help</source>
-                <target>Définissez le texte qui apparaîtra en tant que visas (Vu...) dans les arrêtés</target>
-            </trans-unit>
             <trans-unit id="myorganization.title">
                 <source>myorganization.title</source>
                 <target>Mes organisations</target>
-            </trans-unit>
-            <trans-unit id="visa.delete_modal.title">
-                <source>visa.delete_modal.title</source>
-                <target>Supprimer ce modèle ?</target>
-            </trans-unit>
-            <trans-unit id="visa.duplicate_modal.title">
-                <source>visa.duplicate_modal.title</source>
-                <target>Dupliquer ce modèle ?</target>
-            </trans-unit>
-            <trans-unit id="visa.list.delete">
-                <source>visa.list.delete</source>
-                <target>Supprimer le modèle "%name%" de l'organisation</target>
-            </trans-unit>
-            <trans-unit id="visa.list.duplicate">
-                <source>visa.list.duplicate</source>
-                <target>Duppliquer le modèle "%name%"</target>
             </trans-unit>
             <trans-unit id="signing_authority.form.title">
                 <source>signing_authority.form.title</source>
@@ -2800,7 +2672,7 @@
             </trans-unit>
             <trans-unit id="regulation_order_template.name">
                 <source>regulation_order_template.name</source>
-                <target>Nom</target>
+                <target>Nom du modèle</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.title">
                 <source>regulation_order_template.title</source>

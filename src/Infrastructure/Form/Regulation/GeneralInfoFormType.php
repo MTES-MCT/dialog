@@ -12,13 +12,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class GeneralInfoFormType extends AbstractType
@@ -61,11 +58,6 @@ final class GeneralInfoFormType extends AbstractType
                 options: $this->getSubjectOptions(),
             )
             ->add(
-                'visaModelUuid',
-                ChoiceType::class,
-                options: $this->getVisaModels($options['visaModels']),
-            )
-            ->add(
                 'regulationOrderTemplateUuid',
                 ChoiceType::class,
                 options: $this->getRegulationOrderTemplates($options['regulationOrderTemplates']),
@@ -90,45 +82,9 @@ final class GeneralInfoFormType extends AbstractType
                 ],
             )
             ->add(
-                'additionalVisas',
-                CollectionType::class,
-                options: [
-                    'entry_type' => TextareaType::class,
-                    'label' => null,
-                    'prototype_name' => '__visa_name__',
-                    'entry_options' => [
-                        'label' => 'regulation.general_info.additional_visas.entry',
-                    ],
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'keep_as_list' => true,
-                    'error_bubbling' => false,
-                ],
-            )
-            ->add(
-                'additionalReasons',
-                CollectionType::class,
-                options: [
-                    'entry_type' => TextareaType::class,
-                    'label' => null,
-                    'prototype_name' => '__reason_name__',
-                    'entry_options' => [
-                        'label' => 'regulation.general_info.reason',
-                    ],
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'keep_as_list' => true,
-                    'error_bubbling' => false,
-                ],
-            )
-            ->add(
                 'save',
                 SubmitType::class,
                 options: $options['save_options'],
-            )
-            ->addEventListener(
-                FormEvents::PRE_SUBMIT,
-                [$this, 'onPreSubmit'],
             )
         ;
 
@@ -144,16 +100,6 @@ final class GeneralInfoFormType extends AbstractType
                 },
             ))
         ;
-    }
-
-    /**
-     * Cette méthode met à jour les valeurs de l'input en fonction du résultat de l'API,
-     * afin d'éviter l'erreur "Le choix sélectionné est invalide".
-     */
-    public function onPreSubmit(FormEvent $event): void
-    {
-        $input = $event->getData()['visaModelUuid'];
-        $event->getForm()->add('visaModelUuid', ChoiceType::class, ['choices' => [$input]]);
     }
 
     private function getCategoryOptions(): array
@@ -189,26 +135,6 @@ final class GeneralInfoFormType extends AbstractType
         ];
     }
 
-    private function getVisaModels(array $visaModels = []): array
-    {
-        $choices = [
-            'regulation.general_info.visa_model.placeholder' => '',
-            'DiaLog' => [],
-        ];
-
-        foreach ($visaModels as $visaModel) {
-            $organizationName = $visaModel->organizationUuid ? $visaModel->organizationName : 'DiaLog';
-            $choices[$organizationName][$visaModel->name] = $visaModel->uuid;
-        }
-
-        return [
-            'choices' => $choices,
-            'label' => 'regulation.general_info.visa_model',
-            'help' => 'regulation.general_info.visa_model.help',
-            'required' => false,
-        ];
-    }
-
     private function getRegulationOrderTemplates(array $regulationOrderTemplates = []): array
     {
         $choices = [
@@ -231,12 +157,10 @@ final class GeneralInfoFormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'organizations' => [],
-            'visaModels' => [],
             'regulationOrderTemplates' => [],
             'save_options' => [],
         ]);
         $resolver->setAllowedTypes('organizations', 'array');
-        $resolver->setAllowedTypes('visaModels', 'array');
         $resolver->setAllowedTypes('regulationOrderTemplates', 'array');
         $resolver->setAllowedTypes('save_options', 'array');
     }

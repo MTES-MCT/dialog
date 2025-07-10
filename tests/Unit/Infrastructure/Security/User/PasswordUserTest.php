@@ -42,5 +42,6 @@ class PasswordUserTest extends TestCase
         $this->assertEmpty($passwordUser->eraseCredentials());
         $this->assertFalse($passwordUser->isVerified());
         $this->assertSame('local', $passwordUser->getAuthOrigin());
+        $this->assertTrue($passwordUser->isOrganizationsCompleted());
     }
 }

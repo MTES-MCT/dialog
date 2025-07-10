@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Admin;
 
-use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\RegulationOrderTemplate;
 use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
@@ -42,7 +41,6 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
 
         yield MenuItem::section('Configuration des arrếtés');
-        yield MenuItem::linkToCrud('Modèles de visas', 'fa fa-toolbox', VisaModel::class);
         yield MenuItem::linkToCrud('Modèles d\'arrêtés', 'fa fa-book', RegulationOrderTemplate::class);
 
         yield MenuItem::section('Autres');

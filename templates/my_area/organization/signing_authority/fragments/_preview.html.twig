@@ -1,0 +1,31 @@
+<turbo-frame id="block_signing_authority">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-5">
+            <b>{{ 'signing_authority.name'|trans }}</b>
+            {% if signingAuthority %}
+                <p data-testid="signing_authority_name">{{ signingAuthority.name }}</p>
+            {% else %}
+                <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                    {{ 'organization.not_completed'|trans }}
+                </span>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-col-md-4">
+            <b>{{ 'signing_authority.signatoryName'|trans }}</b>
+            {% if signingAuthority %}
+                <p data-testid="signing_authority_signatory_name">{{ signingAuthority.signatoryName }} ({{ signingAuthority.role }})</p>
+            {% else %}
+                <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mt-1w">
+                    {{ 'organization.not_completed'|trans }}
+                </span>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-col-md-3">
+            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                <a href="{{ path('fragment_organizations_signing_authority_save', { uuid: organization.uuid }) }}" class="fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
+                    {{ 'common.update'|trans }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</turbo-frame>
