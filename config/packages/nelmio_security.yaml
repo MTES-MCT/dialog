@@ -30,8 +30,8 @@ nelmio_security:
         enabled: true
         enforce:
             default-src: ['self']
-            script-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io', 'https://stats.beta.gouv.fr/matomo.js']
-            style-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io']
+            script-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io', 'https://stats.beta.gouv.fr/matomo.js', 'unsafe-inline']
+            style-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io', 'unsafe-inline']
             connect-src: ['self', 'https://data.geopf.fr']
             font-src: ['self']
             img-src: ['self', 'data:', 'blob:', 'https://dialog.oos.cloudgouv-eu-west-1.outscale.com']

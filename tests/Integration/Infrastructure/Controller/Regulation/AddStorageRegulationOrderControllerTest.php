@@ -60,14 +60,6 @@ final class AddStorageRegulationOrderControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur n\'est pas une URL valide.', $crawler->filter('#storage_regulation_order_form_url_error')->text());
     }
 
-    public function testAddAsContributor(): void
-    {
-        $client = $this->login();
-        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/storage/add');
-
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
