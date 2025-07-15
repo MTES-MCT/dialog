@@ -78,6 +78,46 @@
                 <source>mailing_list.email.help</source>
                 <target>Si vous avez des difficultés à accéder à DiaLog, écrivez-nous à : dialog@beta.gouv.fr</target>
             </trans-unit>
+            <trans-unit id="welcome.email.help.subject">
+                <source>welcome.email.help.subject</source>
+                <target>Bienvenue sur DiaLog - Comment démarrer</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.hello">
+                <source>welcome.email.hello</source>
+                <target>Bonjour,</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.description">
+                <source>welcome.email.description</source>
+                <target>Vous venez de créer un compte DiaLog, voici quelques informations pour vous aider à démarrer :</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.help">
+                <source>welcome.email.help</source>
+                <target>Retrouvez <![CDATA[<strong>]]>l’aide en ligne <![CDATA[</strong>]]>de DiaLog ici : </target>
+            </trans-unit>
+            <trans-unit id="welcome.email.help.link">
+                <source>welcome.email.help.link</source>
+                <target>Ouvrir l’aide en ligne</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.how.create.regulation.order.video">
+                <source>welcome.email.how.create.regulation.order.video</source>
+                <target>Regardez <![CDATA[<strong>]]>comment créer un arrêté <![CDATA[</strong>]]>sur DiaLog : </target>
+            </trans-unit>
+            <trans-unit id="welcome.email.how.create.regulation.order.video.link">
+                <source>welcome.email.how.create.regulation.order.video.link</source>
+                <target>Voir la vidéo</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.contact">
+                <source>welcome.email.contact</source>
+                <target>Posez-nous <![CDATA[<strong>]]>vos questions<![CDATA[</strong>]]> et faites nous part de <![CDATA[<strong>]]>vos retours <![CDATA[</strong>]]>: Envoyer un mail à dialog@deta.gouv.fr</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.feedback">
+                <source>welcome.email.feedback</source>
+                <target>N’hésitez pas à faire appel à nous, vos retours sont précieux pour améliorer DiaLog et répondre au mieux à vos besoins.</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.signature">
+                <source>welcome.email.signature</source>
+                <target>L’équipe DiaLog</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
