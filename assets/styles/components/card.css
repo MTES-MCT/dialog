@@ -36,6 +36,10 @@
     background: var(--alt-blue-france);
 }
 
+.app-card--with-background-white {
+    background: white;
+}
+
 .app-card--content-only {
     grid-template-areas: "content";
 
