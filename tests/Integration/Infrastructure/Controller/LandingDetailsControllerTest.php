@@ -35,6 +35,7 @@ final class LandingDetailsControllerTest extends AbstractWebTestCase
                 ['h3', 'Créer un compte DiaLog'],
                 ['a', 'Créer un compte', ['href' => '/register']],
                 ['h3', 'Renseigner mes arrêtés'],
+                ['a', 'Voir la vidéo de création des arrêtés', ['href' => 'https://tube.numerique.gouv.fr/w/ry5FweKbZuU2ddNpMm6LNU']],
                 ['h3', 'Diffuser mes données'],
                 ['h2', 'Intégrer des données depuis votre logiciel de saisie d\'arrêtés'],
                 ['a', 'Nous contacter', ['href' => '/contact']],

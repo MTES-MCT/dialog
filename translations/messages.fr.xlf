@@ -1274,6 +1274,10 @@
                 <source>landing.details.input.steps.add_regulation_orders.description</source>
                 <target>Vous pouvez créer des arrêtés de circulation portant sur une interdiction de circulation ou une limitation de vitesse. Les arrêtés peuvent être temporaires ou permanents.</target>
             </trans-unit>
+            <trans-unit id="landing.details.input.steps.add_regulation_orders.video">
+                <source>landing.details.input.steps.add_regulation_orders.video</source>
+                <target>Voir la vidéo de création des arrêtés</target>
+            </trans-unit>
             <trans-unit id="landing.details.input.steps.broadcast">
                 <source>landing.details.input.steps.broadcast</source>
                 <target>Diffuser mes données</target>
