@@ -4,41 +4,56 @@ declare(strict_types=1);
 
 namespace App\Application\User\Command;
 
-use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
-use App\Domain\User\Exception\SiretAlreadyExistException;
+use App\Application\StorageInterface;
+use App\Domain\Organization\Establishment\Establishment;
+use App\Domain\Organization\Establishment\Repository\EstablishmentRepositoryInterface;
 use App\Domain\User\Organization;
-use App\Domain\User\Repository\OrganizationRepositoryInterface;
 
 final class SaveOrganizationCommandHandler
 {
     public function __construct(
+        private StorageInterface $storage,
         private IdFactoryInterface $idFactory,
-        private DateUtilsInterface $dateUtils,
-        private OrganizationRepositoryInterface $organizationRepository,
+        private EstablishmentRepositoryInterface $establishmentRepository,
     ) {
     }
 
     public function __invoke(SaveOrganizationCommand $command): Organization
     {
-        if (!$command->organization) {
-            $organization = (new Organization($this->idFactory->make()))
-                ->setCreatedAt($this->dateUtils->getNow())
-                ->setSiret($command->siret)
-                ->setName($command->name);
+        $organization = $command->organization;
 
-            $this->organizationRepository->add($organization);
+        if ($command->file) {
+            $folder = \sprintf('organizations/%s', $organization->getUuid());
+            if ($logo = $organization->getLogo()) {
+                $this->storage->delete($logo);
+            }
 
-            return $organization;
+            $organization->setLogo($this->storage->write($folder, $command->file));
         }
 
-        if ($command->siret !== $command->organization->getSiret()
-            && $this->organizationRepository->findOneBySiret($command->siret) instanceof Organization) {
-            throw new SiretAlreadyExistException();
+        $organization->update($command->name);
+
+        if ($establishment = $organization->getEstablishment()) {
+            $establishment->update(
+                address: $command->address,
+                zipCode: $command->zipCode,
+                city: $command->city,
+                addressComplement: $command->addressComplement,
+            );
+        } else {
+            $establishment = new Establishment(
+                uuid: $this->idFactory->make(),
+                address: $command->address,
+                zipCode: $command->zipCode,
+                city: $command->city,
+                organization: $organization,
+                addressComplement: $command->addressComplement,
+            );
+            $this->establishmentRepository->add($establishment);
+            $organization->setEstablishment($establishment);
         }
 
-        $command->organization->update($command->name, $command->siret);
-
-        return $command->organization;
+        return $organization;
     }
 }

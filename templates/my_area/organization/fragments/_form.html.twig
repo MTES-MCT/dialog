@@ -1,0 +1,28 @@
+<turbo-frame id="block_organization_info">
+    {{ form_start(form) }}
+    <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w app-card--with-background-white">
+        <div class="fr-col-12 fr-col-md-6">
+            {{ form_row(form.name, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+            <hr class="fr-mt-2w"/>
+            {{ form_row(form.address, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+            {{ form_row(form.addressComplement, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-4">
+                    {{ form_row(form.zipCode, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                </div>
+                <div class="fr-col-12 fr-col-md-8">
+                    {{ form_row(form.city, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                </div>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-p-3w app-frame app-frame--16-9">
+                <img src="{{ logo ?: asset('images/placeholder-16x9.png')}}" alt="{{ 'organization.logo'|trans }}"/>
+            </div>
+            {{ form_row(form.file) }}
+        </div>
+    </div>
+    {{ form_widget(form.save) }}
+    <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-ml-1w">{{ "common.cancel"|trans }}</a>
+{{ form_end(form) }}
+</turbo-frame>
