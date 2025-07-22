@@ -2021,6 +2021,10 @@
                 <source>organization.name</source>
                 <target>Organisation</target>
             </trans-unit>
+            <trans-unit id="organization.form.name">
+                <source>organization.form.name</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
             <trans-unit id="organization.organizationName">
                 <source>organization.organizationName</source>
                 <target>Nom de l'organisation</target>
@@ -2044,6 +2048,18 @@
             <trans-unit id="organization.establishmentAddress">
                 <source>organization.establishmentAddress</source>
                 <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="organization.zipCode">
+                <source>organization.zipCode</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="organization.city">
+                <source>organization.city</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="organization.addressComplement">
+                <source>organization.addressComplement</source>
+                <target>Complément d'adresse</target>
             </trans-unit>
             <trans-unit id="organization.departmentName">
                 <source>organization.departmentName</source>
@@ -2605,10 +2621,6 @@
             <trans-unit id="signing_authority.form.image_description">
                 <source>signing_authority.form.image_description</source>
                 <target>Vue d'ensemble schématique de l’arrêté montrant l’emplacement des informations sur l’autorité signataire.</target>
-            </trans-unit>
-            <trans-unit id="organization.form.image_description">
-                <source>organization.form.image_description</source>
-                <target>Vue d’ensemble schématique de l’arrêté montrant l’emplacement du logo.</target>
             </trans-unit>
             <trans-unit id="reset_password.succeeded">
                 <source>reset_password.succeeded</source>

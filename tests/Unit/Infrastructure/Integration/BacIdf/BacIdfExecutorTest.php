@@ -42,8 +42,7 @@ final class BacIdfExecutorTest extends TestCase
     {
         $organization = $this->createMock(Organization::class);
 
-        $organizationCommand = new SaveOrganizationCommand();
-        $organizationCommand->siret = '93123';
+        $organizationCommand = new SaveOrganizationCommand($organization);
         $organizationCommand->name = 'Ville Nouvelle';
         $createdOrganization = $this->createMock(Organization::class);
 
