@@ -14,6 +14,7 @@ class User
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
     private bool $isVerified = false;
+    private bool $unsubscribedEmail = false;
 
     public function __construct(
         private string $uuid,
@@ -117,6 +118,18 @@ class User
     public function setVerified(): self
     {
         $this->isVerified = true;
+
+        return $this;
+    }
+
+    public function isUnsubscribed(): bool
+    {
+        return $this->unsubscribedEmail;
+    }
+
+    public function setUnsubscribedEmail(bool $unsubscribedEmail): self
+    {
+        $this->unsubscribedEmail = $unsubscribedEmail;
 
         return $this;
     }
