@@ -185,10 +185,9 @@ class Organization
         return \sprintf('%s (%s)', $this->getCode(), $this->getCodeType());
     }
 
-    public function update(string $name, string $siret): void
+    public function update(string $name): void
     {
         $this->name = $name;
-        $this->siret = $siret;
     }
 
     public function getEstablishmentAddress(): ?string

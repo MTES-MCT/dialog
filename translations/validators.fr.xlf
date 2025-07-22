@@ -90,10 +90,6 @@
                 <source>email.already.exists</source>
                 <target>Cette adresse email est déjà associée à un autre compte.</target>
             </trans-unit>
-            <trans-unit id="organization.siret.already_exist">
-                <source>organization.siret.already_exist</source>
-                <target>Ce SIRET est déjà utilisé.</target>
-            </trans-unit>
             <trans-unit id="regulation.location.error.organization_cannot_intervene_on_geometry">
                 <source>regulation.location.error.organization_cannot_intervene_on_geometry</source>
                 <target>L'organisation "%organizationName%" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S'il s'agit d'une erreur, vous pouvez contacter le support DiaLog.</target>
