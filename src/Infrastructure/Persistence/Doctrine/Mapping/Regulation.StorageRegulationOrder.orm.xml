@@ -9,6 +9,8 @@
     <field name="path" type="string" column="path" nullable="true" />
     <field name="url" type="string" column="url" nullable="true" />
     <field name="title" type="string" column="title" nullable="true" />
+    <field name="fileSize" type="integer" column="file_size" nullable="true" />
+    <field name="mimeType" type="string" column="mime_type" nullable="true" />
     <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder">
       <join-columns>
         <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false"

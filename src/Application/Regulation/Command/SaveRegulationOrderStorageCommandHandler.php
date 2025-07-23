@@ -35,6 +35,8 @@ final class SaveRegulationOrderStorageCommandHandler
                 path: $path ?? $command->path,
                 url: $command->url,
                 title: $command->title,
+                fileSize: $command->file?->getSize(),
+                mimeType: $command->file?->getMimeType(),
             );
 
             return;
@@ -47,6 +49,8 @@ final class SaveRegulationOrderStorageCommandHandler
                 path: $command->file !== null ? $this->storage->write($folder, $command->file) : null,
                 url: $command->url,
                 title: $command->title,
+                fileSize: $command->file?->getSize(),
+                mimeType: $command->file?->getMimeType(),
             ),
         );
     }
