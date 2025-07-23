@@ -2,10 +2,6 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="fr" datatype="plaintext" original="file.ext">
         <body>
-            <trans-unit id="unsubscribe.link">
-                <source>unsubscribe.link</source>
-                <target>Se désinscrire</target>
-            </trans-unit>
             <trans-unit id="forgot_password.subject">
                 <source>forgot_password.subject</source>
                 <target>Réinitialisation du mot de passe de votre compte DiaLog</target>
