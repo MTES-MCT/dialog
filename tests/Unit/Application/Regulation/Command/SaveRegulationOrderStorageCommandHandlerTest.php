@@ -30,8 +30,12 @@ final class SaveRegulationOrderStorageCommandHandlerTest extends TestCase
     public function testSave(): void
     {
         $file = $this->createMock(UploadedFile::class);
+        $file
+            ->expects(self::once())
+            ->method('getSize')
+            ->willReturn(123456);
+
         $regulationOrder = $this->createMock(RegulationOrder::class);
-        $storageRegulationOrder = $this->createMock(StorageRegulationOrder::class);
 
         $regulationOrder
             ->expects(self::once())
@@ -62,6 +66,7 @@ final class SaveRegulationOrderStorageCommandHandlerTest extends TestCase
                         path: 'regulationOrder/496bd752-c217-4625-ba0c-7454dc218516/storageRegulationOrder.pdf',
                         url: 'https://www.herault.gouv.fr/content/download/21272/158268/file/arrete_circulation_vtm.pdf',
                         title: 'Titre test',
+                        fileSize: 123456,
                     ),
                 ),
             );
