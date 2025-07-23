@@ -24,7 +24,6 @@ final class SendWelcomeEmailCommandHandlerTest extends TestCase
                         address: 'mathieu@fairness.coop',
                         subject: 'welcome.email.help.subject',
                         template: 'email/user/welcome_user.html.twig',
-                        payload: ['email' => 'mathieu@fairness.coop'],
                     ),
                 ),
             );

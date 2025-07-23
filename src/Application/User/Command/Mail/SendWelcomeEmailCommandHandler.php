@@ -22,7 +22,6 @@ final readonly class SendWelcomeEmailCommandHandler
                 subject: 'welcome.email.help.subject',
                 template: 'email/user/welcome_user.html.twig',
                 payload: [
-                    'addressEmail' => $command->email,
                 ],
             ),
         );

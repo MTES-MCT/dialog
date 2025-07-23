@@ -1063,12 +1063,6 @@
                     <![CDATA[<h3 class="fr-alert__title">]]>Votre compte a bien été supprimé.<![CDATA[</h3>]]>
                 </target>
             </trans-unit>
-            <trans-unit id="unsubscribed.email">
-                <source>unsubscribed.email</source>
-                <target>
-                    <![CDATA[<h3 class="fr-alert__title">]]>Confirmation de désinscription<![CDATA[</h3>]]><![CDATA[<p>]]>Vous avez bien été désinscrit de nos communications par e-mail.<![CDATA[</p>]]>
-                </target>
-            </trans-unit>
             <trans-unit id="profile.password.first_option">
                 <source>profile.password.first_option</source>
                 <target>Nouveau mot de passe</target>

@@ -24,7 +24,3 @@
 	<p>{{ 'welcome.email.feedback'|trans }}</p>
 	<p>{{ 'welcome.email.signature'|trans }}</p>
 {% endblock %}
-
-{% block footer %}
-	<a href="{{ baseUrl ~ path('app_unsubscribe', {'email': addressEmail}) }}">{{ 'unsubscribe.link'|trans }}</a>
-{% endblock %}
