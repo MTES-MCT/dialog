@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Security;
 
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\ConfirmAccountCommand;
+use App\Application\User\Command\Mail\SendWelcomeEmailCommand;
 use App\Domain\User\Exception\TokenExpiredException;
 use App\Domain\User\Exception\TokenNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,10 +32,11 @@ final readonly class ConfirmAccountController
     public function __invoke(Request $request, string $token): Response
     {
         try {
-            $this->commandBus->handle(new ConfirmAccountCommand($token));
+            $email = $this->commandBus->handle(new ConfirmAccountCommand($token));
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();
             $session->getFlashBag()->add('success', $this->translator->trans('register.succeeded.verified'));
+            $this->commandBus->dispatchAsync(new SendWelcomeEmailCommand($email));
 
             return new RedirectResponse($this->urlGenerator->generate('app_login'));
         } catch (TokenNotFoundException) {
