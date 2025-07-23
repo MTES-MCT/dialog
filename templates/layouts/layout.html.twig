@@ -79,6 +79,22 @@
                     </li>
                 </ul>
             </nav>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                {% if not app.user.isOrganizationsCompleted %}
+                    <div class="fr-notice fr-notice--warning">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+                                <p>
+                                    <span class="fr-notice__title">{{ 'notice.my.organizations.title'|trans }}</span>
+                                    <span class="fr-notice__desc">{{ 'notice.my.organizations.description'|trans }}</span>
+                                    <a title="Lien de consultation - nouvelle fenêtre" href="{{ path('app_my_organizations') }}" target="_blank" rel="noopener external" class="fr-notice__link">{{ 'notice.my.organizations.link'|trans }}</a>
+                                </p>
+                                <button title="Masquer le message" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" type="button" class="fr-btn--close fr-btn">{{ 'notice.my.organizations.btn.close'|trans }}</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
         {% endblock %}
     {% endembed %}
 

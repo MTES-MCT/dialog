@@ -1099,6 +1099,22 @@
                 <source>landing.menu.button.help</source>
                 <target>Aide</target>
             </trans-unit>
+            <trans-unit id="notice.my.organizations.title">
+                <source>notice.my.organizations.title</source>
+                <target>Complétez les informations de vos organisations</target>
+            </trans-unit>
+            <trans-unit id="notice.my.organizations.description">
+                <source>notice.my.organizations.description</source>
+                <target>Ajouter un logo à votre organisation, configurer des modèles d’arrêtés, créer une liste de diffusion, etc.</target>
+            </trans-unit>
+            <trans-unit id="notice.my.organizations.link">
+                <source>notice.my.organizations.link</source>
+                <target>Voir mes organisations</target>
+            </trans-unit>
+            <trans-unit id="notice.my.organizations.btn.close">
+                <source>notice.my.organizations.btn.close</source>
+                <target>Masquer le message</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.regulations">
                 <source>landing.menu.button.regulations</source>
                 <target>Liste des arrêtés</target>
