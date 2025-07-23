@@ -14,6 +14,11 @@ final class ConfirmAccountControllerTest extends AbstractWebTestCase
         $client->request('GET', '/register/confirmAccountToken/confirm-account');
 
         $this->assertResponseStatusCodeSame(302);
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHtmlBodyContains($email, 'Bonjour,');
+
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_login');
