@@ -2684,7 +2684,7 @@
             </trans-unit>
             <trans-unit id="regulation_order_template.list.help">
                 <source>regulation_order_template.list.help</source>
-                <target>Créer des modèles d'arrêtés à utiliser par les agents dans les arrêtés de circulation créés dans DiaLog.</target>
+                <target>Créer des modèles d’arrêtés. Les agents de votre organisation pourront sélectionner le modèle qui convient puis exporter leur arrêté pré-rempli.</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.name">
                 <source>regulation_order_template.name</source>
