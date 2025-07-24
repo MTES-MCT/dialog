@@ -92,7 +92,7 @@
 									<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
 										{{ 'regulation.import.storage.description'|trans }}
 									</div>
-									<a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="/storage/{{ storageRegulationOrder.path }}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
+									<a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url}}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
 									{% if storageRegulationOrder.mimeType and storageRegulationOrder.fileSize %}
 										<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
 											{{ storageRegulationOrder.mimeType }} - {{ storageRegulationOrder.fileSize }} ko
