@@ -24,6 +24,21 @@ final class IndexControllerTest extends AbstractWebTestCase
         $this->assertCount(0, $crawler->filter('[data-testid="admin-link"]'));
     }
 
+    public function testWithOrganizationsNotCompleted(): void
+    {
+        $client = $this->login('mathieu.marchois@beta.gouv.fr');
+        $crawler = $client->request('GET', '/mon-espace/organizations');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+        $this->assertSame('Mes organisations', $crawler->filter('h2')->text());
+        $this->assertMetaTitle('Mes organisations - DiaLog', $crawler);
+
+        $warningNotice = $crawler->filter('[data-testid="notice-warning"]');
+        $this->assertSame('Complétez les informations de vos organisations Ajouter un logo à votre organisation, configurer des modèles d’arrêtés, créer une liste de diffusion, etc. Seul l’administrateur de l’organisation peut effectuer cette action. Merci de le contacter si ce n’est pas votre rôle. Voir mes organisations Masquer le message', $warningNotice->filter('[data-testid="organization-not-completed"]')->text());
+        $this->assertSame('fr-notice fr-notice--warning', $warningNotice->attr('class'));
+    }
+
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
