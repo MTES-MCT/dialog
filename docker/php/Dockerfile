@@ -46,12 +46,14 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | b
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
    mv composer.phar /usr/local/bin/composer
 
-# Install pandoc
-RUN apt-get install -y wget && \
+# Install pandoc (multi-arch)
+RUN apt-get update && apt-get install -y wget ca-certificates && \
     mkdir -p /usr/src/pandoc && \
     cd /usr/src/pandoc && \
-    wget https://github.com/jgm/pandoc/releases/download/3.5/pandoc-3.5-1-amd64.deb && \
-    dpkg -i pandoc-3.5-1-amd64.deb
+    ARCH="$(dpkg --print-architecture)" && \
+    wget -q https://github.com/jgm/pandoc/releases/download/3.5/pandoc-3.5-1-${ARCH}.deb && \
+    dpkg -i pandoc-3.5-1-${ARCH}.deb || (apt-get -f install -y && dpkg -i pandoc-3.5-1-${ARCH}.deb) && \
+    rm -rf /var/lib/apt/lists/* /usr/src/pandoc
 
 # Install Supervisor
 RUN apt-get update && apt-get install -y supervisor
