@@ -79,6 +79,21 @@
                     </li>
                 </ul>
             </nav>
+            {% if app.user and not app.user.isOrganizationsCompleted %}
+                <div class="fr-notice fr-notice--warning" data-testid="notice-warning">
+                    <div class="fr-container" data-testid="organization-not-completed">
+                        <div class="fr-notice__body">
+                            <p>
+                                <span class="fr-notice__title">{{ 'notice.my.organizations.title'|trans }}</span>
+                                <br>
+                                <span class="fr-notice__desc">{{ 'notice.my.organizations.description'|trans }}</span>
+                                <a title="{{ 'notice.my.organizations.link'|trans }}" href="{{ path('app_my_organizations') }}" target="_blank" rel="noopener external" class="fr-notice__link">{{ 'notice.my.organizations.link'|trans }}</a>
+                            </p>
+                            <button title="{{ 'notice.my.organizations.btn.close'|trans }}" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" type="button" class="fr-btn--close fr-btn">{{ 'notice.my.organizations.btn.close'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         {% endblock %}
     {% endembed %}
 
