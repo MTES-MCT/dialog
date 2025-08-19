@@ -10,7 +10,7 @@ on:
         type: string
 
   schedule:
-    - cron: '15 16 * * 1' # Voir https://crontab.guru/ : tous les lundis à 16h15 GMT
+    - cron: '15 16 * * 1-5' # Voir https://crontab.guru/ : du lundi au vendredi à 16h15 GMT
 
 jobs:
   import:
