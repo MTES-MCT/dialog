@@ -423,6 +423,22 @@
                 <source>regulation.storage</source>
                 <target>Joindre</target>
             </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.file">
+                <source>regulation.storage.form.allRegulationOrderStorage.file</source>
+                <target>Importer un fichier</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.url">
+                <source>regulation.storage.form.allRegulationOrderStorage.url</source>
+                <target>Ajouter un lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.file.help">
+                <source>regulation.storage.form.allRegulationOrderStorage.file.help</source>
+                <target>Document d’arrêté officiel signé</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.url.help">
+                <source>regulation.storage.form.allRegulationOrderStorage.url.help</source>
+                <target>Lien vers l’arrêté officiel</target>
+            </trans-unit>
             <trans-unit id="regulation.storage.form.file.title">
                 <source>regulation.storage.form.file.title</source>
                 <target>Importer un fichier</target>
