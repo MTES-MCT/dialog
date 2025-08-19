@@ -401,11 +401,11 @@
             </trans-unit>
             <trans-unit id="regulation.import">
                 <source>regulation.import</source>
-                <target>Ressources</target>
+                <target>Arrêté officiel</target>
             </trans-unit>
             <trans-unit id="regulation.import.description">
                 <source>regulation.import.description</source>
-                <target>Importer un fichier ou ajouter un lien vers le document d’arrêté officiel.</target>
+                <target>Joindre l'arrêté officiel via un fichier ou un lien.</target>
             </trans-unit>
             <trans-unit id="regulation.import.storage.description">
                 <source>regulation.import.storage.description</source>
@@ -417,11 +417,11 @@
             </trans-unit>
             <trans-unit id="regulation.storage.title">
                 <source>regulation.storage.title</source>
-                <target>Ajouter un fichier ou un lien</target>
+                <target>Joindre l'arrêté officiel</target>
             </trans-unit>
             <trans-unit id="regulation.storage">
                 <source>regulation.storage</source>
-                <target>Ajouter un fichier</target>
+                <target>Joindre</target>
             </trans-unit>
             <trans-unit id="regulation.storage.form.file.title">
                 <source>regulation.storage.form.file.title</source>
@@ -449,7 +449,7 @@
             </trans-unit>
             <trans-unit id="regulation.storage.form.save">
                 <source>regulation.storage.form.save</source>
-                <target>Ajouter</target>
+                <target>Valider</target>
             </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
