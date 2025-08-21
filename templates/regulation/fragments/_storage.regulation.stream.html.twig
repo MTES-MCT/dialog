@@ -3,7 +3,7 @@
         {% if redirectUrl is defined %}
             <script>window.top.location = "{{ redirectUrl }}";</script>
         {% else %}
-            {% include 'regulation/storage_regulation_order.html.twig' with { uuid } %}
+            {% include 'regulation/storage_regulation_order.html.twig'%}
         {% endif %}
     </template>
 </turbo-stream>
