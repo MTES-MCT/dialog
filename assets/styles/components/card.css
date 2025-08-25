@@ -23,15 +23,6 @@
     background: var(--alt-blue-france);
 }
 
-.app-card--with-head-background {
-    column-gap: 0;
-}
-
-.app-card--with-head-background {
-    background: var(--alt-blue-france);
-    padding: 1.5rem;
-}
-
 .app-card--with-background {
     background: var(--alt-blue-france);
 }
@@ -67,7 +58,7 @@
 }
 
 .app-card__header {
-    padding: 1.5rem 1.5rem 0 1.5rem;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
     grid-area: header;
     display: flex;
     align-items: center;
@@ -106,9 +97,12 @@
 
 @media screen and (min-width: 992px) {
     .app-card__actions {
-        padding: 1.5rem 1.5rem 0 1.5rem;
+        padding: 1.5rem 1.5rem 1rem 1.5rem;
     }
-    .app-card--with-head-background .app-card__actions {
-        background: var(--alt-blue-france);
-    }
+}
+
+#app-card--with-head-background {
+    @media screen and (min-width: 992px) {
+            background: var(--alt-blue-france);
+        }
 }
