@@ -22,7 +22,7 @@ final class EditStorageRegulationOrderControllerTest extends AbstractWebTestCase
             __DIR__ . '/../../../../fixtures/file_too_large.pdf',
             'file_too_large.pdf',
         );
-        $saveButton = $crawler->selectButton('Ajouter');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['storage_regulation_order_form[title]'] = 'Test';
         $form['storage_regulation_order_form[file]'] = $uploadedFile;
@@ -46,7 +46,7 @@ final class EditStorageRegulationOrderControllerTest extends AbstractWebTestCase
             __DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv',
             'aires_de_stockage_test.csv',
         );
-        $saveButton = $crawler->selectButton('Ajouter');
+        $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $values = $form->getPhpValues();
