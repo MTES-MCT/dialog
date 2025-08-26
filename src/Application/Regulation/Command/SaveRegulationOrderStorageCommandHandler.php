@@ -25,16 +25,20 @@ final class SaveRegulationOrderStorageCommandHandler
         }
 
         if ($storageRegulationOrder = $command->storageRegulationOrder) {
-            $path = null;
+            $path = $command->path;
             if ($command->file !== null) {
-                if ($command->path !== null) {
+                if ($path !== null) {
                     $this->storage->delete($command->path);
                 }
                 $path = $this->storage->write($folder, $command->file);
+            } elseif ($command->url !== null && $command->path !== null) {
+                // Switching from a previously stored file to a URL: delete file and clear path
+                $this->storage->delete($command->path);
+                $path = null;
             }
 
             $storageRegulationOrder->update(
-                path: $path ?? $command->path,
+                path: $path,
                 url: $command->url,
                 title: $command->title,
                 fileSize: $command->file?->getSize(),

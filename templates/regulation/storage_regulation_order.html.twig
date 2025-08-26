@@ -12,7 +12,9 @@
                     }) }}
                     {{ form_label(option, null, { help: (option.vars.label ~ '.help')|trans }) }}
                     <div class="fr-radio-rich__pictogram">
-                        <svg class="fr-artwork" aria-hidden="true" viewbox="0 0 26 26" width="26px" height="26px">
+                        <svg class="fr-artwork" aria-hidden="true" viewbox="0 0 80 80" width="80px" height="80px">
+                            <use class="fr-artwork-decorative" xlink:href="{{ asset('images/regulation_order.' ~ option.vars.value ~ '.svg') }}#artwork-decorative"></use>
+                            <use class="fr-artwork-minor" xlink:href="{{ asset('images/regulation_order.' ~ option.vars.value ~ '.svg') }}#fr-artwork-minor"></use>
                             <use class="fr-artwork-major" xlink:href="{{ asset('images/regulation_order.' ~ option.vars.value ~ '.svg') }}#artwork-major"></use>
                         </svg>
                     </div>
