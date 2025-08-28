@@ -15,10 +15,7 @@ export default class extends Controller {
     }
 
     dismiss() {
-        try {
-            window.localStorage.setItem(this.storageKey, '1');
-        } catch (e) {
-        }
+        window.localStorage.setItem(this.storageKey, '1');
         this.removeNotice();
     }
 

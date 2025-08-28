@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class IndexControllerTest extends AbstractWebTestCase
@@ -37,6 +38,17 @@ final class IndexControllerTest extends AbstractWebTestCase
         $warningNotice = $crawler->filter('[data-testid="notice-warning"]');
         $this->assertSame('Complétez les informations de vos organisations Ajouter un logo à votre organisation, configurer des modèles d’arrêtés, créer une liste de diffusion, etc. Seul l’administrateur de l’organisation peut effectuer cette action. Merci de le contacter si ce n’est pas votre rôle. Voir mes organisations Masquer le message', $warningNotice->filter('[data-testid="organization-not-completed"]')->text());
         $this->assertSame('fr-notice fr-notice--warning', $warningNotice->attr('class'));
+    }
+
+    public function testWithOrganizationCompleted(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/regulations');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $this->assertEmpty($crawler->filter('[data-testid="notice-warning"]'));
     }
 
     public function testWithoutAuthenticatedUser(): void
