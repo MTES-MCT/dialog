@@ -41,7 +41,7 @@
                                     <a class="fr-btn fr-icon-x-government fr-x-icon--sm" href="{{ path('app_my_organizations') }}">
                                         {{ 'user.myorganizations'|trans }}
                                         {% if not app.user.isOrganizationsCompleted %}
-                                            <span class="notification-dot" title="{{ 'user.organizations_incomplete'|trans }}"></span>
+                                            <span class="notification-dot" data-controller="notice" data-notice-id-value="org-incomplete" data-action="notice#dismiss" title="{{ 'user.organizations_incomplete'|trans }}"></span>
                                         {% endif %}
                                     </a>
                                 </li>
