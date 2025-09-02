@@ -34,7 +34,7 @@ final readonly class ConfirmAccountCommandHandler
             throw new TokenExpiredException();
         }
 
-        $token->getUser()->setVerified();
+        $token->getUser()->setIsVerified();
         $email = $token->getUser()->getEmail();
         $this->tokenRepository->remove($token);
 
