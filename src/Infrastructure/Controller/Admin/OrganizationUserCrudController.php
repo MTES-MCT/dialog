@@ -34,6 +34,7 @@ final class OrganizationUserCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Membre d\'organisation')
             ->setEntityLabelInPlural('Membres d\'organisations')
+            ->setSearchFields(['organization.name', 'user.fullName'])
             ->setDefaultSort(['organization' => 'ASC'])
         ;
     }
