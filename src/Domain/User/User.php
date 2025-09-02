@@ -114,9 +114,9 @@ class User
         return $this->isVerified;
     }
 
-    public function setVerified(): self
+    public function setIsVerified(bool $isVerified = true): self
     {
-        $this->isVerified = true;
+        $this->isVerified = $isVerified;
 
         return $this;
     }

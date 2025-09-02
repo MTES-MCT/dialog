@@ -50,7 +50,7 @@ final class CreateProConnectUserCommandHandler
                     ->setEmail($command->email)
                     ->setRoles([UserRolesEnum::ROLE_USER->value])
                     ->setRegistrationDate($this->dateUtils->getNow())
-                    ->setVerified();
+                    ->setIsVerified();
 
                 $this->userRepository->add($user);
             }

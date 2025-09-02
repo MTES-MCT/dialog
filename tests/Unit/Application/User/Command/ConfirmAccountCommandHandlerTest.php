@@ -32,7 +32,7 @@ final class ConfirmAccountCommandHandlerTest extends TestCase
         $user = $this->createMock(User::class);
         $user
             ->expects(self::once())
-            ->method('setVerified');
+            ->method('setIsVerified');
 
         $token = $this->createMock(Token::class);
         $token

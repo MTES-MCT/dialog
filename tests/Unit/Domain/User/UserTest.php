@@ -34,7 +34,7 @@ final class UserTest extends TestCase
         $this->assertSame('Mathieu Marchois (mathieu@fairness.coop)', (string) $user);
         $this->assertFalse($user->isVerified());
 
-        $user->setVerified();
+        $user->setIsVerified();
         $this->assertTrue($user->isVerified());
     }
 }
