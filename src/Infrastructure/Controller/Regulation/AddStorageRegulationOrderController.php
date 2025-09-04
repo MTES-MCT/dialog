@@ -74,6 +74,7 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
                 name: 'regulation/fragments/_storage.regulation.stream.html.twig',
                 context: [
                     'form' => $form->createView(),
+                    'uuid' => $uuid,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid())

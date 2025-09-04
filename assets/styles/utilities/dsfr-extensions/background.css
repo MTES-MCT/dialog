@@ -18,3 +18,7 @@
     border-radius: 40px;
     background: var(--light-decisions-background-background-open-blue-france-active, #ADADF9);
 }
+
+.fr-background-default--grey-hover {
+    background: var(--light-decisions-background-background-default-grey-hover, #F6F6F6);
+}
