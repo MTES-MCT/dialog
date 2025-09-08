@@ -84,4 +84,46 @@ final class SaveRegulationOrderStorageCommandHandlerTest extends TestCase
 
         $handler($command);
     }
+
+    public function testSwitchFromStoredFileToUrl(): void
+    {
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $existingStorage = new StorageRegulationOrder(
+            uuid: 'd035fec0-30f3-4134-95b9-d74c68eb53e3',
+            regulationOrder: $regulationOrder,
+            path: 'regulationOrder/496bd752-c217-4625-ba0c-7454dc218516/storageRegulationOrder.pdf',
+            url: null,
+            title: null,
+            fileSize: 123456,
+            mimeType: 'application/pdf',
+        );
+
+        $this->storageRegulationOrderRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $this->storage
+            ->expects(self::once())
+            ->method('delete')
+            ->with('regulationOrder/496bd752-c217-4625-ba0c-7454dc218516/storageRegulationOrder.pdf');
+
+        $handler = new SaveRegulationOrderStorageCommandHandler(
+            $this->storage,
+            $this->storageRegulationOrderRepository,
+            $this->idFactory,
+        );
+
+        $command = new SaveRegulationOrderStorageCommand($regulationOrder, $existingStorage);
+        $command->file = null;
+        $command->url = 'https://example.org/file.pdf';
+        $command->title = 'Nouveau titre';
+
+        $handler($command);
+
+        $this->assertSame('https://example.org/file.pdf', $existingStorage->getUrl());
+        $this->assertSame('Nouveau titre', $existingStorage->getTitle());
+        $this->assertNull($existingStorage->getPath());
+        $this->assertNull($existingStorage->getFileSize());
+        $this->assertNull($existingStorage->getMimeType());
+    }
 }

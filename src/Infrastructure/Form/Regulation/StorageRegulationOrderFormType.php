@@ -4,18 +4,37 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
+use App\Application\Regulation\Command\SaveRegulationOrderStorageCommand;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class StorageRegulationOrderFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add(
+                'allRegulationOrderStorage',
+                ChoiceType::class,
+                options: [
+                    'choices' => [
+                        'regulation.storage.form.allRegulationOrderStorage.file' => 'file',
+                        'regulation.storage.form.allRegulationOrderStorage.url' => 'url',
+                    ],
+                    'label' => 'regulation.storage.form.allRegulationOrderStorage',
+                    'help' => 'regulation.storage.form.allRegulationOrderStorage.help',
+                    'expanded' => true,
+                    'multiple' => false,
+                    'mapped' => false,
+                    'data' => 'file',
+                ],
+            )
             ->add(
                 'file',
                 FileType::class,
@@ -39,7 +58,7 @@ final class StorageRegulationOrderFormType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'regulation.storage.form.title',
-                    'required' => true,
+                    'required' => false,
                 ],
             )
             ->add(
@@ -51,5 +70,12 @@ final class StorageRegulationOrderFormType extends AbstractType
                 ],
             )
         ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => SaveRegulationOrderStorageCommand::class,
+        ]);
     }
 }
