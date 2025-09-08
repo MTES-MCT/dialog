@@ -27,9 +27,14 @@
             </constraint>
         </property>
         <property name="title">
-            <constraint name="NotBlank" />
-            <constraint name="Length">
-                <option name="max">30</option>
+            <constraint name="When">
+                <option name="expression"> this.url != null </option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">30</option>
+                    </constraint>
+                </option>
             </constraint>
         </property>
     </class>

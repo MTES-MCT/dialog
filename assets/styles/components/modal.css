@@ -1,7 +1,15 @@
 dialog.app-modal {
     border: none;
     padding: var(--2w);
+    width: 60%;
 }
+
+@media (max-width: 768px) {
+    dialog.app-modal {
+      width: 100%;
+      height: auto;
+    }
+  }
 
 dialog.app-modal h1 {
     font-size: 1.5rem;
