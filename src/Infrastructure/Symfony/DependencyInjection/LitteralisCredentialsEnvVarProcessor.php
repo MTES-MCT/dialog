@@ -40,7 +40,10 @@ class LitteralisCredentialsEnvVarProcessor implements EnvVarProcessorInterface
                 throw new \RuntimeException(\sprintf('Environment variable %s must not be empty', $credentialsEnvName));
             }
 
-            $credentials->add($orgName, $orgIdEnv, $credentialsEnv);
+            $baseUrlEnvName = \sprintf('%s%s_BASE_URL', $orgEnvPrefix, strtoupper($orgName));
+            $baseUrlEnv = $getEnv($baseUrlEnvName);
+
+            $credentials->add($orgName, $orgIdEnv, $credentialsEnv, $baseUrlEnv);
         }
 
         return $credentials;
