@@ -15,6 +15,10 @@
     }
 }
 
+.app-card--without-border {
+    border: none;
+}
+
 .app-card--height-auto {
     height: auto !important;
 }

@@ -2,5 +2,5 @@ framework:
     rate_limiter:
         app:
             policy: 'sliding_window'
-            limit: 100
+            limit: 500
             interval: '5 minutes'

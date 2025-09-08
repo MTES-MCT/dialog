@@ -70,36 +70,39 @@
                                 </div>
                             </div>
 
-                        <div data-testid="ressources" class="app-card app-card--raised fr-mt-2w">
-                            <div class="app-card__content">
-                                <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.import'|trans }}</h3>
-                                {% if not storageRegulationOrder %}
-                                    <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
-                                        {{ 'regulation.import.description'|trans }}
-                                    </div>
-                                    <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
-                                        <li>
-                                            <d-modal-trigger modal="create-form-modal" submitvalue="upload">
-                                                <button class="fr-btn fr-btn--secondary" aria-controls="create-form-modal">
-                                                    {{ 'regulation.storage'|trans }}
-                                                </button>
-                                            </d-modal-trigger>
-                                        </li>
-                                    </ul>
-                                {% else %}
-                                    <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
-                                        {{ 'regulation.import.storage.description'|trans }}
-                                    </div>
-                                    <a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url}}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
-                                    {% if storageRegulationOrder.mimeType and storageRegulationOrder.fileSize %}
-                                        <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
-                                            {{ storageRegulationOrder.mimeType }} - {{ storageRegulationOrder.fileSize }} ko
-                                        </div>
-                                    {% endif %}
-                                    <div class="fr-btns-group fr-btns-group--inline-sm">
-                                        <d-modal-trigger modal="upload-form-modal" submitvalue="upload">
-                                            <button class="fr-btn fr-btn--tertiary fr-icon-edit-line" aria-controls="upload-form-modal"></button>
-                                        </d-modal-trigger>
+						<div data-testid="ressources" class="app-card app-card--raised fr-mt-2w">
+							<div class="app-card__content">
+								<h3 class="fr-h4 fr-mb-2w">{{ 'regulation.import'|trans }}</h3>
+								{% if not storageRegulationOrder %}
+									<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+										{{ 'regulation.import.description'|trans }}
+									</div>
+									<ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
+										<li>
+											<d-modal-trigger modal="create-form-modal" submitvalue="upload">
+												<button class="fr-btn fr-btn--secondary" aria-controls="create-form-modal">
+													{{ 'regulation.storage.title'|trans }}
+												</button>
+											</d-modal-trigger>
+										</li>
+									</ul>
+								{% else %}
+									<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+										{{ 'regulation.import.storage.description'|trans }}
+									</div>
+									<a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url}}">{{ (storageRegulationOrderFile ? storageRegulationOrderFile|split('/')|last|split('#')|first|split('?')|first : storageRegulationOrder.title)|u.truncate(25, '...') }}</a>
+									{% if storageRegulationOrder.mimeType and storageRegulationOrder.fileSize %}
+										<div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+											{{ storageRegulationOrder.mimeType }}
+											-
+											{{ storageRegulationOrder.fileSize }}
+											ko
+										</div>
+									{% endif %}
+									<div class="fr-btns-group fr-btns-group--inline-sm fr-mt-2w">
+										<d-modal-trigger modal="upload-form-modal" submitvalue="upload">
+											<button class="fr-btn fr-btn--tertiary fr-icon-edit-line" aria-controls="upload-form-modal"></button>
+										</d-modal-trigger>
 
                                         {% set deleteToken = csrf_token('delete-storage') %}
                                         <form method="POST" action="{{ path('app_config_regulation_delete_storage', { uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
