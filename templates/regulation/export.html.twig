@@ -1,0 +1,89 @@
+{% set startDate = generalInfo.startDate %}
+{% set endDate = generalInfo.endDate %}
+<h1 style="color:blue;">toto</h1>
+<h2 style="color:blue;">toto</h2>
+<h3 style="color:blue;">toto</h3>
+<b>bold</b>
+<p>pas bold</p>
+<p>some text before span tag <span style="color:#FF0000;display:inline">XXXXX</span> Text after span tag.</p>
+
+{% if generalInfo.organizationAddress %}
+<div custom-style="Dialog_AligneDroite">
+<p custom-style="Dialog_ACompleter">{{ generalInfo.organizationAddress.address|raw|nl2br }}</p>
+<p custom-style="Dialog_ACompleter">{{ generalInfo.organizationAddress.zipCode }} {{ generalInfo.organizationAddress.city|raw|nl2br }}</p>
+<p custom-style="Dialog_ACompleter">{{ generalInfo.organizationAddress.addressComplement|raw|nl2br }}</p>
+</div>
+{% endif %}
+
+{% if logo %}
+<img src="data:{{ logoMimeType }};base64,{{ logo }}" width="150px" />
+{% endif %}
+<br/>
+
+<div custom-style="Dialog_TitrePrincipal">
+    {{ regulationOrderTemplate.title|raw }}
+<p>Arrếté n°<span custom-style="Dialog_Variable">{{ generalInfo.identifier }}</span></p>
+</div>
+
+<div custom-style="Dialog_Description">
+<p><span custom-style="Dialog_Variable">{{ generalInfo.title }}</span></p>
+</div>
+
+{% if signingAuthority %}
+<div custom-style="Dialog_Organisation">
+{{ signingAuthority.name }}
+</div>
+{% endif %}
+
+<div custom-style="Dialog_ArreteTitre">
+<p>Arrête</p>
+</div>
+
+<p custom-style="Dialog_ACompleter">Pour permettre...</p>
+
+<div custom-style="Dialog_TitreArticle">
+<p><span custom-style="Dialog_Gras">Article 1</span> - Circulation</p>
+</div>
+
+<p custom-style="Dialog_Variable">{% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}</p>
+
+{% for measure in measures -%}
+<p custom-style="Dialog_Variable">
+    {% include 'regulation/_measure_title.html.twig' with { measure } only %}
+    {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+    {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
+    {%- for location in measure.locations %}
+        {% include 'regulation/_location_line.html.twig' with { location } only %}{% if location.storageArea %} ({{ 'regulation.location.storage_area.line'|trans({'%description%': location.storageArea.description }) }}){% endif %}{% if not loop.last %}, {% endif %}
+    {%- endfor %}
+</p>
+{%- endfor %}
+
+<br>
+
+<div custom-style="Dialog_TitreArticle">
+<p><span custom-style="Dialog_Gras">Article 2</span> - Signalisation</p>
+</div>
+
+<p custom-style="Dialog_ACompleter">Exemple : La signalisation temporaire conforme à l'IISR sera mise en place par les soins du pétitionnaire qui en sera le seul responsable. La signalisation relative au stationnement sera mise en place 24 heures avant le début de l'occupation.</p>
+
+<div custom-style="Dialog_TitreArticle">
+<p><span custom-style="Dialog_Gras">Article 3</span> - Poursuites</p>
+</div>
+
+<p custom-style="Dialog_ACompleter">Exemple : Toute infraction aux dispositions qui précèdent sera poursuivie conformément aux lois et règlements en vigueur.</p>
+
+<div custom-style="Dialog_TitreArticle">
+<p><span custom-style="Dialog_Gras">Article 4</span> - Mise en oeuvre</p>
+</div>
+
+<p custom-style="Dialog_ACompleter">Exemple : Madame la commissaire de XXXXXXX, monsieur le directeur de la police municipale de XXXXXXXX, madame la directrice générale des services de la ville de XXXXXX, sont chargés, chacun en ce qui les concernent, de l’exécution des prescriptions du présent arrêté.</p>
+
+<br>
+
+{% if signingAuthority %}
+<div custom-style="Dialog_AligneDroite">
+<p custom-style="Dialog_ACompleter">Le {{ 'now'|date('d/m/Y') }}</p>
+<p custom-style="Dialog_ACompleter">{{ signingAuthority.signatoryName }}</p>
+<p custom-style="Dialog_ACompleter">Signature et tampon</p>
+</div>
+{% endif %}
