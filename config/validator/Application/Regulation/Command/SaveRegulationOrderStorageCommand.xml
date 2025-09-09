@@ -5,7 +5,7 @@
     <class name="App\Application\Regulation\Command\SaveRegulationOrderStorageCommand">
         <property name="file">
             <constraint name="File">
-                <option name="maxSize">1000k</option>
+                <option name="maxSize">5000k</option>
                 <option name="extensions">
                     <value>pdf</value>
                     <value>jpg</value>
