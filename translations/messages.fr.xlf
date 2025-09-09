@@ -445,7 +445,7 @@
             </trans-unit>
             <trans-unit id="regulation.storage.form.file.help">
                 <source>regulation.storage.form.file.help</source>
-                <target>Taille maximale : 1 Mo. Formats supportés : docx, odt, jpg, pdf.</target>
+                <target>Taille maximale : 5 Mo. Formats supportés : docx, odt, jpg, pdf.</target>
             </trans-unit>
             <trans-unit id="regulation.storage.url.title">
                 <source>regulation.storage.url.title</source>

@@ -18,7 +18,7 @@ final readonly class Storage implements StorageInterface
 
     public function write(string $folder, UploadedFile $file): string
     {
-        $path = \sprintf('%s/%s.%s', $folder, $file->getFilename(), $file->getClientOriginalExtension());
+        $path = \sprintf('%s/%s', $folder, $file->getClientOriginalName());
         $this->storage->write($path, $file->getContent(), [
             'visibility' => 'public',
             'directory_visibility' => 'public',
