@@ -1,36 +1,50 @@
 <div class="app-card app-card--raised">
     <div class="app-card__content">
         {{ form_start(form) }}
-            {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
-            {{ form_row(form.title, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
-            {{ form_row(form.organization, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
-            {{ form_row(form.category, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
-            <div class="fr-fieldset" data-controller="form-reveal">
-                <div class="fr-fieldset__element">
-                    {{ form_row(form.subject, {
-                        group_class: 'fr-select-group',
-                        widget_class: 'fr-select',
+            <div
+                data-controller="fetch"
+                data-fetch-extra-query-params-value="{{ { targetId: form.regulationOrderTemplateUuid.vars.id, organizationUuid: '#' ~ form.organization.vars.id }|json_encode }}"
+                data-fetch-url-value="{{ url('fragment_regulation_order_templates_options') }}"
+            >
+                {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
+                {{ form_row(form.title, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
+                {{ form_row(
+                    form.organization,
+                    {
+                        group_class: 'fr-select-group', widget_class: 'fr-select',
                         attr: {
-                            'data-controller': 'condition',
-                            'data-condition-equals-value': 'other',
-                            'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                            'data-action': 'change->fetch#fetch'
                         }
-                    }) }}
+                    }
+                ) }}
+                {{ form_row(form.category, {group_class: 'fr-select-group', widget_class: 'fr-select'}) }}
+                <div class="fr-fieldset" data-controller="form-reveal">
+                    <div class="fr-fieldset__element">
+                        {{ form_row(form.subject, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                            attr: {
+                                'data-controller': 'condition',
+                                'data-condition-equals-value': 'other',
+                                'data-action': 'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                            }
+                        }) }}
+                    </div>
+                    <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.subject.vars.value != 'other' %}hidden{% endif %}>
+                        {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
+                    </div>
+                    <div class="fr-fieldset__element">
+                        {{ form_row(form.regulationOrderTemplateUuid, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                        }) }}
+                    </div>
                 </div>
-                <div id="otherCategoryText-output" class="fr-fieldset__element" data-form-reveal-target="section" {% if form.subject.vars.value != 'other' %}hidden{% endif %}>
-                    {{ form_row(form.otherCategoryText, { group_class: 'fr-input-group', widget_class: 'fr-input', attr: { 'data-form-reveal-target': 'form-control' } }) }}
-                </div>
-                <div class="fr-fieldset__element">
-                    {{ form_row(form.regulationOrderTemplateUuid, {
-                        group_class: 'fr-select-group',
-                        widget_class: 'fr-select',
-                    }) }}
-                </div>
+                <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                    {{ "common.cancel"|trans }}
+                </a>
+                {{ form_widget(form.save) }}
             </div>
-            <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
-                {{ "common.cancel"|trans }}
-            </a>
-            {{ form_widget(form.save) }}
         {{ form_end(form) }}
     </div>
 </div>

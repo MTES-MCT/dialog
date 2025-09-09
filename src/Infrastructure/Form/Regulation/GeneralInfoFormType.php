@@ -16,6 +16,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class GeneralInfoFormType extends AbstractType
@@ -86,6 +88,10 @@ final class GeneralInfoFormType extends AbstractType
                 SubmitType::class,
                 options: $options['save_options'],
             )
+            ->addEventListener(
+                FormEvents::PRE_SUBMIT,
+                [$this, 'onPreSubmit'],
+            )
         ;
 
         $builder->get('organization')
@@ -100,6 +106,16 @@ final class GeneralInfoFormType extends AbstractType
                 },
             ))
         ;
+    }
+
+    /**
+     * Cette méthode met à jour les valeurs de l'input en fonction du résultat de l'API,
+     * afin d'éviter l'erreur "Le choix sélectionné est invalide".
+     */
+    public function onPreSubmit(FormEvent $event): void
+    {
+        $input = $event->getData()['regulationOrderTemplateUuid'];
+        $event->getForm()->add('regulationOrderTemplateUuid', ChoiceType::class, ['choices' => [$input]]);
     }
 
     private function getCategoryOptions(): array
