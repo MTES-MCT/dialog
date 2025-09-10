@@ -553,7 +553,7 @@
             </trans-unit>
             <trans-unit id="regulation.general_info.regulation_order_template.placeholder">
                 <source>regulation.general_info.regulation_order_template.placeholder</source>
-                <target>Sélectionner un modèle de l'arrêté</target>
+                <target>Sélectionner un modèle d'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
