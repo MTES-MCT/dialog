@@ -8,6 +8,7 @@ use App\Application\Organization\SigningAuthority\Query\GetSigningAuthorityByOrg
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
+use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -44,6 +45,8 @@ final class ExportRegulationController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
+        $regulationOrderTemplate = $this->queryBus->handle(new GetRegulationOrderTemplateQuery($generalInfo->regulationOrderTemplateUuid));
+dd($regulationOrderTemplate);
         $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($generalInfo->organizationUuid));
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
 
@@ -57,8 +60,9 @@ final class ExportRegulationController extends AbstractRegulationController
         }
 
         $content = $this->twig->render(
-            name: 'regulation/export.md.twig',
+            name: 'regulation/export.html.twig',
             context: [
+                'regulationOrderTemplate' => $regulationOrderTemplate,
                 'generalInfo' => $generalInfo,
                 'measures' => $measures,
                 'signingAuthority' => $signingAuthority,
@@ -69,7 +73,7 @@ final class ExportRegulationController extends AbstractRegulationController
 
         $response = new Response(
             (new \Pandoc\Pandoc())
-            ->from('markdown')
+            ->from('html')
             ->input($content)
             ->option('reference-doc', $this->projectDir . '/data/regulation-order-template.docx')
             ->to('docx')
