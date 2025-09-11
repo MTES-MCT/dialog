@@ -80,9 +80,10 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
         }
 
         $siege = $result['siege'];
+        $name = OrganizationCodeTypeEnum::INSEE->value === $codeType ? $result['siege']['libelle_commune'] : $result['nom_complet'];
 
         return new OrganizationFetchedView(
-            name: $result['nom_complet'],
+            name: ucwords(strtolower($name)),
             code: $code,
             codeType: $codeType,
             departmentName: $departmentName,
