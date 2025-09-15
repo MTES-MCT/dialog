@@ -44,6 +44,7 @@ class SyncOrganizationsCodesCommand extends Command
                 $organizationFetchedView = $this->organizationFetcher->findBySiret($organization->getSiret());
                 usleep(150000); // 150 ms de délai pour ne pas dépasser 7 req/s
                 $organization
+                    ->setName($organizationFetchedView->name)
                     ->setCode($organizationFetchedView->code)
                     ->setCodeType($organizationFetchedView->codeType)
                     ->setDepartmentName($organizationFetchedView->departmentName)
