@@ -15,6 +15,7 @@ use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -44,6 +45,10 @@ final class ExportRegulationController extends AbstractRegulationController
         $generalInfo = $this->getRegulationOrderRecordUsing(function () use ($uuid) {
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
+
+        if (!$generalInfo->regulationOrderTemplateUuid) {
+            throw new BadRequestHttpException('Regulation order template not found');
+        }
 
         $regulationOrderTemplate = $this->queryBus->handle(new GetRegulationOrderTemplateQuery($generalInfo->regulationOrderTemplateUuid));
         $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($generalInfo->organizationUuid));

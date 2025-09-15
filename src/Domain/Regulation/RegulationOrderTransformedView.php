@@ -11,8 +11,8 @@ final readonly class RegulationOrderTransformedView
         public string $visaContent,
         public string $consideringContent,
         public string $articleContent,
-        public string $logo,
-        public string $logoMimeType,
+        public ?string $logo = null,
+        public ?string $logoMimeType = null,
     ) {
     }
 }

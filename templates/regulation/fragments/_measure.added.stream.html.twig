@@ -27,7 +27,7 @@
 
 <turbo-stream action="replace" target="block_export">
     <template>
-        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid } only %}
+        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid, regulationOrderTemplateUuid: generalInfo.regulationOrderTemplateUuid } only %}
     </template>
 </turbo-stream>
 

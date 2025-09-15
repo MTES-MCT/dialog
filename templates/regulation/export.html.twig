@@ -1,11 +1,3 @@
-{% if generalInfo.organizationAddress %}
-    <div custom-style="Dialog_AligneDroite">
-        <p>{{ generalInfo.organizationAddress.address|raw|nl2br }}</p>
-        <p>{{ generalInfo.organizationAddress.zipCode }} {{ generalInfo.organizationAddress.city|raw|nl2br }}</p>
-        <p>{{ generalInfo.organizationAddress.addressComplement|raw|nl2br }}</p>
-    </div>
-{% endif %}
-
 {% set measuresHtml %}
     {% for measure in measures -%}
         <p custom-style="Dialog_Variable">
@@ -19,18 +11,33 @@
     {%- endfor %}
 {% endset %}
 
-{% if regulationOrderTransformed.logo %}
-    <img src="data:{{ regulationOrderTransformed.logoMimeType }};base64,{{ regulationOrderTransformed.logo }}" width="150px" />
-{% endif %}
+<table>
+    <tr>
+        <td>
+            {% if regulationOrderTransformed.logo %}
+                <p custom-style="Dialog_AligneGauche">
+                    <img src="data:{{ regulationOrderTransformed.logoMimeType }};base64,{{ regulationOrderTransformed.logo }}" width="150px" />
+                </p>
+            {% endif %}
+        </td>
+        <td>
+            {% if generalInfo.organizationAddress %}
+                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.address|raw|nl2br }}</p>
+                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.zipCode }} {{ generalInfo.organizationAddress.city|raw|nl2br }}</p>
+                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.addressComplement|raw|nl2br }}</p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
 <br/><br/>
 
 {% if regulationOrderTransformed.title %}
-    <div custom-style="Dialog_TitrePrincipal">{{ regulationOrderTransformed.title|raw }}</div><br/>
+    <div custom-style="Dialog_TitrePrincipal">{{ regulationOrderTransformed.title|raw|nl2br }}</div><br/>
 {% endif %}
 
-{{ regulationOrderTransformed.visaContent|raw }}
+{{ regulationOrderTransformed.visaContent|raw|nl2br }}
 <br/>
-{{ regulationOrderTransformed.consideringContent|raw }}
+{{ regulationOrderTransformed.consideringContent|raw|nl2br }}
 <div custom-style="Dialog_ArreteTitre"><p>Arrête</p></div>
 <p custom-style="Dialog_Variable">{% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}</p>
 {{ regulationOrderTransformed.articleContent|replace({'[mesures]': measuresHtml})|raw }}
