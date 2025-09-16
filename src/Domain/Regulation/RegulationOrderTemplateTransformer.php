@@ -26,15 +26,18 @@ final readonly class RegulationOrderTemplateTransformer
     public function transform(
         RegulationOrderTemplate $regulationOrderTemplate,
         GeneralInfoView $generalInfo,
-        SigningAuthority $signingAuthority,
+        ?SigningAuthority $signingAuthority = null,
     ): RegulationOrderTransformedView {
         $replacements = [
             self::VARIABLES[0] => $generalInfo->identifier,
             self::VARIABLES[1] => $generalInfo->title,
-            self::VARIABLES[2] => $signingAuthority->getName(),
             self::VARIABLES[3] => $generalInfo->organizationName,
-            self::VARIABLES[4] => $signingAuthority->getSignatoryName(),
         ];
+
+        if ($signingAuthority) {
+            $replacements[self::VARIABLES[4]] = $signingAuthority->getSignatoryName();
+            $replacements[self::VARIABLES[2]] = $signingAuthority->getName();
+        }
 
         $logo = null;
         $logoMimeType = null;
