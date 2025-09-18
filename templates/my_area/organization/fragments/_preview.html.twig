@@ -40,7 +40,7 @@
             {% endif %}
         </div>
         <div class="fr-col-12 fr-col-md-3">
-            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}
+            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                 <a href="{{ path('fragment_organizations_save', { uuid: organization.uuid }) }}" class="fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
                     {{ 'common.update'|trans }}
                 </a>

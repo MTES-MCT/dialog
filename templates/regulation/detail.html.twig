@@ -67,7 +67,7 @@
                             <div class="app-card app-card--raised fr-mt-2w">
                                 <div class="app-card__content">
                                     <turbo-frame id="block_export">
-                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid } only %}
+                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid, regulationOrderTemplateUuid: generalInfo.regulationOrderTemplateUuid } only %}
                                     </turbo-frame>
                                 </div>
                             </div>
