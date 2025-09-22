@@ -11,9 +11,6 @@
         </property>
         <property name="title">
             <constraint name="NotBlank"/>
-            <constraint name="Length">
-                <option name="max">150</option>
-            </constraint>
         </property>
         <property name="visaContent">
             <constraint name="NotBlank"/>

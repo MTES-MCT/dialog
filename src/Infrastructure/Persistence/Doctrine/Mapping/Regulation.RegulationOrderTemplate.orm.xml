@@ -3,7 +3,7 @@
   <entity name="App\Domain\Regulation\RegulationOrderTemplate" table="regulation_order_template">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" length="150" nullable="false"/>
-    <field name="title" type="string" length="150" nullable="false"/>
+    <field name="title" type="text" nullable="false"/>
     <field name="visaContent" type="text" nullable="false"/>
     <field name="consideringContent" type="text" nullable="false"/>
     <field name="articleContent" type="text" nullable="false"/>

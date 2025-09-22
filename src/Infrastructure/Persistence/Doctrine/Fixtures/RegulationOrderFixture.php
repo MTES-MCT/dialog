@@ -7,10 +7,12 @@ namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\RegulationOrder;
+use App\Domain\Regulation\RegulationOrderTemplate;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-final class RegulationOrderFixture extends Fixture
+final class RegulationOrderFixture extends Fixture implements DependentFixtureInterface
 {
     public const TYPICAL_IDENTIFIER = 'FO1/2023';
     public const IDENTIFIER_CIFS = 'F/CIFS/2023';
@@ -31,6 +33,7 @@ final class RegulationOrderFixture extends Fixture
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             title: 'Title 2',
             subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            regulationOrderTemplate: $this->getReference('regulationOrderTemplate', RegulationOrderTemplate::class),
         );
 
         $regulationOrderPermanent = new RegulationOrder(
@@ -139,5 +142,12 @@ final class RegulationOrderFixture extends Fixture
         $this->addReference('litteralisRegulationOrder', $litteralisRegulationOrder);
         $this->addReference('winterMaintenanceRegulationOrder', $winterMaintenanceRegulationOrder);
         $this->addReference('parkingProhibitedRegulationOrder', $parkingProhibitedRegulationOrder);
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            RegulationOrderTemplateFixture::class,
+        ];
     }
 }
