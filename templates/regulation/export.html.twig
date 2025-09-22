@@ -1,0 +1,52 @@
+{% set measuresHtml %}
+    {% for measure in measures -%}
+        <p custom-style="Dialog_Variable">
+            {% include 'regulation/_measure_title.html.twig' with { measure } only %}
+            {% include 'regulation/_period.html.twig' with { periods: measure.periods } only %}
+            {% include 'regulation/_vehicle_set.html.twig' with { vehicleSet: measure.vehicleSet } only %}
+            {%- for location in measure.locations %}
+                {% include 'regulation/_location_line.html.twig' with { location } only %}{% if location.storageArea %} ({{ 'regulation.location.storage_area.line'|trans({'%description%': location.storageArea.description }) }}){% endif %}{% if not loop.last %}, {% endif %}
+            {%- endfor %}
+        </p>
+    {%- endfor %}
+{% endset %}
+
+<table>
+    <tr>
+        <td>
+            {% if regulationOrderTransformed.logo %}
+                <p custom-style="Dialog_AligneGauche">
+                    <img src="data:{{ regulationOrderTransformed.logoMimeType }};base64,{{ regulationOrderTransformed.logo }}" width="150px" />
+                </p>
+            {% endif %}
+        </td>
+        <td>
+            {% if generalInfo.organizationAddress %}
+                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.address|raw|nl2br }}</p>
+                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.zipCode }} {{ generalInfo.organizationAddress.city|raw|nl2br }}</p>
+                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.addressComplement|raw|nl2br }}</p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+<br/><br/>
+
+{% if regulationOrderTransformed.title %}
+    <div custom-style="Dialog_TitrePrincipal">{{ regulationOrderTransformed.title|raw|nl2br }}</div><br/>
+{% endif %}
+
+{{ regulationOrderTransformed.visaContent|raw|nl2br }}
+<br/>
+{{ regulationOrderTransformed.consideringContent|raw|nl2br }}
+<div custom-style="Dialog_ArreteTitre"><p>Arrête</p></div>
+<p custom-style="Dialog_Variable">{% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}</p>
+{{ regulationOrderTransformed.articleContent|replace({'[mesures]': measuresHtml})|raw }}
+
+{% if signingAuthority %}
+    <div custom-style="Dialog_AligneDroite">
+        <p>Fait à {{ generalInfo.organizationName }}</p>
+        <p>Le {{ 'now'|date('d/m/Y') }}</p>
+        <p>Pour {{ signingAuthority.name }}</p>
+        <p>{{ signingAuthority.signatoryName }}, {{ signingAuthority.role }}</p>
+    </div>
+{% endif %}

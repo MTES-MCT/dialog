@@ -36,6 +36,9 @@ final class RegulationOrderTemplateFixture extends Fixture implements DependentF
         $manager->persist($globalRegulationOrderTemplate);
         $manager->persist($regulationOrderTemplate);
         $manager->flush();
+
+        $this->addReference('regulationOrderTemplate', $regulationOrderTemplate);
+        $this->addReference('globalRegulationOrderTemplate', $globalRegulationOrderTemplate);
     }
 
     public function getDependencies(): array

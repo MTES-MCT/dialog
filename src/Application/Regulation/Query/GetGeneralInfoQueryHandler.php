@@ -40,6 +40,7 @@ final class GetGeneralInfoQueryHandler
             ) : null,
             status: $row['status'],
             regulationOrderUuid: $row['regulationOrderUuid'],
+            regulationOrderTemplateUuid: $row['regulationOrderTemplateUuid'],
             category: $row['category'],
             subject: $row['subject'],
             otherCategoryText: $row['otherCategoryText'],

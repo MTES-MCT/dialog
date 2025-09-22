@@ -212,6 +212,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     est.addressComplement as organizationAddressComplement,
                     roc.status,
                     ro.uuid as regulationOrderUuid,
+                    rot.uuid as regulationOrderTemplateUuid,
                     ro.category,
                     ro.subject,
                     ro.otherCategoryText,
@@ -228,6 +229,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.organization', 'org')
             ->leftJoin('org.establishment', 'est')
             ->innerJoin('roc.regulationOrder', 'ro')
+            ->leftJoin('ro.regulationOrderTemplate', 'rot')
             ->getQuery()
             ->getOneOrNullResult()
         ;

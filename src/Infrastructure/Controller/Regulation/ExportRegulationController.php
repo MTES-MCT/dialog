@@ -8,12 +8,14 @@ use App\Application\Organization\SigningAuthority\Query\GetSigningAuthorityByOrg
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
+use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Application\Regulation\View\GeneralInfoView;
-use App\Application\StorageInterface;
+use App\Domain\Regulation\RegulationOrderTemplateTransformer;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
@@ -23,8 +25,8 @@ final class ExportRegulationController extends AbstractRegulationController
         QueryBusInterface $queryBus,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
+        private readonly RegulationOrderTemplateTransformer $regulationOrderTemplateTransformer,
         private readonly \Twig\Environment $twig,
-        private readonly StorageInterface $storage,
         private readonly string $projectDir,
     ) {
         parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
@@ -44,32 +46,28 @@ final class ExportRegulationController extends AbstractRegulationController
             return $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
         });
 
-        $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($generalInfo->organizationUuid));
-        $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
-
-        $logo = null;
-        $logoMimeType = null;
-
-        if ($path = $generalInfo->organizationLogo) {
-            $storage = $this->storage->read($path);
-            $logo = $storage ? base64_encode($storage) : null;
-            $logoMimeType = $this->storage->getMimeType($path);
+        if (!$generalInfo->regulationOrderTemplateUuid) {
+            throw new BadRequestHttpException('Regulation order template not found');
         }
 
+        $regulationOrderTemplate = $this->queryBus->handle(new GetRegulationOrderTemplateQuery($generalInfo->regulationOrderTemplateUuid));
+        $signingAuthority = $this->queryBus->handle(new GetSigningAuthorityByOrganizationQuery($generalInfo->organizationUuid));
+        $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
+        $regulationOrderTransformed = $this->regulationOrderTemplateTransformer->transform($regulationOrderTemplate, $generalInfo, $signingAuthority);
+
         $content = $this->twig->render(
-            name: 'regulation/export.md.twig',
+            name: 'regulation/export.html.twig',
             context: [
+                'regulationOrderTransformed' => $regulationOrderTransformed,
                 'generalInfo' => $generalInfo,
                 'measures' => $measures,
                 'signingAuthority' => $signingAuthority,
-                'logo' => $logo,
-                'logoMimeType' => $logoMimeType,
             ],
         );
 
         $response = new Response(
             (new \Pandoc\Pandoc())
-            ->from('markdown')
+            ->from('html')
             ->input($content)
             ->option('reference-doc', $this->projectDir . '/data/regulation-order-template.docx')
             ->to('docx')
