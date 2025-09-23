@@ -2770,6 +2770,10 @@
                 <source>regulation_order_template.variables.list.numero_arrete</source>
                 <target>Numéro d'arrêté</target>
             </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.departement">
+                <source>regulation_order_template.variables.list.departement</source>
+                <target>Département</target>
+            </trans-unit>
             <trans-unit id="regulation_order_template.variables.list.intitule_arrete">
                 <source>regulation_order_template.variables.list.intitule_arrete</source>
                 <target>Intitulé de l'arrêté</target>

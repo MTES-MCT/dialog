@@ -41,6 +41,7 @@
     'file-copy-line',
     'government',
     'youtube-line',
+    'function-add-line'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
