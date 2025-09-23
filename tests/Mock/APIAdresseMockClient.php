@@ -28,7 +28,7 @@ final class APIAdresseMockClient extends MockHttpClient
 
     private function getSearchMock(array $options): MockResponse
     {
-        $type = $options['query']['type'];
+        $type = isset($options['query']['type']) ? $options['query']['type'] : 'street';
         $query = $options['query']['q'];
 
         $features = match ([$type, $query]) {
