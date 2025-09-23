@@ -169,7 +169,6 @@ final class APIAdresseGeocoder implements GeocoderInterface
                 'q' => $search,
                 'autocomplete' => '1',
                 'limit' => 7,
-                'type' => 'street',
                 'citycode' => $cityCode,
             ],
         ]);
@@ -181,7 +180,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             foreach ($data['features'] as $feature) {
                 $namedStreets[] = [
                     'roadBanId' => $feature['properties']['id'],
-                    'roadName' => $feature['properties']['street'],
+                    'roadName' => isset($feature['properties']['street']) ? $feature['properties']['street'] : $feature['properties']['name'],
                 ];
             }
 
