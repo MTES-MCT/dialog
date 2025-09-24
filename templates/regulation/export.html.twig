@@ -22,21 +22,21 @@
         </td>
         <td>
             {% if generalInfo.organizationAddress %}
-                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.address|raw|nl2br }}</p>
-                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.zipCode }} {{ generalInfo.organizationAddress.city|raw|nl2br }}</p>
-                <p custom-style="Dialog_AligneDroite">{{ generalInfo.organizationAddress.addressComplement|raw|nl2br }}</p>
+                <p custom-style="Dialog_AligneDroite">RÉPUBLIQUE FRANÇAISE</p>
+                {% if generalInfo.organizationAddress.department %}
+                    <p custom-style="Dialog_AligneDroite">Département {{ generalInfo.organizationAddress.department }}</p>
+                {% endif %}
             {% endif %}
         </td>
     </tr>
 </table>
-<br/><br/>
+<br/>
 
 {% if regulationOrderTransformed.title %}
     <div custom-style="Dialog_TitrePrincipal">{{ regulationOrderTransformed.title|raw|nl2br }}</div><br/>
 {% endif %}
 
-{{ regulationOrderTransformed.visaContent|raw|nl2br }}
-<br/>
+{{ regulationOrderTransformed.visaContent|raw|nl2br }}<br/>
 {{ regulationOrderTransformed.consideringContent|raw|nl2br }}
 <div custom-style="Dialog_ArreteTitre"><p>Arrête</p></div>
 <p custom-style="Dialog_Variable">{% include 'regulation/_overall_period.html.twig' with { generalInfo } only %}</p>

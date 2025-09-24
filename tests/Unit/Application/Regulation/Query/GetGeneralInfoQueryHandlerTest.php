@@ -30,6 +30,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
                 address: '123 Main St',
                 zipCode: '12345',
                 city: 'Anytown',
+                department: 'AnyDepartment',
                 addressComplement: 'Apt 4B',
             ),
             status: RegulationOrderRecordStatusEnum::DRAFT->value,
@@ -65,6 +66,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
                 'organizationAddress' => $generalInfo->organizationAddress->address,
                 'organizationZipCode' => $generalInfo->organizationAddress->zipCode,
                 'organizationCity' => $generalInfo->organizationAddress->city,
+                'organizationDepartment' => $generalInfo->organizationAddress->department,
                 'organizationAddressComplement' => $generalInfo->organizationAddress->addressComplement,
             ]);
 
