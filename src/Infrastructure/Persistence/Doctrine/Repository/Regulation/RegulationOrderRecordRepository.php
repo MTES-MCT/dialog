@@ -209,6 +209,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     est.address as organizationAddress,
                     est.zipCode as organizationZipCode,
                     est.city as organizationCity,
+                    org.departmentName as organizationDepartment,
                     est.addressComplement as organizationAddressComplement,
                     roc.status,
                     ro.uuid as regulationOrderUuid,

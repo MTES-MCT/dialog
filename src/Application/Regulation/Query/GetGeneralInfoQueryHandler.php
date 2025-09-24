@@ -36,6 +36,7 @@ final class GetGeneralInfoQueryHandler
                 address: $row['organizationAddress'],
                 zipCode: $row['organizationZipCode'],
                 city: $row['organizationCity'],
+                department: $row['organizationDepartment'],
                 addressComplement: $row['organizationAddressComplement'],
             ) : null,
             status: $row['status'],

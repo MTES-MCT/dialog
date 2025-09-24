@@ -16,6 +16,7 @@ final readonly class RegulationOrderTemplateTransformer
         '[pouvoir_de_signature]',
         '[nom_commune]',
         '[nom_signataire]',
+        '[departement]',
     ];
 
     public function __construct(
@@ -32,6 +33,7 @@ final readonly class RegulationOrderTemplateTransformer
             self::VARIABLES[0] => $generalInfo->identifier,
             self::VARIABLES[1] => $generalInfo->title,
             self::VARIABLES[3] => $generalInfo->organizationName,
+            self::VARIABLES[5] => $generalInfo->organizationAddress?->department,
         ];
 
         if ($signingAuthority) {
