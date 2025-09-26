@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Admin;
 
+use App\Domain\Organization\ApiClient;
 use App\Domain\Regulation\RegulationOrderTemplate;
 use App\Domain\User\Feedback;
 use App\Domain\User\Organization;
@@ -39,6 +40,7 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Gestion des organisations');
         yield MenuItem::linkToCrud('Organisations', 'fa fa-list', Organization::class);
+        yield MenuItem::linkToCrud('Accès API', 'fa fa-key', ApiClient::class);
 
         yield MenuItem::section('Configuration des arrếtés');
         yield MenuItem::linkToCrud('Modèles d\'arrêtés', 'fa fa-book', RegulationOrderTemplate::class);
