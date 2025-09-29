@@ -1,0 +1,25 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: DiaLog
+            description: Intégration de la réglementation de circulation dans les solutions numériques.
+            version: 1.0.0
+        components:
+            securitySchemes:
+                ApiClientIdHeader:
+                    type: apiKey
+                    in: header
+                    name: X-Client-Id
+                    description: Client id
+                ApiClientSecretHeader:
+                    type: apiKey
+                    in: header
+                    name: X-Client-Secret
+                    description: Client secret
+        security:
+            - ApiClientIdHeader: []
+              ApiClientSecretHeader: []
+
+    areas:
+        path_patterns:
+            - ^/api(?!/doc$)

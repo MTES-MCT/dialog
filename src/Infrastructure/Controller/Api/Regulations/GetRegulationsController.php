@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Api;
+namespace App\Infrastructure\Controller\Api\Regulations;
 
 use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -20,11 +21,11 @@ final class GetRegulationsController
     }
 
     #[Route(
-        '/api/regulations.{_format}',
+        '/api/regulations.xml',
         methods: 'GET',
         name: 'api_regulations_list',
-        requirements: ['_format' => 'xml'],
     )]
+    #[OA\Tag(name: 'Regulations')]
     public function __invoke(): Response
     {
         $regulationOrders = $this->queryBus->handle(new GetRegulationOrdersToDatexFormatQuery());

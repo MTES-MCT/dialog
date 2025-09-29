@@ -4,6 +4,12 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="clientId" type="string" length="255" nullable="false"/>
     <field name="clientSecret" type="string" length="255" nullable="false"/>
+    <field name="isActive" type="boolean" nullable="false">
+        <options>
+          <option name="default">true</option>
+        </options>
+    </field>
+    <field name="lastUsedAt" type="datetimetz" nullable="true"/>
     <field name="createdAt" type="datetimetz" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
