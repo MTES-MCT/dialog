@@ -19,9 +19,10 @@ final class GetCifsIncidentsController
     }
 
     #[Route(
-        '/api/regulations/cifs.xml',
+        '/api/regulations/cifs.{_format}',
         methods: 'GET',
         name: 'api_regulations_cifs',
+        defaults: ['_format' => 'xml'],
     )]
     #[OA\Tag(name: 'Regulations')]
     public function __invoke(): Response
@@ -32,6 +33,8 @@ final class GetCifsIncidentsController
             $this->twig->render('api/regulations/cifs.xml.twig', [
                 'incidents' => $incidents,
             ]),
+            Response::HTTP_OK,
+            ['Content-Type' => 'text/xml; charset=UTF-8'],
         );
     }
 }

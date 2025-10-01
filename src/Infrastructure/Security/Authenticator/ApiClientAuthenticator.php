@@ -26,12 +26,8 @@ final class ApiClientAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $clientId = $request->headers->get('X-Client-Id') ?? $request->headers->get('x-client-id');
-        $clientSecret = $request->headers->get('X-Client-Secret') ?? $request->headers->get('x-client-secret');
-
-        if (!$clientId || !$clientSecret) {
-            throw new AuthenticationException('Missing client credentials');
-        }
+        $clientId = $request->headers->get('X-Client-Id');
+        $clientSecret = $request->headers->get('X-Client-Secret');
 
         return new Passport(
             new UserBadge($clientId),

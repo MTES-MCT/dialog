@@ -21,9 +21,10 @@ final class GetRegulationsController
     }
 
     #[Route(
-        '/api/regulations.xml',
+        '/api/regulations.{_format}',
         methods: 'GET',
         name: 'api_regulations_list',
+        defaults: ['_format' => 'xml'],
     )]
     #[OA\Tag(name: 'Regulations')]
     public function __invoke(): Response
@@ -35,6 +36,8 @@ final class GetRegulationsController
                 'publicationTime' => $this->dateUtils->getNow(),
                 'regulationOrders' => $regulationOrders,
             ]),
+            Response::HTTP_OK,
+            ['Content-Type' => 'text/xml; charset=UTF-8'],
         );
     }
 }

@@ -9,4 +9,6 @@ use App\Domain\User\Organization;
 interface OrganizationAwareUserInterface
 {
     public function getOrganization(): Organization;
+
+    public function getUserIdentifier(): string;
 }
