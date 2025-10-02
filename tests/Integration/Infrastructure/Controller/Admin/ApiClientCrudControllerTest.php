@@ -34,4 +34,21 @@ final class ApiClientCrudControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(403);
     }
+
+    public function testRegenerateApiAccess(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+
+        $crawler = $client->request('GET', '/admin?crudAction=index&crudControllerFqcn=App%5CInfrastructure%5CController%5CAdmin%5CApiClientCrudController');
+        $this->assertResponseIsSuccessful();
+
+        $uuid = '0b507871-8b5e-4575-b297-a630310fc06e';
+        $linkNode = $crawler->filter(\sprintf('a[href*="crudAction=regenerateApiAccess"][href*="entityId=%s"]', $uuid))->first();
+
+        $link = $linkNode->link();
+        $client->click($link);
+        $crawler = $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('Accès modifié avec succès', $crawler->html());
+    }
 }

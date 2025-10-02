@@ -6,11 +6,19 @@ security:
             id: App\Infrastructure\Security\Provider\LocalPasswordUserProvider
         proconnect_user:
             id: App\Infrastructure\Security\Provider\ProConnectUserProvider
+        api_client:
+            id: App\Infrastructure\Security\Provider\ApiClientUserProvider
         all:
             chain:
                 providers: ['local_user', 'proconnect_user']
 
     firewalls:
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: api_client
+            custom_authenticator:
+                - App\Infrastructure\Security\Authenticator\ApiClientAuthenticator
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -31,6 +39,8 @@ security:
                 path: app_logout
 
     access_control:
+        - { path: '^/api/regulations$', roles: ROLE_API, methods: [POST] }
+        - { path: ^/api, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
         - { path: '^/regulations/([0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$', methods: [GET], roles: PUBLIC_ACCESS }
         - { path: '^/regulations$', methods: [GET], roles: PUBLIC_ACCESS }
