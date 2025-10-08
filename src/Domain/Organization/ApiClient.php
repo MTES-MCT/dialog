@@ -10,8 +10,10 @@ class ApiClient
 {
     private string $clientId;
     private string $clientSecret;
+    private bool $isActive;
     private Organization $organization;
     private \DateTimeInterface $createdAt;
+    private ?\DateTimeInterface $lastUsedAt = null;
 
     public function __construct(
         private string $uuid,
@@ -69,5 +71,29 @@ class ApiClient
         $this->clientSecret = $clientSecret;
 
         return $this;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setLastUsedAt(?\DateTimeInterface $lastUsedAt): self
+    {
+        $this->lastUsedAt = $lastUsedAt;
+
+        return $this;
+    }
+
+    public function getLastUsedAt(): ?\DateTimeInterface
+    {
+        return $this->lastUsedAt;
     }
 }

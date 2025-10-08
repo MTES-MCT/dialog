@@ -12,7 +12,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <everyday>18:00-22:00</everyday>
@@ -30,7 +30,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <everyday>18:00-22:00</everyday>
@@ -48,7 +48,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <everyday>18:00-22:00</everyday>
@@ -66,7 +66,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>12:00-14:00,19:00-21:00</tuesday>
@@ -84,7 +84,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>12:00-14:00,19:00-21:00</tuesday>
@@ -102,7 +102,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>12:00-14:00,19:00-21:00</tuesday>
@@ -120,7 +120,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>08:00-10:00</tuesday>
@@ -139,7 +139,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>08:00-10:00</tuesday>
@@ -158,7 +158,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>08:00-10:00</tuesday>
@@ -177,7 +177,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <everyday>18:00-22:00</everyday>
@@ -195,7 +195,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>12:00-14:00,19:00-21:00</tuesday>
@@ -213,7 +213,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                             <schedule>
                                             <tuesday>08:00-10:00</tuesday>
@@ -232,7 +232,7 @@
             <source>
                 <reference>dialog.beta.gouv.fr</reference>
                 <name>DiaLog</name>
-                <url>http://localhost/api/regulations/cifs.xml</url>
+                <url>http://localhost/api/regulations/cifs</url>
             </source>
                     </incident>
     </incidents>

@@ -11,4 +11,5 @@ enum RegulationOrderRecordSourceEnum: string
     case BAC_IDF = 'bacidf';
     case JOP = 'jop';
     case LITTERALIS = 'litteralis';
+    case API = 'api';
 }
