@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
-use App\Application\Organization\VisaModel\Query\GetVisaModelsQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Query\GetRegulationOrderIdentifierQuery;
+use App\Application\Regulation\Query\GetRegulationOrderTemplatesQuery;
 use App\Application\User\Command\MarkUserAsActiveCommand;
+use App\Domain\Regulation\DTO\RegulationOrderTemplateDTO;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
@@ -45,14 +46,17 @@ final class AddRegulationController
         $identifier = $this->queryBus->handle(new GetRegulationOrderIdentifierQuery($organizationUuid));
 
         $command = SaveRegulationGeneralInfoCommand::create(null, $identifier);
-        $visaModels = $this->queryBus->handle(new GetVisaModelsQuery());
+
+        $dto = new RegulationOrderTemplateDTO();
+        $dto->organizationUuid = $organizationUuid;
+        $regulationOrderTemplates = $this->queryBus->handle(new GetRegulationOrderTemplatesQuery($dto));
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
             data: $command,
             options: [
                 'organizations' => $user->getUserOrganizations(),
-                'visaModels' => $visaModels,
+                'regulationOrderTemplates' => $regulationOrderTemplates,
                 'action' => $this->router->generate('app_regulation_add'),
                 'save_options' => [
                     'label' => 'common.form.continue',

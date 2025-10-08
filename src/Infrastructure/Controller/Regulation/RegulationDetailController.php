@@ -7,8 +7,10 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderHistoryQuery;
+use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Application\StorageInterface;
 use App\Domain\Regulation\ArrayRegulationMeasures;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -29,6 +31,7 @@ final class RegulationDetailController extends AbstractRegulationController
         private CanViewRegulationDetail $canViewRegulationDetail,
         private CanDeleteMeasures $canDeleteMeasures,
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
+        private StorageInterface $storage,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
     ) {
@@ -56,6 +59,9 @@ final class RegulationDetailController extends AbstractRegulationController
         }
 
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid, requireUserSameOrg: false);
+        $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+        $storageRegulationOrder = $this->queryBus->handle(new GetStorageRegulationOrderQuery($regulationOrder));
+        $storageRegulationOrderFile = $storageRegulationOrder?->getPath() ? $this->storage->getUrl($storageRegulationOrder->getPath()) : null;
         $regulationOrderUuid = $regulationOrderRecord->getRegulationOrder()->getUuid();
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
@@ -74,6 +80,8 @@ final class RegulationDetailController extends AbstractRegulationController
             'measures' => $measures,
             'regulationOrderRecord' => $regulationOrderRecord,
             'latestHistory' => $latestHistory,
+            'storageRegulationOrder' => $storageRegulationOrder,
+            'storageRegulationOrderFile' => $storageRegulationOrderFile,
         ];
 
         return new Response(

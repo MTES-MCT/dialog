@@ -11,11 +11,7 @@ use App\Domain\User\Organization;
 final class SaveSigningAuthorityCommand implements CommandInterface
 {
     public ?string $name = null;
-    public ?string $address = null;
-    public ?string $roadName = null;
-    public ?string $cityCode = null;
-    public ?string $cityLabel = null;
-    public ?string $placeOfSignature = null;
+    public ?string $role = null;
     public ?string $signatoryName = null;
 
     public function __construct(
@@ -23,11 +19,7 @@ final class SaveSigningAuthorityCommand implements CommandInterface
         public readonly ?SigningAuthority $signingAuthority = null,
     ) {
         $this->name = $signingAuthority?->getName();
-        $this->address = $signingAuthority?->getAddress();
-        $this->roadName = $signingAuthority?->getRoadName();
-        $this->cityCode = $signingAuthority?->getCityCode();
-        $this->cityLabel = $signingAuthority?->getCityLabel();
-        $this->placeOfSignature = $signingAuthority?->getPlaceOfSignature();
+        $this->role = $signingAuthority?->getRole();
         $this->signatoryName = $signingAuthority?->getSignatoryName();
     }
 }

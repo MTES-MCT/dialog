@@ -19,10 +19,8 @@ export default class extends Controller {
         const containerOptions = [
             ['bold', 'italic', 'underline'],
             [{ 'header': [1, 2, 3, false] }],
-            [{ 'size': [] }],
             [{ 'align': [] }],
-            [{ 'indent': '-1' }, { 'indent': '+1' }],
-            [{ 'color': [] }, { 'background': [] }]
+            [{ 'indent': '-1' }, { 'indent': '+1' }]
         ];
 
         const handlersOptions = {};
@@ -77,7 +75,8 @@ export default class extends Controller {
 
         // On affiche l'icône dans le label
         const variablesIcon = document.createElement('span');
-        variablesIcon.className = 'fr-icon-settings-5-line';
+        variablesIcon.textContent = ' Variables';
+        variablesIcon.className = 'fr-icon-x-function-add-line';
         variablesIcon.style.marginRight = '1rem';
         variablesIcon.setAttribute('aria-hidden', 'true');
         const pickerLabel = parent.querySelector('.ql-variables .ql-picker-label');

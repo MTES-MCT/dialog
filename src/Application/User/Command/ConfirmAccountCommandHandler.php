@@ -19,7 +19,7 @@ final readonly class ConfirmAccountCommandHandler
     ) {
     }
 
-    public function __invoke(ConfirmAccountCommand $command): void
+    public function __invoke(ConfirmAccountCommand $command): string
     {
         $token = $this->tokenRepository->findOneByTokenAndType(
             $command->token,
@@ -34,7 +34,10 @@ final readonly class ConfirmAccountCommandHandler
             throw new TokenExpiredException();
         }
 
-        $token->getUser()->setVerified();
+        $token->getUser()->setIsVerified();
+        $email = $token->getUser()->getEmail();
         $this->tokenRepository->remove($token);
+
+        return $email;
     }
 }

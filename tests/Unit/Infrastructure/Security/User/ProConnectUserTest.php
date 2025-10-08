@@ -14,7 +14,7 @@ class ProConnectUserTest extends TestCase
 {
     public function testUser()
     {
-        $organizationUser = new UserOrganizationView('133fb411-7754-4749-9590-ce05a2abe108', 'Mairie de Savenay', []);
+        $organizationUser = new UserOrganizationView('133fb411-7754-4749-9590-ce05a2abe108', 'Mairie de Savenay', true, []);
 
         $user = $this->createMock(User::class);
         $user->expects(self::once())->method('getUuid')->willReturn('2d3724f1-2910-48b4-ba56-81796f6e100b');
@@ -35,5 +35,6 @@ class ProConnectUserTest extends TestCase
         $this->assertEmpty($passwordUser->eraseCredentials());
         $this->assertTrue($passwordUser->isVerified());
         $this->assertSame('proconnect', $passwordUser->getAuthOrigin());
+        $this->assertTrue($passwordUser->isOrganizationsCompleted());
     }
 }

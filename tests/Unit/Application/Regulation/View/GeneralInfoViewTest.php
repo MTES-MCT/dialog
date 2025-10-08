@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\View;
 
+use App\Application\Regulation\View\AddressView;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -22,8 +23,16 @@ final class GeneralInfoViewTest extends TestCase
             organizationName: 'DiaLog',
             organizationLogo: '/path/to/logo.jpg',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+            organizationAddress: new AddressView(
+                address: '123 Main St',
+                zipCode: '12345',
+                city: 'Anytown',
+                department: 'Anydepartment',
+                addressComplement: 'Apt 4B',
+            ),
             status: RegulationOrderRecordStatusEnum::DRAFT->value,
             regulationOrderUuid: 'ed97924b-bdc5-421a-b6e8-ac3ee6b16a7e',
+            regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             subject: RegulationSubjectEnum::OTHER->value,
             otherCategoryText: 'Other category 1',
@@ -40,8 +49,16 @@ final class GeneralInfoViewTest extends TestCase
             organizationName: 'DiaLog',
             organizationLogo: '/path/to/logo.jpg',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+            organizationAddress: new AddressView(
+                address: '123 Main St',
+                zipCode: '12345',
+                city: 'Anytown',
+                department: 'Anydepartment',
+                addressComplement: 'Apt 4B',
+            ),
             status: RegulationOrderRecordStatusEnum::PUBLISHED->value,
             regulationOrderUuid: '8a32e881-a683-4caa-976f-6882296bc29b',
+            regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             subject: RegulationSubjectEnum::OTHER->value,
             otherCategoryText: 'Other category 1',

@@ -17,30 +17,23 @@ use Doctrine\DBAL\Connection;
 final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeocoderInterface
 {
     public function __construct(
+        private Connection $bdtopo2025Connection,
         private Connection $bdtopoConnection,
     ) {
     }
 
-    public function computeRoadLine(string $roadName, string $inseeCode): string
+    public function computeRoadLine(string $roadBanId): string
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
-                    WITH voie_nommee as (
-                        SELECT id_pseudo_fpb
-                        FROM voie_nommee
-                        WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
-                        AND code_insee = :code_insee
-                        LIMIT 1
-                    )
                     SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
                     FROM troncon_de_route
-                    INNER JOIN voie_nommee ON true
-                    WHERE voie_nommee.id_pseudo_fpb = identifiant_voie_1_gauche
+                    WHERE identifiant_voie_ban_gauche IN (:road_ban_id_lower, :road_ban_id_upper)
                 ',
                 [
-                    'nom_minuscule' => $roadName,
-                    'code_insee' => $inseeCode,
+                    'road_ban_id_lower' => strtolower($roadBanId),
+                    'road_ban_id_upper' => strtoupper($roadBanId),
                 ],
             );
         } catch (\Exception $exc) {
@@ -51,8 +44,79 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             return $rows[0]['geometry'];
         }
 
-        $message = \sprintf('no result found in voie_nommee for roadName="%s", inseeCode="%s"', $roadName, $inseeCode);
+        $message = \sprintf("no result found for roadBanId='%s'", $roadBanId);
         throw new GeocodingFailureException($message);
+    }
+
+    // Pour la migration BDTOPO 2023 -> 2025
+    public function computeRoadBanId(string $roadName, string $inseeCode): string
+    {
+        // Dans la BDTOPO à partir de janvier 2025, la table voie_nommee a été remodelée. La colonne 'nom_minuscule'
+        // sur laquelle on se basait pour trouver une voie nommée a disparu. Dans la nouvelle table on doit utiliser la colonne
+        // 'identifiant_voie_ban'. Les géométries n'ont pas changé, mais aucune clé d'interopérabilité n'a été conservée entre ces
+        // deux tables qui permettrait de trouver l'identifiant_voie_ban d'une ancienne voie nommée. L'IGN nous a suggéré de faire
+        // un "rapprochement géométrique" : on trouve la nouvelle voie nommée dont la géométrie est la plus proche de l'ancienne.
+
+        // D'abord on récupère le linéaire de la voie tel que calculé auparavant, avec nom_minuscule.
+
+        try {
+            $row = $this->bdtopoConnection->fetchAssociative(
+                <<<'SQL'
+                    SELECT ST_AsGeoJSON(geometrie) AS geom
+                    FROM voie_nommee
+                    WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
+                    AND code_insee = :code_insee
+                    LIMIT 1
+                SQL,
+                [
+                    'nom_minuscule' => $roadName,
+                    'code_insee' => $inseeCode,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Road line 2023 query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if (empty($row['geom'])) {
+            $message = \sprintf("no result found in voie_nommee 2023 for roadName='%s', inseeCode='%s'", $roadName, $inseeCode);
+            throw new GeocodingFailureException($message);
+        }
+
+        $roadLine2023 = $row['geom'];
+
+        // On trouve ensuite l'identifiant voie BAN de la voie nommée dont la géométrie est la plus proche.
+
+        try {
+            $row = $this->bdtopo2025Connection->fetchAssociative(
+                <<<'SQL'
+                    SELECT v.identifiant_voie_ban AS road_ban_id
+                    FROM voie_nommee AS v
+                    WHERE v.insee_commune = :city_code
+                    -- ST_HausdorffDistance() donne un indice de la "similarité" entre deux géométries.
+                    -- C'est la plus grande distance qui sépare deux points de deux géométries A et B.
+                    -- Donc A et B sont similaires si leur distance de Hausdorff est petite.
+                    -- https://postgis.net/docs/ST_HausdorffDistance.html
+                    -- (On ne pouvait pas utiliser ST_Distance() car elle renvoie au contraire la plus *petite* des
+                    -- distances entre deux points de A et B. Or deux géométries peuvent avoir quelques points très proches
+                    -- mais être très différentes pour le reste...)
+                    ORDER BY ST_HausdorffDistance(v.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:road_line_2023), 4326)) ASC
+                    LIMIT 1
+                SQL,
+                [
+                    'road_line_2023' => $roadLine2023,
+                    'city_code' => $inseeCode,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if (empty($row['road_ban_id'])) {
+            $message = \sprintf("No road_ban_id found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
+            throw new GeocodingFailureException($message);
+        }
+
+        return $row['road_ban_id'];
     }
 
     public function findRoads(string $search, string $roadType, string $administrator): array
@@ -68,7 +132,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
                     SELECT numero
                     FROM route_numerotee_ou_nommee
@@ -105,7 +169,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         $typeDeRoute = $roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value ? 'Départementale' : 'Nationale';
 
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
                     SELECT ST_AsGeoJSON(ST_LineMerge(geometrie)) AS geometry
                     FROM route_numerotee_ou_nommee
@@ -140,7 +204,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function findReferencePoints(string $search, string $administrator, string $roadNumber): array
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 'SELECT
                     DISTINCT p.numero AS point_number,
                     p.numero::integer AS _point_number_int, -- Must be selected because appears in ORDER BY
@@ -194,7 +258,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     ): Coordinates {
         try {
             // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 \sprintf(
                     'SELECT ST_AsGeoJSON(
                         ST_GeometryN(
@@ -277,7 +341,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 \sprintf(
                     'SELECT DISTINCT p.cote AS side
                     FROM point_de_repere AS p
@@ -309,109 +373,57 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return $sides;
     }
 
-    public function findRoadNames(string $search, string $cityCode): array
+    public function findIntersectingNamedStreets(string $roadBanId, string $cityCode): array
     {
-        // Build search query
-        // https://www.postgresql.org/docs/current/datatype-textsearch.html#DATATYPE-TSQUERY
-        $query = str_replace(' ', ' & ', trim($search)) . ':*';
-
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
-                "
-                    SELECT INITCAP(nom_minuscule) road_name
-                    FROM voie_nommee
-                    WHERE (
-                        nom_minuscule_search @@ to_tsquery('french', :query::text)
-                        OR :search % ANY(STRING_TO_ARRAY(f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule), ' '))
-                    )
-                    AND code_insee = :cityCode
-                    ORDER BY ts_rank(nom_minuscule_search, to_tsquery('french', :query::text)) DESC
-                    LIMIT 7
-                ",
-                [
-                    'cityCode' => $cityCode,
-                    'query' => $query,
-                    'search' => $search,
-                ],
-            );
-        } catch (\Exception $exc) {
-            throw new GeocodingFailureException(\sprintf('Road names query has failed: %s', $exc->getMessage()), previous: $exc);
-        }
-
-        $roadNames = [];
-
-        foreach ($rows as $row) {
-            $roadNames[] = $row['road_name'];
-        }
-
-        return $roadNames;
-    }
-
-    public function findIntersectingRoadNames(string $search, string $roadName, string $cityCode): array
-    {
-        // Build search query
-        // https://www.postgresql.org/docs/current/datatype-textsearch.html#DATATYPE-TSQUERY
-        $query = $search ? str_replace(' ', ' & ', trim($search)) . ':*' : '';
-
-        try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
-                \sprintf(
-                    'WITH ref AS (
-                        SELECT ogc_fid, geometrie, nom_minuscule, code_insee
-                        FROM voie_nommee
-                        WHERE code_insee = :cityCode
-                        AND f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:roadName)
-                        LIMIT 1
-                    )
-                    SELECT INITCAP(v.nom_minuscule) AS road_name
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                <<<'SQL'
+                    SELECT v.identifiant_voie_ban AS road_ban_id, v.nom_voie_ban AS road_name
                     FROM voie_nommee AS v
-                    INNER JOIN ref ON v.ogc_fid != ref.ogc_fid
-                    WHERE v.code_insee = ref.code_insee
-                    AND ST_Intersects(v.geometrie, ref.geometrie)
-                    %s
+                    WHERE ST_Intersects(v.geometrie, (SELECT v2.geometrie FROM voie_nommee AS v2 WHERE v2.identifiant_voie_ban = :road_ban_id LIMIT 1))
+                    AND LENGTH(v.identifiant_voie_ban) > 0
+                    AND v.identifiant_voie_ban <> :road_ban_id
+                    AND v.insee_commune = :city_code
                     ORDER BY road_name
-                    ',
-                    $query ? "AND nom_minuscule_search @@ to_tsquery('french', :query::text)" : '',
-                ),
+                SQL,
                 [
-                    'roadName' => $roadName,
-                    'cityCode' => $cityCode,
-                    'query' => $query,
+                    'road_ban_id' => $roadBanId,
+                    'city_code' => $cityCode,
                 ],
             );
         } catch (\Exception $exc) {
             throw new GeocodingFailureException(\sprintf('Intersecting road names query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        $roadNames = [];
+        $namedStreets = [];
 
         foreach ($rows as $row) {
-            $roadNames[] = $row['road_name'];
+            $namedStreets[] = [
+                'roadBanId' => $row['road_ban_id'],
+                'roadName' => $row['road_name'],
+            ];
         }
 
-        return $roadNames;
+        return $namedStreets;
     }
 
-    public function computeIntersection(string $roadName, string $otherRoadName, string $cityCode): Coordinates
+    public function computeIntersection(string $roadBanId, string $otherRoadBanId): Coordinates
     {
         try {
-            $rows = $this->bdtopoConnection->fetchAllAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 \sprintf(
                     'SELECT
-                        ST_X(ST_Centroid(ST_Intersection(v.geometrie, r.geometrie))) AS x,
-                        ST_Y(ST_Centroid(ST_Intersection(v.geometrie, r.geometrie))) AS y
-                    FROM voie_nommee AS v, voie_nommee AS r
-                    WHERE v.code_insee = :cityCode
-                    AND r.code_insee = :cityCode
-                    AND f_bdtopo_voie_nommee_normalize_nom_minuscule(v.nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:roadName)
-                    AND f_bdtopo_voie_nommee_normalize_nom_minuscule(r.nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:otherRoadName)
+                        ST_X(ST_Centroid(ST_Intersection(v1.geometrie, v2.geometrie))) AS x,
+                        ST_Y(ST_Centroid(ST_Intersection(v1.geometrie, v2.geometrie))) AS y
+                    FROM voie_nommee AS v1, voie_nommee AS v2
+                    WHERE v1.identifiant_voie_ban = :roadBanId
+                    AND v2.identifiant_voie_ban = :otherRoadBanId
                     LIMIT 1
                     ',
                 ),
                 [
-                    'cityCode' => $cityCode,
-                    'roadName' => $roadName,
-                    'otherRoadName' => $otherRoadName,
+                    'roadBanId' => $roadBanId,
+                    'otherRoadBanId' => $otherRoadBanId,
                 ],
             );
         } catch (\Exception $exc) {
@@ -419,7 +431,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         if (!$rows) {
-            $message = \sprintf('no intersection exists between roadName="%s" and otherRoadName="%s" in cityCode="%s"', $roadName, $otherRoadName, $cityCode);
+            $message = \sprintf('no intersection exists between roadBanId="%s" and otherRoadBanId="%s"', $roadBanId, $otherRoadBanId);
             throw new GeocodingFailureException($message);
         }
 
@@ -428,10 +440,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         if (!$x || !$y) {
             $message = \sprintf(
-                'no intersection found: one of roadName="%s" or otherRoadName="%s" does not exist in cityCode="%s"',
-                $roadName,
-                $otherRoadName,
-                $cityCode,
+                'no intersection found: one of roadBanId="%s" or otherRoadBanId="%s" does not exist',
+                $roadBanId,
+                $otherRoadBanId,
             );
             throw new GeocodingFailureException($message);
         }
@@ -451,7 +462,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         try {
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 \sprintf(
                     'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(%s)))) AS geom
                     FROM troncon_de_route AS t
@@ -484,7 +495,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function convertPolygonRoadToLines(string $geometry): string
     {
         try {
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $row = $this->bdtopo2025Connection->fetchAssociative(
                 // ST_ApproximateMedialAxis permet de calculer la "ligne centrale" d'un polygone
                 // https://postgis.net/docs/ST_ApproximateMedialAxis.html
                 // Ici on l'utilise pour approximer le linéaire de voie à partir d'un polygone qui définit l'enveloppe de cette voie.

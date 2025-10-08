@@ -49,6 +49,12 @@ final class ApiOrganizationFetcherTest extends TestCase
                         ],
                         'siege' => [
                             'departement' => '44',
+                            'numero_voie' => '7',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
+                            'complement_adresse' => 'Bâtiment A',
+                            'code_postal' => '44195',
+                            'libelle_commune' => 'SAVENAY',
                         ],
                     ],
                 ],
@@ -76,11 +82,15 @@ final class ApiOrganizationFetcherTest extends TestCase
         $result = $this->apiOrganizationFetcher->findBySiret('22930008201453');
 
         $this->assertInstanceOf(OrganizationFetchedView::class, $result);
-        $this->assertEquals('COMMUNE DE SAVENAY', $result->name);
+        $this->assertEquals('Savenay', $result->name);
         $this->assertEquals('44195', $result->code);
         $this->assertEquals(OrganizationCodeTypeEnum::INSEE->value, $result->codeType);
         $this->assertEquals('Loire-Atlantique', $result->departmentName);
         $this->assertEquals('44', $result->departmentCode);
+        $this->assertEquals('7 Rue de la République', $result->establishmentAddress);
+        $this->assertEquals('44195', $result->establishmentZipCode);
+        $this->assertEquals('SAVENAY', $result->establishmentCity);
+        $this->assertEquals('Bâtiment A', $result->establishmentAddressComplement);
     }
 
     public function testFindBySiretForDepartment(): void
@@ -97,6 +107,12 @@ final class ApiOrganizationFetcherTest extends TestCase
                         'nature_juridique' => '7220',
                         'siege' => [
                             'departement' => '93',
+                            'numero_voie' => '7',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
+                            'complement_adresse' => 'Bâtiment A',
+                            'code_postal' => '93406',
+                            'libelle_commune' => 'Saint-Ouen-sur-Seine',
                         ],
                     ],
                 ],
@@ -124,11 +140,15 @@ final class ApiOrganizationFetcherTest extends TestCase
         $result = $this->apiOrganizationFetcher->findBySiret('22930008201453');
 
         $this->assertInstanceOf(OrganizationFetchedView::class, $result);
-        $this->assertEquals('DEPARTEMENT DE LA SEINE SAINT DENIS', $result->name);
+        $this->assertEquals('Departement De La Seine Saint Denis', $result->name);
         $this->assertEquals('93', $result->code);
         $this->assertEquals(OrganizationCodeTypeEnum::DEPARTMENT->value, $result->codeType);
         $this->assertEquals('Seine-Saint-Denis', $result->departmentName);
         $this->assertEquals('93', $result->departmentCode);
+        $this->assertEquals('7 Rue de la République', $result->establishmentAddress);
+        $this->assertEquals('93406', $result->establishmentZipCode);
+        $this->assertEquals('Saint-Ouen-sur-Seine', $result->establishmentCity);
+        $this->assertEquals('Bâtiment A', $result->establishmentAddressComplement);
     }
 
     public function testFindBySiretForRegion(): void
@@ -145,6 +165,12 @@ final class ApiOrganizationFetcherTest extends TestCase
                         'nature_juridique' => '7230',
                         'siege' => [
                             'region' => '11',
+                            'numero_voie' => '7',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
+                            'complement_adresse' => 'Bâtiment A',
+                            'code_postal' => '93406',
+                            'libelle_commune' => 'Saint-Ouen-sur-Seine',
                         ],
                     ],
                 ],
@@ -162,9 +188,13 @@ final class ApiOrganizationFetcherTest extends TestCase
         $result = $this->apiOrganizationFetcher->findBySiret('23750007900312');
 
         $this->assertInstanceOf(OrganizationFetchedView::class, $result);
-        $this->assertEquals('REGION ILE DE FRANCE', $result->name);
+        $this->assertEquals('Region Ile De France', $result->name);
         $this->assertEquals('11', $result->code);
         $this->assertEquals(OrganizationCodeTypeEnum::REGION->value, $result->codeType);
+        $this->assertEquals('7 Rue de la République', $result->establishmentAddress);
+        $this->assertEquals('93406', $result->establishmentZipCode);
+        $this->assertEquals('Saint-Ouen-sur-Seine', $result->establishmentCity);
+        $this->assertEquals('Bâtiment A', $result->establishmentAddressComplement);
     }
 
     public function testFindBySiretForEpci(): void
@@ -181,6 +211,12 @@ final class ApiOrganizationFetcherTest extends TestCase
                         'nature_juridique' => '7343',
                         'siege' => [
                             'epci' => '200054781',
+                            'numero_voie' => '7',
+                            'libelle_voie' => 'de la République',
+                            'type_voie' => 'Rue',
+                            'complement_adresse' => 'Bâtiment A',
+                            'code_postal' => '93406',
+                            'libelle_commune' => 'Saint-Ouen-sur-Seine',
                         ],
                     ],
                 ],
@@ -198,9 +234,13 @@ final class ApiOrganizationFetcherTest extends TestCase
         $result = $this->apiOrganizationFetcher->findBySiret('20005478100022');
 
         $this->assertInstanceOf(OrganizationFetchedView::class, $result);
-        $this->assertEquals('METROPOLE DU GRAND PARIS', $result->name);
+        $this->assertEquals('Metropole Du Grand Paris', $result->name);
         $this->assertEquals('200054781', $result->code);
         $this->assertEquals(OrganizationCodeTypeEnum::EPCI->value, $result->codeType);
+        $this->assertEquals('7 Rue de la République', $result->establishmentAddress);
+        $this->assertEquals('93406', $result->establishmentZipCode);
+        $this->assertEquals('Saint-Ouen-sur-Seine', $result->establishmentCity);
+        $this->assertEquals('Bâtiment A', $result->establishmentAddressComplement);
     }
 
     public function testFindBySiretNotFound(): void

@@ -80,12 +80,16 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         // Edit measure
         $values['measure_form']['locations'][0] = []; // Remove first
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         // Add
         $values['measure_form']['locations'][0]['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_0074';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
@@ -109,6 +113,10 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
+
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         // Keep only 3rd location
         $values['measure_form']['locations'] = [$values['measure_form']['locations'][2]];
@@ -185,6 +193,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
@@ -195,6 +206,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $values = $form->getPhpValues();
         $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
@@ -225,6 +239,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
         $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
         $client->request($form->getMethod(), $form->getUri(), $values);
         $crawler = $client->followRedirect();
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
@@ -235,6 +252,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form = $saveButton->form();
         $values = $form->getPhpValues();
         $values['measure_form']['periods'][0]['timeSlots'] = [];
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(303);
@@ -253,11 +273,16 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
-        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue de NOT_HANDLED_BY_MOCK';
+        $form['measure_form[locations][0][namedStreet][roadBanId]'] = '12345_6789';
+        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue inconnue';
         $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
         $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
-        $crawler = $client->submit($form);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
     }
@@ -295,7 +320,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         unset($form['measure_form[locations][1][namedStreet][isEntireStreet]']);
         $form['measure_form[locations][1][namedStreet][toHouseNumber]'] = '999'; // Mock will return no result
 
-        $crawler = $client->submit($form);
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith('La géolocalisation de la voie entre ces points a échoué', $crawler->filter('#measure_form_locations_1_namedStreet_fromPointType_error')->text());
     }
@@ -311,9 +341,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][2]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][2]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][2]['namedStreet']['roadBanId'] = '93070_4185';
         $values['measure_form']['locations'][2]['namedStreet']['roadName'] = 'Rue Des Graviers';
         unset($values['measure_form']['locations'][2]['namedStreet']['isEntireStreet']);
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadBanId'] = '93070_0013';
         $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Rue Adrien Lesesne';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadBanId'] = '93070_7170';
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Rue Des Poissonniers';
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
@@ -339,12 +372,17 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
         $form['measure_form[locations][0][namedStreet][cityCode]'] = '93070';
         $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Saint-Ouen-sur-Seine';
+        $form['measure_form[locations][0][namedStreet][roadBanId]'] = '93070_3185';
         $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue Eugène Berthoud';
         $form['measure_form[locations][0][namedStreet][isEntireStreet]'] = '1';
         $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
         $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values = $form->getPhpValues();
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
-        $crawler = $client->submit($form);
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(303);
     }
 
@@ -372,6 +410,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['departmentalRoad']['toSide'] = 'D';
         $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100;
         $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 650;
+        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
+        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
@@ -538,6 +579,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '';
         $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
         $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_3185';
         $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Eugène Berthoud';
         $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
 

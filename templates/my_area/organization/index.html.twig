@@ -1,0 +1,48 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{'user.myorganizations'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {% include 'my_area/organization/fragments/_warning_notice.html.twig' only %}
+    <section class="fr-container fr-py-5w" aria-labelledby="myarea">
+        <h2 id="myarea" data-testid="organization-list">{{ 'user.myorganizations'|trans }}</h2>
+        <p>{{ 'organization.list.description'|trans }}</p>
+
+        <div class="fr-grid-row fr-grid-row--gutters" data-testid="organization-list">
+            {% for organization in organizations %}
+                <div class="fr-col-12 fr-col-md-4 fr-col-lg-4" data-testid="organization-detail">
+                    <div class="fr-tile fr-tile--horizontal fr-enlarge-link">
+                        <div class="fr-tile__body">
+                            <div class="fr-tile__content">
+                                <h3 class="fr-tile__title">
+                                    {% if organization.completed %}
+                                        <span class="fr-badge fr-badge--success fr-badge--sm fr-text--xs fr-mb-1w">
+                                            {{ 'organization.completed'|trans }}
+                                        </span>
+                                    {% else %}
+                                        <span class="fr-badge fr-badge--warning fr-badge--sm fr-text--xs fr-mb-1w">
+                                            {{ 'organization.not_completed'|trans }}
+                                        </span>
+                                    {% endif %}
+                                    <a class="fr-x-block" href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}">{{ organization.name }}</a>
+                                </h3>
+                                <p class="fr-tile__detail">
+                                    {% for role in organization.roles %}
+                                        {{ ('roles.' ~ role)|trans }}{% if not loop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-tile__header">
+                            <div class="fr-tile__pictogram">
+                                <img src="{{ asset('images/city-hall.png') }}" alt="city-hall" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

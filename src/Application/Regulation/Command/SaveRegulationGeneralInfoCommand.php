@@ -19,9 +19,8 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
     public ?string $otherCategoryText = null;
     public ?string $title;
     public ?Organization $organization;
-    public array $additionalVisas = [];
-    public array $additionalReasons = [];
-    public ?string $visaModelUuid = null;
+
+    public ?string $regulationOrderTemplateUuid = null;
 
     public function __construct(
         public readonly ?RegulationOrderRecord $regulationOrderRecord = null,
@@ -41,9 +40,7 @@ final class SaveRegulationGeneralInfoCommand implements CommandInterface
         $command->subject = $regulationOrder?->getSubject();
         $command->otherCategoryText = $regulationOrder?->getOtherCategoryText();
         $command->title = $regulationOrder?->getTitle();
-        $command->additionalVisas = $regulationOrder?->getAdditionalVisas() ?? [];
-        $command->additionalReasons = $regulationOrder?->getAdditionalReasons() ?? [];
-        $command->visaModelUuid = $regulationOrder?->getVisaModel()?->getUuid();
+        $command->regulationOrderTemplateUuid = $regulationOrder?->getRegulationOrderTemplate()?->getUuid();
 
         return $command;
     }

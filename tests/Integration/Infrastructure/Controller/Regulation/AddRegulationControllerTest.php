@@ -31,8 +31,6 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $deleteLink = $crawler->selectLink('Supprimer');
         $this->assertSame('http://localhost/regulations', $deleteLink->link()->getUri());
 
-        $this->assertStringContainsString('Les modèles de visas sont gérés', trim($crawler->filter('#visa_models_management_notice')->html()));
-
         $saveButton = $crawler->selectButton('Continuer');
         $form = $saveButton->form();
 
@@ -48,11 +46,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;
         $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
-        $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
-        $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
-        $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
-        $values['general_info_form']['additionalReasons'][0] = 'Motif 1';
-        $values['general_info_form']['additionalReasons'][1] = 'Motif 2';
+        $values['general_info_form']['regulationOrderTemplateUuid'] = 'ba023736-35f6-49f4-a118-dc94f90ef42e';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(303);
@@ -78,11 +72,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $values['general_info_form']['subject'] = RegulationSubjectEnum::OTHER->value;
         $values['general_info_form']['otherCategoryText'] = 'Trou en formation';
-        $values['general_info_form']['visaModelUuid'] = '7eca6579-c07e-4e8e-8f10-fda610d7ee73';
-        $values['general_info_form']['additionalVisas'][0] = 'Vu 1';
-        $values['general_info_form']['additionalVisas'][1] = 'Vu 2';
-        $values['general_info_form']['additionalReasons'][0] = 'Motif 1';
-        $values['general_info_form']['additionalReasons'][1] = 'Motif 2';
+        $values['general_info_form']['regulationOrderTemplateUuid'] = 'ba023736-35f6-49f4-a118-dc94f90ef42e';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(303);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation;
 
-use App\Domain\Organization\VisaModel\VisaModel;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,9 +20,7 @@ class RegulationOrder
         private string $title,
         private ?string $subject = null,
         private ?string $otherCategoryText = null,
-        private ?VisaModel $visaModel = null,
-        private ?array $additionalVisas = [],
-        private ?array $additionalReasons = [],
+        private ?RegulationOrderTemplate $regulationOrderTemplate = null,
     ) {
         $this->measures = new ArrayCollection();
     }
@@ -53,7 +50,7 @@ class RegulationOrder
         return $this->title;
     }
 
-    public function getSubject(): string
+    public function getSubject(): ?string
     {
         return $this->subject;
     }
@@ -80,19 +77,9 @@ class RegulationOrder
         return $this->category === RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
     }
 
-    public function getVisaModel(): ?VisaModel
+    public function getRegulationOrderTemplate(): ?RegulationOrderTemplate
     {
-        return $this->visaModel;
-    }
-
-    public function getAdditionalVisas(): array
-    {
-        return $this->additionalVisas ?? [];
-    }
-
-    public function getAdditionalReasons(): array
-    {
-        return $this->additionalReasons ?? [];
+        return $this->regulationOrderTemplate;
     }
 
     public function update(
@@ -101,17 +88,13 @@ class RegulationOrder
         string $title,
         ?string $subject = null,
         ?string $otherCategoryText = null,
-        array $additionalVisas = [],
-        array $additionalReasons = [],
-        ?VisaModel $visaModel = null,
+        ?RegulationOrderTemplate $regulationOrderTemplate = null,
     ): void {
         $this->identifier = $identifier;
         $this->category = $category;
         $this->title = $title;
         $this->subject = $subject;
         $this->otherCategoryText = $otherCategoryText;
-        $this->additionalVisas = $additionalVisas;
-        $this->additionalReasons = $additionalReasons;
-        $this->visaModel = $visaModel;
+        $this->regulationOrderTemplate = $regulationOrderTemplate;
     }
 }

@@ -17,7 +17,7 @@ final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Ajouter un modèle', $crawler->filter('h2')->text());
+        $this->assertSame('Ajouter un modèle', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Ajouter un modèle - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');
@@ -60,12 +60,10 @@ final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
 
         $values = $form->getPhpValues();
         $values['regulation_order_template_form']['name'] = str_repeat('a', 151);
-        $values['regulation_order_template_form']['title'] = str_repeat('a', 151);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_name_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_title_error')->text());
     }
 
     public function testNotAdministrator(): void

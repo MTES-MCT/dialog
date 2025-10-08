@@ -8,7 +8,7 @@ customElements.define('d-stats-optout-form', class extends HTMLElement {
         document.addEventListener('DOMContentLoaded', () => {
             /** @type {HTMLInputElement} */
             const checkbox = querySelectorOrError(this, 'input[type="checkbox"]');
-
+            checkbox.checked = localStorage.getItem('matomo_checkbox') || 'true';
             this._setOptOut(checkbox);
 
             checkbox.addEventListener('click', () => this.#onCheckboxClick(checkbox));
@@ -19,6 +19,7 @@ customElements.define('d-stats-optout-form', class extends HTMLElement {
      * @param {HTMLInputElement} checkbox 
      */
     #onCheckboxClick = (checkbox) => {
+        localStorage.getItem('matomo_checkbox', checkbox.checked);
         if (checkbox.checked) {
             window['_paq'].push(['forgetUserOptOut']);
         } else {

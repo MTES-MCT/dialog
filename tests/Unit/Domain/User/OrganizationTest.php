@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\User;
 
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
+use App\Domain\Organization\Establishment\Establishment;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 
@@ -13,6 +14,8 @@ final class OrganizationTest extends TestCase
     public function testGetters(): void
     {
         $date = new \DateTimeImmutable('2024-05-07');
+        $establishment = $this->createMock(Establishment::class);
+        $establishment->method('__toString')->willReturn('1 rue de la mairie, 44260 Savenay');
 
         $organization = (new Organization('6598fd41-85cb-42a6-9693-1bc45f4dd392'))
             ->setCreatedAt($date)
@@ -26,12 +29,14 @@ final class OrganizationTest extends TestCase
         $this->assertNull($organization->getDepartmentCodeWithName());
         $this->assertNull($organization->getDepartmentCode());
         $this->assertNull($organization->getDepartmentName());
+        $this->assertNull($organization->getEstablishment());
 
         $organization
             ->setCode('44260')
             ->setCodeType(OrganizationCodeTypeEnum::INSEE->value)
             ->setDepartmentCode('44')
-            ->setDepartmentName('Loire-Atlantique');
+            ->setDepartmentName('Loire-Atlantique')
+            ->setEstablishment($establishment);
 
         $this->assertSame('6598fd41-85cb-42a6-9693-1bc45f4dd392', $organization->getUuid());
         $this->assertEquals($date, $organization->getCreatedAt());
@@ -47,5 +52,7 @@ final class OrganizationTest extends TestCase
         $this->assertSame('Loire-Atlantique (44)', $organization->getDepartmentCodeWithName());
         $this->assertSame('44', $organization->getDepartmentCode());
         $this->assertSame('Loire-Atlantique', $organization->getDepartmentName());
+        $this->assertSame($establishment, $organization->getEstablishment());
+        $this->assertSame('1 rue de la mairie, 44260 Savenay', $organization->getEstablishmentAddress());
     }
 }

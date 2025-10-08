@@ -9,14 +9,12 @@
     <field name="subject" type="string" column="subject" length="50" nullable="true"/>
     <field name="otherCategoryText" type="string" column="other_category_text" length="100" nullable="true"/>
     <field name="title" type="text" column="title" nullable="false"/>
-    <field name="additionalVisas" type="array" nullable="true"/>
-    <field name="additionalReasons" type="array" nullable="true"/>
     <one-to-many field="measures" target-entity="App\Domain\Regulation\Measure" mapped-by="regulationOrder"/>
     <one-to-one field="regulationOrderRecord" target-entity="App\Domain\Regulation\RegulationOrderRecord" mapped-by="regulationOrder"/>
-    <many-to-one field="visaModel" target-entity="App\Domain\Organization\VisaModel\VisaModel">
+    <many-to-one field="regulationOrderTemplate" target-entity="App\Domain\Regulation\RegulationOrderTemplate">
       <join-columns>
-          <join-column name="visa_model_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
+        <join-column name="regulation_order_template_uuid" referenced-column-name="uuid" nullable="true" on-delete="SET NULL"/>
       </join-columns>
-  </many-to-one>
+    </many-to-one>
   </entity>
 </doctrine-mapping>

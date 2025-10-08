@@ -18,7 +18,7 @@ final class AcceptInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertEquals(['success' => ['Vous faites désormais partie de l\'organisation.']], $this->getFlashes($crawler));
-        $this->assertRouteSame('app_my_area');
+        $this->assertRouteSame('app_my_organizations');
     }
 
     public function testInvitationNotOwned(): void
@@ -29,7 +29,7 @@ final class AcceptInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertEquals(['error' => ['Cette adresse email ne correspond pas à l\'invitation reçue.']], $this->getFlashes($crawler));
-        $this->assertRouteSame('app_my_area');
+        $this->assertRouteSame('app_my_organizations');
     }
 
     public function testAlreadyInOrganization(): void
@@ -40,7 +40,7 @@ final class AcceptInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertEquals(['error' => ['Vous disposez déjà d\'un compte dans cette organisation.']], $this->getFlashes($crawler));
-        $this->assertRouteSame('app_my_area');
+        $this->assertRouteSame('app_my_organizations');
     }
 
     public function testInvitationNotFound(): void

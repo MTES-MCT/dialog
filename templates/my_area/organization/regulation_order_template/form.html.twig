@@ -2,12 +2,13 @@
 {% set metaTitle = regulationOrderTemplate is defined ? regulationOrderTemplate.name : 'regulation_order_template.add.title'|trans %}
 
 {% set variables = [
-    { label: 'regulation_order_template.variables.list.number'|trans, value: '[numero_arrete]' },
-    { label: 'regulation_order_template.variables.list.intitule'|trans, value: '[intitule_arrete]' },
-    { label: 'regulation_order_template.variables.list.start_pr'|trans, value: '[numero_pr_debut]' },
-    { label: 'regulation_order_template.variables.list.end_pr'|trans, value: '[numero_pr_fin]' },
-    { label: 'regulation_order_template.variables.list.signatory_name'|trans, value: '[nom_signataire]' },
-    { label: 'regulation_order_template.variables.list.national_road_number'|trans, value: '[numero_rn]' }
+    { label: 'regulation_order_template.variables.list.numero_arrete'|trans, value: '[numero_arrete]' },
+    { label: 'regulation_order_template.variables.list.intitule_arrete'|trans, value: '[intitule_arrete]' },
+    { label: 'regulation_order_template.variables.list.pouvoir_de_signature'|trans, value: '[pouvoir_de_signature]' },
+    { label: 'regulation_order_template.variables.list.nom_commune'|trans, value: '[nom_commune]' },
+    { label: 'regulation_order_template.variables.list.nom_signataire'|trans, value: '[nom_signataire]' },
+    { label: 'regulation_order_template.variables.list.mesures'|trans, value: '[mesures]' },
+    { label: 'regulation_order_template.variables.list.departement'|trans, value: '[departement]' }
 ] %}
 
 {% block title %}
@@ -21,24 +22,23 @@
 
 {% block body %}
     <section class="fr-container fr-py-5w">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-4">
-                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
-            </div>
-            <div class="fr-col-12 fr-col-md-8">
-                {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_area'},
-                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
-                    { title: 'regulation_order_template.list.title'|trans, url: path('app_config_regulation_order_templates_list', {uuid: organization.uuid}), generatedPath: true },
-                    { title: metaTitle },
-                ]} %}
-                <h2>{{ metaTitle }}</h2>
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
+            { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+            { title: 'regulation_order_template.list.title'|trans, url: path('app_config_regulation_order_templates_list', {uuid: organization.uuid}), generatedPath: true },
+            { title: metaTitle },
+        ]} %}
+
+        <div class="fr-tabs">
+            {% include 'my_area/organization/_tabs.html.twig' %}
+            <div id="tab-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-1" tabindex="0">
+                <h3 class="fr-h5 fr-x-text--default-grey" id="recipient-list">{{ metaTitle }}</h3>
                 {{ form_start(form) }}
                     {{ form_row(form.name, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                     <section class="fr-accordion fr-mb-3w">
                         <h3 class="fr-accordion__title">
                             <button type="button" class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-variables">
-                                <span class="fr-icon-settings-5-line fr-pr-2w" aria-hidden="true"></span>
+                                <span class="fr-icon-x-function-add-line fr-pr-2w" aria-hidden="true"></span>
                                 {{ "regulation_order_template.variables.title"|trans }}
                             </button>
                         </h3>

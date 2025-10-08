@@ -17,7 +17,7 @@ final class EditRegulationOrderTemplateControllerTest extends AbstractWebTestCas
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Réglementation de vitesse en agglomération', $crawler->filter('h2')->text());
+        $this->assertSame('Réglementation de vitesse en agglomération', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Réglementation de vitesse en agglomération - DiaLog', $crawler);
 
         $saveButton = $crawler->selectButton('Sauvegarder');
@@ -64,12 +64,10 @@ final class EditRegulationOrderTemplateControllerTest extends AbstractWebTestCas
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#regulation_order_template_form_articleContent_error')->text());
 
         $values['regulation_order_template_form']['name'] = str_repeat('a', 151);
-        $values['regulation_order_template_form']['title'] = str_repeat('a', 151);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_name_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_title_error')->text());
     }
 
     public function testNotAdministrator(): void

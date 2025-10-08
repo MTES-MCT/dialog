@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQueryHandler;
+use App\Application\Regulation\View\AddressView;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -25,8 +26,16 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
             organizationName: 'DiaLog',
             organizationLogo: '/path/to/logo.jpg',
             organizationUuid: 'a8439603-40f7-4b1e-8a35-cee9e53b98d4',
+            organizationAddress: new AddressView(
+                address: '123 Main St',
+                zipCode: '12345',
+                city: 'Anytown',
+                department: 'AnyDepartment',
+                addressComplement: 'Apt 4B',
+            ),
             status: RegulationOrderRecordStatusEnum::DRAFT->value,
             regulationOrderUuid: 'fce8177b-3737-4b4e-933d-fe29d0092c89',
+            regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
             category: 'temporaryRegulation',
             subject: 'other',
             otherCategoryText: 'Other category 1',
@@ -47,12 +56,18 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
                 'organizationLogo' => '/path/to/logo.jpg',
                 'status' => $generalInfo->status,
                 'regulationOrderUuid' => 'fce8177b-3737-4b4e-933d-fe29d0092c89',
+                'regulationOrderTemplateUuid' => '92fc487a-b795-4583-88e6-0b83d23910cc',
                 'category' => $generalInfo->category,
                 'subject' => $generalInfo->subject,
                 'otherCategoryText' => $generalInfo->otherCategoryText,
                 'title' => $generalInfo->title,
                 'overallStartDate' => $startDate,
                 'overallEndDate' => $endDate,
+                'organizationAddress' => $generalInfo->organizationAddress->address,
+                'organizationZipCode' => $generalInfo->organizationAddress->zipCode,
+                'organizationCity' => $generalInfo->organizationAddress->city,
+                'organizationDepartment' => $generalInfo->organizationAddress->department,
+                'organizationAddressComplement' => $generalInfo->organizationAddress->addressComplement,
             ]);
 
         $handler = new GetGeneralInfoQueryHandler($repository);

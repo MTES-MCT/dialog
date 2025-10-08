@@ -1,3 +1,4 @@
+{% trans_default_domain 'messages' %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -30,14 +31,19 @@
 
         /* Header */
         .header {
-            text-align: center;
-            padding: 20px 0;
+            display: flex;
+            align-items: center;
+            padding: 16px;
             background-color: #f8f9fa;
         }
 
         .header img {
             max-width: 150px;
             height: auto;
+        }
+
+        .header_title {
+            font-weight: bold;
         }
 
         /* Content */
@@ -81,7 +87,14 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <img src="{{ baseUrl ~ '/' ~ 'images/logo_email.png' }}" alt="Logo DiaLog"/>
+            <img src="{{ baseUrl ~ '/' ~ 'images/logo_email.webp' }}" alt="Logo République Française"/>
+            <div>
+                <img class="fr-responsive-img" src="{{ baseUrl ~ '/' ~ 'images/logo.png' }}" alt="Logo Dialog" />
+            </div>
+            <div>
+                <p class="header_title">{{ 'common.title'|trans }}</p>
+                <p>{{ 'common.baseline'|trans }}</p>
+            </div>
         </div>
         <div class="content">
             {% block body %}{% endblock %}

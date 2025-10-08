@@ -1,42 +1,62 @@
 {% extends 'layouts/layout.html.twig' %}
 {% set metaTitle = organization.name %}
+{% set establishment = organization.establishment %}
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
 {% endblock %}
 
 {% block body %}
     <section class="fr-container fr-py-5w">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-4">
-                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
-            </div>
-            <div class="fr-col-12 fr-col-md-8">
-                {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_area'},
-                    { title: metaTitle },
-                ]} %}
-                <div class="fr-grid-row fr-x-gap-2w">
-                    <div class="fr-x-grow-32w">
-                        <h2 class="fr-mb-0">{{ metaTitle }}</h2>
-                        <p>{{ 'organization.siret'|trans }} : {{ organization.siret|default('N/D') }}</p>
-                        {% if logo %}
-                            <img class="fr-x-max-w-32w" src="{{ logo }}" alt="{{ 'organization.logo'|trans }}" />
-                        {% endif %}
-                        {% if organization.geometry %}
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
+            { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+        ]} %}
+        <div class="fr-tabs">
+            {% include 'my_area/organization/_tabs.html.twig' %}
+            <div id="tab-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-1" tabindex="0">
+                <h3 class="fr-h5 fr-x-text--default-grey">
+                    {{ 'organization.name'|trans }}
+                </h3>
+                <p class="fr-x-text">
+                    {{ 'organization.description'|trans }}
+                </p>
+                <div class="app-card app-card--no-header app-card--with-background">
+                    <div class="app-card__content">
+                        <turbo-frame id="block_organization_info">
+                            {% include 'my_area/organization/fragments/_preview.html.twig' with { organization, establishment, logo } only %}
+                        </turbo-frame>
+                    </div>
+                </div>
+
+                <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                    {{ 'signing_authority.form.title'|trans }}
+                </h3>
+
+                <div class="app-card">
+                    <div class="app-card__content">
+                        <turbo-frame id="block_signing_authority">
+                            {% include 'my_area/organization/signing_authority/fragments/_preview.html.twig' with { organization, signingAuthority } only %}
+                        </turbo-frame>
+                    </div>
+                </div>
+
+                {% if organization.geometry %}
+                    <h3 class="fr-h5 fr-x-text--default-grey fr-mt-5w">
+                        {{ 'organization.geometry'|trans }}
+                    </h3>
+
+                    <div class="app-card">
+                        <div class="app-card__content">
                             <div data-controller="polygon-map" data-polygon-map-geojson-value='{{ organization.geometry }}'>
                                 <div data-polygon-map-target="container"></div>
                                 <div data-polygon-map-target="loading">{{ 'common.loading'|trans }}</div>
                             </div>
-                        {% endif %}
+                            <p class="fr-x-text--default-grey fr-mt-2w">
+                                {{ 'organization.geometry.help'|trans }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="fr-mb-3w">
-                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and dialogOrgId != organization.uuid %}
-                            <a href="{{ path('app_config_organization_edit', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-edit-line" title="{{ 'common.update'|trans }}">
-                                {{ 'common.update'|trans }}
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </section>

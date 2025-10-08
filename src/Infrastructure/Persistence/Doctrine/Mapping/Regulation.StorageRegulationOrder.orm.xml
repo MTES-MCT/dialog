@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Regulation\StorageRegulationOrder"
+    table="storage_regulation_order">
+    <id name="uuid" type="guid" column="uuid" />
+    <field name="path" type="string" column="path" nullable="true" />
+    <field name="url" type="string" column="url" nullable="true" />
+    <field name="title" type="string" column="title" nullable="true" />
+    <field name="fileSize" type="integer" column="file_size" nullable="true" />
+    <field name="mimeType" type="string" column="mime_type" nullable="true" />
+    <one-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder">
+      <join-columns>
+        <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false"
+          on-delete="CASCADE" />
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

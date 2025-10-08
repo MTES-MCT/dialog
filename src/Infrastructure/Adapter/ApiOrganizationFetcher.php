@@ -79,12 +79,19 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
             }
         }
 
+        $siege = $result['siege'];
+        $name = OrganizationCodeTypeEnum::INSEE->value === $codeType ? $result['siege']['libelle_commune'] : $result['nom_complet'];
+
         return new OrganizationFetchedView(
-            name: $data['results'][0]['nom_complet'],
+            name: ucwords(strtolower($name)),
             code: $code,
             codeType: $codeType,
             departmentName: $departmentName,
             departmentCode: $departmentCode,
+            establishmentAddress: \sprintf('%s %s %s', $siege['numero_voie'], $siege['type_voie'], $siege['libelle_voie']),
+            establishmentZipCode: $siege['code_postal'],
+            establishmentCity: $siege['libelle_commune'],
+            establishmentAddressComplement: $siege['complement_adresse'] ?? null,
         );
     }
 

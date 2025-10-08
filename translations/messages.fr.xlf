@@ -74,6 +74,10 @@
                 <source>common.see</source>
                 <target>Voir le détail</target>
             </trans-unit>
+            <trans-unit id="common.share">
+                <source>common.share</source>
+                <target>Partager</target>
+            </trans-unit>
             <trans-unit id="common.duplicate">
                 <source>common.duplicate</source>
                 <target>Dupliquer</target>
@@ -395,6 +399,78 @@
                 <source>regulation.export.doc.mention</source>
                 <target>DOCX - moins de 100ko</target>
             </trans-unit>
+            <trans-unit id="regulation.export.doc.mention.disabled">
+                <source>regulation.export.doc.mention.disabled</source>
+                <target>Le document n'est pas disponible car il n'est pas associé à un modèle d'arrêté.</target>
+            </trans-unit>
+            <trans-unit id="regulation.import">
+                <source>regulation.import</source>
+                <target>Arrêté officiel</target>
+            </trans-unit>
+            <trans-unit id="regulation.import.description">
+                <source>regulation.import.description</source>
+                <target>Joindre l'arrêté officiel via un fichier ou un lien.</target>
+            </trans-unit>
+            <trans-unit id="regulation.import.storage.description">
+                <source>regulation.import.storage.description</source>
+                <target>Importer le document d’arrêté initial.</target>
+            </trans-unit>
+            <trans-unit id="storageRegulationOrder.export.pdf.mention">
+                <source>storageRegulationOrder.export.pdf.mention</source>
+                <target>PDF - moins de 1Mo</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.title">
+                <source>regulation.storage.title</source>
+                <target>Joindre l'arrêté officiel</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage">
+                <source>regulation.storage</source>
+                <target>Joindre</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.file">
+                <source>regulation.storage.form.allRegulationOrderStorage.file</source>
+                <target>Importer un fichier</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.url">
+                <source>regulation.storage.form.allRegulationOrderStorage.url</source>
+                <target>Ajouter un lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.file.help">
+                <source>regulation.storage.form.allRegulationOrderStorage.file.help</source>
+                <target>Document d’arrêté officiel signé</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.allRegulationOrderStorage.url.help">
+                <source>regulation.storage.form.allRegulationOrderStorage.url.help</source>
+                <target>Lien vers l’arrêté officiel</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.file.title">
+                <source>regulation.storage.form.file.title</source>
+                <target>Importer un fichier</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.file.help">
+                <source>regulation.storage.form.file.help</source>
+                <target>Taille maximale : 5 Mo. Formats supportés : docx, odt, jpg, pdf.</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.url.title">
+                <source>regulation.storage.url.title</source>
+                <target>Ajouter un lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url">
+                <source>regulation.storage.form.url</source>
+                <target>URL du lien</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.url.help">
+                <source>regulation.storage.form.url.help</source>
+                <target>Entrez l’URL vers au format https://www.mondocument.pdf</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.title">
+                <source>regulation.storage.form.title</source>
+                <target>Titre du document</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.form.save">
+                <source>regulation.storage.form.save</source>
+                <target>Valider</target>
+            </trans-unit>
             <trans-unit id="regulation.city">
                 <source>regulation.city</source>
                 <target>Commune</target>
@@ -475,65 +551,13 @@
                 <source>regulation.general_info</source>
                 <target>Informations générales</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visas_and_reasons">
-                <source>regulation.general_info.visas_and_reasons</source>
-                <target>Visas et motifs</target>
+            <trans-unit id="regulation.general_info.regulation_order_template">
+                <source>regulation.general_info.regulation_order_template</source>
+                <target>Modèle de l'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation.general_info.visas">
-                <source>regulation.general_info.visas</source>
-                <target>Visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visas.help">
-                <source>regulation.general_info.visas.help</source>
-                <target>Ajouter les visas que vous souhaitez voir dans votre arrêté. Par exemple, “Vu le code de la route...”.</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reasons.help">
-                <source>regulation.general_info.reasons.help</source>
-                <target>Ajouter les motifs que vous souhaitez voir dans votre arrêté. Par exemple, “Considérant qu'en raison du déroulement des travaux de...”.</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa_model">
-                <source>regulation.general_info.visa_model</source>
-                <target>Modèle de visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa_model.placeholder">
-                <source>regulation.general_info.visa_model.placeholder</source>
-                <target>Sélectionner un modèle de visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa_model.help">
-                <source>regulation.general_info.visa_model.help</source>
-                <target>Sélectionnez le modèle de visa qui correspond à votre arrếté.</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visa.add">
-                <source>regulation.general_info.visa.add</source>
-                <target>Ajoutez les visas que vous souhaitez voir dans votre arrếté. Par exemple, "Vu le code de la route...".</target>
-            </trans-unit>
-            <trans-unit id="regulation.visa_models.management_notice">
-                <source>regulation.visa_models.management_notice</source>
-                <target>Les %visa_models% sont gérés par les administrateurs de votre organisation. Si les modèles ne conviennent pas, contactez l’administrateur de votre organisation ou ajouter les visas ci-dessous.</target>
-            </trans-unit>
-            <trans-unit id="regulation.visa_models.management_notice.visa_models">
-                <source>regulation.visa_models.management_notice.visa_models</source>
-                <target>modèles de visas</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reasons.add">
-                <source>regulation.general_info.reasons.add</source>
-                <target>Ajouter un motif</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.additional_visas.entry">
-                <source>regulation.general_info.additional_visas.entry</source>
-                <target>Visa (Vu ...)</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reason">
-                <source>regulation.general_info.reason</source>
-                <target>Motif (Considérant ...)</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.reasons">
-                <source>regulation.general_info.reasons</source>
-                <target>Motifs</target>
-            </trans-unit>
-            <trans-unit id="regulation.general_info.visas_and_reasons.description">
-                <source>regulation.general_info.visas_and_reasons.description</source>
-                <target>Vous pouvez exporter votre arrêté de circulation à partir de DiaLog, pour cela vous devez spécifier les visas (Vu le ...) et les motifs (Considérant...).</target>
+            <trans-unit id="regulation.general_info.regulation_order_template.placeholder">
+                <source>regulation.general_info.regulation_order_template.placeholder</source>
+                <target>Sélectionner un modèle d'arrêté</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
@@ -1095,6 +1119,22 @@
                 <source>landing.menu.button.help</source>
                 <target>Aide</target>
             </trans-unit>
+            <trans-unit id="notice.my.organizations.title">
+                <source>notice.my.organizations.title</source>
+                <target>Complétez les informations de vos organisations</target>
+            </trans-unit>
+            <trans-unit id="notice.my.organizations.description">
+                <source>notice.my.organizations.description</source>
+                <target>Ajouter un logo à votre organisation, configurer des modèles d’arrêtés, créer une liste de diffusion, etc. Seul l’administrateur de l’organisation peut effectuer cette action. Merci de le contacter si ce n’est pas votre rôle.</target>
+            </trans-unit>
+            <trans-unit id="notice.my.organizations.link">
+                <source>notice.my.organizations.link</source>
+                <target>Voir mes organisations</target>
+            </trans-unit>
+            <trans-unit id="notice.my.organizations.btn.close">
+                <source>notice.my.organizations.btn.close</source>
+                <target>Masquer le message</target>
+            </trans-unit>
             <trans-unit id="landing.menu.button.regulations">
                 <source>landing.menu.button.regulations</source>
                 <target>Liste des arrêtés</target>
@@ -1269,6 +1309,10 @@
             <trans-unit id="landing.details.input.steps.add_regulation_orders.description">
                 <source>landing.details.input.steps.add_regulation_orders.description</source>
                 <target>Vous pouvez créer des arrêtés de circulation portant sur une interdiction de circulation ou une limitation de vitesse. Les arrêtés peuvent être temporaires ou permanents.</target>
+            </trans-unit>
+            <trans-unit id="landing.details.input.steps.add_regulation_orders.video">
+                <source>landing.details.input.steps.add_regulation_orders.video</source>
+                <target>Voir la vidéo de création des arrêtés</target>
             </trans-unit>
             <trans-unit id="landing.details.input.steps.broadcast">
                 <source>landing.details.input.steps.broadcast</source>
@@ -2013,6 +2057,58 @@
                 <source>organization.name</source>
                 <target>Organisation</target>
             </trans-unit>
+            <trans-unit id="organization.form.name">
+                <source>organization.form.name</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.organizationName">
+                <source>organization.organizationName</source>
+                <target>Nom de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="organization.directory">
+                <source>organization.directory</source>
+                <target>Annuaire des entreprises</target>
+            </trans-unit>
+            <trans-unit id="organization.description">
+                <source>organization.description</source>
+                <target>Certaines informations telles que le nom, l’adresse, le logo, l’autorité signataire apparaîtront dans l’export de l’arrêté DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="organization.geometry">
+                <source>organization.geometry</source>
+                <target>Périmètre géographique</target>
+            </trans-unit>
+            <trans-unit id="organization.geometry.help">
+                <source>organization.geometry.help</source>
+                <target>Si le contour ne correspond pas à votre découpage administratif, contactez-nous par email à : dialog@beta.gouv.fr.</target>
+            </trans-unit>
+            <trans-unit id="organization.establishmentAddress">
+                <source>organization.establishmentAddress</source>
+                <target>Adresse de l'établissement</target>
+            </trans-unit>
+            <trans-unit id="organization.zipCode">
+                <source>organization.zipCode</source>
+                <target>Code postal</target>
+            </trans-unit>
+            <trans-unit id="organization.city">
+                <source>organization.city</source>
+                <target>Ville</target>
+            </trans-unit>
+            <trans-unit id="organization.addressComplement">
+                <source>organization.addressComplement</source>
+                <target>Complément d'adresse</target>
+            </trans-unit>
+            <trans-unit id="organization.departmentName">
+                <source>organization.departmentName</source>
+                <target>Département</target>
+            </trans-unit>
+            <trans-unit id="organization.completed">
+                <source>organization.completed</source>
+                <target>Complété</target>
+            </trans-unit>
+            <trans-unit id="organization.not_completed">
+                <source>organization.not_completed</source>
+                <target>À compléter</target>
+            </trans-unit>
             <trans-unit id="organization.logo">
                 <source>organization.logo</source>
                 <target>Logo</target>
@@ -2193,9 +2289,13 @@
                 <source>jop.regulation_order.title</source>
                 <target>Zones réglementées dans le cadre des Jeux Olympiques et Paralympiques de Paris 2024 (JOP 2024)</target>
             </trans-unit>
-            <trans-unit id="organization.list.title">
-                <source>organization.list.title</source>
+            <trans-unit id="user.myorganizations">
+                <source>user.myorganizations</source>
                 <target>Mes organisations</target>
+            </trans-unit>
+            <trans-unit id="organization.list.description">
+                <source>organization.list.description</source>
+                <target>Visualiser les informations de votre organisation. Pour chaque organisation, vous pouvez définir un logo, ajouter des utilisateurs, créer une liste de diffusion, créer des modèles d’arrêtés, etc.</target>
             </trans-unit>
             <trans-unit id="roles.ROLE_ORGA_CONTRIBUTOR">
                 <source>roles.ROLE_ORGA_CONTRIBUTOR</source>
@@ -2224,6 +2324,10 @@
             <trans-unit id="user.list.title">
                 <source>user.list.title</source>
                 <target>Utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="user.list.description">
+                <source>user.list.description</source>
+                <target>Ajouter les contacts des personnes à qui vous souhaiter partager vos arrêtés. Pour plus d’information, consultez l’aide en ligne.</target>
             </trans-unit>
             <trans-unit id="user.list.delete">
                 <source>user.list.delete</source>
@@ -2317,9 +2421,50 @@
                 <source>recipient.list.role</source>
                 <target>Fonction</target>
             </trans-unit>
+            <trans-unit id="recipient.share.title">
+                <source>recipient.share.title</source>
+                <target>Partager l'arrêté</target>
+            </trans-unit>
+            <trans-unit id="recipient.share.title.help">
+                <source>recipient.share.title.help</source>
+                <target>Entrez les adresses emails des destinataires, ou sélectionnez dans la liste de diffusion.</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share.title">
+                <source>mailing.list.share.title</source>
+                <target>Liste de diffusion</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share.breadcrumb">
+                <source>mailing.list.share.breadcrumb</source>
+                <target>Partager l'arrêté %identifier%</target>
+            </trans-unit>
+            <trans-unit id="recipient.form.email">
+                <source>recipient.form.email</source>
+                <target>Destinataire</target>
+            </trans-unit>
+            <trans-unit id="recipient.form.email.help">
+                <source>recipient.form.email.help</source>
+                <target>Entrez les adresses emails des destinataires séparées par une virgule.</target>
+            </trans-unit>
+            <trans-unit id="recipient.mailing.list.help">
+                <source>recipient.mailing.list.help</source>
+                <target>Vous pouvez définir une liste de diffusion dans les paramètres de l’organisation : <![CDATA[<a href="%href%">]]> mon espace<![CDATA[</a>]]></target>
+            </trans-unit>
+            <trans-unit id="recipient.mailing.list.all">
+                <source>recipient.mailing.list.all</source>
+                <target>Tous les destinataires</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share">
+                <source>mailing.list.share</source>
+                <target>Partager</target>
+            </trans-unit>
             <trans-unit id="add.recipient.form.title">
                 <source>add.recipient.form.title</source>
                 <target>Ajouter un destinataire</target>
+            </trans-unit>
+            <trans-unit id="mailing.list.share.succeeded">
+                <source>mailing.list.share.succeeded</source>
+                <target><![CDATA[<h3 class="fr-alert__title">]]>Emails de partage envoyés<![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>L’arrêté a bien été partagé aux destinataires.<![CDATA[</p>]]></target>
             </trans-unit>
             <trans-unit id="recipient.name">
                 <source>recipient.name</source>
@@ -2465,10 +2610,6 @@
                 <source>config.menu.users</source>
                 <target>Utilisateurs</target>
             </trans-unit>
-            <trans-unit id="config.menu.visas">
-                <source>config.menu.visas</source>
-                <target>Modèles de visas</target>
-            </trans-unit>
             <trans-unit id="config.menu.authority">
                 <source>config.menu.authority</source>
                 <target>Autorité signataire</target>
@@ -2477,77 +2618,9 @@
                 <source>config.menu.logo</source>
                 <target>Logo</target>
             </trans-unit>
-            <trans-unit id="visa.list.title">
-                <source>visa.list.title</source>
-                <target>Modèles de visas</target>
-            </trans-unit>
-            <trans-unit id="visa.list.help">
-                <source>visa.list.help</source>
-                <target>Créer des modèles de visas à utiliser par les agents dans les arrếtés de circulation créés dans DiaLog.</target>
-            </trans-unit>
-            <trans-unit id="visa.duplicated.success">
-                <source>visa.duplicated.success</source>
-                <target>Le modèle de visa a bien été dupliqué.</target>
-            </trans-unit>
-            <trans-unit id="visa.name">
-                <source>visa.name</source>
-                <target>Nom du modèle</target>
-            </trans-unit>
-            <trans-unit id="visa.name.help">
-                <source>visa.name.help</source>
-                <target>Entrez un nom, par exemple "Réglementation de vitesse"</target>
-            </trans-unit>
-            <trans-unit id="visa.description">
-                <source>visa.description</source>
-                <target>Description</target>
-            </trans-unit>
-            <trans-unit id="visa.detail.title">
-                <source>visa.detail.title</source>
-                <target>Modèles de visas</target>
-            </trans-unit>
-            <trans-unit id="visa.add.title">
-                <source>visa.add.title</source>
-                <target>Ajouter un modèle</target>
-            </trans-unit>
-            <trans-unit id="visa.add">
-                <source>visa.add</source>
-                <target>Ajouter un visa</target>
-            </trans-unit>
-            <trans-unit id="visa.remove">
-                <source>visa.remove</source>
-                <target>Supprimer</target>
-            </trans-unit>
-            <trans-unit id="visas.form.visa">
-                <source>visas.form.visa</source>
-                <target>Visa (Vu...)</target>
-            </trans-unit>
-            <trans-unit id="visas.form.visas">
-                <source>visas.form.visas</source>
-                <target>Visas</target>
-            </trans-unit>
-            <trans-unit id="visas.form.visas.help">
-                <source>visas.form.visas.help</source>
-                <target>Définissez le texte qui apparaîtra en tant que visas (Vu...) dans les arrêtés</target>
-            </trans-unit>
-            <trans-unit id="myarea.title">
-                <source>myarea.title</source>
-                <target>Mon espace</target>
-            </trans-unit>
-            <trans-unit id="visa.delete_modal.title">
-                <source>visa.delete_modal.title</source>
-                <target>Supprimer ce modèle ?</target>
-            </trans-unit>
-            <trans-unit id="visa.duplicate_modal.title">
-                <source>visa.duplicate_modal.title</source>
-                <target>Dupliquer ce modèle ?</target>
-            </trans-unit>
-            <trans-unit id="visa.list.delete">
-                <source>visa.list.delete</source>
-                <target>Supprimer le modèle "%name%" de l'organisation</target>
-            </trans-unit>
-            <trans-unit id="visa.list.duplicate">
-                <source>visa.list.duplicate</source>
-                <target>Duppliquer le modèle "%name%"</target>
+            <trans-unit id="myorganization.title">
+                <source>myorganization.title</source>
+                <target>Mes organisations</target>
             </trans-unit>
             <trans-unit id="signing_authority.form.title">
                 <source>signing_authority.form.title</source>
@@ -2555,63 +2628,35 @@
             </trans-unit>
             <trans-unit id="signing_authority.name">
                 <source>signing_authority.name</source>
-                <target>Intitulé du signataire</target>
+                <target>Intitulé du pouvoir de signature</target>
             </trans-unit>
             <trans-unit id="signing_authority.help">
                 <source>signing_authority.help</source>
-                <target>L'autorité signataire est gérée par les administrateurs de votre organisation. Si elle ne convient pas, contactez l’administrateur de votre organisation.</target>
+                <target>Entrez l’intitulé du pouvoir de signature, par exemple “Le maire de Paris”</target>
             </trans-unit>
             <trans-unit id="signing_authority.name.help">
                 <source>signing_authority.name.help</source>
                 <target>Entrez l'intitulé du signataire, par exemple "Madame le maire de XX"</target>
             </trans-unit>
-            <trans-unit id="signing_authority.address">
-                <source>signing_authority.address</source>
-                <target>Adresse de l'établissement</target>
+            <trans-unit id="signing_authority.role">
+                <source>signing_authority.role</source>
+                <target>Rôle du signataire effectif</target>
             </trans-unit>
-            <trans-unit id="signing_authority.address.help">
-                <source>signing_authority.address.help</source>
-                <target>Entrez l'adresse de l'établissement, par exemple de la mairie</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.roadName">
-                <source>signing_authority.roadName</source>
-                <target>Adresse de l'établissement</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.roadName.help">
-                <source>signing_authority.roadName.help</source>
-                <target>Numéro et voie</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.cityCode">
-                <source>signing_authority.cityCode</source>
-                <target>Code postal</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.cityLabel">
-                <source>signing_authority.cityLabel</source>
-                <target>Ville</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.placeOfSignature">
-                <source>signing_authority.placeOfSignature</source>
-                <target>Fait à</target>
-            </trans-unit>
-            <trans-unit id="signing_authority.placeOfSignature.help">
-                <source>signing_authority.placeOfSignature.help</source>
-                <target>Entrez le nom de la ville ou a été rédigé l'arrếté</target>
+            <trans-unit id="signing_authority.role.help">
+                <source>signing_authority.role.help</source>
+                <target>Entrez l’intitulé du signataire effectif par exemple “Adjoint au maire de XXX”</target>
             </trans-unit>
             <trans-unit id="signing_authority.signatoryName">
                 <source>signing_authority.signatoryName</source>
-                <target>Nom du signataire</target>
+                <target>Nom du signataire effectif</target>
             </trans-unit>
             <trans-unit id="signing_authority.signatoryName.help">
                 <source>signing_authority.signatoryName.help</source>
-                <target>Entrez le nom du signataire de l'arrếté</target>
+                <target>Entrez le nom et le prénom du signataire effectif</target>
             </trans-unit>
             <trans-unit id="signing_authority.form.image_description">
                 <source>signing_authority.form.image_description</source>
                 <target>Vue d'ensemble schématique de l’arrêté montrant l’emplacement des informations sur l’autorité signataire.</target>
-            </trans-unit>
-            <trans-unit id="organization.form.image_description">
-                <source>organization.form.image_description</source>
-                <target>Vue d’ensemble schématique de l’arrêté montrant l’emplacement du logo.</target>
             </trans-unit>
             <trans-unit id="reset_password.succeeded">
                 <source>reset_password.succeeded</source>
@@ -2675,11 +2720,11 @@
             </trans-unit>
             <trans-unit id="regulation_order_template.list.help">
                 <source>regulation_order_template.list.help</source>
-                <target>Créer des modèles d'arrêtés à utiliser par les agents dans les arrêtés de circulation créés dans DiaLog.</target>
+                <target>Créer des modèles d’arrêtés. Les agents de votre organisation pourront sélectionner le modèle qui convient puis exporter leur arrêté pré-rempli.</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.name">
                 <source>regulation_order_template.name</source>
-                <target>Nom</target>
+                <target>Nom du modèle</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.title">
                 <source>regulation_order_template.title</source>
@@ -2711,7 +2756,7 @@
             </trans-unit>
             <trans-unit id="regulation_order_template.variables.description">
                 <source>regulation_order_template.variables.description</source>
-                <target>Copier les variables que vous souhaitez utiliser dans votre modèle d'arrêté.</target>
+                <target>Copiez les variables que vous souhaitez utiliser dans votre modèle d’arrêté. Elles seront remplacées par les bonnes données au moment de l'export du document.</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.variables.intitule">
                 <source>regulation_order_template.variables.intitule</source>
@@ -2721,29 +2766,33 @@
                 <source>regulation_order_template.variables.name</source>
                 <target>Nom de la variable</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.number">
-                <source>regulation_order_template.variables.list.number</source>
+            <trans-unit id="regulation_order_template.variables.list.numero_arrete">
+                <source>regulation_order_template.variables.list.numero_arrete</source>
                 <target>Numéro d'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.intitule">
-                <source>regulation_order_template.variables.list.intitule</source>
+            <trans-unit id="regulation_order_template.variables.list.departement">
+                <source>regulation_order_template.variables.list.departement</source>
+                <target>Département</target>
+            </trans-unit>
+            <trans-unit id="regulation_order_template.variables.list.intitule_arrete">
+                <source>regulation_order_template.variables.list.intitule_arrete</source>
                 <target>Intitulé de l'arrêté</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.start_pr">
-                <source>regulation_order_template.variables.list.start_pr</source>
-                <target>Numéro du PR de début</target>
+            <trans-unit id="regulation_order_template.variables.list.pouvoir_de_signature">
+                <source>regulation_order_template.variables.list.pouvoir_de_signature</source>
+                <target>Pouvoir de signature (ex: le maire)</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.end_pr">
-                <source>regulation_order_template.variables.list.end_pr</source>
-                <target>Numéro du PR de fin</target>
+            <trans-unit id="regulation_order_template.variables.list.nom_commune">
+                <source>regulation_order_template.variables.list.nom_commune</source>
+                <target>Nom de la commune</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.signatory_name">
-                <source>regulation_order_template.variables.list.signatory_name</source>
-                <target>Nom du signataire</target>
+            <trans-unit id="regulation_order_template.variables.list.nom_signataire">
+                <source>regulation_order_template.variables.list.nom_signataire</source>
+                <target>Nom du signataire effectif (ex: l'adjoint au maire)</target>
             </trans-unit>
-            <trans-unit id="regulation_order_template.variables.list.national_road_number">
-                <source>regulation_order_template.variables.list.national_road_number</source>
-                <target>Numéro de la route nationale</target>
+            <trans-unit id="regulation_order_template.variables.list.mesures">
+                <source>regulation_order_template.variables.list.mesures</source>
+                <target>Mesures (restrictions, localisations, périodes, etc.)</target>
             </trans-unit>
             <trans-unit id="regulation_order_template.delete_modal.title">
                 <source>regulation_order_template.delete_modal.title</source>

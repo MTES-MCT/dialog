@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -62,6 +63,8 @@ final class OrganizationCrudController extends AbstractCrudController
             TextField::new('departmentCodeWithName')->setLabel('Département')->hideOnForm(),
             TextField::new('departmentCode')->setLabel('Code du département')->hideOnIndex(),
             TextField::new('departmentName')->setLabel('Nom du département')->hideOnIndex(),
+            TextField::new('establishmentAddress', 'Adresse de l\'établissement')->setFormTypeOption('disabled', true)->hideOnForm(),
+            AssociationField::new('establishment')->setLabel('Adresse de l\'établissement')->setFormTypeOption('disabled', true)->hideOnIndex(),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
             DateTimeField::new('updatedAt')->setLabel('Date de mise à jour du contour')->hideOnForm(),
         ];

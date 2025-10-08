@@ -37,7 +37,7 @@ final class EditRecipientController extends AbstractOrganizationController
 
     #[Route(
         '/organizations/{uuid}/recipients/{mailingListUuid}/edit',
-        name: 'app_recipient_edit',
+        name: 'app_config_recipients_list_edit',
         requirements: ['uuid' => Requirement::UUID, 'mailingListUuid' => Requirement::UUID],
         methods: ['GET', 'POST'],
     )]

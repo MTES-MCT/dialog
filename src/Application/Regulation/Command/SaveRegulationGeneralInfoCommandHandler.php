@@ -6,8 +6,8 @@ namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrder;
@@ -30,8 +30,9 @@ final class SaveRegulationGeneralInfoCommandHandler
     public function __invoke(SaveRegulationGeneralInfoCommand $command): RegulationOrderRecord
     {
         $command->cleanOtherCategoryText();
-        $visaModel = $command->visaModelUuid
-            ? $this->queryBus->handle(new GetVisaModelQuery($command->visaModelUuid))
+
+        $regulationOrderTemplate = $command->regulationOrderTemplateUuid
+            ? $this->queryBus->handle(new GetRegulationOrderTemplateQuery($command->regulationOrderTemplateUuid))
             : null;
 
         // If submitting the form the first time, we create the regulationOrder and regulationOrderRecord
@@ -44,9 +45,7 @@ final class SaveRegulationGeneralInfoCommandHandler
                     subject: $command->subject,
                     title: $command->title,
                     otherCategoryText: $command->otherCategoryText,
-                    additionalVisas: $command->additionalVisas,
-                    additionalReasons: $command->additionalReasons,
-                    visaModel: $visaModel,
+                    regulationOrderTemplate: $regulationOrderTemplate,
                 ),
             );
             $regulationOrderRecord = $this->regulationOrderRecordRepository->add(
@@ -75,9 +74,7 @@ final class SaveRegulationGeneralInfoCommandHandler
             subject: $command->subject,
             title: $command->title,
             otherCategoryText: $command->otherCategoryText,
-            additionalVisas: $command->additionalVisas,
-            additionalReasons: $command->additionalReasons,
-            visaModel: $visaModel,
+            regulationOrderTemplate: $regulationOrderTemplate,
         );
 
         $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value));

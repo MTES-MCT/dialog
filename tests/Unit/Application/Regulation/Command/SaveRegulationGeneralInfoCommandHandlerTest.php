@@ -6,12 +6,11 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Organization\VisaModel\Query\GetVisaModelQuery;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommandHandler;
-use App\Domain\Organization\VisaModel\VisaModel;
+use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
@@ -19,10 +18,10 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\RegulationOrderTemplate;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
-use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
 
 final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
@@ -32,9 +31,8 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
     private $regulationOrderRepository;
     private $queryBus;
     private $organization;
-    private $visaModel;
+    private $regulationOrderTemplate;
     private $commandBus;
-    private $user;
 
     public function setUp(): void
     {
@@ -43,9 +41,8 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->organization = $this->createMock(Organization::class);
-        $this->visaModel = $this->createMock(VisaModel::class);
+        $this->regulationOrderTemplate = $this->createMock(RegulationOrderTemplate::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->user = $this->createMock(User::class);
     }
 
     public function testCreate(): void
@@ -146,8 +143,8 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetVisaModelQuery('b748e11a-e76f-4aba-b94c-c9f08cabd7d6'))
-            ->willReturn($this->visaModel);
+            ->with(new GetRegulationOrderTemplateQuery('92fc487a-b795-4583-88e6-0b83d23910cc'))
+            ->willReturn($this->regulationOrderTemplate);
 
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder
@@ -159,9 +156,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
                 'Interdiction de circuler',
                 RegulationSubjectEnum::OTHER->value,
                 'Trou en formation',
-                [],
-                [],
-                $this->visaModel,
+                $this->regulationOrderTemplate,
             );
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -196,7 +191,7 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
         $command->subject = RegulationSubjectEnum::OTHER->value;
         $command->otherCategoryText = 'Trou en formation';
         $command->title = 'Interdiction de circuler';
-        $command->visaModelUuid = 'b748e11a-e76f-4aba-b94c-c9f08cabd7d6';
+        $command->regulationOrderTemplateUuid = '92fc487a-b795-4583-88e6-0b83d23910cc';
 
         $result = $handler($command);
         $this->assertSame($regulationOrderRecord, $result);

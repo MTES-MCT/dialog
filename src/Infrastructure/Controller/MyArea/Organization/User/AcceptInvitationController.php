@@ -47,7 +47,7 @@ final class AcceptInvitationController
             $session->getFlashBag()->add('success', $this->translator->trans('invitation.accept.success'));
 
             return new RedirectResponse(
-                url: $this->router->generate('app_my_area'),
+                url: $this->router->generate('app_my_organizations'),
                 status: Response::HTTP_SEE_OTHER,
             );
         } catch (InvitationNotFoundException) {
@@ -56,14 +56,14 @@ final class AcceptInvitationController
             $session->getFlashBag()->add('error', $this->translator->trans('invitation.accept.error'));
 
             return new RedirectResponse(
-                url: $this->router->generate('app_my_area'),
+                url: $this->router->generate('app_my_organizations'),
                 status: Response::HTTP_SEE_OTHER,
             );
         } catch (InvitationNotOwnedException) {
             $session->getFlashBag()->add('error', $this->translator->trans('invitation.accept.error_not_owned'));
 
             return new RedirectResponse(
-                url: $this->router->generate('app_my_area'),
+                url: $this->router->generate('app_my_organizations'),
                 status: Response::HTTP_SEE_OTHER,
             );
         }

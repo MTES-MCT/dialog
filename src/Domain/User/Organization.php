@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\Organization\Establishment\Establishment;
+
 class Organization
 {
     private string $name;
@@ -14,6 +16,7 @@ class Organization
     private ?string $departmentName = null;
     private ?string $departmentCode = null;
     private ?string $geometry;
+    private ?Establishment $establishment = null;
     private \DateTimeInterface $createdAt;
     private ?\DateTimeInterface $updatedAt;
 
@@ -108,6 +111,18 @@ class Organization
         return \sprintf('%s (%s)', $this->getDepartmentName(), $this->getDepartmentCode());
     }
 
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    public function setEstablishment(Establishment $establishment): self
+    {
+        $this->establishment = $establishment;
+
+        return $this;
+    }
+
     public function setLogo(?string $logo): self
     {
         $this->logo = $logo;
@@ -170,9 +185,17 @@ class Organization
         return \sprintf('%s (%s)', $this->getCode(), $this->getCodeType());
     }
 
-    public function update(string $name, string $siret): void
+    public function update(string $name): void
     {
         $this->name = $name;
-        $this->siret = $siret;
+    }
+
+    public function getEstablishmentAddress(): ?string
+    {
+        if (!$this->establishment) {
+            return null;
+        }
+
+        return (string) $this->establishment;
     }
 }

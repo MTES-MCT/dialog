@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
+use App\Application\Regulation\View\AddressView;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -31,8 +32,16 @@ final class GetGeneralInfoQueryHandler
             organizationName: $row['organizationName'],
             organizationLogo: $row['organizationLogo'],
             organizationUuid: $row['organizationUuid'],
+            organizationAddress: $row['organizationAddress'] ? new AddressView(
+                address: $row['organizationAddress'],
+                zipCode: $row['organizationZipCode'],
+                city: $row['organizationCity'],
+                department: $row['organizationDepartment'],
+                addressComplement: $row['organizationAddressComplement'],
+            ) : null,
             status: $row['status'],
             regulationOrderUuid: $row['regulationOrderUuid'],
+            regulationOrderTemplateUuid: $row['regulationOrderTemplateUuid'],
             category: $row['category'],
             subject: $row['subject'],
             otherCategoryText: $row['otherCategoryText'],

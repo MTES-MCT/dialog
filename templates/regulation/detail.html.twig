@@ -8,7 +8,8 @@
     {{ parent() }}
 {% endblock %}
 
-{% block page_class %}fr-background-alt--grey{% endblock %}
+{% block page_class %}fr-background-alt--grey
+{% endblock %}
 
 {% set definesContentSkiplink = true %}
 
@@ -41,6 +42,7 @@
                             {% endfor %}
                         </ul>
 
+
                         {% if not isReadOnly and isDraft %}
                             {% if measures|length > 0 %}
                                 {% include "regulation/fragments/_add_measure_link.html.twig" with { regulationOrderRecordUuid: generalInfo.uuid } only %}
@@ -65,13 +67,60 @@
                             <div class="app-card app-card--raised fr-mt-2w">
                                 <div class="app-card__content">
                                     <turbo-frame id="block_export">
-                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid } only %}
+                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid, regulationOrderTemplateUuid: generalInfo.regulationOrderTemplateUuid } only %}
                                     </turbo-frame>
                                 </div>
                             </div>
                         {% endif %}
 
-                        <div class="app-card app-card--raised fr-mt-2w">
+                        <div data-testid="ressources" class="app-card app-card--raised fr-mt-2w">
+                            <div class="app-card__content">
+                                <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.import'|trans }}</h3>
+                                {% if not storageRegulationOrder %}
+                                    <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+                                        {{ 'regulation.import.description'|trans }}
+                                    </div>
+                                    <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
+                                        <li>
+                                            <d-modal-trigger modal="create-form-modal" submitvalue="upload">
+                                                <button class="fr-btn fr-btn--secondary" aria-controls="create-form-modal">
+                                                    {{ 'regulation.storage.title'|trans }}
+                                                </button>
+                                            </d-modal-trigger>
+                                        </li>
+                                    </ul>
+                                {% else %}
+                                    <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+                                        {{ 'regulation.import.storage.description'|trans }}
+                                    </div>
+                                    <a target="_top" download class="fr-link {{ storageRegulationOrder.url is defined and storageRegulationOrder.url ? 'fr-icon-links-line' : 'fr-icon-download-line' }} fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url}}">{{ (storageRegulationOrderFile ? storageRegulationOrderFile|split('/')|last|split('#')|first|split('?')|first : storageRegulationOrder.title)|u.truncate(25, '...') }}</a>
+                                    {% if storageRegulationOrder.mimeType and storageRegulationOrder.fileSize %}
+                                        <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+                                            {{ storageRegulationOrder.mimeType }}
+                                            -
+                                            {{ storageRegulationOrder.fileSize }}
+                                            ko
+                                        </div>
+                                    {% endif %}
+                                    <div class="fr-btns-group fr-btns-group--inline-sm fr-mt-2w">
+                                        <d-modal-trigger modal="upload-form-modal" submitvalue="upload">
+                                            <button class="fr-btn fr-btn--tertiary fr-icon-edit-line" aria-controls="upload-form-modal"></button>
+                                        </d-modal-trigger>
+
+                                        {% set deleteToken = csrf_token('delete-storage') %}
+                                        <form method="POST" action="{{ path('app_config_regulation_delete_storage', { uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <d-modal-trigger modal="storage-delete-modal" submitvalue="delete">
+                                                <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-delete-bin-line" aria-controls="storage-delete-modal" data-testid="delete"></button>
+                                            </d-modal-trigger>
+                                            <input type="hidden" name="_token" value="{{ deleteToken }}"/>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="app-card app-card--raised fr-mt-2w" data-testid="actions">
                             <div class="app-card__content">
                                 <h3 class="fr-h4 fr-mb-2w">{{ 'common.actions'|trans }}</h3>
                                 <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
@@ -80,6 +129,12 @@
                                             <div id="block_publication">
                                                 {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid, regulationOrderRecord } only %}
                                             </div>
+                                        </li>
+                                    {% endif %}
+                                    {% if not isDraft %}
+                                        <li>
+                                            <a href="{{ path('app_mailing_list_share', { uuid: regulationOrderRecord.uuid })}}" role="button" class="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-send-plane-line">{{ 'common.share'|trans }}</a>
+                                            <hr class="fr-mt-1w">
                                         </li>
                                     {% endif %}
                                     <li>
@@ -91,24 +146,16 @@
                                     </li>
                                     <li>
                                         {% set deleteCsrfToken = csrf_token('delete-regulation') %}
-                                        <form
-                                            method="POST"
-                                            action="{{ path('app_regulation_delete', { uuid: generalInfo.uuid }) }}"
-                                            data-controller="form-submit"
-                                            data-action="modal-trigger:submit->form-submit#submit"
-                                        >
+                                        <form method="POST" action="{{ path('app_regulation_delete', { uuid: generalInfo.uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
                                             <input type="hidden" name="_method" value="DELETE">
 
-                                            <d-modal-trigger modal="regulation-delete-modal" submitValue="delete">
-                                                <button
-                                                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line"
-                                                    aria-controls="regulation-delete-modal"
-                                                >
+                                            <d-modal-trigger modal="regulation-delete-modal" submitvalue="delete">
+                                                <button class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-delete-bin-line" aria-controls="regulation-delete-modal">
                                                     {{'common.delete'|trans}}
                                                 </button>
                                             </d-modal-trigger>
 
-                                            <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                                            <input type="hidden" name="_token" value="{{ deleteCsrfToken }}"/>
                                         </form>
                                     </li>
                                 </ul>
@@ -126,6 +173,17 @@
                                 </div>
                             </div>
                         </div>
+                        {% if storageRegulationOrder %}
+                            <div class="app-card app-card--raised fr-mt-2w">
+                                <div class="app-card__content">
+                                    <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.import'|trans }}</h3>
+                                    <a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="/storage/{{ storageRegulationOrder.path }}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
+                                    <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+                                        {{ 'storageRegulationOrder.export.pdf.mention'|trans }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </aside>
             </div>
@@ -170,6 +228,21 @@
                 { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
                 { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
             ],
+        } only %}
+
+        {% include "common/confirmation_modal.html.twig" with {
+            id: 'storage-delete-modal',
+            title: 'regulation.delete_modal.title'|trans,
+            buttons: [
+                { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+                { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+            ],
+        } only %}
+
+        {% include "common/form-modal.html.twig" with {
+            id: not storageRegulationOrder?'create-form-modal':'upload-form-modal',
+            frameId: 'upload-form-frame',
+            src: not storageRegulationOrder?path('app_config_regulation_add_storage', { uuid }):path('app_config_regulation_edit_storage', { uuid }),
         } only %}
     {% endif %}
 {% endblock %}

@@ -103,7 +103,7 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->setFullName('Mathieu MARCHOIS')
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($registrationDate)
-            ->setVerified();
+            ->setIsVerified();
 
         $this->userRepository
             ->expects(self::once())

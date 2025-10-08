@@ -8,78 +8,78 @@
 
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="user-list">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-4">
-                {% include 'my_area/organization/_menu.html.twig' with { organization } only %}
-            </div>
-            <div class="fr-col-12 fr-col-md-8">
-                {% include "common/breadcrumb.html.twig" with { items: [
-                    { title: 'user.myarea'|trans, path: 'app_my_area'},
-                    { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
-                    { title: 'recipient.list.title'|trans },
-                ]} %}
-                <div class="fr-grid-row">
-                    <h2 id="recipient-list" class="fr-col fr-mb-0">{{ 'recipient.list.title'|trans }}</h2>
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
+            { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+            { title: 'recipient.list.title'|trans },
+        ]} %}
+
+        <div class="fr-tabs">
+            {% include 'my_area/organization/_tabs.html.twig' %}
+            <div id="tab-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-1" tabindex="0">
+                <div class="fr-grid-row fr-mb-2w">
+                    <div class="fr-col-12 fr-col-md-8">
+                        <h3 class="fr-h5 fr-x-text--default-grey" id="recipient-list">{{ 'recipient.list.title'|trans }}</h3>
+                        <p class="fr-x-text">{{ 'recipient.list.description'|trans }}</p>
+                    </div>
                     {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
                         <a href="{{ path('app_config_recipients_list_add', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'recipient.add.title'|trans }}">
                             {{ 'recipient.add.title'|trans }}
                         </a>
                     {% endif %}
-                </div>
-                <p class="fr-text--sm">{{ 'recipient.list.description'|trans }}</p>
-                <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
-                    <table>
-                        <caption>{{ 'user.list.title'|trans }}</caption>
-                        <thead>
-                            <tr>
-                                <th scope="col">{{ 'recipient.list.name'|trans }}</th>
-                                <th scope="col">{{ 'recipient.list.email'|trans }}</th>
-                                <th scope="col">{{ 'recipient.list.role'|trans }}</th>
-                                <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
-                            </tr>
-                        </thead>
-                        <tbody data-testid="recipient-list">
-                            {% for mailingList in mailingLists %}
+                    <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td>
-                                        {{ mailingList.name }}<br/>
-                                    </td>
-                                    <td>
-                                        {{ mailingList.email }}<br/>
-                                    </td>
-                                    <td>
-                                        {{ mailingList.role }}<br/>
-                                    </td>
-                                    <td>
-                                        <div class="fr-btns-group fr-btns-group--inline-sm">
-                                            {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
-                                                <a title="{{ 'common.update'|trans }}" href="{{ path('app_recipient_edit', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
-                                                </a>
-                                                    <form
-                                                        method="POST"
-                                                        action="{{ path('app_config_mailing_list_delete', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}"
-                                                        data-controller="form-submit"
-                                                        data-action="modal-trigger:submit->form-submit#submit"
-                                                    >
-                                                        <input type="hidden" name="_method" value="DELETE">
-
-                                                        <d-modal-trigger modal="mailing-list-delete-modal" submitValue="mailing-list-delete-{{ mailingList.uuid }}">
-                                                            <button
-                                                                class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
-                                                                aria-controls="mailing-list-delete-modal"
-                                                                aria-label="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
-                                                                title="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
-                                                            ></button>
-                                                        </d-modal-trigger>
-                                                        <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
-                                                    </form>
-                                            {% endif %}
-                                        </div>
-                                    </td>
+                                    <th scope="col">{{ 'recipient.list.name'|trans }}</th>
+                                    <th scope="col">{{ 'recipient.list.email'|trans }}</th>
+                                    <th scope="col">{{ 'recipient.list.role'|trans }}</th>
+                                    <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody data-testid="recipient-list">
+                                {% for mailingList in mailingLists %}
+                                    <tr>
+                                        <td>
+                                            {{ mailingList.name }}<br/>
+                                        </td>
+                                        <td>
+                                            {{ mailingList.email }}<br/>
+                                        </td>
+                                        <td>
+                                            {{ mailingList.role }}<br/>
+                                        </td>
+                                        <td>
+                                            <div class="fr-btns-group fr-btns-group--inline-sm">
+                                                {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                                                    <a title="{{ 'common.update'|trans }}" href="{{ path('app_config_recipients_list_edit', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
+                                                    </a>
+                                                        <form
+                                                            method="POST"
+                                                            action="{{ path('app_config_mailing_list_delete', { uuid: organization.uuid, mailingListUuid: mailingList.uuid }) }}"
+                                                            data-controller="form-submit"
+                                                            data-action="modal-trigger:submit->form-submit#submit"
+                                                        >
+                                                            <input type="hidden" name="_method" value="DELETE">
+
+                                                            <d-modal-trigger modal="mailing-list-delete-modal" submitValue="mailing-list-delete-{{ mailingList.uuid }}">
+                                                                <button
+                                                                    class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line"
+                                                                    aria-controls="mailing-list-delete-modal"
+                                                                    aria-label="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
+                                                                    title="{{ 'recipient.list.delete'|trans({'%name%': mailingList.name}) }}"
+                                                                ></button>
+                                                            </d-modal-trigger>
+                                                            <input type="hidden" name="_token" value="{{ deleteCsrfToken }}" />
+                                                        </form>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

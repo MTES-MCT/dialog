@@ -19,6 +19,10 @@
     --icon-size: 2.75rem;
 }
 
+.fr-x-icon--sm::before {
+    --icon-size: 1rem;
+}
+
 @each $extraIcon in (
     'commercial',
     'emergency-services',
@@ -35,6 +39,9 @@
     'road-maintenance-or-construction',
     'parking-box-line',
     'file-copy-line',
+    'government',
+    'youtube-line',
+    'function-add-line'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
