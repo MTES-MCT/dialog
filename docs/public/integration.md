@@ -60,7 +60,7 @@ La transformation au format DiaLog nécessite en tout cas de pouvoir obtenir les
         * _(De préférence)_ **Géométrie** : de préférence fournie directement au format GeoJSON.
         * _(À défaut)_ Toutes les informations précises permettant de calculer une géométrie GeoJSON par une opération de géocodage (numéro d'adresse, nom de voie, code Insee de la commune, numéro de route départementale ou nationale, identifiants de points kilométriques...).
 
-Les arrêtés dont les données sources ne permettent pas de les importer de façon fidèle dans DiaLog ne seront pas importés et ne seront a fortiori pas mis à disposition sur les différents canaux de réutilisation (carte, export DATEX II, export CIFS).
+Les arrêtés dont les données sources ne permettent pas de les importer de façon fidèle dans DiaLog ne seront pas importés et ne seront a fortiori pas mis à disposition sur les différents canaux de réutilisation (carte, export DATEX II, export CIFS). Voir également la [documentation API](./api.md) pour la création d’arrêtés et les exports.
 
 ### 3. Mise à disposition pour réutilisation
 

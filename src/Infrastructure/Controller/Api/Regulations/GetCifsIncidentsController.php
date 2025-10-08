@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Controller\Api;
+namespace App\Infrastructure\Controller\Api\Regulations;
 
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -21,8 +22,9 @@ final class GetCifsIncidentsController
         '/api/regulations/cifs.{_format}',
         methods: 'GET',
         name: 'api_regulations_cifs',
-        requirements: ['_format' => 'xml'],
+        defaults: ['_format' => 'xml'],
     )]
+    #[OA\Tag(name: 'Regulations')]
     public function __invoke(): Response
     {
         $incidents = $this->queryBus->handle(new GetCifsIncidentsQuery());
@@ -31,6 +33,8 @@ final class GetCifsIncidentsController
             $this->twig->render('api/regulations/cifs.xml.twig', [
                 'incidents' => $incidents,
             ]),
+            Response::HTTP_OK,
+            ['Content-Type' => 'text/xml; charset=UTF-8'],
         );
     }
 }
