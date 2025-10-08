@@ -30,11 +30,11 @@ nelmio_security:
         enabled: true
         enforce:
             default-src: ['self']
-            script-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io', 'https://stats.beta.gouv.fr/matomo.js', 'unsafe-inline']
-            style-src: ['self', 'https://dialog-metabase.osc-fr1.scalingo.io', 'unsafe-inline']
-            connect-src: ['self', 'https://data.geopf.fr']
+            script-src: ['self', 'https://cdn.jsdelivr.net', 'https://dialog-metabase.osc-fr1.scalingo.io', 'https://stats.beta.gouv.fr/matomo.js', 'unsafe-inline']
+            style-src: ['self', 'https://cdn.jsdelivr.net', 'https://dialog-metabase.osc-fr1.scalingo.io', 'unsafe-inline']
+            connect-src: ['self', 'https://data.geopf.fr', 'https://cdn.jsdelivr.net']
             font-src: ['self']
-            img-src: ['self', 'data:', 'blob:', 'https://dialog.oos.cloudgouv-eu-west-1.outscale.com']
+            img-src: ['self', 'data:', 'blob:', 'https://dialog.oos.cloudgouv-eu-west-1.outscale.com', 'https://cdn.jsdelivr.net']
             # maplibre-gl
             # https://maplibre.org/maplibre-gl-js/docs/#csp-directives
             worker-src: ['blob:']
