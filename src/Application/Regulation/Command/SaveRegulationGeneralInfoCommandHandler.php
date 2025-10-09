@@ -65,7 +65,6 @@ final class SaveRegulationGeneralInfoCommandHandler
         }
 
         $command->regulationOrderRecord->updateOrganization($command->organization);
-
         $regulationOrder = $command->regulationOrderRecord->getRegulationOrder();
 
         $regulationOrder->update(

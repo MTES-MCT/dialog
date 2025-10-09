@@ -18,6 +18,7 @@ final class SaveMeasureCommand implements CommandInterface
     public ?int $maxSpeed = null;
     /** @var SaveLocationCommand[] */
     public array $locations = [];
+    /** @var SavePeriodCommand[] */
     public array $periods = [];
     public ?\DateTimeInterface $createdAt = null;
     public ?SaveVehicleSetCommand $vehicleSet = null;
@@ -55,9 +56,9 @@ final class SaveMeasureCommand implements CommandInterface
             }
         } else {
             $locationCommand = new SaveLocationCommand();
-            $locationCommand->organization = $regulationOrder?->getRegulationOrderRecord()->getOrganization();
-
+            $locationCommand->organization = $regulationOrder?->getRegulationOrderRecord()?->getOrganization();
             $command->addLocation($locationCommand);
+
             $command->periods[] = new SavePeriodCommand();
         }
 

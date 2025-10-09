@@ -4,14 +4,25 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\EventSubscriber;
 
+use App\Application\Exception\AbscissaOutOfRangeException;
+use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\LaneGeocodingFailureException;
+use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
+use App\Application\Exception\RoadGeocodingFailureException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ApIExceptionSubscriber implements EventSubscriberInterface
 {
+    public function __construct(
+        private TranslatorInterface $translator,
+    ) {
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -23,29 +34,59 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
     {
         $exception = $event->getThrowable();
 
-        if (!str_starts_with($event->getRequest()->getPathInfo(), '/api')) {
+        if (!$this->isApiRequest($event)) {
             return;
         }
 
-        // Check if validation exception is nested
+        $response = $this->createApiErrorResponse($exception);
+
+        if ($response instanceof JsonResponse) {
+            $event->setResponse($response);
+        }
+    }
+
+    private function isApiRequest(ExceptionEvent $event): bool
+    {
+        return str_starts_with($event->getRequest()->getPathInfo(), '/api');
+    }
+
+    private function createApiErrorResponse(\Throwable $exception): ?JsonResponse
+    {
         if ($exception instanceof ValidationFailedException) {
-            $violations = $exception->getViolations();
-            $response = new JsonResponse([
+            return new JsonResponse([
                 'status' => 422,
                 'detail' => 'Validation failed',
                 'violations' => array_map(
-                    fn ($violation) => [
+                    static fn ($violation) => [
                         'propertyPath' => $violation->getPropertyPath(),
                         'title' => $violation->getMessage(),
                         'parameters' => $violation->getParameters(),
                     ],
-                    iterator_to_array($violations),
+                    iterator_to_array($exception->getViolations()),
                 ),
             ], 422);
-
-            $event->setResponse($response);
-
-            return;
         }
+
+        foreach ($this->getErrorMap() as [$exceptionClass, $detail]) {
+            if ($exception instanceof $exceptionClass) {
+                return new JsonResponse([
+                    'status' => 400,
+                    'detail' => $detail,
+                ], 400);
+            }
+        }
+
+        return null;
+    }
+
+    private function getErrorMap(): array
+    {
+        return [
+            [LaneGeocodingFailureException::class, $this->translator->trans('regulation.location.error.lane_geocoding_failed', [], 'validators')],
+            [AbscissaOutOfRangeException::class, $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators')],
+            [RoadGeocodingFailureException::class, $this->translator->trans('regulation.location.error.numbered_road_geocoding_failed', [], 'validators')],
+            [GeocodingFailureException::class, $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators')],
+            [OrganizationCannotInterveneOnGeometryException::class, $this->translator->trans('regulation.location.error.organization_cannot_intervene_on_geometry', ['%organizationName%' => null], 'validators')],
+        ];
     }
 }
