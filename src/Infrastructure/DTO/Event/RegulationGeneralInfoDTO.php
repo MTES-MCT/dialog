@@ -11,4 +11,5 @@ final class RegulationGeneralInfoDTO
     public ?string $subject = null;
     public ?string $otherCategoryText = null;
     public ?string $title = null;
+    public SaveMeasureDTO $measure;
 }
