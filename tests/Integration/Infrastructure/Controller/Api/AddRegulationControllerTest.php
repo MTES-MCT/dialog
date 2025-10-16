@@ -10,16 +10,65 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class AddRegulationControllerTest extends AbstractWebTestCase
 {
-    public function testAddRegulationWithValidCredentials(): void
+    public function testAddRegulation(): void
     {
         $client = static::createClient();
 
         $payload = [
-            'identifier' => 'API-INT-0001',
+            'identifier' => 'F2025/publié',
             'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
-            'title' => 'Travaux de voirie via API',
+            'title' => 'Travaux de voirie rue Exemple',
+            'measure' => [
+                'type' => 'speedLimitation',
+                'maxSpeed' => 30,
+                'createdAt' => '2025-10-09T08:00:00Z',
+                'vehicleSet' => [
+                    'allVehicles' => false,
+                    'restrictedTypes' => ['heavyGoodsVehicle'],
+                    'exemptedTypes' => ['commercial'],
+                    'otherRestrictedTypeText' => 'string',
+                    'otherExemptedTypeText' => 'string',
+                    'heavyweightMaxWeight' => 0,
+                    'maxWidth' => 0,
+                    'maxLength' => 0,
+                    'maxHeight' => 0,
+                    'critairTypes' => ['critair2'],
+                ],
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'startTime' => '2025-10-16T13:01:02.887Z',
+                    'endDate' => '2025-10-16T13:01:02.887Z',
+                    'endTime' => '2025-10-16T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => true,
+                    'dailyRange' => [
+                        'recurrenceType' => 'everyDay',
+                        'applicableDays' => ['monday'],
+                    ],
+                    'timeSlots' => [[
+                        'startTime' => '2025-10-16T13:01:02.887Z',
+                        'endTime' => '2025-10-16T13:01:02.887Z',
+                    ]],
+                ]],
+                'locations' => [[
+                    'roadType' => 'lane',
+                    'namedStreet' => [
+                        'cityCode' => '93070',
+                        'cityLabel' => 'saint ouen sur seine',
+                        'roadName' => 'rue eugene berthoud',
+                        'fromPointType' => '',
+                        'fromHouseNumber' => '',
+                        'fromRoadName' => '',
+                        'toPointType' => '',
+                        'toHouseNumber' => '',
+                        'toRoadName' => '',
+                        'geometry' => '',
+                        'direction' => 'BOTH',
+                    ],
+                ]],
+            ],
         ];
 
         $client->request(
@@ -42,8 +91,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
         $this->assertIsArray($data);
-        $this->assertArrayHasKey('message', $data);
-        $this->assertMatchesRegularExpression('/^Regulation .+ created$/', $data['message']);
+        $this->assertArrayHasKey('uuid', $data);
     }
 
     public function testAddRegulationWithInvalidCredentials(): void
@@ -88,6 +136,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'category' => 'invalidCategory',
             'subject' => RegulationSubjectEnum::OTHER->value,
             'title' => '',
+            'measure' => null,
         ];
 
         $client->request(
@@ -113,9 +162,106 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertIsArray($data['violations']);
 
         $paths = array_map(static fn (array $v) => $v['propertyPath'], $data['violations']);
-        $this->assertContains('identifier', $paths);
-        $this->assertContains('category', $paths);
-        $this->assertContains('title', $paths);
-        $this->assertContains('otherCategoryText', $paths);
+        $this->assertContains('generalInfo.category', $paths);
+        $this->assertContains('generalInfo.identifier', $paths);
+        $this->assertContains('generalInfo.otherCategoryText', $paths);
+        $this->assertContains('generalInfo.title', $paths);
+        $this->assertContains('measureDto', $paths);
+    }
+
+    public function testAddRegulationLaneGeocodingFailure(): void
+    {
+        $client = static::createClient();
+
+        $payload = json_encode([
+            'identifier' => 'API-INT-0004',
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'otherCategoryText' => null,
+            'title' => 'Géocodage voie en échec',
+            'measure' => [
+                'type' => 'noEntry',
+                'locations' => [[
+                    'roadType' => 'lane',
+                    'namedStreet' => [
+                        'isEntireStreet' => true,
+                        'cityCode' => '59368',
+                        'cityLabel' => 'La Madeleine (59110)',
+                        'roadBanId' => '12345_6789',
+                        'roadName' => 'Rue inconnue',
+                    ],
+                ]],
+            ],
+        ]);
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            $payload,
+        );
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertIsArray($data);
+        $this->assertSame(422, $data['status']);
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', (string) $data['detail']);
+    }
+
+    public function testAddRegulationLaneOrganizationOutOfPerimeter(): void
+    {
+        $client = static::createClient();
+
+        $payload = json_encode([
+            'identifier' => 'API-INT-0005',
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'otherCategoryText' => null,
+            'title' => 'Hors périmètre org',
+            'measure' => [
+                'type' => 'noEntry',
+                'locations' => [[
+                    'roadType' => 'lane',
+                    'namedStreet' => [
+                        'cityCode' => '44195',
+                        'cityLabel' => 'Savenay (44260)',
+                        'roadBanId' => '44195_0137',
+                        'roadName' => 'Route du Grand Brossais',
+                        'fromHouseNumber' => '15',
+                        'toHouseNumber' => '37bis',
+                        'direction' => 'BOTH',
+                    ],
+                ]],
+            ],
+        ]);
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            $payload,
+        );
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertIsArray($data);
+        $this->assertSame(422, $data['status']);
+        $this->assertStringStartsWith('L\'organisation "" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S\'il s\'agit d\'une erreur, vous pouvez contacter le support DiaLog', (string) $data['detail']);
     }
 }
