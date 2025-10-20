@@ -260,49 +260,113 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
             $row = $this->bdtopo2025Connection->fetchAssociative(
                 \sprintf(
-                    'SELECT ST_AsGeoJSON(
-                        ST_GeometryN(
-                            ST_LocateAlong(
-                                ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
-                                ST_InterpolatePoint(
-                                    ST_AddMeasure(s.geometrie, 0, ST_Length(s.geometrie::geography)),
-                                    p.geometrie
-                                ) + :abscissa * (
-                                    -- L ordre de numérisation (= ordre des points dans la géométrie de la section)
-                                    -- n\'est pas forcément l\'ordre des points de repère (= ordre de numérotation).
-                                    -- On détecte si les deux ordres correspondent avec cette règle :
-                                    -- => Les ordres sont alignés si et seulement si le 1er PR de la section est situé dans le 1er quart de la section
-                                    -- Si les ordres sont inversés, il faut compter les abscisses dans l\'autre sens
-                                    CASE WHEN ST_Distance(
-                                        ST_StartPoint(s.geometrie),
-                                        (
-                                            SELECT pp.geometrie
-                                            FROM point_de_repere AS pp
-                                            WHERE pp.identifiant_de_section = s.identifiant_de_section
-                                            AND pp.ordre >= 0
-                                            ORDER BY pp.ordre ASC
-                                            LIMIT 1
-                                        )
-                                    ) < ST_Length(s.geometrie) / 4
-                                    THEN 1
-                                    ELSE -1
-                                    END
+                    'WITH pr_section AS (
+                        -- Trouver la section qui contient le PR de référence
+                        SELECT
+                            s.identifiant_de_section,
+                            s.geometrie,
+                            ST_Length(s.geometrie::geography) AS section_length,
+                            ST_LineLocatePoint(s.geometrie, p.geometrie) AS pr_position,
+                            CASE WHEN ST_Distance(
+                                ST_StartPoint(s.geometrie),
+                                (
+                                    SELECT pp.geometrie
+                                    FROM point_de_repere AS pp
+                                    WHERE pp.identifiant_de_section = s.identifiant_de_section
+                                    AND pp.ordre >= 0
+                                    ORDER BY pp.ordre ASC
+                                    LIMIT 1
                                 )
-                            ),
-                            1
-                        )
-                    ) AS geom
-                    FROM point_de_repere AS p
-                    LEFT JOIN section_de_points_de_repere AS s
-                        ON p.identifiant_de_section = s.identifiant_de_section
-                    WHERE p.gestionnaire = :administrator
+                            ) < ST_Length(s.geometrie) / 4
+                            THEN 1
+                            ELSE -1
+                            END AS direction
+                        FROM point_de_repere AS p
+                        LEFT JOIN section_de_points_de_repere AS s
+                            ON p.identifiant_de_section = s.identifiant_de_section
+                        WHERE p.gestionnaire = :administrator
                         AND p.route = :roadNumber
                         AND p.numero = :pointNumber
                         AND p.cote = :side
-                        -- Types dans la BDTOPO : C, CS, DS, FS, PR, PR0, PRF.
-                        -- On ne garde que les types PR, PR0 et PRF, car les autres types ne correspondent pas à des PR "physiques".
                         AND p.type_de_pr LIKE \'PR%%\'
                         %s
+                    ),
+                    next_pr AS (
+                        -- Trouver le PR suivant sur la même route
+                        SELECT
+                            p2.numero,
+                            p2.geometrie,
+                            s2.identifiant_de_section,
+                            s2.geometrie AS section_geometrie,
+                            ST_Length(s2.geometrie::geography) AS section_length,
+                            ST_LineLocatePoint(s2.geometrie, p2.geometrie) AS pr_position
+                        FROM pr_section AS ps
+                        LEFT JOIN point_de_repere AS p2 ON p2.gestionnaire = :administrator
+                            AND p2.route = :roadNumber
+                            AND p2.cote = :side
+                            AND p2.numero = CAST(:pointNumber + 1 AS VARCHAR)
+                            AND p2.type_de_pr LIKE \'PR%%\'
+                        LEFT JOIN section_de_points_de_repere AS s2
+                            ON p2.identifiant_de_section = s2.identifiant_de_section
+                    ),
+                    position_calculation AS (
+                        -- Calculer la position cible
+                        SELECT
+                            ps.identifiant_de_section,
+                            ps.geometrie,
+                            ps.section_length,
+                            ps.pr_position,
+                            ps.direction,
+                            (:abscissa * ps.direction / ps.section_length) AS abscissa_offset,
+                            ps.pr_position + (:abscissa * ps.direction / ps.section_length) AS raw_position,
+                            CASE
+                                WHEN ps.pr_position + (:abscissa * ps.direction / ps.section_length) <= 1.0
+                                     AND ps.pr_position + (:abscissa * ps.direction / ps.section_length) >= 0.0 THEN
+                                    -- Position dans la section courante
+                                    ps.pr_position + (:abscissa * ps.direction / ps.section_length)
+                                WHEN ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
+                                     AND np.identifiant_de_section IS NOT NULL THEN
+                                    -- Débordement vers la section suivante : calculer la position dans la section du PR suivant
+                                    LEAST(
+                                        np.pr_position + ((:abscissa * ps.direction - (1.0 - ps.pr_position) * ps.section_length) / np.section_length),
+                                        1.0
+                                    )
+                                WHEN ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0 THEN
+                                    -- Pas de section suivante : s\'arrêter à la fin de la section courante
+                                    1.0
+                                ELSE
+                                    -- Position négative : s\'arrêter au début de la section courante
+                                    0.0
+                            END AS final_position,
+                            -- Déterminer quelle section utiliser
+                            CASE
+                                WHEN ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
+                                     AND np.identifiant_de_section IS NOT NULL THEN
+                                    -- Utiliser la section suivante
+                                    np.identifiant_de_section
+                                ELSE
+                                    -- Utiliser la section courante
+                                    ps.identifiant_de_section
+                            END AS target_section_id,
+                            COALESCE(np.section_geometrie, ps.geometrie) AS target_geometrie,
+                            COALESCE(np.section_length, ps.section_length) AS target_section_length
+                        FROM pr_section AS ps
+                        LEFT JOIN next_pr AS np ON ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
+                    )
+                    SELECT ST_AsGeoJSON(
+                        ST_LineInterpolatePoint(
+                            pc.target_geometrie,
+                            pc.final_position
+                        )
+                    ) AS geom,
+                    pc.pr_position,
+                    pc.direction,
+                    pc.abscissa_offset,
+                    pc.raw_position,
+                    pc.final_position,
+                    pc.target_section_id,
+                    pc.target_geometrie IS NOT NULL AS has_next_section
+                    FROM position_calculation AS pc
                     ',
                     empty($departmentCode) ? '' : 'AND p.code_insee_du_departement = :departmentCode',
                 ),

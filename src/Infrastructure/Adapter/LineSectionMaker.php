@@ -29,6 +29,7 @@ final class LineSectionMaker implements LineSectionMakerInterface
 
         $pointA = $fromCoords->asGeoJSON($includeCrs);
         $pointB = $toCoords->asGeoJSON($includeCrs);
+
         // Convertir la tolérance (mètres) en degrés (EPSG:4326) pour les opérations de snapping/splitting
         $snapToleranceDegrees = 0.00001 * (float) $tolerance;
 
