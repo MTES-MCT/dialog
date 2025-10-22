@@ -13,7 +13,7 @@ use App\Infrastructure\DTO\Event\SaveTimeSlotDTO;
 
 final class PeriodsTransformer
 {
-    public static function toCommands(array $periodDtos): array
+    public static function toCommands(?array $periodDtos = []): array
     {
         $commands = [];
 
