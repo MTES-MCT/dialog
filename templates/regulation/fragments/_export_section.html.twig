@@ -1,17 +1,19 @@
-
-<h3 class="fr-h4 fr-mb-2w">{{ 'regulation.export'|trans }}</h3>
-
-<div class="fr-mb-3w">
-    {% if regulationOrderTemplateUuid %}
-        <a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-left" href="{{ path('app_regulation_export', { uuid: regulationOrderRecordUuid })}}">
-            {{ 'regulation.export.doc'|trans }}
-        </a>
-        <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
-            {{ 'regulation.export.doc.mention'|trans }}
+<div class="app-card app-card--raised fr-mt-2w">
+    <div class="app-card__content">
+        <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.export'|trans }}</h3>
+        <div class="fr-mb-3w">
+            {% if regulationOrderTemplateUuid %}
+                <a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-left" href="{{ path('app_regulation_export', { uuid: regulationOrderRecordUuid })}}">
+                    {{ 'regulation.export.doc'|trans }}
+                </a>
+                <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+                    {{ 'regulation.export.doc.mention'|trans }}
+                </div>
+            {% else %}
+                <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
+                    {{ 'regulation.export.doc.mention.disabled'|trans }}
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
-            {{ 'regulation.export.doc.mention.disabled'|trans }}
-        </div>
-    {% endif %}
+    </div>
 </div>
