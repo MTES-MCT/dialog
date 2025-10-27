@@ -22,7 +22,7 @@ final class SaveMeasureDTO
     public ?string $createdAt = null;
     /** @var SavePeriodDTO[]|null */
     #[Map(target: 'periods', transform: [PeriodsTransformer::class, 'toCommands'])]
-    public ?array $periods = null;
+    public ?array $periods = [];
     /** @var SaveLocationDTO[]|null */
     #[Map(target: 'locations', transform: [LocationsTransformer::class, 'toCommands'])]
     public ?array $locations = [];

@@ -207,12 +207,12 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             $payload,
         );
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseStatusCodeSame(400);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
-        $this->assertSame(422, $data['status']);
+        $this->assertSame(400, $data['status']);
         $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', (string) $data['detail']);
     }
 
@@ -256,12 +256,12 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             $payload,
         );
 
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseStatusCodeSame(400);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
-        $this->assertSame(422, $data['status']);
+        $this->assertSame(400, $data['status']);
         $this->assertStringStartsWith('L\'organisation "" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S\'il s\'agit d\'une erreur, vous pouvez contacter le support DiaLog', (string) $data['detail']);
     }
 }

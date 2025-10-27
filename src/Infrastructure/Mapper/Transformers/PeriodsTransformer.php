@@ -17,6 +17,10 @@ final class PeriodsTransformer
     {
         $commands = [];
 
+        if (!$periodDtos) {
+            return $commands;
+        }
+
         foreach ($periodDtos as $dto) {
             if (!$dto instanceof SavePeriodDTO) {
                 continue;
