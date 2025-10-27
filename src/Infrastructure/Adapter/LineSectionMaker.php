@@ -141,10 +141,26 @@ final class LineSectionMaker implements LineSectionMakerInterface
                         LEAST(ST_LineLocatePoint((SELECT geom FROM b_host), (SELECT geom FROM b)), ST_LineLocatePoint((SELECT geom FROM b_host), (SELECT geom FROM b_to_a_endpoint))),
                         GREATEST(ST_LineLocatePoint((SELECT geom FROM b_host), (SELECT geom FROM b)), ST_LineLocatePoint((SELECT geom FROM b_host), (SELECT geom FROM b_to_a_endpoint)))
                     ) AS geom
+                ),
+                all_other_segments AS (
+                    SELECT l.geom
+                    FROM base_merged_linestring l
+                    WHERE NOT ST_Equals(l.geom, (SELECT geom FROM a_host))
+                      AND NOT ST_Equals(l.geom, (SELECT geom FROM b_host))
+                ),
+                intermediate_sections AS (
+                    SELECT geom FROM all_other_segments
+                ),
+                all_sections AS (
+                    SELECT geom FROM a_side_section
+                    UNION ALL
+                    SELECT geom FROM intermediate_sections
+                    UNION ALL
+                    SELECT geom FROM b_side_section
                 )
                 SELECT CASE WHEN EXISTS (SELECT 1 FROM same_host_section)
                     THEN ST_AsGeoJSON(f_ST_NormalizeGeometryCollection((SELECT geom FROM same_host_section)))
-                    ELSE ST_AsGeoJSON(f_ST_NormalizeGeometryCollection(ST_Collect((SELECT geom FROM a_side_section), (SELECT geom FROM b_side_section))))
+                    ELSE ST_AsGeoJSON(f_ST_NormalizeGeometryCollection((SELECT ST_Collect(geom) FROM all_sections)))
                 END AS geom
                 ',
             [
