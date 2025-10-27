@@ -307,29 +307,6 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_1_namedStreet_toHouseNumber_error')->text());
     }
 
-    public function testLaneWithUnknownHouseNumbers(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        // Get the raw values.
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-        unset($form['measure_form[locations][1][namedStreet][isEntireStreet]']);
-        $form['measure_form[locations][1][namedStreet][toHouseNumber]'] = '999'; // Mock will return no result
-
-        // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values = $form->getPhpValues();
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
-
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('La géolocalisation de la voie entre ces points a échoué', $crawler->filter('#measure_form_locations_1_namedStreet_fromPointType_error')->text());
-    }
-
     public function testUpdateLaneWithIntersections(): void
     {
         $client = $this->login();

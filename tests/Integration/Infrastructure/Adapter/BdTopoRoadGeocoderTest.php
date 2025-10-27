@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
-use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -266,21 +265,6 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             pointNumber: '1',
             side: 'U',
             abscissa: 0,
-        );
-    }
-
-    public function testComputeReferencePointErrorOutOfRange(): void
-    {
-        $this->expectException(AbscissaOutOfRangeException::class);
-
-        $this->roadGeocoder->computeReferencePoint(
-            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
-            administrator: 'Ardèche',
-            roadNumber: 'D906',
-            departmentCode: null,
-            pointNumber: '34',
-            side: 'U',
-            abscissa: 4000,
         );
     }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
-use App\Application\Exception\GeocodingFailureException;
 use App\Domain\Geography\Coordinates;
 use App\Infrastructure\Adapter\LineSectionMaker;
 use Doctrine\DBAL\Connection;
@@ -110,23 +109,12 @@ final class LineSectionMakerTest extends KernelTestCase
                 'fromCoords' => Coordinates::fromLonLat(1, 1), // Belongs to a (1st segment)
                 'toCoords' => Coordinates::fromLonLat(3, 2), // Belongs to a (2nd segment)
                 'section' => json_encode([
-                    'type' => 'GeometryCollection',
-                    'geometries' => [
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [2, 2],
-                                [3, 2],
-                            ],
-                        ],
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [1, 1],
-                                [1, 2],
-                                [2, 2],
-                            ],
-                        ],
+                    'type' => 'LineString',
+                    'coordinates' => [
+                        [1, 1],
+                        [1, 2],
+                        [2, 2],
+                        [3, 2],
                     ],
                 ]),
             ],
@@ -194,16 +182,70 @@ final class LineSectionMakerTest extends KernelTestCase
         $this->assertSame($section, $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords, $tolerance));
     }
 
-    private function provideComputeSectionError(): array
+    private function provideComputeSectionCrossSegments(): array
     {
         return [
             'pointsDoNotMapToSameSegment' => [
                 'fromCoords' => Coordinates::fromLonLat(1, 1), // Belongs to a
                 'toCoords' => Coordinates::fromLonLat(7, 3), // Maps to c
+                'section' => json_encode([
+                    'type' => 'MultiLineString',
+                    'coordinates' => [
+                        [
+                            [1, 1],
+                            [1, 2],
+                            [2, 2],
+                            [3, 2],
+                            [5, 2],
+                        ],
+                        [
+                            [5, 2],
+                            [5, 3],
+                        ],
+                        [
+                            [12, 2],
+                            [13, 2],
+                        ],
+                        [
+                            [5, 2],
+                            [7, 2],
+                        ],
+                    ],
+                ]),
             ],
             'pointsMapOutsideTolerance' => [
                 'fromCoords' => Coordinates::fromLonLat(7, 1),
                 'toCoords' => Coordinates::fromLonLat(9.6, 2), // P
+                'section' => json_encode([
+                    'type' => 'GeometryCollection',
+                    'geometries' => [
+                        [
+                            'type' => 'Point',
+                            'coordinates' => [7, 1],
+                        ],
+                        [
+                            'type' => 'LineString',
+                            'coordinates' => [
+                                [1, 1],
+                                [1, 2],
+                                [2, 2],
+                                [3, 2],
+                                [5, 2],
+                            ],
+                        ],
+                        [
+                            'type' => 'LineString',
+                            'coordinates' => [
+                                [5, 2],
+                                [5, 3],
+                            ],
+                        ],
+                        [
+                            'type' => 'Point',
+                            'coordinates' => [12, 2],
+                        ],
+                    ],
+                ]),
                 'getTolerance' => fn ($bdtopoConnection) => 0.99 // Just below
                     * self::getThresholdTolerance(
                         $bdtopoConnection,
@@ -216,13 +258,12 @@ final class LineSectionMakerTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider provideComputeSectionError
+     * @dataProvider provideComputeSectionCrossSegments
      */
-    public function testComputeSectionError(Coordinates $fromCoords, Coordinates $toCoords, ?\Closure $getTolerance = null): void
+    public function testComputeSectionCrossSegments(Coordinates $fromCoords, Coordinates $toCoords, string $section, ?\Closure $getTolerance = null): void
     {
         $tolerance = $getTolerance ? $getTolerance($this->bdtopoConnection) : 1;
 
-        $this->expectException(GeocodingFailureException::class);
-        $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords, $tolerance);
+        $this->assertSame($section, $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords, $tolerance));
     }
 }

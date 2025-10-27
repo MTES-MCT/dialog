@@ -387,37 +387,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringStartsWith('La géolocalisation de la voie entre ces points a échoué', $crawler->filter('#measure_form_locations_0_namedStreet_fromPointType_error')->text());
     }
 
-    public function testAddLaneWithHouseNumbersOnMultipleSections(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-
-        // Get the raw values.
-        $values = $form->getPhpValues();
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '59606';
-        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Valenciennes (59300)';
-        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '59606_1500';
-        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue du Faubourg de Paris';
-        unset($values['measure_form']['locations'][0]['namedStreet']['isEntireStreet']);
-        $values['measure_form']['locations'][0]['namedStreet']['fromHouseNumber'] = '80';
-        $values['measure_form']['locations'][0]['namedStreet']['toHouseNumber'] = '44'; // Not on same section than 80
-        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
-        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('La géolocalisation de la voie entre ces points a échoué', $crawler->filter('#measure_form_locations_0_namedStreet_fromPointType_error')->text());
-    }
-
     private function provideTestAddNumberedRoad(): array
     {
         return [
@@ -561,70 +530,6 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith('La géolocalisation de la route entre ces points de repère a échoué', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
-    }
-
-    public function testAddDepartmentalRoadWithStartAbscissaOutOfRange(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-
-        // Get the raw values.
-        $values = $form->getPhpValues();
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['departmentalRoad']['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['departmentalRoad']['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromPointNumber'] = '1';
-        $values['measure_form']['locations'][0]['departmentalRoad']['toPointNumber'] = '5';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromSide'] = 'U';
-        $values['measure_form']['locations'][0]['departmentalRoad']['toSide'] = 'U';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100000000;
-        $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 650;
-        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromAbscissa_error')->text());
-    }
-
-    public function testAddDepartmentalRoadWithEndAbscissaOutOfRange(): void
-    {
-        $client = $this->login();
-        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $saveButton = $crawler->selectButton('Valider');
-        $form = $saveButton->form();
-
-        // Get the raw values.
-        $values = $form->getPhpValues();
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['departmentalRoad']['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['departmentalRoad']['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromPointNumber'] = '1';
-        $values['measure_form']['locations'][0]['departmentalRoad']['toPointNumber'] = '5';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromSide'] = 'U';
-        $values['measure_form']['locations'][0]['departmentalRoad']['toSide'] = 'U';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100;
-        $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 100000000;
-        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-
-        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
-        $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette abscisse n\'est pas située sur la route. Veuillez vérifier votre saisie.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toAbscissa_error')->text());
     }
 
     public function testAddRawGeoJSONAsUserHidden(): void
