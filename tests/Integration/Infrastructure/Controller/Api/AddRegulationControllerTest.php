@@ -20,7 +20,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
             'title' => 'Travaux de voirie rue Exemple',
-            'measure' => [
+            'measures' => [[
                 'type' => 'speedLimitation',
                 'maxSpeed' => 30,
                 'createdAt' => '2025-10-09T08:00:00Z',
@@ -68,7 +68,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
                         'direction' => 'BOTH',
                     ],
                 ]],
-            ],
+            ]],
         ];
 
         $client->request(
@@ -136,7 +136,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'category' => 'invalidCategory',
             'subject' => RegulationSubjectEnum::OTHER->value,
             'title' => '',
-            'measure' => null,
+            'measures' => null,
         ];
 
         $client->request(
@@ -166,7 +166,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertContains('generalInfo.identifier', $paths);
         $this->assertContains('generalInfo.otherCategoryText', $paths);
         $this->assertContains('generalInfo.title', $paths);
-        $this->assertContains('measureDto', $paths);
+        $this->assertContains('measureDtos', $paths);
     }
 
     public function testAddRegulationLaneGeocodingFailure(): void
@@ -179,7 +179,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
             'title' => 'Géocodage voie en échec',
-            'measure' => [
+            'measures' => [[
                 'type' => 'noEntry',
                 'locations' => [[
                     'roadType' => 'lane',
@@ -191,7 +191,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
                         'roadName' => 'Rue inconnue',
                     ],
                 ]],
-            ],
+            ]],
         ]);
 
         $client->request(
@@ -226,7 +226,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
             'title' => 'Hors périmètre org',
-            'measure' => [
+            'measures' => [[
                 'type' => 'noEntry',
                 'locations' => [[
                     'roadType' => 'lane',
@@ -240,7 +240,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
                         'direction' => 'BOTH',
                     ],
                 ]],
-            ],
+            ]],
         ]);
 
         $client->request(

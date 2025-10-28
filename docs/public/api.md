@@ -34,7 +34,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
 - `subject` (string, nullable) — sujet: `roadMaintenance` | `incident` | `event` | `winterMaintenance` | `other`
 - `otherCategoryText` (string, nullable, max 100)
 - `title` (string, max 255)
-- `measure` (object, nullable)
+- `measures` (array<object>, nullable)
   - `type` (string) — enum: `noEntry` | `speedLimitation` | `parkingProhibited`
   - `maxSpeed` (integer, nullable) — requis uniquement si `type = speedLimitation`
   - `createdAt` (string, date-time ISO, nullable)
@@ -65,17 +65,16 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
   - `locations` (array<object>, nullable)
     - `roadType` (string) — enum: `lane` | `departmentalRoad` | `nationalRoad` | `rawGeoJSON`
     - `namedStreet` (object, nullable) — utilisé avec `roadType = lane`
-      - `cityCode`, `cityLabel`, `roadName` (string, nullable)
+      - `cityCode` (string, nullable) — code INSEE de la commune
+      - `cityLabel`, `roadName` (string, nullable)
       - `fromPointType`, `fromHouseNumber`, `fromRoadName` (string, nullable)
       - `toPointType`, `toHouseNumber`, `toRoadName` (string, nullable)
-      - `geometry` (string GeoJSON, nullable)
       - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`
     - `departmentalRoad` (object, nullable) — utilisé avec `roadType = departmentalRoad`
       - `administrator`, `roadNumber`, `fromDepartmentCode`, `fromPointNumber`, `toDepartmentCode`, `toPointNumber` (string, nullable)
       - `fromAbscissa`, `toAbscissa` (integer, nullable)
       - `fromSide`, `toSide` (string, nullable)
       - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`
-      - `geometry` (string GeoJSON, nullable)
     - `nationalRoad` (object, nullable) — utilisé avec `roadType = nationalRoad`
       - mêmes champs que `departmentalRoad`
     - `rawGeoJSON` (object, nullable) — utilisé avec `roadType = rawGeoJSON`
@@ -84,7 +83,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
 
 ##### Enums détaillés
 
-- `measure.type` (MeasureTypeEnum): `noEntry`, `speedLimitation`, `parkingProhibited`
+- `measures[*].type` (MeasureTypeEnum): `noEntry`, `speedLimitation`, `parkingProhibited`
 - `locations[*].roadType` (RoadTypeEnum): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`
 - `namedStreet.direction`, `departmentalRoad.direction`, `nationalRoad.direction` (DirectionEnum): `BOTH`, `A_TO_B`, `B_TO_A`
 - `periods[*].recurrenceType`, `dailyRange.recurrenceType` (PeriodRecurrenceTypeEnum): `everyDay`, `certainDays`
@@ -102,54 +101,56 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
   "category": "temporaryRegulation",
   "subject": "roadMaintenance",
   "title": "Travaux",
-  "measure": {
-    "type": "speedLimitation",
-    "maxSpeed": 30,
-    "createdAt": "2025-10-09T08:00:00Z",
-    "vehicleSet": {
-      "allVehicles": false,
-      "restrictedTypes": ["heavyGoodsVehicle","dimensions","critair"],
-      "exemptedTypes": ["emergencyServices","roadMaintenanceOrConstruction"],
-      "heavyweightMaxWeight": 3.5,
-      "maxWidth": 2.1,
-      "maxLength": 7.5,
-      "maxHeight": 3.0,
-      "critairTypes": ["critair4","critair5"]
-    },
-    "periods": [
-      {
-        "startDate": "2025-10-10T00:00:00Z",
-        "startTime": "2025-10-10T08:00:00Z",
-        "endDate": "2025-10-20T00:00:00Z",
-        "endTime": "2025-10-20T18:00:00Z",
-        "recurrenceType": "certainDays",
-        "isPermanent": false,
-        "dailyRange": {
+  "measures": [
+    {
+      "type": "speedLimitation",
+      "maxSpeed": 30,
+      "createdAt": "2025-10-09T08:00:00Z",
+      "vehicleSet": {
+        "allVehicles": false,
+        "restrictedTypes": ["heavyGoodsVehicle","dimensions","critair"],
+        "exemptedTypes": ["emergencyServices","roadMaintenanceOrConstruction"],
+        "heavyweightMaxWeight": 3.5,
+        "maxWidth": 2.1,
+        "maxLength": 7.5,
+        "maxHeight": 3.0,
+        "critairTypes": ["critair4","critair5"]
+      },
+      "periods": [
+        {
+          "startDate": "2025-10-10T00:00:00Z",
+          "startTime": "2025-10-10T08:00:00Z",
+          "endDate": "2025-10-20T00:00:00Z",
+          "endTime": "2025-10-20T18:00:00Z",
           "recurrenceType": "certainDays",
-          "applicableDays": ["monday","tuesday","wednesday"]
-        },
-        "timeSlots": [
-          { "startTime": "2025-10-10T08:00:00Z", "endTime": "2025-10-10T12:00:00Z" },
-          { "startTime": "2025-10-10T14:00:00Z", "endTime": "2025-10-10T18:00:00Z" }
-        ]
-      }
-    ],
-    "locations": [
-      {
-        "roadType": "lane",
-        "namedStreet": {
-          "cityCode": "75056",
-          "cityLabel": "Paris",
-          "roadName": "Rue Exemple",
-          "fromPointType": "houseNumber",
-          "fromHouseNumber": "10",
-          "toPointType": "houseNumber",
-          "toHouseNumber": "20",
-          "direction": "BOTH"
+          "isPermanent": false,
+          "dailyRange": {
+            "recurrenceType": "certainDays",
+            "applicableDays": ["monday","tuesday","wednesday"]
+          },
+          "timeSlots": [
+            { "startTime": "2025-10-10T08:00:00Z", "endTime": "2025-10-10T12:00:00Z" },
+            { "startTime": "2025-10-10T14:00:00Z", "endTime": "2025-10-10T18:00:00Z" }
+          ]
         }
-      }
-    ]
-  }
+      ],
+      "locations": [
+        {
+          "roadType": "lane",
+          "namedStreet": {
+          "cityCode": "75056", // code INSEE
+            "cityLabel": "Paris",
+            "roadName": "Rue Exemple",
+            "fromPointType": "houseNumber",
+            "fromHouseNumber": "10",
+            "toPointType": "houseNumber",
+            "toHouseNumber": "20",
+            "direction": "BOTH"
+          }
+        }
+      ]
+    }
+  ]
 }
 ```
 

@@ -19,17 +19,19 @@ final class SaveRegulationWithMeasureCommandHandler
     public function __invoke(SaveRegulationWithMeasureCommand $command): RegulationOrderRecord
     {
         $regulationOrderRecord = $this->commandBus->handle($command->generalInfo);
-
-        $measureCommand = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder());
-        $this->objectMapper->map($command->measureDto, $measureCommand);
-
         $organization = $command->generalInfo->organization;
-        foreach ($measureCommand->locations as $locationCommand) {
-            $locationCommand->organization = $organization;
-        }
 
-        $measure = $this->commandBus->handle($measureCommand);
-        $regulationOrderRecord->getRegulationOrder()->addMeasure($measure);
+        foreach ($command->measureDtos ?? [] as $measureDto) {
+            $measureCommand = SaveMeasureCommand::create($regulationOrderRecord->getRegulationOrder());
+            $this->objectMapper->map($measureDto, $measureCommand);
+
+            foreach ($measureCommand->locations as $locationCommand) {
+                $locationCommand->organization = $organization;
+            }
+
+            $measure = $this->commandBus->handle($measureCommand);
+            $regulationOrderRecord->getRegulationOrder()->addMeasure($measure);
+        }
 
         $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
 
