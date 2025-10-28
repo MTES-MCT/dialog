@@ -30,6 +30,14 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
                 continue;
             }
 
+            if ($command->$roadType === null) {
+                $this->context->buildViolation('common.error.not_blank')
+                    ->atPath($roadType)
+                    ->addViolation();
+
+                return;
+            }
+
             // '$command->$roadType' is a 'variable variable' syntax => https://www.php.net/manual/en/language.variables.variable.php
             if (!$command->$roadType->administrator) {
                 $this->context->buildViolation('common.error.not_blank')

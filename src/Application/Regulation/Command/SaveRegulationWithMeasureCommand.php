@@ -11,7 +11,8 @@ final class SaveRegulationWithMeasureCommand implements CommandInterface
 {
     public function __construct(
         public SaveRegulationGeneralInfoCommand $generalInfo,
-        public ?SaveMeasureDTO $measureDto,
+        /** @var SaveMeasureDTO[]|null */
+        public ?array $measureDtos,
     ) {
     }
 }
