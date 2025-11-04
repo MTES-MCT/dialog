@@ -377,6 +377,9 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['type'] = 'noEntry';
         $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['namedStreet'] = [];
+        $values['measure_form']['locations'][0]['nationalRoad'] = [];
+        $values['measure_form']['locations'][0]['rawGeoJSON'] = [];
         $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
         $values['measure_form']['locations'][0]['departmentalRoad']['administrator'] = 'Ardèche';
@@ -392,7 +395,6 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-
         $this->assertResponseStatusCodeSame(422);
         $this->assertStringStartsWith('La géolocalisation de la route entre ces points de repère a échoué', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
     }

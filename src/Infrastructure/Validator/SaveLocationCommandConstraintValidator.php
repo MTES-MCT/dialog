@@ -9,13 +9,55 @@ use App\Domain\Regulation\Location\NumberedRoad;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SaveLocationCommandConstraintValidator extends ConstraintValidator
 {
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     public function validate(mixed $command, Constraint $constraint): void
     {
         if (!$command instanceof SaveLocationCommand) {
             throw new UnexpectedValueException($command, SaveLocationCommand::class);
+        }
+
+        // Un seul type de localisation doit être présent
+        $hasNamedStreet = $command->namedStreet?->roadName !== null;
+        $hasDepartmentalRoad = $command->departmentalRoad?->roadNumber !== null;
+        $hasNationalRoad = $command->nationalRoad?->roadNumber !== null;
+        $hasRawGeoJSON = $command->rawGeoJSON?->label !== null;
+
+        $filledCount = ($hasNamedStreet ? 1 : 0)
+            + ($hasDepartmentalRoad ? 1 : 0)
+            + ($hasNationalRoad ? 1 : 0)
+            + ($hasRawGeoJSON ? 1 : 0);
+
+        if ($filledCount !== 1) {
+            $this->context->buildViolation($this->translator->trans('regulation.location.type.error.exclusive', [], 'messages'))
+                ->addViolation();
+        }
+
+        // La section doit correspondre au roadType
+        $expectedFieldByType = [
+            'lane' => 'namedStreet',
+            'departmentalRoad' => 'departmentalRoad',
+            'nationalRoad' => 'nationalRoad',
+            'rawGeoJSON' => 'rawGeoJSON',
+        ];
+
+        $roadType = $command->roadType;
+        if (isset($expectedFieldByType[$roadType])) {
+            $expectedField = $expectedFieldByType[$roadType];
+            if ($command->$expectedField === null) {
+                $this->context->buildViolation($this->translator->trans('regulation.location.type.error.mismatch', [], 'messages'))
+                    ->atPath('roadType')
+                    ->addViolation();
+
+                return;
+            }
         }
 
         // Pourquoi faire tout ce qui suit ?
