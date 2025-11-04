@@ -2806,6 +2806,14 @@
                 <source>regulation_order_template.duplicate_modal.title</source>
                 <target>Dupliquer ce modèle ?</target>
             </trans-unit>
+            <trans-unit id="regulation.location.type.error.exclusive">
+                <source>regulation.location.type.error.exclusive</source>
+                <target>Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale ou GeoJSON brut).</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.type.error.mismatch">
+                <source>regulation.location.type.error.mismatch</source>
+                <target>La section de localisation doit correspondre à la valeur de type de voie (roadType).</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

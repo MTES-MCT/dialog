@@ -35,6 +35,7 @@
         "symfony/messenger": "7.3.*",
         "symfony/mime": "7.3.*",
         "symfony/monolog-bundle": "^3.8",
+        "symfony/object-mapper": "7.3.*",
         "symfony/rate-limiter": "7.3.*",
         "symfony/redis-messenger": "7.3.*",
         "symfony/runtime": "7.3.*",

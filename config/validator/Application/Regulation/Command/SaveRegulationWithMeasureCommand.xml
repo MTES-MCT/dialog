@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Regulation\Command\SaveRegulationWithMeasureCommand">
+        <property name="measureDtos">
+            <constraint name="NotBlank"/>
+            <constraint name="Type">
+                <option name="type">array</option>
+            </constraint>
+            <constraint name="Count">
+                <option name="min">1</option>
+            </constraint>
+            <constraint name="Valid"/>
+        </property>
+        <property name="generalInfo">
+            <constraint name="NotBlank"/>
+            <constraint name="Valid"/>
+        </property>
+    </class>
+</constraint-mapping>

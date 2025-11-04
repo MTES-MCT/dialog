@@ -18,7 +18,7 @@ final class SavePeriodCommand implements CommandInterface
     public ?string $recurrenceType;
     public ?Measure $measure;
     public ?SaveDailyRangeCommand $dailyRange = null;
-    public ?array $timeSlots;
+    public ?array $timeSlots = [];
     public ?bool $isPermanent = false;
 
     public function __construct(

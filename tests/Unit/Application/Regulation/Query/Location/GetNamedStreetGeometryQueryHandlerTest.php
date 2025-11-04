@@ -16,7 +16,6 @@ use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
@@ -29,8 +28,8 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     private string $fromHouseNumber;
     private string $toHouseNumber;
     private string $geometry;
-    private MockObject $roadGeocoder;
-    private MockObject $laneSectionMaker;
+    private $roadGeocoder;
+    private $laneSectionMaker;
 
     public function setUp(): void
     {
@@ -122,6 +121,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     public function testGetWithLocationToRecompute(): void
     {
         $location = $this->createMock(Location::class);
+
         $namedStreet = $this->createMock(NamedStreet::class);
         $namedStreet
             ->expects(self::once())
@@ -305,5 +305,171 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->toCoords = null;
 
         $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+    }
+
+    public function testComputeRoadBanIdWhenMissing(): void
+    {
+        $computedRoadBanId = '44195_9999';
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadBanId')
+            ->with($this->roadName, $this->cityCode)
+            ->willReturn($computedRoadBanId);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($computedRoadBanId)
+            ->willReturn('fullLaneGeometry');
+
+        $this->laneSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->with(
+                'fullLaneGeometry',
+                $computedRoadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                null,
+                $this->fromHouseNumber,
+                null,
+                null,
+                $this->toHouseNumber,
+                null,
+            )
+            ->willReturn($this->geometry);
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = null; // manquant
+        $saveNamedStreetCommand->roadName = $this->roadName; // fourni
+        $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
+        $saveNamedStreetCommand->toHouseNumber = $this->toHouseNumber;
+
+        $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+
+        $this->assertSame($this->geometry, $result);
+    }
+
+    public function testComputeFromRoadBanIdWhenMissingButFromRoadNameProvided(): void
+    {
+        $computedFromRoadBanId = '44195_from_1234';
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadBanId')
+            ->with('Rue Du Départ', $this->cityCode)
+            ->willReturn($computedFromRoadBanId);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadBanId)
+            ->willReturn('fullLaneGeometry');
+
+        $this->laneSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->with(
+                'fullLaneGeometry',
+                $this->roadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                null,
+                $this->fromHouseNumber,
+                $computedFromRoadBanId,
+                null,
+                $this->toHouseNumber,
+                null,
+            )
+            ->willReturn($this->geometry);
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId; // déjà connu
+        $saveNamedStreetCommand->roadName = $this->roadName;
+        $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
+        $saveNamedStreetCommand->toHouseNumber = $this->toHouseNumber;
+        $saveNamedStreetCommand->fromRoadName = 'Rue Du Départ';
+        $saveNamedStreetCommand->fromRoadBanId = null; // à calculer
+
+        $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+
+        $this->assertSame($this->geometry, $result);
+    }
+
+    public function testComputeToRoadBanIdWhenMissingButToRoadNameProvided(): void
+    {
+        $computedToRoadBanId = '44195_to_5678';
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadBanId')
+            ->with('Rue D\'Arrivée', $this->cityCode)
+            ->willReturn($computedToRoadBanId);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadBanId)
+            ->willReturn('fullLaneGeometry');
+
+        $this->laneSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->with(
+                'fullLaneGeometry',
+                $this->roadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                null,
+                $this->fromHouseNumber,
+                null,
+                null,
+                $this->toHouseNumber,
+                $computedToRoadBanId,
+            )
+            ->willReturn($this->geometry);
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId; // déjà connu
+        $saveNamedStreetCommand->roadName = $this->roadName;
+        $saveNamedStreetCommand->fromHouseNumber = $this->fromHouseNumber;
+        $saveNamedStreetCommand->toHouseNumber = $this->toHouseNumber;
+        $saveNamedStreetCommand->toRoadName = 'Rue D\'Arrivée';
+        $saveNamedStreetCommand->toRoadBanId = null; // à calculer
+
+        $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+
+        $this->assertSame($this->geometry, $result);
     }
 }
