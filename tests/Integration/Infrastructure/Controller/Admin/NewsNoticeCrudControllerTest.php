@@ -9,7 +9,6 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class NewsNoticeCrudControllerTest extends AbstractWebTestCase
 {
-
     public function testIndex(): void
     {
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
