@@ -1119,6 +1119,10 @@
                 <source>landing.menu.button.help</source>
                 <target>Aide</target>
             </trans-unit>
+            <trans-unit id="landing.menu.button.news">
+                <source>landing.menu.button.news</source>
+                <target>Nouveautés</target>
+            </trans-unit>
             <trans-unit id="notice.my.organizations.title">
                 <source>notice.my.organizations.title</source>
                 <target>Complétez les informations de vos organisations</target>
