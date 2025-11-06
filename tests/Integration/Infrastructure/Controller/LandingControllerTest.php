@@ -70,6 +70,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
+            ['Nouveautés', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
 
         $registerLink = $crawler->filter('main')->selectLink('Créer un compte');
@@ -85,6 +86,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
+            ['Nouveautés', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/carte');
@@ -94,6 +96,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => 'page']],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
+            ['Nouveautés', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
     }
 
@@ -108,6 +111,7 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => null]],
             ['Blog', ['href' => '/blog/fr/', 'aria-current' => null]],
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
+            ['Nouveautés', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
     }
 }
