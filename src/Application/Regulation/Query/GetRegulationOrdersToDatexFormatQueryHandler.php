@@ -24,7 +24,11 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 
     public function __invoke(GetRegulationOrdersToDatexFormatQuery $query): array
     {
-        $regulationOrderRecords = $this->repository->findRegulationOrdersForDatexFormat();
+        $regulationOrderRecords = $this->repository->findRegulationOrdersForDatexFormat(
+            includePermanent: $query->includePermanent,
+            includeTemporary: $query->includeTemporary,
+            includeExpired: $query->includeExpired,
+        );
 
         $uuids = [];
 

@@ -227,10 +227,35 @@ Pour obtenir des identifiants d’accès ou signaler un problème, contactez l�
 - Authentification requise: non
 - Réponse: XML (`Content-Type: text/xml; charset=UTF-8`)
 
+#### Paramètres de requête (filtres)
+
+- `includePermanent` (boolean, défaut `true`): inclut les arrêtés permanents.
+- `includeTemporary` (boolean, défaut `true`): inclut les arrêtés temporaires.
+- `includeExpired` (boolean, défaut `false`): inclut les arrêtés temporaires expirés.
+
+Règles d’interprétation:
+- Si `includePermanent=false`, les permanents sont exclus.
+- Si `includeTemporary=false`, les temporaires sont exclus.
+- Si les deux sont `false`, la réponse est vide.
+- Lorsque `includeExpired=false`, seuls les temporaires dont la date de fin n’est pas dépassée sont renvoyés (les permanents restent inclus selon `includePermanent`).
+
 #### Exemple de requête
 
 ```bash
 curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml' -H 'Accept: application/xml'
+```
+
+Exemples avec filtres:
+
+```bash
+# Uniquement permanents
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includeTemporary=false' -H 'Accept: application/xml'
+
+# Uniquement temporaires non expirés
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=false' -H 'Accept: application/xml'
+
+# Tous les temporaires, y compris expirés (et sans permanents)
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=true' -H 'Accept: application/xml'
 ```
 
 #### Détails

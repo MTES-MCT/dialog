@@ -249,9 +249,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $row ? $row['uuid'] : null;
     }
 
-    public function findRegulationOrdersForDatexFormat(): array
-    {
-        return $this->createQueryBuilder('roc')
+    public function findRegulationOrdersForDatexFormat(
+        bool $includePermanent = true,
+        bool $includeTemporary = true,
+        bool $includeExpired = false,
+    ): array {
+        $qb = $this->createQueryBuilder('roc')
             ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg', 'sa')
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('roc.organization', 'o')
@@ -266,14 +269,36 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('p.dailyRange', 'd')
             ->leftJoin('p.timeSlots', 't')
             ->where('roc.status = :status')
-            ->setParameters([
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-            ])
             ->andWhere('loc.geometry IS NOT NULL')
-            ->orderBy('roc.uuid')
+            ->orderBy('roc.uuid');
+
+        $parameters = [
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+        ];
+
+        // Filtre permanent/temporaire
+        if ($includePermanent && !$includeTemporary) {
+            $qb->andWhere('ro.category = :category');
+            $parameters['category'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        } elseif ($includeTemporary && !$includePermanent) {
+            $qb->andWhere('ro.category = :category');
+            $parameters['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        } elseif (!$includePermanent && !$includeTemporary) {
+            $qb->andWhere('1 = 0'); // Si aucun filtre, on ne retourne rien.
+        }
+
+        // Filtre expirés
+        /*if (!$includeExpired) {
+            $overallEndDateExpr = \sprintf('(%s)', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE));
+            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR %s >= :now', $overallEndDateExpr));
+            $parameters['permanentCategory'] = $parameters['permanentCategory'] ?? RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+            $parameters['now'] = $this->dateUtils->getNow();
+        }*/
+
+        return $qb
+            ->setParameters($parameters)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     public function getOverallDatesByRegulationUuids(array $uuids): array
