@@ -134,7 +134,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         try {
             $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 '
-                    SELECT numero
+                    SELECT DISTINCT numero
                     FROM route_numerotee_ou_nommee
                     WHERE numero LIKE :numero_pattern
                     AND gestionnaire = :gestionnaire
@@ -448,6 +448,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     AND LENGTH(v.identifiant_voie_ban) > 0
                     AND v.identifiant_voie_ban <> :road_ban_id
                     AND v.insee_commune = :city_code
+                    GROUP BY v.identifiant_voie_ban, v.nom_voie_ban
                     ORDER BY road_name
                 SQL,
                 [

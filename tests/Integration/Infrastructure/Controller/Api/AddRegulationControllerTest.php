@@ -264,4 +264,46 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame(400, $data['status']);
         $this->assertStringStartsWith('L\'organisation "" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S\'il s\'agit d\'une erreur, vous pouvez contacter le support DiaLog', (string) $data['detail']);
     }
+
+    public function testNoLocationWithMultipleViolations(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'API-LOC-0001',
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Aucune localisation',
+            'measures' => [[
+                'type' => 'speedLimitation',
+                'maxSpeed' => 30,
+                'periods' => [['isPermanent' => true]],
+                'locations' => [[
+                    'roadType' => 'lane',
+                    // pas de namedStreet/departmentalRoad/nationalRoad/rawGeoJSON
+                ]],
+            ]],
+        ];
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            json_encode($payload),
+        );
+
+        $this->assertResponseStatusCodeSame(422);
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertIsArray($data);
+        $this->assertSame(422, $data['status']);
+        $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale ou GeoJSON brut).', $data['violations'][1]['title']);
+        $this->assertSame('La section de localisation doit correspondre à la valeur de type de voie (roadType).', $data['violations'][2]['title']);
+    }
 }

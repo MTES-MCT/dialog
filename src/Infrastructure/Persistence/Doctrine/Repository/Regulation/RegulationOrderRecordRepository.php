@@ -288,12 +288,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         }
 
         // Filtre expirés
-        /*if (!$includeExpired) {
+        if (!$includeExpired) {
             $overallEndDateExpr = \sprintf('(%s)', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE));
-            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR %s >= :now', $overallEndDateExpr));
-            $parameters['permanentCategory'] = $parameters['permanentCategory'] ?? RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR (ro.category = :category AND %s >= :now)', $overallEndDateExpr));
+            $parameters['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
             $parameters['now'] = $this->dateUtils->getNow();
-        }*/
+        }
 
         return $qb
             ->setParameters($parameters)
