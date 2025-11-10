@@ -8,7 +8,8 @@ class News
 {
     private \DateTimeInterface $createdAt;
     private string $name;
-    private string $title;
+    private string $linkTitle;
+    private string $link;
     private string $content;
 
     public function __construct(
@@ -33,14 +34,26 @@ class News
         return $this;
     }
 
-    public function getTitle(): string
+    public function getLinkTitle(): string
     {
-        return $this->title;
+        return $this->linkTitle;
     }
 
-    public function setTitle(string $title): self
+    public function setLinkTitle(string $linkTitle): self
     {
-        $this->title = $title;
+        $this->linkTitle = $linkTitle;
+
+        return $this;
+    }
+
+    public function getLink(): string
+    {
+        return $this->link;
+    }
+
+    public function setLink(string $link): self
+    {
+        $this->link = $link;
 
         return $this;
     }

@@ -5,7 +5,8 @@
     table="news">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="name" type="string" column="name" nullable="false"/>
-    <field name="title" type="string" column="title" nullable="false"/>
+    <field name="linkTitle" type="string" column="link_title" nullable="false"/>
+    <field name="link" type="string" column="link" nullable="false"/>
     <field name="content" type="text" column="content" nullable="false"/>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
         <options>

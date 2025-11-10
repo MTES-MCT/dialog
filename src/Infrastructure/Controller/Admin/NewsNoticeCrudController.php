@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 
 final class NewsNoticeCrudController extends AbstractCrudController
 {
@@ -34,7 +35,8 @@ final class NewsNoticeCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'Nom'),
-            TextField::new('title', 'Titre')->setFormTypeOption('disabled', true)->hideOnIndex(),
+            TextField::new('linkTitle', 'Titre du lien')->hideOnIndex(),
+            UrlField::new('link', 'Lien')->hideOnIndex(),
             TextareaField::new('content', 'Contenu'),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
         ];
@@ -43,7 +45,6 @@ final class NewsNoticeCrudController extends AbstractCrudController
     public function createEntity(string $entityFqcn): News
     {
         $newsNotice = new News($this->idFactory->make());
-        $newsNotice->setTitle('Découvrez les dernières nouveautés sur DiaLog !');
         $newsNotice->setCreatedAt($this->dateUtils->getNow());
 
         return $newsNotice;

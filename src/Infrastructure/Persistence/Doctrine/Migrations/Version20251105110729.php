@@ -16,7 +16,7 @@ final class Version20251105110729 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE news (uuid UUID NOT NULL, name VARCHAR(255) NOT NULL, title VARCHAR(255) NOT NULL, content TEXT NOT NULL, created_at TIMESTAMP(0) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, PRIMARY KEY(uuid))');
+        $this->addSql('CREATE TABLE news (uuid UUID NOT NULL, name VARCHAR(255) NOT NULL, link_title VARCHAR(255) NOT NULL, link VARCHAR(255) NOT NULL, content TEXT NOT NULL, created_at TIMESTAMP(0) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL, PRIMARY KEY(uuid))');
     }
 
     public function down(Schema $schema): void
