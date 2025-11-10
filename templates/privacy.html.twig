@@ -1,6 +1,6 @@
 {% extends 'layouts/layout.html.twig' %}
 
-{% set title = 'Vie privée'|trans %}
+{% set title = 'Politique de confidentialité'|trans %}
 
 {% block title %}
     {{ title }} - {{ parent() }}
@@ -19,66 +19,89 @@
             {% apply markdown_to_html %}
             # {{ title }}
 
-            ## Données à caractère personnel
 
-            Nous nous engageons à ce que la collecte et le traitement de vos données, effectués à partir du site soient conformes au règlement général sur la protection des données du 27 avril 2016, applicable depuis le 25 mai 2018, et à la loi informatique et libertés dans sa dernière version modifiée du 20 juin 2018.
+            ## Qui sommes-nous ?
 
-            Ces dispositions fixent des règles strictes de confidentialité et de sécurité à toute organisation, publique et privée, dans le cadre du traitement des données à caractère personnel de leurs utilisateurs, et ce afin de protéger la vie privée de ceux-ci.
+            DiaLog est un produit numérique qui permet aux administrations de diffuser leur réglementation de circulation et de stationnement, en saisissant directement leurs arrêtés par le biais de formulaires ou en intégrant des données depuis leurs outils métier le cas échéant.
 
-            ## Responsable du traitement
+            DiaLog est sous la responsabilité de la Direction générale des infrastructures, des transports et des mobilités (DGITM). Les informations de contact de la DGITM sont accessibles [ici](https://dialog.beta.gouv.fr/mentions-legales)
 
-            Le responsable du traitement de vos données à caractère personnel est la [Direction générale des infrastructures, des transports et des mobilités (DGITM)](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm) du Ministère de la transition Ecologique, domiciliée à l’adresse suivante :
 
-            Le Ministère de la Transition Ecologique,<br/>
-            Direction Générale des Infrastructures, des Transports et des Mobilités ([DGITM](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm))<br/>
-            Sous-direction Multimodalité, Innovation, Numérique et Territoires ([SDMINT](https://lannuaire.service-public.fr/gouvernement/1861e8f3-ba7d-43a2-acca-fe99b07e0919)),<br/>
-            Tour Séquoïa 1, place Carpeaux 92055 La Défense Cedex.
+            ## Pourquoi traitons-nous des données à caractère personnel ? 
 
-            ## Traitement des données et utilisation
+            - Gérer les inscriptions et les connexions des agents publics à leurs comptes utilisateurs sur DiaLog ;
+            - Gérer les demandes de contact par courriel ;
+            - Assurer la traçabilité des actions des utilisateurs.
 
-            Nous ne pouvons utiliser vos données à caractère personnel qu’à des fins à la fois légitimes et nécessaires. Cela signifie concrètement que nous traitons vos données à caractère personnel pour des finalités de :
 
-            - L’exécution d’un contrat ou de mesures pré-contractuelles demandées (dans le cadre des mécanismes d’appels d’offres par exemple).
-            - L’exécution d’une mission d’intérêt public ou relevant de l’exercice de l’autorité publique (dans le cadre du suivi de la programmation pluriannuelle de l’énergie par exemple)
-            - La nature des opérations réalisées sur les données est : collecte, enregistrement, organisation, conservation, modification, consultation, utilisation, effacement ou destruction.
-            - Les données à caractère personnel traitées sont : prénoms, nom, nom usuel, adresse email professionnelle.
+            ## Quelles sont les données à caractère personnel collectées ? 
 
-            Les données sont conservées pour une durée de : 22 ans ou jusqu’à l’expiration du contrat, à compter de la notification.
+            - <b>Données relatives au compte utilisateur</b> : nom, prénom, adresse courriel ;
+            - <b>Données relatives aux demandes de contact</b> : adresse courriel, champs libres ;
+            - <b>Données relatives à la traçabilité</b> : logs et adresse IP.
 
-            ## Mesure d'audience
 
-            Notre site utilise l'outil de mesure d'audience Matomo pour collecter des données d'utilisation du site de manière anonymisée et sans avoir recours aux cookies.
+            ## Qu’est-ce qui nous autorise à traiter vos données à caractère personnel ?
 
-            ## Vos droits
+            DiaLog traite des données à caractère personnel sur le fondement de la mission d’intérêt public de la DGITM au sens de l’article 6-1 e) du RGPD.<br/>
+            Cette mission d’intérêt public se traduit en pratique par l’article 5 du décret n° 2008-680 du 9 juillet 2008 portant organisation de l’administration centrale des ministères chargés de la transition écologique, de la cohésion des territoires et de la mer.
 
-            Nous nous engageons à prendre les mesures techniques et organisationnelles appropriées afin de garantir la sécurité du traitement des données à caractère personnel de chacun.
 
-            En application du Règlement Général sur la Protection des Données (RGPD) et de la loi informatique et libertés, vous disposez d’un droit d’accès, de rectification, de suppression et d’opposition.
+            ## Pendant combien de temps conservons-nous vos données ? 
 
-            Par mail :
+            - Données relatives au compte utilisateur => 3 ans à partir de la dernière connexion 
+            - Données relatives aux demandes de contact => 1 an à partir du dernier contact
+            - Données relatives à la traçabilité => 1 an, conformément à la LCEN
 
-            [dialog@beta.gouv.fr](mailto:dialog@beta.gouv.fr)
 
-            Par voie postale :
+            ## Quels sont vos droits ?
 
-            Ministère de la Transition Ecologique,<br/>
-            Direction Générale des Infrastructures, des Transports et des Mobilités ([DGITM](https://www.ecologie.gouv.fr/direction-generale-des-infrastructures-des-transports-et-des-mobilites-dgitm))<br/>
-            Sous-direction Multimodalité, Innovation, Numérique et Territoires ([SDMINT](https://lannuaire.service-public.fr/gouvernement/1861e8f3-ba7d-43a2-acca-fe99b07e0919)),<br/>
-            Tour Séquoïa 1, place Carpeaux 92055 La Défense Cedex.
+            Vous disposez : 
 
-            Cette demande écrite doit être accompagnée d’une copie du titre d’identité avec signature du titulaire de la pièce, en précisant l’adresse à laquelle la réponse doit être envoyée.
+            - D’un droit d’information et d’accès à vos données ;
+            - D’un droit de rectification ;
+            - D’un droit d’opposition ;
+            - D’un droit à la limitation du traitement de vos données. 
 
-            Le délégué à la protection des données (DPD) du Ministère de la Transition Ecologique peut également être contacté à l’adresse suivante :
+            Pour exercer vos droits, vous pouvez nous contacter : dialog@beta.gouv.fr
+            
+            Ou contacter le délégué à la protection des données : dpd.daj.sg@developpement-durable.gouv.fr
+            
+            Par voie postale : 
+            
+            ministère de la Transition Écologique
+            Direction générale des infrastructures, des transports et des mobilités 
+            Tour Séquoia, 1 place Carpeaux 92055 La Défense Cedex
+            
+            Nous nous engageons à répondre à votre demande dans un délai raisonnable qui ne saurait excéder un mois à compter de la réception de votre demande.
+            
+            Si vous estimez que vos droits ne sont pas respectés, vous pouvez à tout moment adresser une réclamation à la CNIL.
 
-            [dpd.daj.sg@developpement-durable.gouv.fr](mailto:dpd.daj.sg@developpement-durable.gouv.fr)
+            ## Qui peut avoir accès à vos données ?
 
-            Conformément au règlement général sur la protection des données, vous disposez du droit d’introduire une réclamation auprès de la CNIL (3 place de Fontenoy – TSA 80715 – 75334 PARIS CEDEX 07). Les modalités de réclamation sont précisées sur le site de la CNIL : [www.cnil.fr](https://www.cnil.fr).
+            Seuls les membres habilités de l’équipe DiaLog ont accès aux données dans le cadre de leurs missions.
 
-            ## Procédure en cas de violations de données à caractère personnel
 
-            En cas de destruction, de perte, d’altération, de divulgation non autorisée de données à caractère personnel transmises, conservées ou traitées d’une autre manière, ou d’accès non autorisé à de telles données, de manière accidentelle ou illicite, susceptible d’engendrer un risque élevé pour les droits et libertés de l’utilisateur, nous vous en informerons des faits et des mesures prises, dans les meilleurs délais.
+            ## Qui nous aide à traiter vos données ?
 
-            Nous nous assurerons également que le nécessaire soit fait quant à la notification de la violation en question à la CNIL dans les 72 heures après en avoir pris connaissance, à moins que la violation ne présente pas un risque élevé pour vos droits et libertés.
+            Certaines données sont transmises à des “sous-traitants” qui agissent pour le compte de la DGITM, selon ses instructions.</br>
+
+            - Scalingo :
+            Hébergement des données en France
+            [Garanties](https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles)
+            - Brevo :
+            Gestion de la lettre d’information en France
+            [Garanties](https://www.brevo.com/fr/legal/termsofuse/#accord-sur-le-traitement-des-donnees-a-caractere-personnel-dpa)
+            - Tally :
+            Gestion des formulaires en Belgique
+            [Garanties](https://tally.so/help/data-processing-agreement)
+
+
+            ## Cookies et traceurs
+
+            Un témoin de connexion (cookie) ou traceur est un fichier déposé sur votre terminal lors de la visite d’un site. Il a pour but de collecter des informations relatives à votre navigation et de vous adresser des services adaptés à votre terminal. 
+
+            Sur DiaLog, l’outil de mesure d’audience Matomo est utilisé, configuré en mode “exempté” et ne nécessitant pas le recueil de votre consentement conformément aux recommandations de la CNIL.
             {% endapply %}
         </div>
     </div>
