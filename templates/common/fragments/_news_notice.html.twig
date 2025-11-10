@@ -1,13 +1,16 @@
-<div class="fr-notice fr-notice--info" data-testid="notice-news" data-controller="notice" data-notice-id-value="org-incomplete">
-        <div class="fr-container">
-            <div class="fr-notice__body">
-                <p>
-                    <span class="fr-notice__title fr-icon-megaphone-fill">{{ 'notice.news.title'|trans }}</span>
-                    <br>
-                    <span class="fr-notice__desc">{{ newsNotice.content }}</span>
-                    <a title="{{ 'notice.my.organizations.link'|trans }}" href="{{ newsNotice.link }}" target="_blank" rel="noopener external" class="fr-notice__link">{{ newsNotice.linkTitle }}</a>
-                </p>
-                <button title="{{ 'notice.news.btn.close'|trans }}" data-action="notice#dismiss" type="button" class="fr-btn--close fr-btn">{{ 'notice.news.btn.close'|trans }}</button>
+
+{% if newsNotice is not null%}
+    <div class="fr-notice fr-notice--info" data-testid="notice-news" data-controller="notice" data-notice-id-value="org-incomplete">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__title fr-icon-megaphone-fill">{{ 'notice.news.title'|trans }}</span>
+                        <br>
+                        <span class="fr-notice__desc">{{ newsNotice.content }}</span>
+                        <a title="{{ 'notice.my.organizations.link'|trans }}" href="{{ newsNotice.link }}" target="_blank" rel="noopener external" class="fr-notice__link">{{ newsNotice.linkTitle }}</a>
+                    </p>
+                    <button title="{{ 'notice.news.btn.close'|trans }}" data-action="notice#dismiss" type="button" class="fr-btn--close fr-btn">{{ 'notice.news.btn.close'|trans }}</button>
+                </div>
             </div>
         </div>
-    </div>
+{% endif%}
