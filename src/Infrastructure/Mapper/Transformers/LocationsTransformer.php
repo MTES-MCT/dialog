@@ -26,6 +26,7 @@ final class LocationsTransformer
 
             if ($dto->namedStreet) {
                 $ns = new SaveNamedStreetCommand();
+                $ns->roadType = $cmd->roadType;
                 $ns->cityCode = $dto->namedStreet->cityCode;
                 $ns->cityLabel = $dto->namedStreet->cityLabel;
                 $ns->roadName = $dto->namedStreet->roadName;
@@ -82,6 +83,7 @@ final class LocationsTransformer
 
             if ($dto->rawGeoJSON) {
                 $r = new SaveRawGeoJSONCommand();
+                $r->roadType = $cmd->roadType;
                 $r->label = $dto->rawGeoJSON->label;
                 $r->geometry = $dto->rawGeoJSON->geometry;
                 $cmd->rawGeoJSON = $r;
