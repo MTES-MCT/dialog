@@ -1123,6 +1123,14 @@
                 <source>landing.menu.button.news</source>
                 <target>Nouveautés</target>
             </trans-unit>
+            <trans-unit id="notice.news.title">
+                <source>notice.news.title</source>
+                <target>Découvrez les dernières nouveautés sur DiaLog !</target>
+            </trans-unit>
+            <trans-unit id="notice.news.btn.close">
+                <source>notice.news.btn.close</source>
+                <target>Masquer le message</target>
+            </trans-unit>
             <trans-unit id="notice.my.organizations.title">
                 <source>notice.my.organizations.title</source>
                 <target>Complétez les informations de vos organisations</target>

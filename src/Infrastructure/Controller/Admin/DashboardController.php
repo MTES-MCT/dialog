@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Admin;
 use App\Domain\Organization\ApiClient;
 use App\Domain\Regulation\RegulationOrderTemplate;
 use App\Domain\User\Feedback;
+use App\Domain\User\News;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\User;
@@ -47,5 +48,7 @@ final class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Autres');
         yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
+
+        yield MenuItem::linkToCrud('Bandeaux nouveautés', 'fa fa-newspaper', News::class);
     }
 }
