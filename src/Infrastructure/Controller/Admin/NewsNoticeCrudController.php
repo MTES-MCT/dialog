@@ -25,7 +25,7 @@ final class NewsNoticeCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular(' Bandeau dernières nouveautés')
+            ->setEntityLabelInSingular('Bandeau dernières nouveautés')
             ->setEntityLabelInPlural('Bandeau dernières nouveautés')
             ->setDefaultSort(['createdAt' => 'DESC'])
         ;
