@@ -33,7 +33,8 @@ final class SaveRegulationWithMeasureCommandHandler
             $regulationOrderRecord->getRegulationOrder()->addMeasure($measure);
         }
 
-        $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
+        // Dans un premier temps, on ne publie pas la réglementation
+        // $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
 
         return $regulationOrderRecord;
     }
