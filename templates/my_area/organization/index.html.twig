@@ -6,6 +6,7 @@
 
 {% block body %}
     {% include 'my_area/organization/fragments/_warning_notice.html.twig' only %}
+    {% include 'common/fragments/_news_notice.html.twig' with { newsNotice } only %}
     <section class="fr-container fr-py-5w" aria-labelledby="myarea">
         <h2 id="myarea" data-testid="organization-list">{{ 'user.myorganizations'|trans }}</h2>
         <p>{{ 'organization.list.description'|trans }}</p>
