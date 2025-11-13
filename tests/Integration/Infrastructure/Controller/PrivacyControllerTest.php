@@ -9,13 +9,13 @@ final class PrivacyControllerTest extends AbstractWebTestCase
     public function testGet(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/vie-privee');
+        $crawler = $client->request('GET', '/politique-de-confidentialite');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('public, s-maxage=86400', $client->getResponse()->headers->get('Cache-Control'));
-        $this->assertMetaTitle('Vie privée - DiaLog', $crawler);
-        $this->assertSame('Vie privée', $crawler->filter('h1')->text());
+        $this->assertMetaTitle('Politique de confidentialité - DiaLog', $crawler);
+        $this->assertSame('Politique de confidentialité', $crawler->filter('h1')->text());
     }
 
     public function testFooterLink(): void
@@ -24,7 +24,7 @@ final class PrivacyControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/');
         $this->assertResponseStatusCodeSame(200);
 
-        $link = $crawler->filter('footer')->selectLink('Vie privée');
-        $this->assertSame('http://localhost/vie-privee', $link->link()->getUri());
+        $link = $crawler->filter('footer')->selectLink('Politique de confidentialité');
+        $this->assertSame('http://localhost/politique-de-confidentialite', $link->link()->getUri());
     }
 }
