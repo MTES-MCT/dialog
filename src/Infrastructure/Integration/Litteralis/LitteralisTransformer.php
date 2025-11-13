@@ -166,8 +166,15 @@ final readonly class LitteralisTransformer
         $items = $this->parseSeparatedString($properties['parametresarrete'], ';');
 
         foreach ($items as $item) {
-            [$key, $value] = explode(' :', $item, 2);
-            $value = trim($value);
+            // Robustesse: certaines entrées peuvent être mal formées (pas de ' :')
+            $parts = explode(' :', $item, 2);
+            $key = isset($parts[0]) ? trim($parts[0]) : null;
+            $value = isset($parts[1]) ? trim($parts[1]) : null;
+
+            if (!$key || !$value) {
+                continue;
+            }
+
             $parameters[] = [$key, $value];
         }
 
@@ -337,7 +344,14 @@ final readonly class LitteralisTransformer
             }
 
             // Exemple : "dérogation : urgences" -> ['dérogation', 'urgences']
-            [$key, $value] = explode(' : ', $item, 2);
+            $kv = explode(' : ', $item, 2);
+            $key = isset($kv[0]) ? trim($kv[0]) : null;
+            $value = isset($kv[1]) ? trim($kv[1]) : null;
+
+            if (!$key || !$value) {
+                // Ignore une ligne de paramètre mal formée
+                continue;
+            }
 
             $parametersByMeasureName[$name][] = [$key, $value];
         }
@@ -347,7 +361,14 @@ final readonly class LitteralisTransformer
         $empriseParameters = $this->parseSeparatedString($properties['parametresemprise'], ';');
 
         foreach ($empriseParameters as $param) {
-            [$key, $value] = $this->parseSeparatedString($param, ':');
+            // Certaines entrées peuvent être mal formées (pas de ':')
+            $parts = explode(':', $param, 2);
+            $key = isset($parts[0]) ? trim($parts[0]) : null;
+            $value = isset($parts[1]) ? trim($parts[1]) : null;
+
+            if (!$key || !$value) {
+                continue;
+            }
 
             foreach ($measureNames as $name) {
                 $parametersByMeasureName[$name][] = [$key, $value];

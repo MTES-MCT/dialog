@@ -8,22 +8,6 @@
                 <option name="type">boolean</option>
             </constraint>
         </getter>
-        <property name="fromPointType">
-            <constraint name="Choice">
-                <option name="choices">
-                    <value>houseNumber</value>
-                    <value>intersection</value>
-                </option>
-            </constraint>
-        </property>
-        <property name="toPointType">
-            <constraint name="Choice">
-                <option name="choices">
-                    <value>houseNumber</value>
-                    <value>intersection</value>
-                </option>
-            </constraint>
-        </property>
         <property name="cityCode">
             <constraint name="Length">
                 <option name="min">5</option>
