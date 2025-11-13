@@ -45,11 +45,17 @@ class LitteralisImportCommand extends Command
 
             $orgId = $this->litteralisCredentials->getOrgId($name);
 
+            if (empty($orgId)) {
+                $output->writeln(\sprintf('Organization "%s": missing orgId (check APP_LITTERALIS_ORG_%s_ID)', $name, strtoupper($name)));
+                $returnCode = Command::FAILURE;
+                continue;
+            }
+
             try {
                 $report = $this->executor->execute($name, $orgId, $now, $this->reporter);
 
                 $output->write($report);
-            } catch (\Exception $exc) {
+            } catch (\Throwable $exc) {
                 $output->writeln($exc->getMessage());
 
                 $returnCode = Command::FAILURE;
