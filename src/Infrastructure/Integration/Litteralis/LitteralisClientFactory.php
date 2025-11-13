@@ -13,10 +13,14 @@ final class LitteralisClientFactory
     ) {
     }
 
-    public function create(string $credentials): LitteralisClient
+    public function create(string $credentials, ?string $baseUrl): LitteralisClient
     {
         $client = new LitteralisClient($this->litteralisWfsHttpClient);
         $client->setCredentials($credentials);
+
+        if ($baseUrl) {
+            $client->setBaseUrl($baseUrl);
+        }
 
         return $client;
     }
