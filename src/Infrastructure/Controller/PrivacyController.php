@@ -15,7 +15,7 @@ final class PrivacyController
     ) {
     }
 
-    #[Route('/vie-privee', name: 'app_privacy', methods: ['GET'])]
+    #[Route('/politique-de-confidentialite', name: 'app_privacy', methods: ['GET'])]
     public function __invoke(): Response
     {
         $response = (new Response($this->twig->render('privacy.html.twig')))->setSharedMaxAge(86400);

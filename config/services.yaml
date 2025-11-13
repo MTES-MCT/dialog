@@ -122,6 +122,13 @@ services:
             - { name: monolog.logger, channel: jop_import }
 
     # --------------
+    # Markdown Table Extension
+    # --------------
+
+    League\CommonMark\Extension\Table\TableExtension:
+        tags: ['twig.markdown.league_extension'] 
+
+    # --------------
     # Litteralis
     # --------------
 

@@ -145,7 +145,7 @@
             </trans-unit>
             <trans-unit id="common.privacy">
                 <source>common.privacy</source>
-                <target>Vie privée</target>
+                <target>Politique de confidentialité</target>
             </trans-unit>
             <trans-unit id="common.permanent">
                 <source>common.permanent</source>
