@@ -121,6 +121,9 @@ dbshell: ## Connect to the database
 dbfixtures: ## Load tests fixtures
 	make console CMD="doctrine:fixtures:load --env=test -n --purge-with-truncate"
 
+droptestdb: ## Drop test database
+	make console CMD="doctrine:database:drop --env=test --force"
+
 redisshell: ## Connect to the Redis container
 	docker compose exec redis redis-cli
 
