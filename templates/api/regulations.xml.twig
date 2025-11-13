@@ -21,8 +21,6 @@
     </com:publicationCreator>
 
     <trafficRegulationsFromCompetentAuthorities>
-        {% include "api/_regulations_raw.xml.twig" %}
-
         {% for regulationOrder in regulationOrders %}
             {% set startDate = regulationOrder.startDate %}
             {% set endDate = regulationOrder.endDate %}
