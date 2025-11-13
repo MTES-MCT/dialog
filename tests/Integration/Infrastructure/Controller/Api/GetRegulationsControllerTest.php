@@ -58,4 +58,19 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
             $response->getContent(),
         );*/
     }
+
+    public function testGetRegulationsToDatexFormatWithFilters(): void
+    {
+        $client = $this->login();
+
+        // Prepare some regulation orders to avoid the need to have published versions of fixtures
+        $this->prepareWinterMaintenanceRegulationOrder($client);
+
+        $client->request('GET', '/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=true');
+        $response = $client->getResponse();
+
+        $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+    }
 }

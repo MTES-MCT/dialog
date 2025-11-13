@@ -6,6 +6,12 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\QueryInterface;
 
-final class GetRegulationOrdersToDatexFormatQuery implements QueryInterface
+final readonly class GetRegulationOrdersToDatexFormatQuery implements QueryInterface
 {
+    public function __construct(
+        public bool $includePermanent = true,
+        public bool $includeTemporary = true,
+        public bool $includeExpired = false,
+    ) {
+    }
 }

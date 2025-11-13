@@ -24,7 +24,11 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function findOrganizationUuid(string $uuid): ?string;
 
-    public function findRegulationOrdersForDatexFormat(): array;
+    public function findRegulationOrdersForDatexFormat(
+        bool $includePermanent = true,
+        bool $includeTemporary = true,
+        bool $includeExpired = false,
+    ): array;
 
     public function getOverallDatesByRegulationUuids(array $uuids): array;
 

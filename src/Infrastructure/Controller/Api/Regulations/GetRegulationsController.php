@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class GetRegulationsController
@@ -27,9 +28,21 @@ final class GetRegulationsController
         defaults: ['_format' => 'xml'],
     )]
     #[OA\Tag(name: 'Regulations')]
-    public function __invoke(): Response
-    {
-        $regulationOrders = $this->queryBus->handle(new GetRegulationOrdersToDatexFormatQuery());
+    public function __invoke(
+        #[MapQueryParameter]
+        bool $includePermanent = true,
+        #[MapQueryParameter]
+        bool $includeTemporary = true,
+        #[MapQueryParameter]
+        bool $includeExpired = false,
+    ): Response {
+        $regulationOrders = $this->queryBus->handle(
+            new GetRegulationOrdersToDatexFormatQuery(
+                includePermanent: $includePermanent,
+                includeTemporary: $includeTemporary,
+                includeExpired: $includeExpired,
+            ),
+        );
 
         return new Response(
             $this->twig->render('api/regulations.xml.twig', [
