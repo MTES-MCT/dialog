@@ -48,15 +48,53 @@
 
 
             ## Pendant combien de temps conservons-nous vos données ? 
+            {% endapply %}
+            <div class="fr-table">
+                <div class="fr-table__container">
+                    <div class="fr-table__content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Catégories de données
+                                    </th>
+                                    <th scope="col">
+                                        Durée de conservation
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Données relatives au compte utilisateur
+                                    </td>
+                                    <td>
+                                        3 ans à partir de la dernière connexion
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Données relatives aux demandes de contact
+                                    </td>
+                                    <td>
+                                        1 an à partir du dernier contact
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Données relatives à la traçabilité
+                                    </td>
+                                    <td>
+                                        1 an, conformément à la LCEN
+                                    </td>
+                                </tr>
 
-            | Catégories de données | Durée de conservation |
-            |---|---|
-            | Données relatives au compte utilisateur | 3 ans à partir de la dernière connexion |
-            | Données relatives aux demandes de contact | 1 an à partir du dernier contact |
-            | Données relatives à la traçabilité | 1 an, conformément à la LCEN |
-            </br>
-
-
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% apply markdown_to_html %}
             ## Quels sont vos droits ?
 
             Vous disposez : 
@@ -70,10 +108,8 @@
             
             Ou contacter le délégué à la protection des données : dpd.daj.sg@developpement-durable.gouv.fr
             
-            Par voie postale : 
-            
-            ministère de la Transition Écologique
-            Direction générale des infrastructures, des transports et des mobilités 
+            Par voie postale : Ministère de la Transition Écologique
+            Direction générale des infrastructures, des transports et des mobilités </br>
             Tour Séquoia, 1 place Carpeaux 92055 La Défense Cedex
             
             Nous nous engageons à répondre à votre demande dans un délai raisonnable qui ne saurait excéder un mois à compter de la réception de votre demande.
@@ -88,14 +124,77 @@
             ## Qui nous aide à traiter vos données ?
 
             Certaines données sont transmises à des “sous-traitants” qui agissent pour le compte de la DGITM, selon ses instructions.</br>
-            
-            | Sous-traitant | Traitement réalisé | Pays destinataire | Garanties |
-            |---|---|---|---|
-            | Scalingo | Hébergement des données | France | https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles |
-            | Brevo | Gestion de la lettre d’information | France | https://www.brevo.com/fr/legal/termsofuse/#accord-sur-le-traitement-des-donnees-a-caractere-personnel-dpa |
-            | Tally | Gestion des formulaires | Belgique | https://tally.so/help/data-processing-agreement |
-            </br>
+            {% endapply %}
+            <div class="fr-table">
+                <div class="fr-table__container">
+                    <div class="fr-table__content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">
+                                        Sous-traitant
+                                    </th>
+                                    <th scope="col">
+                                        Traitement réalisé
+                                    </th>
+                                    <th scope="col">
+                                        Pays destinataire
+                                    </th>
+                                    <th scope="col">
+                                        Garanties
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Scalingo
+                                    </td>
+                                    <td>
+                                        Hébergement des données
+                                    </td>
+                                    <td>
+                                        France
+                                    </td>
+                                    <td>
+                                        <a href="https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles" target="_blank" rel="noopener">https://scalingo.com/fr/contrat-gestion-traitements-donnees-personnelles</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Brevo
+                                    </td>
+                                    <td>
+                                        Gestion de la lettre d’information
+                                    </td>
+                                    <td>
+                                        France
+                                    </td>
+                                    <td>
+                                        <a href="https://www.brevo.com/fr/legal/termsofuse/#accord-sur-le-traitement-des-donnees-a-caractere-personnel-dpa" target="_blank" rel="noopener">https://www.brevo.com/fr/legal/termsofuse/#accord-sur-le-traitement-des-donnees-a-caractere-personnel-dpa</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Tally
+                                    </td>
+                                    <td>
+                                        Gestion des formulaires
+                                    </td>
+                                    <td>
+                                        Belgique
+                                    </td>
+                                    <td>
+                                        <a href="https://tally.so/help/data-processing-agreement" target="_blank" rel="noopener">https://tally.so/help/data-processing-agreement</a>
+                                    </td>
+                                </tr>
 
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% apply markdown_to_html %}
             ## Cookies et traceurs
 
             Un témoin de connexion (cookie) ou traceur est un fichier déposé sur votre terminal lors de la visite d’un site. Il a pour but de collecter des informations relatives à votre navigation et de vous adresser des services adaptés à votre terminal. 
