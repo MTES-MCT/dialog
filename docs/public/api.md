@@ -49,7 +49,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `exemptedTypes` (string[], nullable) — valeurs autorisées: voir enum ci-dessous
     - `otherRestrictedTypeText` (string, nullable)
     - `otherExemptedTypeText` (string, nullable)
-    - `heavyweightMaxWeight` (number, nullable) - valeures : `3.5`, `7.5`, `12`, `19`, `26`, `32`, `44`
+    - `heavyweightMaxWeight` (number, nullable) - valeurs autorisées : `3.5`, `7.5`, `12`, `19`, `26`, `32`, `44`
     - `maxWidth` (number, nullable)
     - `maxLength` (number, nullable)
     - `maxHeight` (number, nullable)
