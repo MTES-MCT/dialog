@@ -13,6 +13,11 @@ L’authentification est requise UNIQUEMENT pour l’endpoint POST `/api/regulat
 
 Les exports (lecture) via GET (`/api/regulations.xml` et `/api/regulations/cifs.xml`) sont publics et ne nécessitent pas d’authentification.
 
+## Documentation OpenAPI
+
+- Documentation JSON: `/api/doc.json`
+- Client intégré (Swagger UI): `/api/doc`
+
 ## Endpoints
 
 ### Créer un arrêté
@@ -44,7 +49,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `exemptedTypes` (string[], nullable) — valeurs autorisées: voir enum ci-dessous
     - `otherRestrictedTypeText` (string, nullable)
     - `otherExemptedTypeText` (string, nullable)
-    - `heavyweightMaxWeight` (number, nullable)
+    - `heavyweightMaxWeight` (number, nullable) - valeurs autorisées : `3.5`, `7.5`, `12`, `19`, `26`, `32`, `44`
     - `maxWidth` (number, nullable)
     - `maxLength` (number, nullable)
     - `maxHeight` (number, nullable)
@@ -67,8 +72,10 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `namedStreet` (object, nullable) — utilisé avec `roadType = lane`
       - `cityCode` (string, nullable) — code INSEE de la commune
       - `cityLabel`, `roadName` (string, nullable)
-      - `fromPointType`, `fromHouseNumber`, `fromRoadName` (string, nullable)
-      - `toPointType`, `toHouseNumber`, `toRoadName` (string, nullable)
+      - `fromPointType` (string, nullable) - enum : `houseNumber` | `intersection`
+      - `fromHouseNumber`, `fromRoadName` (string, nullable)
+      - `toPointType` (string, nullable) - enum : `houseNumber` | `intersection`
+      - `toHouseNumber`, `toRoadName` (string, nullable)
       - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`
     - `departmentalRoad` (object, nullable) — utilisé avec `roadType = departmentalRoad`
       - `administrator`, `roadNumber`, `fromDepartmentCode`, `fromPointNumber`, `toDepartmentCode`, `toPointNumber` (string, nullable)
