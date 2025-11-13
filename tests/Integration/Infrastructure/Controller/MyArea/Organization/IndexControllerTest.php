@@ -25,6 +25,19 @@ final class IndexControllerTest extends AbstractWebTestCase
         $this->assertCount(0, $crawler->filter('[data-testid="admin-link"]'));
     }
 
+    public function testWithNewsNotice(): void
+    {
+        $client = $this->login('mathieu.marchois@beta.gouv.fr');
+        $crawler = $client->request('GET', '/mon-espace/organizations');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $newsNotice = $crawler->filter('[data-testid="notice-news"]');
+
+        $this->assertSame('Découvrez les dernières nouveautés sur DiaLog ! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Exporter mes arrêtés de circulation Masquer le message', $newsNotice->filter('[data-testid="news-notice-content"]')->text());
+    }
+
     public function testWithOrganizationsNotCompleted(): void
     {
         $client = $this->login('mathieu.marchois@beta.gouv.fr');
