@@ -45,6 +45,7 @@ final class LocationsTransformer
 
             if ($dto->departmentalRoad) {
                 $nr = new SaveNumberedRoadCommand();
+                $nr->roadType = $cmd->roadType;
                 $nr->administrator = $dto->departmentalRoad->administrator;
                 $nr->roadNumber = $dto->departmentalRoad->roadNumber;
                 $nr->fromDepartmentCode = $dto->departmentalRoad->fromDepartmentCode;
@@ -64,6 +65,7 @@ final class LocationsTransformer
 
             if ($dto->nationalRoad) {
                 $nr = new SaveNumberedRoadCommand();
+                $nr->roadType = $cmd->roadType;
                 $nr->administrator = $dto->nationalRoad->administrator;
                 $nr->roadNumber = $dto->nationalRoad->roadNumber;
                 $nr->fromDepartmentCode = $dto->nationalRoad->fromDepartmentCode;
