@@ -9,6 +9,12 @@
             </constraint>
         </property>
         <property name="restrictedTypes">
+            <constraint name="Type">
+                <option name="type">
+                    <value>null</value>
+                    <value>array</value>
+                </option>
+            </constraint>
             <constraint name="When">
                 <option name="expression">
                     this.allVehicles === false

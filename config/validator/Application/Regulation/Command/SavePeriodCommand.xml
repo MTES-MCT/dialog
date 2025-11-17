@@ -20,6 +20,13 @@
                 </option>
             </constraint>
         </property>
+        <property name="recurrenceType">
+            <constraint name="NotBlank"/>
+            <constraint name="Choice">
+                <value>everyDay</value>
+                <value>certainDays</value>
+            </constraint>
+        </property>
         <property name="endDate">
             <constraint name="When">
                 <option name="expression"> !this.isPermanent </option>

@@ -296,7 +296,9 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertIsArray($data);
         $this->assertSame(422, $data['status']);
-        $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale ou GeoJSON brut).', $data['violations'][1]['title']);
-        $this->assertSame('La section de localisation doit correspondre à la valeur de type de voie (roadType).', $data['violations'][2]['title']);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][0]['title']);
+        $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][1]['title']);
+        $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale ou GeoJSON brut).', $data['violations'][2]['title']);
+        $this->assertSame('La section de localisation doit correspondre à la valeur de type de voie (roadType).', $data['violations'][3]['title']);
     }
 }
