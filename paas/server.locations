@@ -17,3 +17,8 @@ location ~* \.(css|js|jpg|jpeg|png|svg|webp|ico|woff2|woff|eot|ttf) {
 location /blog {
     try_files $uri $uri.html $uri/index.html =404;
 }
+
+# Forcer la doc OpenAPI à passer par Symfony (éviter la résolution de fichiers statiques)
+location ^~ /api/doc {
+    try_files $uri /index.php?$query_string;
+}
