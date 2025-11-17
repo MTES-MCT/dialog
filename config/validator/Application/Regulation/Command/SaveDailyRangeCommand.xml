@@ -4,6 +4,12 @@
   xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
     <class name="App\Application\Regulation\Command\Period\SaveDailyRangeCommand">
         <property name="applicableDays">
+            <constraint name="Type">
+                <option name="type">
+                    <value>null</value>
+                    <value>array</value>
+                </option>
+            </constraint>
             <constraint name="When">
                 <option name="expression">
                     this.recurrenceType === 'certainDays'
