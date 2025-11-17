@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Symfony\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -16,6 +17,7 @@ class RateLimiterSubscriber implements EventSubscriberInterface
     public function __construct(
         private KernelInterface $kernel,
         private RateLimiterFactory $appLimiter,
+        private RateLimiterFactory $apiLimiter,
     ) {
     }
 
@@ -35,10 +37,16 @@ class RateLimiterSubscriber implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-        $limiter = $this->appLimiter->create($request->getClientIp());
+        $limiterFactory = $this->isApiRequest($request) ? $this->apiLimiter : $this->appLimiter;
+        $limiter = $limiterFactory->create($request->getClientIp());
 
         if (false === $limiter->consume(1)->isAccepted()) {
             throw new TooManyRequestsHttpException();
         }
+    }
+
+    private function isApiRequest(Request $request): bool
+    {
+        return str_starts_with($request->getPathInfo(), '/api');
     }
 }

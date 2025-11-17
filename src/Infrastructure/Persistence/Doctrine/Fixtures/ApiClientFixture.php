@@ -21,7 +21,15 @@ final class ApiClientFixture extends Fixture implements DependentFixtureInterfac
             ->setCreatedAt(new \DateTimeImmutable('2024-03-01'))
             ->setIsActive(true);
 
+        $saintOuenOrgClient = (new ApiClient('0ae55b60-455a-449b-a2b7-26ea38d909f2'))
+            ->setClientId('saintOuenOrgClientId')
+            ->setClientSecret('saintOuenOrgClientSecret')
+            ->setOrganization($this->getReference('saintOuenOrg', Organization::class))
+            ->setCreatedAt(new \DateTimeImmutable('2025-03-01'))
+            ->setIsActive(true);
+
         $manager->persist($seineSaintDenisClient);
+        $manager->persist($saintOuenOrgClient);
         $manager->flush();
     }
 

@@ -33,7 +33,7 @@ final class AddRegulationController
         name: 'api_regulations_add',
         methods: ['POST'],
     )]
-    #[OA\Tag(name: 'Regulations')]
+    #[OA\Tag(name: 'Private')]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
