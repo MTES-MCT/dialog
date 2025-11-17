@@ -9,9 +9,12 @@ L’API utilise une authentification par en-têtes HTTP spécifiques. Ces identi
 - X-Client-Id: identifiant client
 - X-Client-Secret: secret client
 
-L’authentification est requise UNIQUEMENT pour l’endpoint POST `/api/regulations` (écriture).
+L’authentification est requise pour les endpoints suivants :
 
-Les exports (lecture) via GET (`/api/regulations.xml` et `/api/regulations/cifs.xml`) sont publics et ne nécessitent pas d’authentification.
+- POST `/api/regulations` (création d’un arrêté)
+- GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
+
+Les exports (lecture) via GET (`/api/regulations.xml` et `/api/regulations/cifs.xml`) restent publics et ne nécessitent pas d’authentification.
 
 ## Documentation OpenAPI
 
@@ -222,6 +225,27 @@ Lorsque des erreurs de validation surviennent, la réponse a la structure suivan
 Remarques:
 - Les erreurs métier (code 400) incluent notamment: échec de géocodage de voie, abscisse hors plage, échec de géocodage de route numérotée, impossibilité d'intervention de l'organisation sur la géométrie.
 - Les erreurs de validation (code 422) concernent les contraintes de format et de cohérence des données.
+
+### Lister les identifiants existants de son organisation
+
+- Méthode: GET
+- URL: `/api/organization/identifiers`
+- Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
+- Réponse: JSON contenant la liste des identifiants déjà utilisés par votre organisation, triés par ordre alphabétique.
+
+#### Exemple de réponse
+
+```json
+{
+  "identifiers": [
+    "117374#24-A-0473",
+    "F/CIFS/2023",
+    "FO1/2023"
+  ]
+}
+```
+
+Cet endpoint est utile pour vérifier rapidement la disponibilité d’un identifiant avant la création d’un nouvel arrêté. Seuls les arrêtés appartenant à l’organisation associée à vos identifiants API sont renvoyés.
 
 ## Support
 

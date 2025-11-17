@@ -39,7 +39,7 @@ security:
                 path: app_logout
 
     access_control:
-        - { path: '^/api/regulations$', roles: ROLE_API, methods: [POST] }
+        - { path: '^/api/(regulations$|organization)', roles: ROLE_API, methods: [POST, GET] }
         - { path: ^/api, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
         - { path: '^/regulations/([0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$', methods: [GET], roles: PUBLIC_ACCESS }

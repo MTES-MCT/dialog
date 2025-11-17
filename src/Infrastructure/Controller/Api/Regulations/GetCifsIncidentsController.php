@@ -24,7 +24,7 @@ final class GetCifsIncidentsController
         name: 'api_regulations_cifs',
         defaults: ['_format' => 'xml'],
     )]
-    #[OA\Tag(name: 'Regulations')]
+    #[OA\Tag(name: 'Public')]
     public function __invoke(): Response
     {
         $incidents = $this->queryBus->handle(new GetCifsIncidentsQuery());
