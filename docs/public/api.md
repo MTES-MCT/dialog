@@ -62,10 +62,9 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `startTime` (string, date-time ISO, nullable)
     - `endDate` (string, date-time ISO, nullable)
     - `endTime` (string, date-time ISO, nullable)
-    - `recurrenceType` (string, nullable) — enum: `everyDay` | `certainDays`
+    - `recurrenceType` (string) — enum: `everyDay` | `certainDays`
     - `isPermanent` (boolean, nullable)
     - `dailyRange` (object, nullable)
-      - `recurrenceType` (string, nullable) — enum comme ci-dessus
       - `applicableDays` (string[], nullable) — enum: `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`
     - `timeSlots` (array<object>, nullable)
       - `startTime` (string, date-time ISO, nullable)
