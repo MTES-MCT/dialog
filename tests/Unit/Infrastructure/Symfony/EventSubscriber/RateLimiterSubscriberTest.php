@@ -41,7 +41,7 @@ class RateLimiterSubscriberTest extends TestCase
             ->expects(self::never())
             ->method('create');
 
-        $subscriber = new RateLimiterSubscriber($kernel, $rateLimiter);
+        $subscriber = new RateLimiterSubscriber($kernel, $rateLimiter, $rateLimiter);
         $subscriber->onKernelRequest($event);
     }
 
@@ -81,7 +81,7 @@ class RateLimiterSubscriberTest extends TestCase
             ->willReturn($limiter);
 
         $event = new RequestEvent($kernel, $request, 1);
-        $subscriber = new RateLimiterSubscriber($kernel, $rateLimiter);
+        $subscriber = new RateLimiterSubscriber($kernel, $rateLimiter, $rateLimiter);
         $subscriber->onKernelRequest($event);
     }
 
@@ -122,7 +122,7 @@ class RateLimiterSubscriberTest extends TestCase
             ->willReturn($limiter);
 
         $event = new RequestEvent($kernel, $request, 1);
-        $subscriber = new RateLimiterSubscriber($kernel, $rateLimiter);
+        $subscriber = new RateLimiterSubscriber($kernel, $rateLimiter, $rateLimiter);
         $subscriber->onKernelRequest($event);
     }
 }

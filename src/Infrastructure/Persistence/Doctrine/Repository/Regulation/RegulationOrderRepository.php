@@ -54,4 +54,15 @@ final class RegulationOrderRepository extends ServiceEntityRepository implements
 
         return \sprintf('%s-%d', $identifier, $nextNumber);
     }
+
+    public function findIdentifiersByOrganization(Organization $organization): array
+    {
+        return $this->createQueryBuilder('ro')
+            ->select('ro.identifier')
+            ->innerJoin('ro.regulationOrderRecord', 'ror')
+            ->where('ror.organization = :organization')
+            ->setParameter('organization', $organization)
+            ->getQuery()
+            ->getSingleColumnResult();
+    }
 }

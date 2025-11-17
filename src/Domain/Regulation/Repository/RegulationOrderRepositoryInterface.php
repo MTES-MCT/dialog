@@ -14,4 +14,6 @@ interface RegulationOrderRepositoryInterface
     public function delete(RegulationOrder $regulationOrder): void;
 
     public function getDuplicateIdentifier(string $identifier, Organization $organization): string;
+
+    public function findIdentifiersByOrganization(Organization $organization): array;
 }

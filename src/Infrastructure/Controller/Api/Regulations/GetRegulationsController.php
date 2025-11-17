@@ -27,7 +27,7 @@ final class GetRegulationsController
         name: 'api_regulations_list',
         defaults: ['_format' => 'xml'],
     )]
-    #[OA\Tag(name: 'Regulations')]
+    #[OA\Tag(name: 'Public')]
     public function __invoke(
         #[MapQueryParameter]
         bool $includePermanent = true,
