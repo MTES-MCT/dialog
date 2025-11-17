@@ -278,21 +278,25 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         // Filtre permanent/temporaire
         if ($includePermanent && !$includeTemporary) {
-            $qb->andWhere('ro.category = :category');
-            $parameters['category'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+            $qb->andWhere('ro.category = :permanentCategory');
+            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         } elseif ($includeTemporary && !$includePermanent) {
-            $qb->andWhere('ro.category = :category');
-            $parameters['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+            $qb->andWhere('ro.category = :temporaryCategory');
+            $parameters['temporaryCategory'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         } elseif (!$includePermanent && !$includeTemporary) {
             $qb->andWhere('1 = 0'); // Si aucun filtre, on ne retourne rien.
         }
 
         // Filtre expirés
-        if (!$includeExpired) {
+        if (!$includeExpired && $includeTemporary) {
             $overallEndDateExpr = \sprintf('(%s)', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE));
-            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR (ro.category = :category AND %s >= :now)', $overallEndDateExpr));
-            $parameters['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
-            $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+            if ($includePermanent) {
+                $qb->andWhere(\sprintf('ro.category = :permanentCategory OR (ro.category = :temporaryCategory AND %s >= :now)', $overallEndDateExpr));
+                $parameters['permanentCategory'] ??= RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+                $parameters['temporaryCategory'] ??= RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+            } else {
+                $qb->andWhere(\sprintf('%s >= :now', $overallEndDateExpr));
+            }
             $parameters['now'] = $this->dateUtils->getNow();
         }
 
