@@ -3,8 +3,13 @@
         {{ form_start(form) }}
             <div
                 data-controller="fetch"
-                data-fetch-extra-query-params-value="{{ { targetId: form.regulationOrderTemplateUuid.vars.id, organizationUuid: '#' ~ form.organization.vars.id }|json_encode }}"
-                data-fetch-url-value="{{ url('fragment_regulation_order_templates_options') }}"
+                data-fetch-extra-query-params-value="{{ {
+                    targetId: form.regulationOrderTemplateUuid.vars.id,
+                    identifierTargetName: form.identifier.vars.full_name,
+                    identifierTargetId: form.identifier.vars.id,
+                    organizationUuid: '#' ~ form.organization.vars.id
+                }|json_encode }}"
+                data-fetch-url-value="{{ url('fragment_regulation_order_templates_and_identifiers') }}"
             >
                 {{ form_row(form.identifier, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
                 {{ form_row(form.title, {group_class: 'fr-input-group', attr: {class: 'fr-input'}, help_attr: {class: 'fr-hint-text'}}) }}
