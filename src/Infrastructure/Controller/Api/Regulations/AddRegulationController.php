@@ -40,6 +40,7 @@ final class AddRegulationController
             type: 'object',
             properties: [
                 new OA\Property(property: 'identifier', type: 'string', maxLength: 60, example: 'F2025/001'),
+                new OA\Property(property: 'status', type: 'string', enum: ['draft', 'published'], example: 'draft'),
                 new OA\Property(property: 'category', type: 'string', enum: ['temporaryRegulation', 'permanentRegulation'], example: 'temporaryRegulation'),
                 new OA\Property(property: 'subject', type: 'string', enum: ['roadMaintenance', 'incident', 'event', 'winterMaintenance', 'other'], nullable: true, example: 'roadMaintenance'),
                 new OA\Property(property: 'otherCategoryText', type: 'string', nullable: true, maxLength: 100, example: null),
@@ -253,7 +254,7 @@ final class AddRegulationController
         $generalInfo->organization = $organization;
         $this->objectMapper->map($dto, $generalInfo);
 
-        $regulationOrderRecord = $this->commandBus->handle(new SaveRegulationWithMeasureCommand($generalInfo, $dto->measures));
+        $regulationOrderRecord = $this->commandBus->handle(new SaveRegulationWithMeasureCommand($generalInfo, $dto->status, $dto->measures));
         $this->commandBus->handle(new UpdateApiClientLastUsedAtCommand($user->getUserIdentifier()));
 
         return new JsonResponse(
