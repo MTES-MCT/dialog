@@ -5,6 +5,7 @@ services:
             -  endpoint: '%env(S3_ENDPOINT)%'
                accessKeyId: '%env(S3_ACCESS_KEY)%'
                accessKeySecret: '%env(S3_SECRET_KEY)%'
+               pathStyleEndpoint: true
 
 flysystem:
     storages:
