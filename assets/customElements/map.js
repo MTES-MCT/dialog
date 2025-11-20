@@ -155,16 +155,51 @@ class MapLibreMap {
                             'line-join': 'round',
                             'line-cap': 'round',
                         },
+                        'filter': ['!=', ['get', 'measure_type'], 'noEntry'],
                         'paint': {
                             'line-color': [
                                 'case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
-                                ['==', ['get', 'measure_type'], 'noEntry'], '#ff5655', // red
-                                ['==', ['get', 'measure_type'], 'speedLimitation'], '#ff742e', // orange
+                                ['==', ['get', 'measure_type'], 'speedLimitation'], '#f6c43c', // yellow
                                 '#000000'], // black ; note : blue -> 0063cb
                             'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16], // line-width = 4 when zoom < 15, line-width = 8 when zoom bewteen 15 and 18, and line-width = 16 for zoom > 18 ; https://maplibre.org/maplibre-style-spec/expressions/#step
                         },
                     },
                     "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
+                );
+                map.addLayer(
+                    {
+                        'id': 'locations-layer-no-entry-border',
+                        'type': 'line',
+                        'source': 'locations-source',
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round',
+                        },
+                        'filter': ['==', ['get', 'measure_type'], 'noEntry'],
+                        'paint': {
+                            'line-color': '#CE0500',
+                            'line-width': ["step", ["zoom"], 6, lineWidthFirstStep, 10, lineWidthSecondStep, 18],
+                        },
+                    },
+                    "toponyme numéro de route - départementale"
+                );
+                map.addLayer(
+                    {
+                        'id': 'locations-layer-no-entry',
+                        'type': 'line',
+                        'source': 'locations-source',
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round',
+                        },
+                        'filter': ['==', ['get', 'measure_type'], 'noEntry'],
+                        'paint': {
+                            'line-color': '#ff5655', // red
+                            'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16],
+                            'line-dasharray': [1, 1.2],
+                        },
+                    },
+                    "toponyme numéro de route - départementale"
                 );
 
                 map.addLayer(
