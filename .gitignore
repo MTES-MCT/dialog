@@ -38,3 +38,4 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 /test-results/
 tests/tmp
+.cursorrules
