@@ -1,0 +1,22 @@
+<turbo-stream action="update" target="{{ targetId }}">
+    <template>
+        <option value="">{{ 'regulation.general_info.regulation_order_template.placeholder'|trans }}</option>
+        {% for regulationOrderTemplateUuid, regulationOrderTemplate in options %}
+            <option value="{{ regulationOrderTemplateUuid }}">{{ regulationOrderTemplate }}</option>
+        {% endfor %}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="{{ identifierTargetId }}">
+    <template>
+        <input
+            type="text"
+            id="{{ identifierTargetId }}"
+            name="{{ identifierTargetName }}"
+            required="required"
+            aria-describedby="{{ identifierTargetId }}_help"
+            class="fr-input"
+            value="{{ identifierValue }}"
+            />
+    </template>
+</turbo-stream>
