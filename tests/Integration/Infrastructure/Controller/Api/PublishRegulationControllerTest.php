@@ -40,7 +40,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_OTHER_ORG),
+            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_PARKING_PROHIBITED),
             [],
             [],
             [
