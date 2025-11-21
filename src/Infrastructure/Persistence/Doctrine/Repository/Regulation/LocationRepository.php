@@ -99,12 +99,16 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 // Renvoie un résultat vide pour éviter une erreur dans le cas où la date de fin est avant la date de début
                 $measureDatesCondition = 'AND FALSE';
             } else {
+                $rangeStartSql = $startDate ? '(:startDate)::timestamp' : 'NULL';
+                $rangeEndSql = $endDate ? '((:endDate)::timestamp + make_interval(days => 1))::timestamp' : 'NULL';
+
                 // Principe : on garde une localisation si l'intervalle défini par ses périodes
                 // intersecte au moins partiellement l'intervalle défini par les filtres.
                 // En PostgreSQL, tsrange permet de représenter un intervalle de date et heure.
                 // https://www.postgresql.org/docs/13/rangetypes.html
                 // NB : si l'arrêté n'a pas encore de période, EXISTS renverra FALSE, donc on ne retiendra pas ses localisations, comme attendu.
-                $measureDatesCondition = 'AND EXISTS (
+                $measureDatesCondition = \sprintf(
+                    'AND EXISTS (
                     SELECT 1
                     FROM period AS p
                     WHERE p.measure_uuid = m.uuid
@@ -113,11 +117,22 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     -- Donc dans le cas où startDate et endDate désignent toutes les deux le 12/01/2025 par exemple,
                     -- cela correspondrait à un intervalle de temps vide, et on ne sélectionnerait rien.
                     -- Pour inclure le 12/01/2025 en entier, il faut prendre (startDate inclus, endDate + 1 jour exclus)
-                    AND tsrange((:startDate)::timestamp, ((:endDate)::timestamp + make_interval(days => 1))::timestamp, \'[)\') && tsrange(p.start_datetime::timestamp, p.end_datetime::timestamp)
-                )';
+                    AND tsrange(%s, %s, \'[)\') && tsrange(
+                        LEAST(p.start_datetime::timestamp, p.end_datetime::timestamp),
+                        GREATEST(p.start_datetime::timestamp, p.end_datetime::timestamp)
+                    )
+                )',
+                    $rangeStartSql,
+                    $rangeEndSql,
+                );
 
-                $parameters['startDate'] = $startDate?->format(\DateTimeInterface::ATOM);
-                $parameters['endDate'] = $endDate?->format(\DateTimeInterface::ATOM);
+                if ($startDate) {
+                    $parameters['startDate'] = $startDate->format(\DateTimeInterface::ATOM);
+                }
+
+                if ($endDate) {
+                    $parameters['endDate'] = $endDate->format(\DateTimeInterface::ATOM);
+                }
             }
         }
 
