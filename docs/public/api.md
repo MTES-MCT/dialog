@@ -12,6 +12,7 @@ L’API utilise une authentification par en-têtes HTTP spécifiques. Ces identi
 L’authentification est requise pour les endpoints suivants :
 
 - POST `/api/regulations` (création d’un arrêté)
+- PUT `/api/regulations/{uuid}/publish` (publication d’un arrêté existant)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 
 Les exports (lecture) via GET (`/api/regulations.xml` et `/api/regulations/cifs.xml`) restent publics et ne nécessitent pas d’authentification.
@@ -224,6 +225,58 @@ Lorsque des erreurs de validation surviennent, la réponse a la structure suivan
 Remarques:
 - Les erreurs métier (code 400) incluent notamment: échec de géocodage de voie, abscisse hors plage, échec de géocodage de route numérotée, impossibilité d'intervention de l'organisation sur la géométrie.
 - Les erreurs de validation (code 422) concernent les contraintes de format et de cohérence des données.
+
+### Publier un arrêté existant
+
+- Méthode: PUT
+- URL: `/api/regulations/{uuid}/publish`
+- Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
+- Corps: aucun
+- Réponses: 200, 400, 401, 403, 404
+
+Ce endpoint publie un arrêté déjà créé (statut `draft`). Il applique les mêmes règles métier que l’interface: au moins une mesure, données complètes, etc.
+
+#### Exemples de réponses
+
+- 200 OK
+
+```json
+{
+  "uuid": "e413a47e-5928-4353-a8b2-8b7dda27f9a5",
+  "status": "published"
+}
+```
+
+- 400 Publication impossible (ex. aucune mesure)
+
+```json
+{
+  "status": 400,
+  "detail": "L'arrêté ne peut pas être publié."
+}
+```
+
+- 403 Organisation non autorisée / arrêté appartenant à une autre organisation
+
+```json
+{
+  "status": 403,
+  "detail": "Forbidden"
+}
+```
+
+- 404 Arrêté inexistant
+
+```json
+{
+  "status": 404,
+  "detail": "Not Found"
+}
+```
+
+Remarques :
+- Seuls les arrêtés appartenant à l’organisation liée aux identifiants API peuvent être publiés.
+- Si la publication échoue, corrigez les données via l’interface avant de relancer l’appel.
 
 ### Lister les identifiants existants de son organisation
 
