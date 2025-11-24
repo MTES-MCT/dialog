@@ -1,0 +1,27 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{'report_address.meta.title'|trans}} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-md-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h1>{{ 'report_address.meta.title'|trans }}</h1>
+                            <p>{{ 'report_address.meta.description'|trans }}</p>
+                            {{ form_start(form) }}
+                            {{ form_row(form.roadType, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            {{ form_row(form.content, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            {{ form_row(form.save, {group_class: 'fr-btns-group'}) }}
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
