@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -16,6 +17,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $payload = [
             'identifier' => 'F2025/publié',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
@@ -93,6 +95,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $payload = [
             'identifier' => 'API-INT-0002',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
@@ -126,6 +129,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $payload = [
             'identifier' => '',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             'category' => 'invalidCategory',
             'subject' => RegulationSubjectEnum::OTHER->value,
             'title' => '',
@@ -168,6 +172,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $payload = json_encode([
             'identifier' => 'API-INT-0004',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
             'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
@@ -215,6 +220,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $payload = json_encode([
             'identifier' => 'API-INT-0005',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
             'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'otherCategoryText' => null,
@@ -264,6 +270,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $payload = [
             'identifier' => 'API-LOC-0001',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
             'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
             'title' => 'Aucune localisation',

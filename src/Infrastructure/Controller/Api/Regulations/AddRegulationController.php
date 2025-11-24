@@ -40,6 +40,7 @@ final class AddRegulationController
             type: 'object',
             properties: [
                 new OA\Property(property: 'identifier', type: 'string', maxLength: 60, example: 'F2025/001'),
+                new OA\Property(property: 'status', type: 'string', enum: ['draft', 'published'], example: 'draft'),
                 new OA\Property(property: 'category', type: 'string', enum: ['temporaryRegulation', 'permanentRegulation'], example: 'temporaryRegulation'),
                 new OA\Property(property: 'subject', type: 'string', enum: ['roadMaintenance', 'incident', 'event', 'winterMaintenance', 'other'], nullable: true, example: 'roadMaintenance'),
                 new OA\Property(property: 'otherCategoryText', type: 'string', nullable: true, maxLength: 100, example: null),
@@ -61,7 +62,7 @@ final class AddRegulationController
                                 properties: [
                                     new OA\Property(property: 'allVehicles', type: 'boolean', nullable: true, example: false),
                                     new OA\Property(property: 'restrictedTypes', type: 'array', items: new OA\Items(type: 'string', enum: ['heavyGoodsVehicle', 'dimensions', 'critair', 'hazardousMaterials', 'other']), nullable: true),
-                                    new OA\Property(property: 'exemptedTypes', type: 'array', items: new OA\Items(type: 'string', enum: ['commercial', 'emergencyServices', 'bicycle', 'pedestrians', 'taxi', 'carSharing', 'roadMaintenanceOrConstruction', 'other']), nullable: true),
+                                    new OA\Property(property: 'exemptedTypes', type: 'array', items: new OA\Items(type: 'string', enum: ['commercial', 'emergencyServices', 'bicycle', 'pedestrians', 'taxi', 'carSharing', 'roadMaintenanceOrConstruction', 'cityLogistics', 'other']), nullable: true),
                                     new OA\Property(property: 'otherRestrictedTypeText', type: 'string', nullable: true),
                                     new OA\Property(property: 'otherExemptedTypeText', type: 'string', nullable: true),
                                     new OA\Property(property: 'heavyweightMaxWeight', type: 'number', format: 'float', nullable: true),
@@ -253,7 +254,7 @@ final class AddRegulationController
         $generalInfo->organization = $organization;
         $this->objectMapper->map($dto, $generalInfo);
 
-        $regulationOrderRecord = $this->commandBus->handle(new SaveRegulationWithMeasureCommand($generalInfo, $dto->measures));
+        $regulationOrderRecord = $this->commandBus->handle(new SaveRegulationWithMeasureCommand($generalInfo, $dto->status, $dto->measures));
         $this->commandBus->handle(new UpdateApiClientLastUsedAtCommand($user->getUserIdentifier()));
 
         return new JsonResponse(
