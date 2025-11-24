@@ -10,6 +10,10 @@
                     <value>array</value>
                 </option>
             </constraint>
+            <constraint name="Choice">
+                <option name="callback">App\Domain\Condition\Period\Enum\ApplicableDayEnum::getValues</option>
+                <option name="multiple">true</option>
+            </constraint>
             <constraint name="When">
                 <option name="expression">
                     this.recurrenceType === 'certainDays'

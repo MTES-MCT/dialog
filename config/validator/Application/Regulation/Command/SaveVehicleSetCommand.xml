@@ -15,6 +15,10 @@
                     <value>array</value>
                 </option>
             </constraint>
+            <constraint name="Choice">
+                <option name="callback">App\Domain\Regulation\Enum\VehicleTypeEnum::restrictedValues</option>
+                <option name="multiple">true</option>
+            </constraint>
             <constraint name="When">
                 <option name="expression">
                     this.allVehicles === false
@@ -58,6 +62,16 @@
             </constraint>
         </property>
         <property name="critairTypes">
+            <constraint name="Type">
+                <option name="type">
+                    <value>null</value>
+                    <value>array</value>
+                </option>
+            </constraint>
+            <constraint name="Choice">
+                <option name="callback">App\Domain\Regulation\Enum\CritairEnum::critairValues</option>
+                <option name="multiple">true</option>
+            </constraint>
             <constraint name="When">
                 <option name="expression">
                     'critair' in this.restrictedTypes
@@ -65,6 +79,18 @@
                 <option name="constraints">
                     <constraint name="NotBlank"/>
                 </option>
+            </constraint>
+        </property>
+        <property name="exemptedTypes">
+            <constraint name="Type">
+                <option name="type">
+                    <value>null</value>
+                    <value>array</value>
+                </option>
+            </constraint>
+            <constraint name="Choice">
+                <option name="callback">App\Domain\Regulation\Enum\VehicleTypeEnum::exemptedValues</option>
+                <option name="multiple">true</option>
             </constraint>
         </property>
         <property name="otherExemptedTypeText">

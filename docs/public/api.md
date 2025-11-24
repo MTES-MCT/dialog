@@ -56,7 +56,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `maxWidth` (number, nullable)
     - `maxLength` (number, nullable)
     - `maxHeight` (number, nullable)
-    - `critairTypes` (string[], nullable) — valeurs: `critair2`, `critair3`, `critair4`, `critair5`
+    - `critairTypes` (string[], nullable) — valeurs: `critairVE`, `critair1`, `critair2`, `critair3`, `critair4`, `critair5`
   - `periods` (array<object>, nullable)
     - `startDate` (string, date-time ISO, nullable)
     - `startTime` (string, date-time ISO, nullable)
@@ -99,8 +99,8 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
 - `dailyRange.applicableDays` (ApplicableDayEnum): `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`
 - `vehicleSet.restrictedTypes` / `vehicleSet.exemptedTypes` (VehicleTypeEnum, sous-ensembles):
   - Restreints possibles: `heavyGoodsVehicle`, `dimensions`, `critair`, `hazardousMaterials`, `other`
-  - Exemptés possibles: `commercial`, `emergencyServices`, `bicycle`, `pedestrians`, `taxi`, `carSharing`, `roadMaintenanceOrConstruction`, `other`
-- `vehicleSet.critairTypes` (CritairEnum): `critair2`, `critair3`, `critair4`, `critair5`
+  - Exemptés possibles: `commercial`, `emergencyServices`, `bicycle`, `pedestrians`, `taxi`, `carSharing`, `roadMaintenanceOrConstruction`, `cityLogistics`, `other`
+- `vehicleSet.critairTypes` (CritairEnum): `critairVE`, `critair1`, `critair2`, `critair3`, `critair4`, `critair5`
 
 #### Exemple de requête (complet)
 
