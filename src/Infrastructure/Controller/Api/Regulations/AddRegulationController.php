@@ -62,7 +62,7 @@ final class AddRegulationController
                                 properties: [
                                     new OA\Property(property: 'allVehicles', type: 'boolean', nullable: true, example: false),
                                     new OA\Property(property: 'restrictedTypes', type: 'array', items: new OA\Items(type: 'string', enum: ['heavyGoodsVehicle', 'dimensions', 'critair', 'hazardousMaterials', 'other']), nullable: true),
-                                    new OA\Property(property: 'exemptedTypes', type: 'array', items: new OA\Items(type: 'string', enum: ['commercial', 'emergencyServices', 'bicycle', 'pedestrians', 'taxi', 'carSharing', 'roadMaintenanceOrConstruction', 'other']), nullable: true),
+                                    new OA\Property(property: 'exemptedTypes', type: 'array', items: new OA\Items(type: 'string', enum: ['commercial', 'emergencyServices', 'bicycle', 'pedestrians', 'taxi', 'carSharing', 'roadMaintenanceOrConstruction', 'cityLogistics', 'other']), nullable: true),
                                     new OA\Property(property: 'otherRestrictedTypeText', type: 'string', nullable: true),
                                     new OA\Property(property: 'otherExemptedTypeText', type: 'string', nullable: true),
                                     new OA\Property(property: 'heavyweightMaxWeight', type: 'number', format: 'float', nullable: true),
