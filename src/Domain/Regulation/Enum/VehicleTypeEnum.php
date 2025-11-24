@@ -18,6 +18,7 @@ enum VehicleTypeEnum: string
     case OTHER = 'other';
     case TAXI = 'taxi';
     case CAR_SHARING = 'carSharing';
+    case CITY_LOGISTICS = 'cityLogistics';
     case HAZARDOUS_MATERIALS = 'hazardousMaterials';
     case ROAD_MAINTENANCE_OR_CONSTRUCTION = 'roadMaintenanceOrConstruction';
 
@@ -42,6 +43,7 @@ enum VehicleTypeEnum: string
             VehicleTypeEnum::TAXI,
             VehicleTypeEnum::CAR_SHARING,
             VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION,
+            VehicleTypeEnum::CITY_LOGISTICS,
             VehicleTypeEnum::OTHER,
         ];
     }
