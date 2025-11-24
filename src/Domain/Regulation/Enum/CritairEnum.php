@@ -24,4 +24,9 @@ enum CritairEnum: string
             'VE' => CritairEnum::CRITAIR_VE,
         ];
     }
+
+    public static function critairValues(): array
+    {
+        return array_map(static fn (self $case): string => $case->value, self::critairCases());
+    }
 }

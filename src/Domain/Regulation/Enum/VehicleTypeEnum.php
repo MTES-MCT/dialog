@@ -47,4 +47,14 @@ enum VehicleTypeEnum: string
             VehicleTypeEnum::OTHER,
         ];
     }
+
+    public static function restrictedValues(): array
+    {
+        return array_map(static fn (self $case): string => $case->value, self::restrictedCases());
+    }
+
+    public static function exemptedValues(): array
+    {
+        return array_map(static fn (self $case): string => $case->value, self::exemptedCases());
+    }
 }
