@@ -6,6 +6,8 @@ namespace App\Domain\Regulation\Enum;
 
 enum CritairEnum: string
 {
+    case CRITAIR_VE = 'critairVE';
+    case CRITAIR_1 = 'critair1';
     case CRITAIR_2 = 'critair2'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
     case CRITAIR_3 = 'critair3'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
     case CRITAIR_4 = 'critair4'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
@@ -18,6 +20,13 @@ enum CritairEnum: string
             4 => CritairEnum::CRITAIR_4,
             3 => CritairEnum::CRITAIR_3,
             2 => CritairEnum::CRITAIR_2,
+            1 => CritairEnum::CRITAIR_1,
+            'VE' => CritairEnum::CRITAIR_VE,
         ];
+    }
+
+    public static function critairValues(): array
+    {
+        return array_map(static fn (self $case): string => $case->value, self::critairCases());
     }
 }
