@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\RegulationOrderRecord;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
@@ -33,8 +34,9 @@ final class SaveRegulationWithMeasureCommandHandler
             $regulationOrderRecord->getRegulationOrder()->addMeasure($measure);
         }
 
-        // Dans un premier temps, on ne publie pas la réglementation
-        // $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
+        if ($command->status === RegulationOrderRecordStatusEnum::PUBLISHED) {
+            $this->commandBus->handle(new PublishRegulationCommand($regulationOrderRecord));
+        }
 
         return $regulationOrderRecord;
     }
