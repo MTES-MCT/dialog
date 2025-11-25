@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Enum;
 
+// See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
 enum CritairEnum: string
 {
-    case CRITAIR_0 = 'critair0'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
-    case CRITAIR_1 = 'critair1'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
-    case CRITAIR_2 = 'critair2'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
-    case CRITAIR_3 = 'critair3'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
-    case CRITAIR_4 = 'critair4'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
-    case CRITAIR_5 = 'critair5'; // See: https://www.legifrance.gouv.fr/loda/id/JORFTEXT000032749723/
+    case CRITAIR_0 = 'critair0';
+    case CRITAIR_1 = 'critair1';
+    case CRITAIR_2 = 'critair2';
+    case CRITAIR_3 = 'critair3';
+    case CRITAIR_4 = 'critair4';
+    case CRITAIR_5 = 'critair5';
     case CRITAIR_WITHOUT = 'critairWithout';
 
     public static function critairCases(): array
