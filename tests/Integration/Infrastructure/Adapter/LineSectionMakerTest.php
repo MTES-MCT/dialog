@@ -202,10 +202,7 @@ final class LineSectionMakerTest extends KernelTestCase
                             [5, 2],
                             [5, 3],
                         ],
-                        [
-                            [12, 2],
-                            [13, 2],
-                        ],
+                        // Le segment [[12,2],[13,2]] est exclu car trop éloigné géographiquement
                         [
                             [5, 2],
                             [7, 2],
@@ -217,33 +214,10 @@ final class LineSectionMakerTest extends KernelTestCase
                 'fromCoords' => Coordinates::fromLonLat(7, 1),
                 'toCoords' => Coordinates::fromLonLat(9.6, 2), // P
                 'section' => json_encode([
-                    'type' => 'GeometryCollection',
-                    'geometries' => [
-                        [
-                            'type' => 'Point',
-                            'coordinates' => [7, 1],
-                        ],
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [1, 1],
-                                [1, 2],
-                                [2, 2],
-                                [3, 2],
-                                [5, 2],
-                            ],
-                        ],
-                        [
-                            'type' => 'LineString',
-                            'coordinates' => [
-                                [5, 2],
-                                [5, 3],
-                            ],
-                        ],
-                        [
-                            'type' => 'Point',
-                            'coordinates' => [12, 2],
-                        ],
+                    'type' => 'MultiPoint',
+                    'coordinates' => [
+                        [7, 1],
+                        [12, 2],
                     ],
                 ]),
                 'getTolerance' => fn ($bdtopoConnection) => 0.99 // Just below

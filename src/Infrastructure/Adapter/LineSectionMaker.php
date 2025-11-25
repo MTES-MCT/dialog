@@ -142,14 +142,28 @@ final class LineSectionMaker implements LineSectionMakerInterface
                         GREATEST(ST_LineLocatePoint((SELECT geom FROM b_host), (SELECT geom FROM b)), ST_LineLocatePoint((SELECT geom FROM b_host), (SELECT geom FROM b_to_a_endpoint)))
                     ) AS geom
                 ),
-                all_other_segments AS (
-                    SELECT l.geom
+                -- Calcule la distance de chaque segment depuis A et B
+                segments_distances AS (
+                    SELECT
+                        l.geom,
+                        ST_Distance((SELECT geom FROM a)::geography, ST_Centroid(l.geom)::geography) AS dist_from_a,
+                        ST_Distance((SELECT geom FROM b)::geography, ST_Centroid(l.geom)::geography) AS dist_from_b
                     FROM base_merged_linestring l
-                    WHERE NOT ST_Equals(l.geom, (SELECT geom FROM a_host))
-                      AND NOT ST_Equals(l.geom, (SELECT geom FROM b_host))
                 ),
+                -- Distance entre A et B
+                ab_distance AS (
+                    SELECT ST_Distance((SELECT geom FROM a)::geography, (SELECT geom FROM b)::geography) AS dist
+                ),
+                -- Un segment est "entre" A et B si : dist(A,segment) + dist(segment,B) ≈ dist(A,B)
+                -- On utilise une marge de tolérance de 20% pour gérer les sinuosités
                 intermediate_sections AS (
-                    SELECT geom FROM all_other_segments
+                    SELECT s.geom
+                    FROM segments_distances s, ab_distance abd
+                    WHERE (s.dist_from_a + s.dist_from_b) <= (abd.dist * 1.2)
+                      AND s.dist_from_a <= abd.dist
+                      AND s.dist_from_b <= abd.dist
+                      AND NOT ST_Equals(s.geom, (SELECT geom FROM a_host))
+                      AND NOT ST_Equals(s.geom, (SELECT geom FROM b_host))
                 ),
                 all_sections AS (
                     SELECT geom FROM a_side_section
