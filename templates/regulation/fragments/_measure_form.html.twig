@@ -151,7 +151,7 @@
     </li>
 {% endmacro %}
 
-{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject) %}
+{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject, regulationOrderRecord) %}
     {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
 
     <div
@@ -222,6 +222,19 @@
                     <li role="status" data-autocomplete-target="status"></li>
                 </ul>
         </div>
+
+        <d-modal-trigger modal="create-report-address-form-modal" submitvalue="upload">
+            <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-error-warning-line" aria-controls="create-report-address-form-modal">
+                {{'regulation.location.report.problem.btn'|trans}}
+            </button>
+        </d-modal-trigger>
+
+        {% include "common/form-modal.html.twig" with {
+                id: 'create-report-address-form-modal',
+                frameId: 'create-report-address-form-frame',
+                src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
+        } only %}
+
         <hr class="fr-mt-3w" />
         <fieldset
             aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point"
@@ -329,7 +342,7 @@
     </div>
 {% endmacro %}
 
-{% macro locations_list_item(form, index, position, regulationSubject) %}
+{% macro locations_list_item(form, index, position, regulationSubject, regulationOrderRecord) %}
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
@@ -357,8 +370,8 @@
                     },
                 }) }}
 
-                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject) }}
-                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject) }}
+                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject, regulationOrderRecord) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject, regulationOrderRecord) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
@@ -709,7 +722,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject, regulationOrderRecord)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-2w d-stack"
@@ -718,7 +731,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject) }}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject, regulationOrderRecord) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}
