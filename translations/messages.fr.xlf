@@ -1897,9 +1897,13 @@
                 <source>regulation.vehicle_set.type.critair</source>
                 <target>Crit'Air</target>
             </trans-unit>
-            <trans-unit id="regulation.vehicle_set.type.critairVE">
-                <source>regulation.vehicle_set.type.critairVE</source>
-                <target>Crit'Air VE</target>
+            <trans-unit id="regulation.vehicle_set.type.critairWithout">
+                <source>regulation.vehicle_set.type.critairWithout</source>
+                <target>sans vignette</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.critair0">
+                <source>regulation.vehicle_set.type.critair0</source>
+                <target>Crit'Air 0 / VE</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.critair1">
                 <source>regulation.vehicle_set.type.critair1</source>
