@@ -40,6 +40,36 @@ final class ReportAddressController
     {
         $user = $this->authenticatedUser->getUser();
         $command = new SaveReportAddressCommand($user);
+
+        // Récupérer les paramètres de la requête
+        $administrator = $request->query->get('administrator');
+        $roadNumber = $request->query->get('roadNumber');
+        $cityLabel = $request->query->get('cityLabel');
+        $roadName = $request->query->get('roadName');
+
+        // Construire la valeur de roadType
+        $roadTypeParts = [];
+
+        // Cas 1 : Routes numérotées (administrator + roadNumber)
+        if ($administrator !== null && $administrator !== '') {
+            $roadTypeParts[] = $administrator;
+        }
+        if ($roadNumber !== null && $roadNumber !== '') {
+            $roadTypeParts[] = $roadNumber;
+        }
+
+        // Cas 2 : Routes nommées (cityLabel + roadName)
+        if ($cityLabel !== null && $cityLabel !== '') {
+            $roadTypeParts[] = $cityLabel;
+        }
+        if ($roadName !== null && $roadName !== '') {
+            $roadTypeParts[] = $roadName;
+        }
+
+        if (!empty($roadTypeParts)) {
+            $command->roadType = implode(' - ', $roadTypeParts);
+        }
+
         $form = $this->formFactory->create(ReportAddressFormType::class, $command);
         $form->handleRequest($request);
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
@@ -52,22 +82,28 @@ final class ReportAddressController
 
             $redirectUrl = $this->router->generate('app_regulation_detail', ['uuid' => $uuid]);
 
+            $frameId = $request->query->get('frameId', 'create-report-address-form-frame');
+
             return new Response(
                 $this->twig->render(
                     'regulation/fragments/_reportAddress.stream.html.twig',
                     [
                         'redirectUrl' => $redirectUrl,
+                        'frameId' => $frameId,
                     ],
                 ),
                 Response::HTTP_OK,
             );
         }
 
+        $frameId = $request->query->get('frameId', 'create-report-address-form-frame');
+
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_reportAddress.stream.html.twig',
                 context: [
                     'form' => $form->createView(),
+                    'frameId' => $frameId,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid())

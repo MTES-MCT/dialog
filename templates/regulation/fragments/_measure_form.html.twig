@@ -223,17 +223,29 @@
                 </ul>
         </div>
 
-        <d-modal-trigger modal="create-report-address-form-modal" submitvalue="upload">
-            <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-error-warning-line" aria-controls="create-report-address-form-modal">
-                {{'regulation.location.report.problem.btn'|trans}}
-            </button>
-        </d-modal-trigger>
+        {% set reportModalId = 'create-report-address-form-modal-' ~ locationIndex ~ '-' ~ roadType %}
+        {% set reportFrameId = 'create-report-address-form-frame-' ~ locationIndex ~ '-' ~ roadType %}
+        <div data-controller="report-address-modal">
+            <d-modal-trigger modal="{{ reportModalId }}" submitvalue="upload">
+                <button 
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line" 
+                    aria-controls="{{ reportModalId }}"
+                    data-action="click->report-address-modal#updateModalUrl"
+                    data-administrator-field-id="{{ form[roadType].administrator.vars.id }}"
+                    data-road-number-field-id="{{ form[roadType].roadNumber.vars.id }}"
+                    data-frame-id="{{ reportFrameId }}"
+                    data-base-url="{{ path('app_report_address', { uuid: regulationOrderRecord.uuid }) }}"
+                >
+                    {{'regulation.location.report.problem.btn'|trans}}
+                </button>
+            </d-modal-trigger>
 
-        {% include "common/form-modal.html.twig" with {
-                id: 'create-report-address-form-modal',
-                frameId: 'create-report-address-form-frame',
-                src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
-        } only %}
+            {% include "common/form-modal.html.twig" with {
+                    id: reportModalId,
+                    frameId: reportFrameId,
+                    src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
+            } only %}
+        </div>
 
         <hr class="fr-mt-3w" />
         <fieldset
@@ -504,7 +516,32 @@
                                     'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
                                 }
                             }) }}
+
+                            {% set reportModalIdLane = 'create-report-address-form-modal-' ~ index ~ '-lane' %}
+                            {% set reportFrameIdLane = 'create-report-address-form-frame-' ~ index ~ '-lane' %}
+                            <div data-controller="report-address-modal">
+                                <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
+                                    <button 
+                                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line" 
+                                        aria-controls="{{ reportModalIdLane }}"
+                                        data-action="click->report-address-modal#updateModalUrl"
+                                        data-city-label-field-id="{{ form.namedStreet.cityLabel.vars.id }}"
+                                        data-road-name-field-id="{{ form.namedStreet.roadName.vars.id }}"
+                                        data-frame-id="{{ reportFrameIdLane }}"
+                                        data-base-url="{{ path('app_report_address', { uuid: regulationOrderRecord.uuid }) }}"
+                                    >
+                                        {{'regulation.location.report.problem.btn'|trans}}
+                                    </button>
+                                </d-modal-trigger>
+
+                                {% include "common/form-modal.html.twig" with {
+                                        id: reportModalIdLane,
+                                        frameId: reportFrameIdLane,
+                                        src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
+                                } only %}
+                            </div>
                             <hr class="fr-mt-3w" />
+
                             <fieldset
                                 aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
                                 data-form-reveal-target="section formControl"
