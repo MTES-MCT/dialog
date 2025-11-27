@@ -12,8 +12,10 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class OrganizationRepository extends ServiceEntityRepository implements OrganizationRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly string $dialogOrgId,
+    ) {
         parent::__construct($registry, Organization::class);
     }
 
@@ -79,7 +81,8 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
     {
         return $this->createQueryBuilder('o')
             ->select('count(o.uuid)')
-            ->where('o.uuid <> \'e0d93630-acf7-4722-81e8-ff7d5fa64b66\'') // DiaLog
+            ->where('o.uuid <> :dialogOrgId')
+            ->setParameter('dialogOrgId', $this->dialogOrgId)
             ->getQuery()
             ->getSingleScalarResult()
         ;
@@ -101,5 +104,19 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         );
 
         return (bool) ($result['has_intersection'] ?? false);
+    }
+
+    public function findAllForStatistics(): array
+    {
+        return $this->getEntityManager()->getConnection()->fetchAllAssociative(
+            'SELECT uuid, name, ST_AsGeoJSON(geometry) as geometry
+            FROM organization
+            WHERE uuid <> :dialogOrgId
+            AND geometry IS NOT NULL
+            AND NOT ST_IsEmpty(geometry)',
+            [
+                'dialogOrgId' => $this->dialogOrgId,
+            ],
+        );
     }
 }

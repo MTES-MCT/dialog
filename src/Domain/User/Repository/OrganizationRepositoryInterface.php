@@ -25,4 +25,6 @@ interface OrganizationRepositoryInterface
     public function flush(): void;
 
     public function canInterveneOnGeometry(string $uuid, string $geometry): bool;
+
+    public function findAllForStatistics(): array;
 }
