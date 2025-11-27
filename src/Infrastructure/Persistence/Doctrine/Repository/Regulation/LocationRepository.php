@@ -107,6 +107,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 // En PostgreSQL, tsrange permet de représenter un intervalle de date et heure.
                 // https://www.postgresql.org/docs/13/rangetypes.html
                 // NB : si l'arrêté n'a pas encore de période, EXISTS renverra FALSE, donc on ne retiendra pas ses localisations, comme attendu.
+                // IMPORTANT : si end_datetime est NULL, cela signifie une période permanente (sans fin),
+                // on utilise donc un range ouvert [start, +infini)
                 $measureDatesCondition = \sprintf(
                     'AND EXISTS (
                     SELECT 1
@@ -119,7 +121,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     -- Pour inclure le 12/01/2025 en entier, il faut prendre (startDate inclus, endDate + 1 jour exclus)
                     AND tsrange(%s, %s, \'[)\') && tsrange(
                         LEAST(p.start_datetime::timestamp, p.end_datetime::timestamp),
-                        GREATEST(p.start_datetime::timestamp, p.end_datetime::timestamp)
+                        CASE
+                            WHEN p.end_datetime IS NULL THEN NULL
+                            ELSE GREATEST(p.start_datetime::timestamp, p.end_datetime::timestamp)
+                        END,
+                        \'[)\'
                     )
                 )',
                     $rangeStartSql,
@@ -180,10 +186,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ];
         }
 
-        return json_encode([
-            'type' => 'FeatureCollection',
-            'features' => $features,
-        ]);
+        return json_encode(['type' => 'FeatureCollection', 'features' => $features]);
     }
 
     public function findAllWithoutGeometry(): array
