@@ -10,6 +10,7 @@ use App\Domain\User\Feedback;
 use App\Domain\User\News;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
+use App\Domain\User\ReportAddress;
 use App\Domain\User\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -50,5 +51,7 @@ final class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Avis', 'fa fa-comments', Feedback::class);
 
         yield MenuItem::linkToCrud('Bandeaux nouveautés', 'fa fa-newspaper', News::class);
+
+        yield MenuItem::linkToCrud('Signalement adresse', 'fa fa-newspaper', ReportAddress::class);
     }
 }

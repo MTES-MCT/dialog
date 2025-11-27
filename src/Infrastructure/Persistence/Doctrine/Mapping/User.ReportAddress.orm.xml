@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\User\ReportAddress"
+    table="report_address">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="content" type="text" column="content" nullable="false"/>
+    <field name="roadType" type="string" column="road_type" nullable="false" length="40"/>
+    <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
+        <options>
+          <option name="default">CURRENT_TIMESTAMP</option>
+        </options>
+    </field>
+    <field name="hasBeenContacted" type="boolean" column="has_been_contacted" nullable="true">
+      <options>
+        <option name="default">false</option>
+      </options>
+    </field>
+    <many-to-one field="user" target-entity="App\Domain\User\User">
+        <join-columns>
+            <join-column name="user_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
+        </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

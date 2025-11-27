@@ -151,7 +151,7 @@
     </li>
 {% endmacro %}
 
-{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject) %}
+{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject, regulationOrderRecord) %}
     {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
 
     <div
@@ -222,6 +222,31 @@
                     <li role="status" data-autocomplete-target="status"></li>
                 </ul>
         </div>
+
+        {% set reportModalId = 'create-report-address-form-modal-' ~ locationIndex ~ '-' ~ roadType %}
+        {% set reportFrameId = 'create-report-address-form-frame-' ~ locationIndex ~ '-' ~ roadType %}
+        <div data-controller="report-address-modal">
+            <d-modal-trigger modal="{{ reportModalId }}" submitvalue="upload">
+                <button 
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line" 
+                    aria-controls="{{ reportModalId }}"
+                    data-action="click->report-address-modal#updateModalUrl"
+                    data-administrator-field-id="{{ form[roadType].administrator.vars.id }}"
+                    data-road-number-field-id="{{ form[roadType].roadNumber.vars.id }}"
+                    data-frame-id="{{ reportFrameId }}"
+                    data-base-url="{{ path('app_report_address', { uuid: regulationOrderRecord.uuid }) }}"
+                >
+                    {{'regulation.location.report.problem.btn'|trans}}
+                </button>
+            </d-modal-trigger>
+
+            {% include "common/form-modal.html.twig" with {
+                    id: reportModalId,
+                    frameId: reportFrameId,
+                    src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
+            } only %}
+        </div>
+
         <hr class="fr-mt-3w" />
         <fieldset
             aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point"
@@ -329,7 +354,7 @@
     </div>
 {% endmacro %}
 
-{% macro locations_list_item(form, index, position, regulationSubject) %}
+{% macro locations_list_item(form, index, position, regulationSubject, regulationOrderRecord) %}
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
@@ -357,8 +382,8 @@
                     },
                 }) }}
 
-                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject) }}
-                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject) }}
+                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject, regulationOrderRecord) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject, regulationOrderRecord) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
@@ -491,7 +516,32 @@
                                     'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
                                 }
                             }) }}
+
+                            {% set reportModalIdLane = 'create-report-address-form-modal-' ~ index ~ '-lane' %}
+                            {% set reportFrameIdLane = 'create-report-address-form-frame-' ~ index ~ '-lane' %}
+                            <div data-controller="report-address-modal">
+                                <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
+                                    <button 
+                                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line" 
+                                        aria-controls="{{ reportModalIdLane }}"
+                                        data-action="click->report-address-modal#updateModalUrl"
+                                        data-city-label-field-id="{{ form.namedStreet.cityLabel.vars.id }}"
+                                        data-road-name-field-id="{{ form.namedStreet.roadName.vars.id }}"
+                                        data-frame-id="{{ reportFrameIdLane }}"
+                                        data-base-url="{{ path('app_report_address', { uuid: regulationOrderRecord.uuid }) }}"
+                                    >
+                                        {{'regulation.location.report.problem.btn'|trans}}
+                                    </button>
+                                </d-modal-trigger>
+
+                                {% include "common/form-modal.html.twig" with {
+                                        id: reportModalIdLane,
+                                        frameId: reportFrameIdLane,
+                                        src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
+                                } only %}
+                            </div>
                             <hr class="fr-mt-3w" />
+
                             <fieldset
                                 aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
                                 data-form-reveal-target="section formControl"
@@ -709,7 +759,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject, regulationOrderRecord)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-2w d-stack"
@@ -718,7 +768,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject) }}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject, regulationOrderRecord) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}
