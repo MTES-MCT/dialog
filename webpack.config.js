@@ -70,8 +70,10 @@ Encore
         config.corejs = '3.23';
     })
 
-    // enables Sass/SCSS support
-    .enableSassLoader()
+    // enables Sass/SCSS support with modern API
+    .enableSassLoader((options) => {
+        options.api = 'modern'; // Use modern Sass API (compatible with sass-loader v13+)
+    })
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()

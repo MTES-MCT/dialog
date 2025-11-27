@@ -1,4 +1,4 @@
-@import './button';
-@import './container';
-@import './fieldset';
-@import './icon';
+@use './button' as *;
+@use './container' as *;
+@use './fieldset' as *;
+@use './icon' as *;

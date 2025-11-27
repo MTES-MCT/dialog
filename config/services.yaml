@@ -38,6 +38,7 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
+            - '../src/Infrastructure/Persistence/Doctrine/Fixtures'
             - '../src/Infrastructure/Persistence/Doctrine/Mapping'
             - '../src/Infrastructure/Persistence/Doctrine/Migrations'
             - '../src/Kernel.php'
@@ -126,7 +127,7 @@ services:
     # --------------
 
     League\CommonMark\Extension\Table\TableExtension:
-        tags: ['twig.markdown.league_extension'] 
+        tags: ['twig.markdown.league_extension']
 
     # --------------
     # Litteralis
@@ -137,8 +138,20 @@ services:
         tags:
             - { name: monolog.logger, channel: litteralis_import }
 
+when@dev:
+    services:
+        # Load fixtures in dev environment (override default exclusion)
+        App\Infrastructure\Persistence\Doctrine\Fixtures\:
+            resource: '../src/Infrastructure/Persistence/Doctrine/Fixtures/'
+            tags: ['doctrine.fixture.orm']
+
 when@test:
     services:
+        # Load fixtures in test environment (override default exclusion)
+        App\Infrastructure\Persistence\Doctrine\Fixtures\:
+            resource: '../src/Infrastructure/Persistence/Doctrine/Fixtures/'
+            tags: ['doctrine.fixture.orm']
+
         App\Tests\Mock\APIAdresseMockClient:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
             decorates: 'api.adresse.client'
