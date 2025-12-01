@@ -1,5 +1,5 @@
-@import './dsfr-extensions/index';
-@import './a11y';
-@import './gap';
-@import './text';
-@import './grow';
+@use './dsfr-extensions/index' as *;
+@use './a11y' as *;
+@use './gap' as *;
+@use './text' as *;
+@use './grow' as *;

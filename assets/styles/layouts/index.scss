@@ -1,2 +1,2 @@
-@import './stack';
-@import './frame';
+@use './stack' as *;
+@use './frame' as *;

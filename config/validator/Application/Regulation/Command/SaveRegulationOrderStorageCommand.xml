@@ -22,6 +22,7 @@
                         <option name="protocols">
                             <value>https</value>
                         </option>
+                        <option name="requireTld">true</option>
                     </constraint>
                 </option>
             </constraint>

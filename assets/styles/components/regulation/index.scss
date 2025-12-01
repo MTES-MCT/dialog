@@ -1,2 +1,2 @@
-@import './timeslot';
-@import './vehicles';
+@use './timeslot' as *;
+@use './vehicles' as *;
