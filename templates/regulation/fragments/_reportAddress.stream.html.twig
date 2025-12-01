@@ -1,9 +1,13 @@
+{% if redirectUrl is defined %}
 <turbo-stream action="update" target="{{ frameId|default('create-report-address-form-frame') }}">
     <template>
-        {% if redirectUrl is defined %}
-            <script>window.top.location = "{{ redirectUrl }}";</script>
-        {% else %}
-            {% include 'regulation/reportAddress.html.twig'%}
-        {% endif %}
+        <div data-controller="redirect" data-redirect-url-value="{{ redirectUrl }}" style="display: none;"></div>
     </template>
 </turbo-stream>
+{% else %}
+<turbo-stream action="update" target="{{ frameId|default('create-report-address-form-frame') }}">
+    <template>
+        {% include 'regulation/reportAddress.html.twig'%}
+    </template>
+</turbo-stream>
+{% endif %}

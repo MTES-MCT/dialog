@@ -893,6 +893,10 @@
                 <source>regulation.location.report.problem.btn</source>
                 <target>Signaler un problème avec une adresse</target>
             </trans-unit>
+            <trans-unit id="regulation.location.report.problem.send">
+                <source>regulation.location.report.problem.send</source>
+                <target>Signaler</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.add">
                 <source>regulation.measure.add</source>
                 <target>Ajouter une mesure</target>

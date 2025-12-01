@@ -20,6 +20,9 @@ final class ReportAddressFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'localisation du problème',
+                    'attr' => [
+                        'readonly' => true,
+                    ],
                 ],
             )
             ->add(
@@ -32,7 +35,7 @@ final class ReportAddressFormType extends AbstractType
             )
             ->add('save', SubmitType::class,
                 options: [
-                    'label' => 'common.send',
+                    'label' => 'regulation.location.report.problem.send',
                     'attr' => ['class' => 'fr-btn'],
                 ],
             )

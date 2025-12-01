@@ -70,12 +70,19 @@ final class ReportAddressController
             $command->roadType = implode(' - ', $roadTypeParts);
         }
 
-        $form = $this->formFactory->create(ReportAddressFormType::class, $command);
+        $form = $this->formFactory->create(
+            ReportAddressFormType::class,
+            $command,
+            [
+                'action' => $this->router->generate('app_report_address', ['uuid' => $uuid]),
+            ],
+        );
         $form->handleRequest($request);
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
+
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();
             $session->getFlashBag()->add('success', $this->translator->trans('report_address.send.success'));
