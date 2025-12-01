@@ -5,7 +5,7 @@
     table="report_address">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="content" type="text" column="content" nullable="false"/>
-    <field name="roadType" type="string" column="road_type" nullable="false" length="40"/>
+    <field name="roadType" type="string" column="road_type" nullable="false" length="255"/>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>

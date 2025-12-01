@@ -83,20 +83,17 @@ final class ReportAddressController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
 
+            $redirectUrl = $this->router->generate('app_regulation_detail', ['uuid' => $uuid]);
+
             /** @var FlashBagAwareSessionInterface */
             $session = $request->getSession();
             $session->getFlashBag()->add('success', $this->translator->trans('report_address.send.success'));
-
-            $redirectUrl = $this->router->generate('app_regulation_detail', ['uuid' => $uuid]);
-
-            $frameId = $request->query->get('frameId', 'create-report-address-form-frame');
 
             return new Response(
                 $this->twig->render(
                     'regulation/fragments/_reportAddress.stream.html.twig',
                     [
                         'redirectUrl' => $redirectUrl,
-                        'frameId' => $frameId,
                     ],
                 ),
                 Response::HTTP_OK,
