@@ -102,9 +102,11 @@ https://github.com/symfony/symfony/blob/6.3/src/Symfony/Bridge/Twig/Resources/vi
 
 {% block form_label_content %}
   <span {% with {attr: label_content_attr|default({})} %}{{ block('attributes') }}{% endwith %}>
-    {{ parent() }}{% if required %}<span class="fr-x-required-marker" aria-hidden="true"></span>{% endif %}
+    {{ parent() }}{% if required is defined and required %}<span class="fr-x-required-marker" aria-hidden="true"></span>{% endif %}
   </span>
-  {{- form_help(form) -}}
+  {%- if help is defined and help -%}
+    <div id="{{ id }}_help" class="fr-hint-text help-text">{{ help|trans }}</div>
+  {%- endif -%}
 {% endblock %}
 
 {% block form_help %}

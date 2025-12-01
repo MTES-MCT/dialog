@@ -11,14 +11,14 @@ use App\Application\QueryBusInterface;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use App\Infrastructure\Form\Organization\MailingListFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
-use Http\Discovery\Exception\NotFoundException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -52,7 +52,7 @@ final class EditRecipientController extends AbstractOrganizationController
         $mailingList = $this->queryBus->handle(new GetRecipientQuery($mailingListUuid));
 
         if (!$mailingList) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException();
         }
 
         $command = new SaveMailingListCommand($organization, $mailingList);

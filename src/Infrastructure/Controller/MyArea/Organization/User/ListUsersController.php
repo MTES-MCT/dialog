@@ -10,7 +10,7 @@ use App\Application\User\Query\GetOrganizationUsersQuery;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 final class ListUsersController extends AbstractOrganizationController

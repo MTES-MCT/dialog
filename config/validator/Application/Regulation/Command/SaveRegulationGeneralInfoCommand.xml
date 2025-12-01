@@ -23,8 +23,10 @@
                 </option>
                 <option name="constraints">
                     <constraint name="Choice">
-                        <value>temporaryRegulation</value>
-                        <value>permanentRegulation</value>
+                        <option name="choices">
+                            <value>temporaryRegulation</value>
+                            <value>permanentRegulation</value>
+                        </option>
                     </constraint>
                 </option>
             </constraint>
@@ -36,11 +38,13 @@
                 </option>
                 <option name="constraints">
                     <constraint name="Choice">
-                        <value>roadMaintenance</value>
-                        <value>incident</value>
-                        <value>event</value>
-                        <value>winterMaintenance</value>
-                        <value>other</value>
+                        <option name="choices">
+                            <value>roadMaintenance</value>
+                            <value>incident</value>
+                            <value>event</value>
+                            <value>winterMaintenance</value>
+                            <value>other</value>
+                        </option>
                     </constraint>
                 </option>
             </constraint>

@@ -23,8 +23,10 @@
         <property name="recurrenceType">
             <constraint name="NotBlank"/>
             <constraint name="Choice">
-                <value>everyDay</value>
-                <value>certainDays</value>
+                <option name="choices">
+                    <value>everyDay</value>
+                    <value>certainDays</value>
+                </option>
             </constraint>
         </property>
         <property name="endDate">

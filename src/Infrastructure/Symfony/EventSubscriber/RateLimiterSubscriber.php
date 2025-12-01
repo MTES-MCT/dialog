@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\EventSubscriber;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -16,7 +17,9 @@ class RateLimiterSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private KernelInterface $kernel,
+        #[Autowire(service: 'limiter.app')]
         private RateLimiterFactory $appLimiter,
+        #[Autowire(service: 'limiter.api')]
         private RateLimiterFactory $apiLimiter,
     ) {
     }

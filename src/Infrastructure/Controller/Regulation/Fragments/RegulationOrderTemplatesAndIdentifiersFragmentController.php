@@ -11,7 +11,7 @@ use App\Domain\Regulation\DTO\RegulationOrderTemplateDTO;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class RegulationOrderTemplatesAndIdentifiersFragmentController

@@ -1,5 +1,5 @@
-@import './background';
-@import './display';
-@import './sizing';
-@import './text';
-@import './proconnect';
+@use './background' as *;
+@use './display' as *;
+@use './sizing' as *;
+@use './text' as *;
+@use './proconnect' as *;

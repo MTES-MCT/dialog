@@ -1,7 +1,7 @@
-@import './reset';
-@import './variables';
-@import './defaults';
-@import './layouts/index';
-@import './components/index';
-@import './customElements/index';
-@import './utilities/index';
+@use './reset' as *;
+@use './variables' as *;
+@use './defaults' as *;
+@use './layouts/index' as *;
+@use './components/index' as *;
+@use './customElements/index' as *;
+@use './utilities/index' as *;
