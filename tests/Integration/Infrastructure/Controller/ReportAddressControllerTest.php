@@ -1,0 +1,125 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Integration\Infrastructure\Controller;
+
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use Symfony\UX\Turbo\TurboBundle;
+
+final class ReportAddressControllerTest extends AbstractWebTestCase
+{
+    public function testGetForm(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+        $this->assertSecurityHeaders();
+
+        $streams = $crawler->filter('turbo-stream');
+        $this->assertCount(1, $streams);
+        $this->assertSame('update', $streams->eq(0)->attr('action'));
+        $this->assertSame('create-report-address-form-frame', $streams->eq(0)->attr('target'));
+
+        $template = $streams->eq(0)->filter('template');
+        $this->assertSame('localisation du problème', $template->filter('label[for*="roadType"]')->text());
+        $this->assertSame('Description du problème Décrivez ici le problème, par exemple le nom de la rue non trouvée ou le numéro de PR sur une route.', $template->filter('label[for*="content"]')->text());
+    }
+
+    public function testGetFormWithQueryParametersForNumberedRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address?administrator=Route%20d%C3%A9partementale&roadNumber=D12&frameId=custom-frame-id');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+
+        $streams = $crawler->filter('turbo-stream');
+        $this->assertSame('custom-frame-id', $streams->eq(0)->attr('target'));
+
+        $template = $streams->eq(0)->filter('template');
+        $roadTypeInput = $template->filter('input[name*="roadType"]');
+        $this->assertSame('Route départementale - D12', $roadTypeInput->attr('value'));
+    }
+
+    public function testGetFormWithQueryParametersForNamedRoad(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address?cityLabel=Paris&roadName=Rue%20de%20la%20Paix');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+
+        $template = $crawler->filter('turbo-stream template');
+        $roadTypeInput = $template->filter('input[name*="roadType"]');
+        $this->assertSame('Paris - Rue de la Paix', $roadTypeInput->attr('value'));
+    }
+
+    public function testSubmitValidForm(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address?administrator=Route%20d%C3%A9partementale&roadNumber=D12&frameId=custom-frame-id');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $template = $crawler->filter('turbo-stream template');
+        $saveButton = $template->selectButton('Signaler');
+        $form = $saveButton->form();
+        $form['report_address_form[content]'] = 'Il y a un problème avec cette adresse, la signalisation est absente.';
+
+        $crawler = $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+
+        $streams = $crawler->filter('turbo-stream');
+        $this->assertCount(1, $streams);
+        $this->assertSame('update', $streams->eq(0)->attr('action'));
+
+        $template = $streams->eq(0)->filter('template');
+        $script = $template->filter('script');
+        $this->assertCount(1, $script);
+        $this->assertStringContainsString('/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, $script->text());
+    }
+
+    public function testEmptyData(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $template = $crawler->filter('turbo-stream template');
+        $saveButton = $template->selectButton('Signaler');
+        $form = $saveButton->form();
+        $form['report_address_form[content]'] = '';
+        $form['report_address_form[roadType]'] = '';
+
+        $crawler = $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+
+        $template = $crawler->filter('turbo-stream template');
+        $this->assertSame('Cette valeur ne doit pas être vide.', $template->filter('#report_address_form_content_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $template->filter('#report_address_form_roadType_error')->text());
+    }
+
+    public function testWithoutAuthenticatedUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address');
+
+        $this->assertResponseRedirects('http://localhost/login', 302);
+    }
+
+    public function testWithInvalidUuid(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/regulations/invalid-uuid/report-address');
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+}

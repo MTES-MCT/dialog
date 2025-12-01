@@ -22,9 +22,6 @@ final class ReportAddressFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'localisation du problème',
-                    'attr' => [
-                        'readonly' => true,
-                    ],
                 ],
             )
             ->add(
