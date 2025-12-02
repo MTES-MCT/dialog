@@ -6,7 +6,47 @@
 
 {% block body %}
     <div class="fr-container fr-x-max-w-156w fr-py-2w fr-py-md-5w">
-        <h1>{{ 'statistics.title'|trans }}</h1>
+        <h1 class="fr-h1">{{ 'statistics.title'|trans }}</h1>
+
+        <section class="fr-mb-6w"
+            data-controller="stats-map"
+            data-stats-map-api-url-value="{{ path('api_stats_organizations_geometries') }}"
+        >
+            <h2 class="fr-h4 fr-mb-2w">{{ 'statistics.map.title'|trans }}</h2>
+            <p class="fr-text--sm fr-mb-3w">
+                {{ 'statistics.map.description'|trans }}
+            </p>
+
+            <div class="stats-map-main-container">
+                <div data-stats-map-target="mainMap" class="stats-map-main"></div>
+            </div>
+
+            <div class="fr-mt-3w">
+                <h3 class="fr-h6 fr-mb-2w">{{ 'statistics.map.overseas.title'|trans }}</h3>
+                <div class="stats-map-overseas-grid">
+                    <div class="stats-overseas-map">
+                        <div class="stats-overseas-map-title">{{ 'statistics.map.overseas.guadeloupe'|trans }}</div>
+                        <div data-stats-map-target="overseasMap" class="stats-overseas-map-container"></div>
+                    </div>
+                    <div class="stats-overseas-map">
+                        <div class="stats-overseas-map-title">{{ 'statistics.map.overseas.martinique'|trans }}</div>
+                        <div data-stats-map-target="overseasMap" class="stats-overseas-map-container"></div>
+                    </div>
+                    <div class="stats-overseas-map">
+                        <div class="stats-overseas-map-title">{{ 'statistics.map.overseas.guyane'|trans }}</div>
+                        <div data-stats-map-target="overseasMap" class="stats-overseas-map-container"></div>
+                    </div>
+                    <div class="stats-overseas-map">
+                        <div class="stats-overseas-map-title">{{ 'statistics.map.overseas.reunion'|trans }}</div>
+                        <div data-stats-map-target="overseasMap" class="stats-overseas-map-container"></div>
+                    </div>
+                    <div class="stats-overseas-map">
+                        <div class="stats-overseas-map-title">{{ 'statistics.map.overseas.mayotte'|trans }}</div>
+                        <div data-stats-map-target="overseasMap" class="stats-overseas-map-container"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <d-responsive-iframe
             maxWidth="1200" {# Corresponds to 156w #}
