@@ -11,7 +11,7 @@ class ReportAddress
     public function __construct(
         private string $uuid,
         private string $content,
-        private string $roadType,
+        private string $location,
         private User $user,
         private bool $hasBeenContacted = false,
     ) {
@@ -27,9 +27,9 @@ class ReportAddress
         return $this->content;
     }
 
-    public function getRoadType(): string
+    public function getLocation(): string
     {
-        return $this->roadType;
+        return $this->location;
     }
 
     public function getUser(): User

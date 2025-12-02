@@ -24,7 +24,7 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
         $this->assertSame('create-report-address-form-frame', $streams->eq(0)->attr('target'));
 
         $template = $streams->eq(0)->filter('template');
-        $this->assertSame('localisation du problème', $template->filter('label[for*="roadType"]')->text());
+        $this->assertSame('Localisation du problème Saisissez la localisation du problème, par exemple Route nationale N176', $template->filter('label[for*="location"]')->text());
         $this->assertSame('Description du problème Décrivez ici le problème, par exemple le nom de la rue non trouvée ou le numéro de PR sur une route.', $template->filter('label[for*="content"]')->text());
     }
 
@@ -40,8 +40,8 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
         $this->assertSame('custom-frame-id', $streams->eq(0)->attr('target'));
 
         $template = $streams->eq(0)->filter('template');
-        $roadTypeInput = $template->filter('input[name*="roadType"]');
-        $this->assertSame('Route départementale - D12', $roadTypeInput->attr('value'));
+        $locationInput = $template->filter('input[name*="location"]');
+        $this->assertSame('Route départementale - D12', $locationInput->attr('value'));
     }
 
     public function testGetFormWithQueryParametersForNamedRoad(): void
@@ -53,8 +53,8 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
         $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
 
         $template = $crawler->filter('turbo-stream template');
-        $roadTypeInput = $template->filter('input[name*="roadType"]');
-        $this->assertSame('Paris - Rue de la Paix', $roadTypeInput->attr('value'));
+        $locationInput = $template->filter('input[name*="location"]');
+        $this->assertSame('Paris - Rue de la Paix', $locationInput->attr('value'));
     }
 
     public function testSubmitValidForm(): void
@@ -95,7 +95,7 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
         $saveButton = $template->selectButton('Signaler');
         $form = $saveButton->form();
         $form['report_address_form[content]'] = '';
-        $form['report_address_form[roadType]'] = '';
+        $form['report_address_form[location]'] = '';
 
         $crawler = $client->submit($form);
 
@@ -104,7 +104,7 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
 
         $template = $crawler->filter('turbo-stream template');
         $this->assertSame('Cette valeur ne doit pas être vide.', $template->filter('#report_address_form_content_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $template->filter('#report_address_form_roadType_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $template->filter('#report_address_form_location_error')->text());
     }
 
     public function testWithoutAuthenticatedUser(): void

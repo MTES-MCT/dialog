@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
@@ -38,12 +39,24 @@ final class ReportAddressController
         ],
         methods: ['GET', 'POST'],
     )]
-    public function __invoke(Request $request, string $uuid): Response
-    {
+    public function __invoke(Request $request,
+        string $uuid,
+        #[MapQueryParameter] ?string $frameId = null,
+        #[MapQueryParameter] ?string $administrator = null,
+        #[MapQueryParameter] ?string $roadNumber = null,
+        #[MapQueryParameter] ?string $cityLabel = null,
+        #[MapQueryParameter] ?string $roadName = null,
+    ): Response {
         $user = $this->authenticatedUser->getUser();
-        $command = new SaveReportAddressCommand($user);
+        $command = new SaveReportAddressCommand(
+            $user,
+            $administrator,
+            $roadNumber,
+            $cityLabel,
+            $roadName,
+        );
 
-        $frameId = $request->query->get('frameId', 'create-report-address-form-frame');
+        $frameId = $frameId ?? 'create-report-address-form-frame';
 
         $actionParams = array_merge(
             [
@@ -51,34 +64,6 @@ final class ReportAddressController
             ],
             $request->query->all(),
         );
-
-        // Récupérer les paramètres de la requête
-        $administrator = $request->query->get('administrator');
-        $roadNumber = $request->query->get('roadNumber');
-        $cityLabel = $request->query->get('cityLabel');
-        $roadName = $request->query->get('roadName');
-
-        $roadTypeParts = [];
-
-        // Cas 1 : Routes numérotées (administrator + roadNumber)
-        if ($administrator !== null && $administrator !== '') {
-            $roadTypeParts[] = $administrator;
-        }
-        if ($roadNumber !== null && $roadNumber !== '') {
-            $roadTypeParts[] = $roadNumber;
-        }
-
-        // Cas 2 : Routes nommées (cityLabel + roadName)
-        if ($cityLabel !== null && $cityLabel !== '') {
-            $roadTypeParts[] = $cityLabel;
-        }
-        if ($roadName !== null && $roadName !== '') {
-            $roadTypeParts[] = $roadName;
-        }
-
-        if (!empty($roadTypeParts)) {
-            $command->roadType = implode(' - ', $roadTypeParts);
-        }
 
         $form = $this->formFactory->create(
             ReportAddressFormType::class,

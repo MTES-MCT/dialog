@@ -1040,6 +1040,14 @@
                     demande.<![CDATA[</p>]]>
                 </target>
             </trans-unit>
+            <trans-unit id="report_address.location.label">
+                <source>report_address.location.label</source>
+                <target>Localisation du problème</target>
+            </trans-unit>
+            <trans-unit id="report_address.location.help">
+                <source>report_address.location.help</source>
+                <target>Saisissez la localisation du problème, par exemple Route nationale N176</target>
+            </trans-unit>
             <trans-unit id="report_address.content.label">
                 <source>report_address.content.label</source>
                 <target>Description du problème</target>

@@ -25,7 +25,7 @@ final class ReportAddressFixture extends Fixture implements DependentFixtureInte
         $reportAddress1 = new ReportAddress(
             uuid: self::UUID_TYPICAL,
             content: 'Il y a un problème avec cette adresse, la signalisation est absente.',
-            roadType: 'Route départementale - D12',
+            location: 'Route départementale - D12',
             user: $department93User,
         );
         $reportAddress1->setCreatedAt(new \DateTimeImmutable('2024-11-20 10:30:00'));
@@ -33,7 +33,7 @@ final class ReportAddressFixture extends Fixture implements DependentFixtureInte
         $reportAddress2 = new ReportAddress(
             uuid: self::UUID_NUMBERED_ROAD,
             content: 'La route nationale N12 présente des panneaux de signalisation manquants entre les points 22##122 et 22##123.',
-            roadType: 'Route nationale - N12',
+            location: 'Route nationale - N12',
             user: $department93User,
         );
         $reportAddress2->setCreatedAt(new \DateTimeImmutable('2024-11-21 14:15:00'));
@@ -41,7 +41,7 @@ final class ReportAddressFixture extends Fixture implements DependentFixtureInte
         $reportAddress3 = new ReportAddress(
             uuid: self::UUID_NAMED_ROAD,
             content: 'Problème de signalisation sur la rue de la Paix à Paris.',
-            roadType: 'Paris - Rue de la Paix',
+            location: 'Paris - Rue de la Paix',
             user: $department93User,
         );
         $reportAddress3->setCreatedAt(new \DateTimeImmutable('2024-11-22 09:00:00'));
@@ -49,7 +49,7 @@ final class ReportAddressFixture extends Fixture implements DependentFixtureInte
         $reportAddress4 = new ReportAddress(
             uuid: self::UUID_CONTACTED,
             content: 'Signalement déjà traité et contact effectué avec l\'utilisateur.',
-            roadType: 'Route départementale - D93',
+            location: 'Route départementale - D93',
             user: $department93User,
             hasBeenContacted: true,
         );

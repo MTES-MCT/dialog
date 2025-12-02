@@ -29,7 +29,7 @@ final class ReportAddressCrudController extends AbstractCrudController
         return [
             TextField::new('user.fullName', 'Prénom / Nom'),
             EmailField::new('user.email', 'Email'),
-            TextField::new('roadType', 'Localisation'),
+            TextField::new('location', 'Localisation'),
             TextField::new('content', 'Signalement adresse'),
             BooleanField::new('hasBeenContacted', 'A été contacté'),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),

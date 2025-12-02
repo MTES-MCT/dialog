@@ -33,7 +33,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
     {
         $command = new SaveReportAddressCommand($this->user);
         $command->content = 'Il y a un problème avec cette adresse.';
-        $command->roadType = 'Route départementale - D12';
+        $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
 
         $this->idFactory
@@ -49,7 +49,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
         $reportAddress = new ReportAddress(
             uuid: '0de5692b-cab1-494c-804d-765dc14df674',
             content: 'Il y a un problème avec cette adresse.',
-            roadType: 'Route départementale - D12',
+            location: 'Route départementale - D12',
             user: $this->user,
         );
         $reportAddress->setCreatedAt($date);

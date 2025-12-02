@@ -23,7 +23,7 @@ final class SaveReportAddressCommandHandler
         $reportAddress = new ReportAddress(
             uuid: $this->idFactory->make(),
             content: $command->content,
-            roadType: $command->roadType,
+            location: $command->location,
             user: $command->user,
         );
         $reportAddress->setCreatedAt($this->dateUtils->getNow());

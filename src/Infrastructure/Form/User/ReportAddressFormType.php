@@ -18,10 +18,11 @@ final class ReportAddressFormType extends AbstractType
     {
         $builder
             ->add(
-                'roadType',
+                'location',
                 TextType::class,
                 options: [
-                    'label' => 'localisation du problème',
+                    'label' => 'report_address.location.label',
+                    'help' => 'report_address.location.help',
                 ],
             )
             ->add(

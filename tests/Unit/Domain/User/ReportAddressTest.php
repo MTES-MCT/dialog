@@ -20,6 +20,7 @@ final class ReportAddressTest extends TestCase
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $reportAddress->getUuid());
         $this->assertSame($user, $reportAddress->getUser());
         $this->assertSame('Ceci est un signalement', $reportAddress->getContent());
+        $this->assertSame('lane', $reportAddress->getLocation());
         $this->assertSame($date, $reportAddress->getCreatedAt());
         $this->assertFalse($reportAddress->getHasBeenContacted());
 

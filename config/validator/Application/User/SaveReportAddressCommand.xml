@@ -6,7 +6,7 @@
         <property name="content">
             <constraint name="NotBlank"/>
         </property>
-        <property name="roadType">
+        <property name="location">
             <constraint name="NotBlank"/>
         </property>
     </class>
