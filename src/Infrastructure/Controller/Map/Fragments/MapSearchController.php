@@ -7,7 +7,7 @@ namespace App\Infrastructure\Controller\Map\Fragments;
 use App\Application\MapGeocoderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 final class MapSearchController
 {

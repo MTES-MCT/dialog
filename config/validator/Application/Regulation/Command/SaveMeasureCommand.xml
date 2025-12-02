@@ -6,9 +6,11 @@
         <property name="type">
             <constraint name="NotBlank" />
             <constraint name="Choice">
-                <value>noEntry</value>
-                <value>speedLimitation</value>
-                <value>parkingProhibited</value>
+                <option name="choices">
+                    <value>noEntry</value>
+                    <value>speedLimitation</value>
+                    <value>parkingProhibited</value>
+                </option>
             </constraint>
         </property>
         <property name="maxSpeed">

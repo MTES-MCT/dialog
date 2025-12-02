@@ -55,7 +55,8 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
 
         foreach ($sides as $index => [$side, $selected]) {
             $this->assertSame($side, $options->eq($index)->attr('value'));
-            $this->assertSame($selected ? 'selected' : null, $options->eq($index)->attr('selected'));
+            // Symfony 7.4+ : attr() retourne '' pour les attributs booléens présents sans valeur
+            $this->assertSame($selected ? '' : null, $options->eq($index)->attr('selected'));
         }
     }
 

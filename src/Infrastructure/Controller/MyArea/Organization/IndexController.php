@@ -9,7 +9,7 @@ use App\Application\Regulation\Query\GetNewsNoticeQuery;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 final class IndexController
 {
