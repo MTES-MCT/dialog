@@ -54,6 +54,7 @@
                 <source>common.feedback</source>
                 <target>Votre avis</target>
             </trans-unit>
+
             <trans-unit id="common.login">
                 <source>common.login</source>
                 <target>Se connecter</target>
@@ -888,6 +889,14 @@
                 <source>regulation.location.add</source>
                 <target>Ajouter une localisation</target>
             </trans-unit>
+            <trans-unit id="regulation.location.report.problem.btn">
+                <source>regulation.location.report.problem.btn</source>
+                <target>Signaler un problème avec une adresse</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.report.problem.send">
+                <source>regulation.location.report.problem.send</source>
+                <target>Signaler</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.add">
                 <source>regulation.measure.add</source>
                 <target>Ajouter une mesure</target>
@@ -1030,6 +1039,38 @@
                     <![CDATA[<p>]]>Nous avons bien reçu votre
                     demande.<![CDATA[</p>]]>
                 </target>
+            </trans-unit>
+            <trans-unit id="report_address.location.label">
+                <source>report_address.location.label</source>
+                <target>Localisation du problème</target>
+            </trans-unit>
+            <trans-unit id="report_address.location.help">
+                <source>report_address.location.help</source>
+                <target>Saisissez la localisation du problème, par exemple Route nationale N176</target>
+            </trans-unit>
+            <trans-unit id="report_address.content.label">
+                <source>report_address.content.label</source>
+                <target>Description du problème</target>
+            </trans-unit>
+            <trans-unit id="report_address.content.help">
+                <source>report_address.content.help</source>
+                <target>Décrivez ici le problème, par exemple le nom de la rue non trouvée ou le numéro de PR sur une route.</target>
+            </trans-unit>
+            <trans-unit id="report_address.send.success">
+                <source>report_address.send.success</source>
+                <target>
+                    <![CDATA[<h3 class="fr-alert__title">]]>Votre message a été envoyé avec succès ! Merci ! <![CDATA[</h3>]]>
+                    <![CDATA[<p>]]>Nous avons bien reçu votre
+                    demande.<![CDATA[</p>]]>
+                </target>
+            </trans-unit>
+            <trans-unit id="report_address.meta.title">
+                <source>report_address.meta.title</source>
+                <target>Signaler un problème avec une adresse</target>
+            </trans-unit>
+            <trans-unit id="report_address.meta.description">
+                <source>report_address.meta.description</source>
+                <target>Si vous rencontrez des difficultés à trouver une rue dans une commune, ou un PR sur une route, signalez nous vos difficultés pour comprendre d’où vient le problème.</target>
             </trans-unit>
             <trans-unit id="profile.update.success">
                 <source>profile.update.success</source>
