@@ -15,7 +15,7 @@ L’authentification est requise pour les endpoints suivants :
 - PUT `/api/regulations/{uuid}/publish` (publication d’un arrêté existant)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 
-Les exports (lecture) via GET (`/api/regulations.xml` et `/api/regulations/cifs.xml`) restent publics et ne nécessitent pas d’authentification.
+Les exports (lecture) via GET (`/api/regulations.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
 
 ## Documentation OpenAPI
 
@@ -361,4 +361,100 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/cifs.xml' -H 'Accept: a
 
 #### Limitations
 
-- En raison des limites du format propriétaire CIFS (Waze), seules les interdictions de circulation temporaires s’appliquant à tous les véhicules sont exposées. Les autres cas (ex. zone 30, restrictions poids lourds, permanentes, etc.) ne sont pas inclus.
+- En raison des limites du format propriétaire CIFS (Waze), seules les interdictions de circulation temporaires s'appliquant à tous les véhicules sont exposées. Les autres cas (ex. zone 30, restrictions poids lourds, permanentes, etc.) ne sont pas inclus.
+
+### Géométries des organisations (statistiques)
+
+- Méthode: GET
+- URL: `/api/stats`
+- Authentification requise: non
+- Réponse: JSON (`Content-Type: application/json`)
+
+#### Description
+
+Cet endpoint retourne les géométries de l'ensemble des organisations enregistrées dans DiaLog au format GeoJSON. Il est principalement utilisé pour afficher la couverture géographique des organisations sur une carte (page statistiques).
+
+#### Format de réponse
+
+Le format respecte la spécification GeoJSON (RFC 7946). Les géométries peuvent être de différents types selon les organisations:
+- `Polygon`: pour les organisations couvrant une zone géographique (commune, département, etc.)
+- `MultiPolygon`: pour les organisations avec plusieurs zones non contiguës
+
+#### Exemple de requête
+
+```bash
+curl -X GET 'https://dialog.beta.gouv.fr/api/stats' -H 'Accept: application/json'
+```
+
+#### Exemple de réponse
+
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.224122, 48.841620],
+            [2.469920, 48.815573],
+            [2.469920, 48.902158],
+            [2.224122, 48.902158],
+            [2.224122, 48.841620]
+          ]
+        ]
+      },
+      "properties": {
+        "uuid": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "Ville de Paris",
+        "code": "75056",
+        "codeType": "insee",
+        "departmentName": "Paris",
+        "departmentCode": "75"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [2.373620, 48.892722],
+            [2.404251, 48.892722],
+            [2.404251, 48.909017],
+            [2.373620, 48.909017],
+            [2.373620, 48.892722]
+          ]
+        ]
+      },
+      "properties": {
+        "uuid": "234e5678-e89b-12d3-a456-426614174001",
+        "name": "Ville de Saint-Denis",
+        "code": "93066",
+        "codeType": "insee",
+        "departmentName": "Seine-Saint-Denis",
+        "departmentCode": "93"
+      }
+    }
+  ]
+}
+```
+
+#### Propriétés des features
+
+Chaque feature contient les propriétés suivantes:
+
+- `uuid` (string): Identifiant unique de l'organisation
+- `name` (string): Nom de l'organisation
+- `code` (string, nullable): Code de l'organisation (ex. code INSEE)
+- `codeType` (string, nullable): Type de code (`insee`, `siren`, etc.)
+- `departmentName` (string, nullable): Nom du département
+- `departmentCode` (string, nullable): Code du département
+
+#### Notes
+
+- Seules les organisations possédant une géométrie valide et non vide sont incluses dans la réponse.
+- Les coordonnées utilisent le système de référence WGS84 (EPSG:4326).
+- Cet endpoint est public et ne nécessite pas d'authentification pour faciliter l'affichage des statistiques.
