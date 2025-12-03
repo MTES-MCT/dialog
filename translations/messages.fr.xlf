@@ -2074,6 +2074,38 @@
                 <source>statistics.temporaryRegulationOrderRecords</source>
                 <target>Nombre total d'arrếtés temporaires</target>
             </trans-unit>
+            <trans-unit id="statistics.map.title">
+                <source>statistics.map.title</source>
+                <target>Couverture géographique des organisations</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.description">
+                <source>statistics.map.description</source>
+                <target>Visualisation des territoires des organisations utilisant DiaLog pour la gestion de leurs arrêtés de circulation.</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.overseas.title">
+                <source>statistics.map.overseas.title</source>
+                <target>Départements et régions d'outre-mer</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.overseas.guadeloupe">
+                <source>statistics.map.overseas.guadeloupe</source>
+                <target>Guadeloupe</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.overseas.martinique">
+                <source>statistics.map.overseas.martinique</source>
+                <target>Martinique</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.overseas.guyane">
+                <source>statistics.map.overseas.guyane</source>
+                <target>Guyane</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.overseas.reunion">
+                <source>statistics.map.overseas.reunion</source>
+                <target>La Réunion</target>
+            </trans-unit>
+            <trans-unit id="statistics.map.overseas.mayotte">
+                <source>statistics.map.overseas.mayotte</source>
+                <target>Mayotte</target>
+            </trans-unit>
             <trans-unit id="common.form.time.hour">
                 <source>common.form.time.hour</source>
                 <target>Heures</target>

@@ -1,0 +1,88 @@
+.stats-map-main-container {
+    border: 1px solid var(--border-default-grey);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: var(--overlap-shadow);
+}
+
+.stats-map-main {
+    width: 100%;
+    height: 600px;
+}
+
+.stats-overseas-map-container {
+    width: 100%;
+    height: 200px;
+}
+
+/* Grille des DOM-TOM */
+.stats-map-overseas-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+}
+
+.stats-overseas-map {
+    background: var(--background-default-grey);
+    border: 1px solid var(--border-default-grey);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    box-shadow: var(--raised-shadow);
+}
+
+.stats-overseas-map-title {
+    padding: 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    background-color: var(--background-contrast-grey);
+    border-bottom: 1px solid var(--border-default-grey);
+    color: var(--text-title-grey);
+}
+
+/* Contrôles de navigation */
+.stats-map-main .maplibregl-ctrl-top-left {
+    top: 10px;
+    left: 10px;
+}
+
+.stats-overseas-map-container .maplibregl-ctrl-top-right {
+    top: 5px;
+    right: 5px;
+}
+
+.stats-overseas-map-container .maplibregl-ctrl-group button {
+    width: 24px;
+    height: 24px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .stats-map-overseas-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-map-main {
+        height: 500px;
+    }
+
+    .stats-map-overseas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stats-overseas-map-container {
+        height: 160px;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-map-main {
+        height: 400px;
+    }
+
+    .stats-map-overseas-grid {
+        grid-template-columns: 1fr;
+    }
+}

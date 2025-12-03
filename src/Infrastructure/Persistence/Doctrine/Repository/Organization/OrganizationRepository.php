@@ -109,7 +109,14 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
     public function findAllForStatistics(): array
     {
         return $this->getEntityManager()->getConnection()->fetchAllAssociative(
-            'SELECT uuid, name, ST_AsGeoJSON(geometry) as geometry
+            'SELECT
+                uuid,
+                name,
+                code,
+                code_type,
+                department_name,
+                department_code,
+                ST_AsGeoJSON(geometry) as geometry
             FROM organization
             WHERE uuid <> :dialogOrgId
             AND geometry IS NOT NULL
