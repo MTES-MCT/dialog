@@ -8,7 +8,23 @@
     <div class="fr-container fr-x-max-w-156w fr-py-2w fr-py-md-5w">
         <h1 class="fr-h1">{{ 'statistics.title'|trans }}</h1>
 
-        <section class="fr-mb-6w"
+        <d-responsive-iframe
+            maxWidth="1200" {# Corresponds to 156w #}
+            extraPadding="32"
+            targetOrigin="{{ app.request.schemeAndHttpHost }}"
+        >
+            <iframe
+                src="{{ dashboardEmbedUrl }}"
+                frameborder="0"
+                width="1200"
+                height="1200"
+                allowtransparency
+                title="{{ 'statistics.dashboard.title'|trans }}"
+                data-testid="dashboard"
+            ></iframe>
+        </d-responsive-iframe>
+
+        <section class="fr-mt-3w"
             data-controller="stats-map"
             data-stats-map-api-url-value="{{ path('api_stats_organizations_geometries') }}"
         >
@@ -47,21 +63,5 @@
                 </div>
             </div>
         </section>
-
-        <d-responsive-iframe
-            maxWidth="1200" {# Corresponds to 156w #}
-            extraPadding="32"
-            targetOrigin="{{ app.request.schemeAndHttpHost }}"
-        >
-            <iframe
-                src="{{ dashboardEmbedUrl }}"
-                frameborder="0"
-                width="1200"
-                height="1200"
-                allowtransparency
-                title="{{ 'statistics.dashboard.title'|trans }}"
-                data-testid="dashboard"
-            ></iframe>
-        </d-responsive-iframe>
     </div>
 {% endblock %}
