@@ -9,8 +9,8 @@ let cachedOrganizationsData = null;
 const OVERSEAS_TERRITORIES = [
     { name: 'Guadeloupe', center: [-61.55, 16.25], zoom: 8.5 },
     { name: 'Martinique', center: [-61.02, 14.64], zoom: 9 },
-    { name: 'Guyane', center: [-53.13, 3.93], zoom: 6 },
-    { name: 'La Réunion', center: [55.536, -21.115], zoom: 9.5 },
+    { name: 'Guyane', center: [-53.13, 3.93], zoom: 5 },
+    { name: 'La Réunion', center: [55.536, -21.115], zoom: 8 },
     { name: 'Mayotte', center: [45.166244, -12.8275], zoom: 10 },
 ];
 
@@ -172,6 +172,10 @@ export default class extends Controller {
                 return;
             }
 
+            const { lng, lat } = event.lngLat;
+            const zoom = Math.max(map.getZoom(), 8).toFixed(2);
+            const mapLink = `/carte#mapZoomAndPosition=${zoom}/${lat.toFixed(5)}/${lng.toFixed(5)}`;
+
             const names = clusterName
                 .split(',')
                 .map(name => name.trim())
@@ -197,6 +201,11 @@ export default class extends Controller {
                         ${listItems}
                         ${moreInfo}
                     </ul>
+                    <p class="fr-mt-1v fr-mb-0">
+                        <a class="fr-link fr-link--sm" href="${mapLink}" rel="noopener noreferrer">
+                            Voir les restrictions
+                        </a>
+                    </p>
                 </div>
             `;
 
