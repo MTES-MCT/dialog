@@ -1,7 +1,6 @@
 .stats-map-main-container {
     border: 1px solid var(--border-default-grey);
     border-radius: 0.25rem;
-    overflow: hidden;
     box-shadow: var(--overlap-shadow);
 }
 

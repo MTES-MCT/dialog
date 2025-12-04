@@ -31,7 +31,6 @@ class RunMetabaseExportCommand extends Command
 
         $this->statisticsRepository->addCountStatistics($now);
         $this->statisticsRepository->addUserActiveStatistics($now);
-        $this->statisticsRepository->addOrganizationCoverageStatistics($now);
 
         return Command::SUCCESS;
     }

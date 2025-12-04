@@ -26,7 +26,7 @@ final class GetOrganizationsGeometriesController
     #[OA\Tag(name: 'Public')]
     #[OA\Response(
         response: 200,
-        description: 'Géométries des organisations au format GeoJSON',
+        description: 'Zones géographiques fusionnées au format GeoJSON',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
@@ -60,12 +60,13 @@ final class GetOrganizationsGeometriesController
                                 property: 'properties',
                                 type: 'object',
                                 properties: [
-                                    new OA\Property(property: 'uuid', type: 'string'),
-                                    new OA\Property(property: 'name', type: 'string'),
-                                    new OA\Property(property: 'code', type: 'string', nullable: true),
-                                    new OA\Property(property: 'codeType', type: 'string', nullable: true),
-                                    new OA\Property(property: 'departmentName', type: 'string', nullable: true),
-                                    new OA\Property(property: 'departmentCode', type: 'string', nullable: true),
+                                    new OA\Property(
+                                        property: 'clusterName',
+                                        type: 'string',
+                                        nullable: true,
+                                        example: 'Ville de Paris, Ville de Lyon',
+                                        description: 'Nom agrégé des organisations incluses dans ce cluster',
+                                    ),
                                 ],
                             ),
                         ],

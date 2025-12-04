@@ -36,13 +36,9 @@ final class GetOrganizationsGeometriesControllerTest extends WebTestCase
         $this->assertSame('Feature', $feature['type']);
         $this->assertArrayHasKey('geometry', $feature);
         $this->assertArrayHasKey('properties', $feature);
+        $this->assertIsArray($feature['properties']);
 
         $properties = $feature['properties'];
-        $this->assertArrayHasKey('uuid', $properties);
-        $this->assertArrayHasKey('name', $properties);
-        $this->assertArrayHasKey('code', $properties);
-        $this->assertArrayHasKey('codeType', $properties);
-        $this->assertArrayHasKey('departmentName', $properties);
-        $this->assertArrayHasKey('departmentCode', $properties);
+        $this->assertArrayHasKey('clusterName', $properties);
     }
 }
