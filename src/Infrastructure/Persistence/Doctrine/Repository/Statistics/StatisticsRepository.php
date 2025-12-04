@@ -72,38 +72,4 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
             $stmt->executeStatement();
         }
     }
-
-    public function addOrganizationCoverageStatistics(\DateTimeInterface $now): void
-    {
-        // Export les géométries des organisations pour visualiser leur couverture territoriale dans Metabase
-        $organizationRows = $this->organizationRepository->findAllForStatistics();
-        $this->bulkInsertOrganizationCoverageStatistics($now, $organizationRows);
-    }
-
-    private function bulkInsertOrganizationCoverageStatistics(\DateTimeInterface $now, array $organizationRows): void
-    {
-        // D'abord, on nettoie les anciennes données pour ne garder que la dernière version
-        // Cela évite d'accumuler des données obsolètes si les géométries changent
-        $date = \DateTimeImmutable::createFromInterface($now)->sub(new \DateInterval('P7D'));
-
-        $this->metabaseConnection->executeStatement(
-            'DELETE FROM analytics_organization_coverage WHERE uploaded_at < :date',
-            [
-                'date' => $date->format(\DateTimeInterface::ATOM),
-            ],
-        );
-
-        $stmt = $this->metabaseConnection->prepare(
-            'INSERT INTO analytics_organization_coverage(id, uploaded_at, organization_uuid, organization_name, geometry)
-            VALUES (uuid_generate_v4(), :uploadedAt, :organizationUuid, :organizationName, ST_GeomFromGeoJSON(:geometry))',
-        );
-
-        foreach ($organizationRows as $row) {
-            $stmt->bindValue('uploadedAt', $now->format(\DateTimeInterface::ATOM));
-            $stmt->bindValue('organizationUuid', $row['uuid']);
-            $stmt->bindValue('organizationName', $row['name']);
-            $stmt->bindValue('geometry', $row['geometry']);
-            $stmt->executeStatement();
-        }
-    }
 }

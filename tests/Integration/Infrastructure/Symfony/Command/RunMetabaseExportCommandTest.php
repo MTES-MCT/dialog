@@ -62,23 +62,6 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
         $this->assertSame('2023-06-09 00:00:00', $rows[2]['uploaded_at']);
         $this->assertSame(null, $rows[2]['last_active_at']);
 
-        // Check organization coverage statistics
-        $rows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_organization_coverage ORDER BY organization_name');
-        $this->assertCount(3, $rows); // 3 organizations with geometry (excluding DiaLog)
-        $this->assertEquals(['id', 'uploaded_at', 'organization_uuid', 'organization_name', 'geometry'], array_keys($rows[0]));
-
-        // Verify the organizations are exported
-        $organizationNames = array_map(fn ($row) => $row['organization_name'], $rows);
-        $this->assertContains('Département de Seine-Saint-Denis', $organizationNames);
-        $this->assertContains('Région Ile de France', $organizationNames);
-        $this->assertContains('Commune de Saint Ouen sur Seine', $organizationNames);
-
-        // Verify all have the correct upload date
-        foreach ($rows as $row) {
-            $this->assertSame($executionDate, $row['uploaded_at']);
-            $this->assertNotNull($row['geometry']);
-        }
-
         // Execute again to test for uuid conflicts
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();

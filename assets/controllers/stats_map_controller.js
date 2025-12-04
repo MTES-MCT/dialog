@@ -1,5 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 // Cache global pour éviter de recharger l'API plusieurs fois
 let cachedOrganizationsData = null;
@@ -8,8 +9,8 @@ let cachedOrganizationsData = null;
 const OVERSEAS_TERRITORIES = [
     { name: 'Guadeloupe', center: [-61.55, 16.25], zoom: 8.5 },
     { name: 'Martinique', center: [-61.02, 14.64], zoom: 9 },
-    { name: 'Guyane', center: [-53.13, 3.93], zoom: 6 },
-    { name: 'La Réunion', center: [55.536, -21.115], zoom: 9.5 },
+    { name: 'Guyane', center: [-53.13, 3.93], zoom: 5 },
+    { name: 'La Réunion', center: [55.536, -21.115], zoom: 8 },
     { name: 'Mayotte', center: [45.166244, -12.8275], zoom: 10 },
 ];
 
@@ -109,15 +110,25 @@ export default class extends Controller {
     }
 
     addOrganizationsLayer(map) {
-        map.addSource('organizations-source', {
+        const container = map.getContainer();
+        if (!container.dataset.statsMapId) {
+            container.dataset.statsMapId = `stats-map-${Math.random().toString(36).slice(2)}`;
+        }
+        const prefix = container.dataset.statsMapId;
+
+        const sourceId = `${prefix}-source`;
+        const fillLayerId = `${prefix}-fill`;
+        const outlineLayerId = `${prefix}-outline`;
+
+        map.addSource(sourceId, {
             type: 'geojson',
             data: cachedOrganizationsData,
         });
 
         map.addLayer({
-            id: 'organizations-fill',
+            id: fillLayerId,
             type: 'fill',
-            source: 'organizations-source',
+            source: sourceId,
             paint: {
                 'fill-color': ORGANIZATION_COLOR,
                 'fill-opacity': 0.2,
@@ -125,25 +136,88 @@ export default class extends Controller {
         });
 
         map.addLayer({
-            id: 'organizations-outline',
+            id: outlineLayerId,
             type: 'line',
-            source: 'organizations-source',
+            source: sourceId,
             paint: {
                 'line-color': ORGANIZATION_COLOR,
                 'line-width': 2,
             },
         });
 
-        this.addHoverEffect(map);
+        this.addHoverEffect(map, fillLayerId);
+        this.addClusterNamePopup(map, fillLayerId);
     }
 
-    addHoverEffect(map) {
-        map.on('mouseenter', 'organizations-fill', () => {
+    addHoverEffect(map, fillLayerId) {
+        map.on('mouseenter', fillLayerId, () => {
             map.getCanvas().style.cursor = 'pointer';
         });
 
-        map.on('mouseleave', 'organizations-fill', () => {
+        map.on('mouseleave', fillLayerId, () => {
             map.getCanvas().style.cursor = '';
+        });
+    }
+
+    addClusterNamePopup(map, fillLayerId) {
+        map.on('click', fillLayerId, (event) => {
+            if (!event.features || event.features.length === 0) {
+                return;
+            }
+
+            const properties = event.features[0].properties || {};
+            const clusterName = properties.clusterName || '';
+
+            if (!clusterName) {
+                return;
+            }
+
+            const { lng, lat } = event.lngLat;
+            const zoom = Math.max(map.getZoom(), 8).toFixed(2);
+            const mapLink = `/carte#mapZoomAndPosition=${zoom}/${lat.toFixed(5)}/${lng.toFixed(5)}`;
+
+            const names = clusterName
+                .split(',')
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
+
+            const MAX_VISIBLE_NAMES = 10;
+            const visibleNames = names.slice(0, MAX_VISIBLE_NAMES);
+            const totalCount = names.length;
+            const remainingCount = totalCount - visibleNames.length;
+
+            const listItems = visibleNames
+                .map(name => `<li>${name}</li>`)
+                .join('');
+
+            const moreInfo = remainingCount > 0
+                ? `<li><em>… et ${remainingCount} autre${remainingCount > 1 ? 's' : ''}</em></li>`
+                : '';
+
+            const content = `
+                <div class="fr-background-default--grey fr-p-1w fr-text--sm fr-radius-1w">
+                    <p class="fr-text--bold fr-mb-1v">Zones couvertes</p>
+                    <ul class="fr-list fr-mb-0">
+                        ${listItems}
+                        ${moreInfo}
+                    </ul>
+                    <p class="fr-mt-1v fr-mb-0">
+                        <a class="fr-link fr-link--sm" href="${mapLink}" rel="noopener noreferrer">
+                            Voir les restrictions
+                        </a>
+                    </p>
+                </div>
+            `;
+
+            new maplibregl.Popup({
+                closeButton: true,
+                closeOnClick: true,
+                className: 'd-map-popup',
+                maxWidth: '320px',
+            })
+                .setLngLat(event.lngLat)
+                .setHTML(content)
+                .addTo(map);
         });
     }
 

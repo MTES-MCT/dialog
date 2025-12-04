@@ -36,31 +36,23 @@ final class GetOrganizationsGeometriesQueryHandlerTest extends TestCase
 
     public function testWithGeometries(): void
     {
-        $organizations = [
+        $rows = [
             [
-                'uuid' => '550e8400-e29b-41d4-a716-446655440000',
-                'name' => 'Ville de Paris',
-                'code' => '75056',
-                'code_type' => 'INSEE',
-                'department_name' => 'Paris',
-                'department_code' => '75',
-                'geometry' => '{"type":"Point","coordinates":[2.3522,48.8566]}',
+                'cluster_id' => 0,
+                'geometry' => '{"type":"Polygon","coordinates":[[[2.2,48.8],[2.4,48.8],[2.4,48.9],[2.2,48.9],[2.2,48.8]]]}',
+                'cluster_name' => 'Ville de Paris, Ville de Lyon',
             ],
             [
-                'uuid' => '550e8400-e29b-41d4-a716-446655440001',
-                'name' => 'Ville de Lyon',
-                'code' => '69123',
-                'code_type' => 'INSEE',
-                'department_name' => 'Rhône',
-                'department_code' => '69',
-                'geometry' => '{"type":"Point","coordinates":[4.8357,45.7640]}',
+                'cluster_id' => 1,
+                'geometry' => '{"type":"Polygon","coordinates":[[[4.8,45.7],[4.9,45.7],[4.9,45.8],[4.8,45.8],[4.8,45.7]]]}',
+                'cluster_name' => 'Ville de Marseille',
             ],
         ];
 
         $this->organizationRepository
             ->expects(self::once())
             ->method('findAllForStatistics')
-            ->willReturn($organizations);
+            ->willReturn($rows);
 
         $handler = new GetOrganizationsGeometriesQueryHandler($this->organizationRepository);
         $result = $handler(new GetOrganizationsGeometriesQuery());
@@ -71,31 +63,21 @@ final class GetOrganizationsGeometriesQueryHandlerTest extends TestCase
                 [
                     'type' => 'Feature',
                     'geometry' => [
-                        'type' => 'Point',
-                        'coordinates' => [2.3522, 48.8566],
+                        'type' => 'Polygon',
+                        'coordinates' => [[[2.2, 48.8], [2.4, 48.8], [2.4, 48.9], [2.2, 48.9], [2.2, 48.8]]],
                     ],
                     'properties' => [
-                        'uuid' => '550e8400-e29b-41d4-a716-446655440000',
-                        'name' => 'Ville de Paris',
-                        'code' => '75056',
-                        'codeType' => 'INSEE',
-                        'departmentName' => 'Paris',
-                        'departmentCode' => '75',
+                        'clusterName' => 'Ville de Paris, Ville de Lyon',
                     ],
                 ],
                 [
                     'type' => 'Feature',
                     'geometry' => [
-                        'type' => 'Point',
-                        'coordinates' => [4.8357, 45.7640],
+                        'type' => 'Polygon',
+                        'coordinates' => [[[4.8, 45.7], [4.9, 45.7], [4.9, 45.8], [4.8, 45.8], [4.8, 45.7]]],
                     ],
                     'properties' => [
-                        'uuid' => '550e8400-e29b-41d4-a716-446655440001',
-                        'name' => 'Ville de Lyon',
-                        'code' => '69123',
-                        'codeType' => 'INSEE',
-                        'departmentName' => 'Rhône',
-                        'departmentCode' => '69',
+                        'clusterName' => 'Ville de Marseille',
                     ],
                 ],
             ],

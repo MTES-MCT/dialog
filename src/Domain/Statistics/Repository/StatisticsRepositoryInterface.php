@@ -9,6 +9,4 @@ interface StatisticsRepositoryInterface
     public function addCountStatistics(\DateTimeImmutable $now): void;
 
     public function addUserActiveStatistics(\DateTimeImmutable $now): void;
-
-    public function addOrganizationCoverageStatistics(\DateTimeImmutable $now): void;
 }
