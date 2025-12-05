@@ -17,6 +17,13 @@
         <div class="app-card__actions">
             <button
                 type="button"
+                aria-label="{{ 'common.duplicate'|trans }}"
+                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-x-file-copy-line"
+                data-action="form-collection#duplicateCollectionElement"
+            >
+            </button>
+            <button
+                type="button"
                 aria-label="{{ 'common.delete'|trans }}"
                 class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
                 data-action="remove#removeElement"
@@ -227,8 +234,8 @@
         {% set reportFrameId = 'create-report-address-form-frame-' ~ locationIndex ~ '-' ~ roadType %}
         <div data-controller="report-address-modal">
             <d-modal-trigger modal="{{ reportModalId }}" submitvalue="upload">
-                <button 
-                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line" 
+                <button
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line"
                     aria-controls="{{ reportModalId }}"
                     data-action="click->report-address-modal#updateModalUrl"
                     data-administrator-field-id="{{ form[roadType].administrator.vars.id }}"
@@ -521,8 +528,8 @@
                             {% set reportFrameIdLane = 'create-report-address-form-frame-' ~ index ~ '-lane' %}
                             <div data-controller="report-address-modal">
                                 <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
-                                    <button 
-                                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line" 
+                                    <button
+                                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line"
                                         aria-controls="{{ reportModalIdLane }}"
                                         data-action="click->report-address-modal#updateModalUrl"
                                         data-city-label-field-id="{{ form.namedStreet.cityLabel.vars.id }}"
