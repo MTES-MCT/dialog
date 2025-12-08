@@ -98,8 +98,8 @@ class MapLibreMap {
     }
 
     /**
-     * @param {MapDataSource} dataSource 
-     * @param {Partial<maplibregl.MapOptions>} mapOptions 
+     * @param {MapDataSource} dataSource
+     * @param {Partial<maplibregl.MapOptions>} mapOptions
      * @param {HTMLElement} mapContainer
      * @returns {Promise<maplibregl.Map>}
      */
@@ -119,7 +119,7 @@ class MapLibreMap {
             // Create and configure the map
             const map = new maplibregl.Map({
                 container: mapContainer,
-                style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
+                style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
                 hash: 'mapZoomAndPosition',
                 ...mapOptions,
             });
@@ -163,8 +163,7 @@ class MapLibreMap {
                                 '#000000'], // black ; note : blue -> 0063cb
                             'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16], // line-width = 4 when zoom < 15, line-width = 8 when zoom bewteen 15 and 18, and line-width = 16 for zoom > 18 ; https://maplibre.org/maplibre-style-spec/expressions/#step
                         },
-                    },
-                    "toponyme numéro de route - départementale" // insert this layer below the main label layers like road labels
+                    }
                 );
 
                 map.addLayer(
@@ -297,7 +296,7 @@ export class MapElement extends HTMLElement {
     }
 
     /**
-     * @param {() => void} callback 
+     * @param {() => void} callback
      */
     onDataUrlChange(callback) {
         const observer = new MutationObserver((mutations) => {
@@ -313,7 +312,7 @@ export class MapElement extends HTMLElement {
 
     /**
      * Center map on given coordinates
-     * @param {[number, number]} coordinates 
+     * @param {[number, number]} coordinates
      * @param {number} zoom
      */
     flyTo(coordinates, zoom) {
