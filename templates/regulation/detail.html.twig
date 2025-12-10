@@ -42,7 +42,6 @@
                             {% endfor %}
                         </ul>
 
-
                         {% if not isReadOnly and isDraft %}
                             {% if measures|length > 0 %}
                                 {% include "regulation/fragments/_add_measure_link.html.twig" with { regulationOrderRecordUuid: generalInfo.uuid } only %}

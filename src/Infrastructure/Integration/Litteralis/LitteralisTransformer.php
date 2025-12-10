@@ -31,6 +31,12 @@ final readonly class LitteralisTransformer
         'Limitation de vitesse' => MeasureTypeEnum::SPEED_LIMITATION->value,
         'Limitation de vitesse (Arrêté Permanent)' => MeasureTypeEnum::SPEED_LIMITATION->value,
         'Interdiction de stationnement' => MeasureTypeEnum::PARKING_PROHIBITED->value,
+
+        // Montpellier - Mesures avec préfixes dynamiques (gérés par normalizeMeasureName)
+        // Les préfixes "YYYY - " (ex: "2021 - ", "2022 - ") et "AP - " sont retirés automatiquement
+        'Circulation interdite RD' => MeasureTypeEnum::NO_ENTRY->value,
+        'Limitation de vitesse RD' => MeasureTypeEnum::SPEED_LIMITATION->value,
+        'Stationnement - Interdiction' => MeasureTypeEnum::PARKING_PROHIBITED->value,
     ];
 
     public function __construct(
@@ -218,7 +224,8 @@ final readonly class LitteralisTransformer
 
         foreach ($parametersByMeasureName as $name => $parameters) {
             $measureCommand = new SaveMeasureCommand();
-            $measureCommand->type = self::MEASURE_MAP[$name];
+            $normalizedName = $this->normalizeMeasureName($name);
+            $measureCommand->type = self::MEASURE_MAP[$normalizedName];
 
             if ($measureCommand->type === MeasureTypeEnum::SPEED_LIMITATION->value) {
                 $measureCommand->maxSpeed = $this->parseMaxSpeed($properties, $parameters, $reporter);
@@ -245,7 +252,9 @@ final readonly class LitteralisTransformer
         $measureNames = [];
 
         foreach ($allMeasureNames as $name) {
-            if (!\array_key_exists($name, self::MEASURE_MAP)) {
+            $normalizedName = $this->normalizeMeasureName($name);
+
+            if (!\array_key_exists($normalizedName, self::MEASURE_MAP)) {
                 $reporter->addNotice(LitteralisRecordEnum::NOTICE_UNSUPPORTED_MEASURE->value, [
                     CommonRecordEnum::ATTR_REGULATION_ID->value => $properties['arretesrcid'],
                     CommonRecordEnum::ATTR_DETAILS->value => [
@@ -465,7 +474,38 @@ final readonly class LitteralisTransformer
         return (int) $matches['speed'];
     }
 
-    // Utilities
+    /**
+     * Normalise le nom d'une mesure en retirant les préfixes collectivité/année.
+     *
+     * Gère les préfixes dynamiques :
+     * - "YYYY - " (ex: "2021 - ", "2022 - ", "2023 - ", etc.) pour Montpellier
+     * - "AP - " (Arrêté Permanent) pour Montpellier
+     * - "ATemp - " (Arrêté Temporaire) pour Montpellier
+     *
+     * Exemples :
+     * - "2021 - Circulation interdite" => "Circulation interdite"
+     * - "2025 - Limitation de vitesse" => "Limitation de vitesse"
+     * - "AP - Interdiction de stationnement" => "Interdiction de stationnement"
+     * - "SOGELINK - Circulation interdite" => "SOGELINK - Circulation interdite" (inchangé)
+     */
+    private function normalizeMeasureName(string $name): string
+    {
+        // Gestion des préfixes avec année (format "YYYY - ")
+        // Exemples: "2021 - Circulation interdite", "2025 - Limitation de vitesse"
+        if (preg_match('/^\d{4} - (.+)$/', $name, $matches)) {
+            return $matches[1];
+        }
+
+        // Gestion des préfixes Arrêté Permanent/Temporaire Montpellier
+        // Exemples: "AP - Circulation interdite", "ATemp - Limitation de vitesse"
+        if (preg_match('/^A(?:P|Temp) - (.+)$/', $name, $matches)) {
+            return $matches[1];
+        }
+
+        // Aucun préfixe à retirer, on retourne le nom tel quel
+        // (cas MEL/SOGELINK, ou mesures déjà normalisées)
+        return $name;
+    }
 
     private function findParameterValue(array $parameters, string $theKey): ?string
     {

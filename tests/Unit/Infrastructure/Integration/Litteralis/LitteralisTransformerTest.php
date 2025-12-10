@@ -477,4 +477,111 @@ final class LitteralisTransformerTest extends TestCase
             ],
         ], $this->reporter->getRecords());
     }
+
+    public function testTransformMontpellierMeasures(): void
+    {
+        // Test avec les mesures Montpellier (préfixes "2021 - " et "AP - ")
+        $feature = json_decode(self::feature, true);
+        $feature['properties']['mesures'] = '2021 - Circulation interdite;2021 - Limitation de vitesse';
+        $feature['properties']['parametresmesures'] = '2021 - Circulation interdite | dérogations : véhicules de l\'entreprise exécutant les travaux ; 2021 - Limitation de vitesse | limite de vitesse : 30 km/h';
+        $identifier = $feature['properties']['arretesrcid'];
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('convertPolygonRoadToLines')
+            ->willReturn('geometry1');
+
+        $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
+
+        $this->assertNotNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(2, $command->measureCommands);
+        $this->assertEquals(MeasureTypeEnum::NO_ENTRY->value, $command->measureCommands[0]->type);
+        $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[1]->type);
+        $this->assertEquals(30, $command->measureCommands[1]->maxSpeed);
+    }
+
+    public function testTransformMontpellierPermanentMeasures(): void
+    {
+        // Test avec les mesures Montpellier Arrêtés Permanents (préfixe "AP - ")
+        $feature = json_decode(self::feature, true);
+        $feature['properties']['documenttype'] = 'ARRETE PERMANENT';
+        $feature['properties']['arretefin'] = null;
+        $feature['properties']['mesures'] = 'AP - Limitation de vitesse';
+        $feature['properties']['parametresmesures'] = 'AP - Limitation de vitesse | limite de vitesse : 50 km/h';
+        $identifier = $feature['properties']['arretesrcid'];
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('convertPolygonRoadToLines')
+            ->willReturn('geometry1');
+
+        $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
+
+        $this->assertNotNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(1, $command->measureCommands);
+        $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[0]->type);
+        $this->assertEquals(50, $command->measureCommands[0]->maxSpeed);
+        $this->assertEquals(RegulationOrderCategoryEnum::PERMANENT_REGULATION->value, $command->generalInfoCommand->category);
+    }
+
+    public function testTransformMontpellierDynamicYearPrefix(): void
+    {
+        // Test avec différentes années pour vérifier que c'est bien dynamique
+        $testCases = [
+            ['year' => '2022', 'measure' => 'Interdiction de stationnement'],
+            ['year' => '2023', 'measure' => 'Circulation interdite'],
+            ['year' => '2024', 'measure' => 'Limitation de vitesse'],
+            ['year' => '2025', 'measure' => 'Circulation interdite RD'],
+        ];
+
+        foreach ($testCases as $testCase) {
+            $feature = json_decode(self::feature, true);
+            $measureName = $testCase['year'] . ' - ' . $testCase['measure'];
+            $feature['properties']['mesures'] = $measureName;
+
+            // Adaptation des parametresmesures selon le type
+            if ($testCase['measure'] === 'Limitation de vitesse' || $testCase['measure'] === 'Limitation de vitesse RD') {
+                $feature['properties']['parametresmesures'] = $measureName . ' | limite de vitesse : 30 km/h';
+            } else {
+                $feature['properties']['parametresmesures'] = $measureName . ' | dérogations : véhicules d\'urgence';
+            }
+
+            $identifier = $feature['properties']['arretesrcid'] . '_' . $testCase['year'];
+
+            $this->roadGeocoder
+                ->method('convertPolygonRoadToLines')
+                ->willReturn('geometry1');
+
+            $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
+
+            $this->assertNotNull($command, "Failed for year {$testCase['year']} with measure {$testCase['measure']}");
+            $this->assertFalse($this->reporter->hasNewErrors(), "Errors for year {$testCase['year']}: " . json_encode($this->reporter->getRecords()));
+            $this->assertCount(1, $command->measureCommands);
+        }
+    }
+
+    public function testTransformMontpellierRDSuffix(): void
+    {
+        // Test spécifique pour les mesures avec suffixe "RD" (Routes Départementales)
+        $feature = json_decode(self::feature, true);
+        $feature['properties']['mesures'] = '2021 - Circulation interdite RD;2021 - Limitation de vitesse RD';
+        $feature['properties']['parametresmesures'] = '2021 - Circulation interdite RD | dérogations : véhicules de l\'entreprise ; 2021 - Limitation de vitesse RD | limite de vitesse : 70 km/h';
+        $identifier = $feature['properties']['arretesrcid'];
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('convertPolygonRoadToLines')
+            ->willReturn('geometry1');
+
+        $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
+
+        $this->assertNotNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(2, $command->measureCommands);
+        $this->assertEquals(MeasureTypeEnum::NO_ENTRY->value, $command->measureCommands[0]->type);
+        $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[1]->type);
+        $this->assertEquals(70, $command->measureCommands[1]->maxSpeed);
+    }
 }
