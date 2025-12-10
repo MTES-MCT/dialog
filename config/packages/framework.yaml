@@ -35,6 +35,9 @@ framework:
                 base_uri: '%env(API_ORGANIZATION_FETCHER_URL)%'
             geo_api.client:
                 base_uri: '%env(API_GEO_URL)%'
+            ign.report.client:
+                base_uri: '%env(API_IGN_REPORT_BASE_URL)%'
+                auth_basic: '%env(API_IGN_REPORT_AUTH)%'
 
 when@test:
     framework:

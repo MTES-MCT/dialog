@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Command\SaveReportAddressCommand;
 use App\Infrastructure\Form\User\ReportAddressFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
@@ -26,6 +28,7 @@ final class ReportAddressController
         private AuthenticatedUser $authenticatedUser,
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
+        private QueryBusInterface $queryBus,
         private TranslatorInterface $translator,
         private \Twig\Environment $twig,
     ) {
@@ -46,14 +49,27 @@ final class ReportAddressController
         #[MapQueryParameter] ?string $roadNumber = null,
         #[MapQueryParameter] ?string $cityLabel = null,
         #[MapQueryParameter] ?string $roadName = null,
+        #[MapQueryParameter] ?string $roadBanId = null,
     ): Response {
         $user = $this->authenticatedUser->getUser();
+
+        // Get organization from regulation order record
+        $organizationUuid = null;
+        try {
+            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
+            $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
+        } catch (\Exception $e) {
+            // If regulation order record not found, continue without organization
+        }
+
         $command = new SaveReportAddressCommand(
             $user,
             $administrator,
             $roadNumber,
             $cityLabel,
             $roadName,
+            $roadBanId,
+            $organizationUuid,
         );
 
         $frameId = $frameId ?? 'create-report-address-form-frame';
