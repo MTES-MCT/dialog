@@ -12,7 +12,7 @@ use App\Domain\Condition\Period\Period;
 final class SaveDailyRangeCommand implements CommandInterface
 {
     public ?string $recurrenceType = null;
-    public ?array $applicableDays;
+    public array $applicableDays = [];
     public ?Period $period;
 
     public function __construct(
@@ -23,7 +23,7 @@ final class SaveDailyRangeCommand implements CommandInterface
 
     public function initFromEntity(?DailyRange $dailyRange): self
     {
-        $this->applicableDays = $dailyRange?->getApplicableDays();
+        $this->applicableDays = $dailyRange?->getApplicableDays() ?? [];
 
         return $this;
     }

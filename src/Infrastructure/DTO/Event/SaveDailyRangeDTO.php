@@ -12,6 +12,6 @@ use Symfony\Component\ObjectMapper\Attribute\Map;
 final class SaveDailyRangeDTO
 {
     public ?PeriodRecurrenceTypeEnum $recurrenceType = null;
-    /** @var string[]|null */
-    public ?array $applicableDays = [];
+    /** @var string[] */
+    public array $applicableDays = [];
 }
