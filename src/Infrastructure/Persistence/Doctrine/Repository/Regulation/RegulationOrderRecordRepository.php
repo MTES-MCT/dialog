@@ -365,7 +365,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
                 $excludedOrgUuids ? 'roc.organization NOT IN (:excludedOrgUuids)' : null,
                 'm.type = :measureType',
-                'v IS NULL or (v.restrictedTypes = \'a:0:{}\' AND v.exemptedTypes = \'a:0:{}\')',
+                'v IS NULL or v.restrictedTypes = \'a:0:{}\'',
             )
             ->setParameters([
                 ...($allowedSources ? ['allowedSources' => $allowedSources] : []),
