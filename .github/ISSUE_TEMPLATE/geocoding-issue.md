@@ -8,16 +8,16 @@ assignees: ''
 ---
 
 **Type de voirie** :
-[] Voie
-[] Route départementale
-[] Route nationale
+- [ ] Voie
+- [ ] Route départementale
+- [ ] Route nationale
 
 **Organisation concernée :** 
 **Département :**
 
 **Nature du problème :**
-[] Intersection manquante - préciser :
-[] Voirie manquante - préciser :
+- [ ] Intersection manquante - préciser :
+- [ ] Voirie manquante - préciser :
 
 **Description du problème :**
 
