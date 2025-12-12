@@ -1,5 +1,7 @@
 # API DiaLog
 
+> Cette API est en **bêta** et en cours de construction. Vos retours nous permettent de la fiabiliser et d’ajuster le schéma si nécessaire.
+
 Cette page décrit l’API publique de DiaLog, qui expose des endpoints d’écriture (création d’arrêtés) et de lecture (exports). Elle s’adresse aux organismes et collectivités souhaitant intégrer des arrêtés de circulation dans DiaLog via un échange machine-à-machine.
 
 ## Authentification
@@ -58,18 +60,18 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `maxLength` (number, nullable)
     - `maxHeight` (number, nullable)
     - `critairTypes` (string[], nullable) — valeurs: `critair0` (ex. VE), `critair1`, `critair2`, `critair3`, `critair4`, `critair5`
-  - `periods` (array<object>, nullable)
-    - `startDate` (string, date-time ISO, nullable)
+- `periods` (array<object>, nullable)
+  - `startDate` (string, date-time ISO) — **obligatoire**
+  - `startTime` (string, date-time ISO, nullable) — requis si `isPermanent = false`
+  - `endDate` (string, date-time ISO, nullable) — requis si `isPermanent = false`
+  - `endTime` (string, date-time ISO, nullable) — requis si `isPermanent = false`
+  - `recurrenceType` (string) — enum: `everyDay` | `certainDays` — **obligatoire**
+  - `isPermanent` (boolean, nullable)
+  - `dailyRange` (object, nullable)
+    - `applicableDays` (string[], nullable) — enum: `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`
+  - `timeSlots` (array<object>, nullable)
     - `startTime` (string, date-time ISO, nullable)
-    - `endDate` (string, date-time ISO, nullable)
     - `endTime` (string, date-time ISO, nullable)
-    - `recurrenceType` (string) — enum: `everyDay` | `certainDays`
-    - `isPermanent` (boolean, nullable)
-    - `dailyRange` (object, nullable)
-      - `applicableDays` (string[], nullable) — enum: `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`
-    - `timeSlots` (array<object>, nullable)
-      - `startTime` (string, date-time ISO, nullable)
-      - `endTime` (string, date-time ISO, nullable)
   - `locations` (array<object>, nullable)
     - `roadType` (string) — enum: `lane` | `departmentalRoad` | `nationalRoad` | `rawGeoJSON`
     - `namedStreet` (object, nullable) — utilisé avec `roadType = lane`
