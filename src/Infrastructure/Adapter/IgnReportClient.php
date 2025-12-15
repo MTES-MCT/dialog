@@ -38,7 +38,6 @@ final class IgnReportClient
             'attributes' => [
                 'community' => 1,
                 'theme' => 'Route',
-                'attributes' => (object) [],
             ],
         ];
 
@@ -48,7 +47,7 @@ final class IgnReportClient
         ]);
 
         try {
-            $response = $this->ignReportClient->request('POST', '/', [
+            $response = $this->ignReportClient->request('POST', '/reports', [
                 'json' => $payload,
             ]);
 

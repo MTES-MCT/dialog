@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Organization;
 
 use App\Application\User\View\OrganizationView;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -109,21 +110,43 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
     public function findAllForStatistics(): array
     {
         return $this->getEntityManager()->getConnection()->fetchAllAssociative(
-            'SELECT
-                uuid,
-                name,
-                code,
-                code_type,
-                department_name,
-                department_code,
-                ST_AsGeoJSON(geometry) as geometry
-            FROM organization
-            WHERE uuid <> :dialogOrgId
-            AND geometry IS NOT NULL
-            AND NOT ST_IsEmpty(geometry)',
+            // On regroupe les organisations en \"gros blocs\" géographiques :
+            // 1. ST_ClusterDBSCAN crée des clusters d'entités voisines (eps ≈ 100 m en WGS84)
+            // 2. Pour chaque cluster, on fusionne les géométries avec ST_Union
+            // 3. On construit un nom de cluster en concaténant les noms des organisations
+            // 4. On renvoie un GeoJSON par cluster, avec uniquement ce nom agrégé
+            'WITH clustered AS (
+                SELECT
+                    ST_ClusterDBSCAN(geometry, eps := 0.001, minpoints := 1) OVER () AS cluster_id,
+                    geometry,
+                    name
+                FROM organization
+                WHERE uuid <> :dialogOrgId
+                AND code_type <> :regionCodeType
+                AND geometry IS NOT NULL
+                AND NOT ST_IsEmpty(geometry)
+            )
+            SELECT
+                cluster_id,
+                ST_AsGeoJSON(ST_Union(geometry)) AS geometry,
+                string_agg(DISTINCT name, \', \' ORDER BY name) AS cluster_name
+            FROM clustered
+            GROUP BY cluster_id
+            ORDER BY cluster_id',
             [
                 'dialogOrgId' => $this->dialogOrgId,
+                'regionCodeType' => OrganizationCodeTypeEnum::REGION->value,
             ],
         );
+    }
+
+    public function computeCentroidFromGeoJson(string $geoJson): string
+    {
+        $result = $this->getEntityManager()->getConnection()->fetchAssociative(
+            'SELECT ST_AsGeoJSON(ST_PointOnSurface(ST_SetSRID(ST_GeomFromGeoJSON(:geoJson), 4326))) AS centroid',
+            ['geoJson' => $geoJson],
+        );
+
+        return $result['centroid'];
     }
 }

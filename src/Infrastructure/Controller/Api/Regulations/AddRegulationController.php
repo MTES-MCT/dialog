@@ -78,12 +78,13 @@ final class AddRegulationController
                                 nullable: true,
                                 items: new OA\Items(
                                     type: 'object',
+                                    required: ['startDate', 'recurrenceType'],
                                     properties: [
-                                        new OA\Property(property: 'startDate', type: 'string', format: 'date-time', nullable: true),
-                                        new OA\Property(property: 'startTime', type: 'string', format: 'date-time', nullable: true),
-                                        new OA\Property(property: 'endDate', type: 'string', format: 'date-time', nullable: true),
-                                        new OA\Property(property: 'endTime', type: 'string', format: 'date-time', nullable: true),
-                                        new OA\Property(property: 'recurrenceType', type: 'string', enum: ['everyDay', 'certainDays'], nullable: true),
+                                        new OA\Property(property: 'startDate', type: 'string', format: 'date-time'),
+                                        new OA\Property(property: 'startTime', type: 'string', format: 'date-time', nullable: true, description: 'Obligatoire si isPermanent = false'),
+                                        new OA\Property(property: 'endDate', type: 'string', format: 'date-time', nullable: true, description: 'Obligatoire si isPermanent = false'),
+                                        new OA\Property(property: 'endTime', type: 'string', format: 'date-time', nullable: true, description: 'Obligatoire si isPermanent = false'),
+                                        new OA\Property(property: 'recurrenceType', type: 'string', enum: ['everyDay', 'certainDays']),
                                         new OA\Property(property: 'isPermanent', type: 'boolean', nullable: true),
                                         new OA\Property(
                                             property: 'dailyRange',

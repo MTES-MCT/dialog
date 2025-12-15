@@ -20,11 +20,11 @@ final class SaveMeasureDTO
     public ?int $maxSpeed = null;
     #[Map(target: 'createdAt', transform: [DateTimeTransformers::class, 'fromIso'])]
     public ?string $createdAt = null;
-    /** @var SavePeriodDTO[]|null */
+    /** @var SavePeriodDTO[] */
     #[Map(target: 'periods', transform: [PeriodsTransformer::class, 'toCommands'])]
-    public ?array $periods = [];
-    /** @var SaveLocationDTO[]|null */
+    public array $periods = [];
+    /** @var SaveLocationDTO[] */
     #[Map(target: 'locations', transform: [LocationsTransformer::class, 'toCommands'])]
-    public ?array $locations = [];
+    public array $locations = [];
     public ?SaveVehicleSetDTO $vehicleSet = null;
 }

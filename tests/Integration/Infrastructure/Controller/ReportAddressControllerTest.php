@@ -153,4 +153,31 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(404);
     }
+
+    public function testWithNonExistentRegulationOrderRecord(): void
+    {
+        $client = $this->login();
+        // Utiliser un UUID qui n'existe probablement pas en base
+        $nonExistentUuid = '9f8c3e4a-1234-5678-9abc-def012345678';
+
+        // Première étape : vérifier que le formulaire s'affiche malgré l'absence de RegulationOrderRecord
+        $crawler = $client->request('GET', '/regulations/' . $nonExistentUuid . '/report-address?administrator=Route%20nationale&roadNumber=N176');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+
+        $template = $crawler->filter('turbo-stream template');
+        $locationInput = $template->filter('input[name*="location"]');
+        $this->assertSame('Route nationale - N176', $locationInput->attr('value'));
+
+        // Deuxième étape : vérifier que le formulaire peut être soumis
+        $saveButton = $template->selectButton('Signaler');
+        $form = $saveButton->form();
+        $form['report_address_form[content]'] = 'Il y a un problème avec cette adresse, la signalisation est absente.';
+
+        $crawler = $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+    }
 }

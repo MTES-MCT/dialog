@@ -47,24 +47,24 @@ final class SaveReportAddressCommandHandler
     {
         $comment = $command->content;
 
-        // Try to get geometry from roadBanId first (for entire road)
-        $geometry = null;
-
-        if ($command->roadBanId) {
-            $geometry = $this->getGeometryFromRoadBanId($command->roadBanId);
-        }
-
-        // If roadBanId geocoding failed or not provided, use organization geometry
-        if (!$geometry) {
-            $geometry = $this->getOrganizationGeometry($command);
-        }
+        // Try to get geometry from roadBanId first (for entire road), fallback to organization geometry
+        $roadBanIdGeometry = $command->roadBanId ? $this->getGeometryFromRoadBanId($command->roadBanId) : null;
+        $geometry = $roadBanIdGeometry ?? $this->getOrganizationPointGeometry($command);
 
         if (!$geometry) {
-            $this->logger->warning('Cannot send report to IGN API: geometry not found', [
+            $context = [
                 'userId' => $command->user->getUuid(),
                 'organizationUuid' => $command->organizationUuid,
-                'roadBanId' => $command->roadBanId,
-            ]);
+            ];
+
+            if ($command->roadBanId) {
+                $context['roadBanId'] = $command->roadBanId;
+                $context['reason'] = 'roadBanId geocoding failed and organization geometry not found or invalid';
+            } else {
+                $context['reason'] = 'no roadBanId provided and organization geometry not found or invalid';
+            }
+
+            $this->logger->warning('Cannot send report to IGN API: geometry not found', $context);
 
             return;
         }
@@ -85,103 +85,41 @@ final class SaveReportAddressCommandHandler
             // Get GeoJSON geometry from roadBanId (for entire road)
             $geoJson = $this->roadGeocoder->computeRoadLine($roadBanId);
 
-            return $this->convertGeoJsonToWkt($geoJson);
-        } catch (GeocodingFailureException $e) {
-            $this->logger->info('Failed to get geometry from roadBanId, will use organization geometry', [
-                'roadBanId' => $roadBanId,
-                'error' => $e->getMessage(),
-            ]);
+            // Calculate centroid with PostGIS
+            $centroidGeoJson = $this->organizationRepository->computeCentroidFromGeoJson($geoJson);
 
+            // Convert GeoJSON Point to WKT
+            return $this->convertPointGeoJsonToWkt($centroidGeoJson);
+        } catch (GeocodingFailureException $e) {
+            // Silent fallback to organization geometry
             return null;
         }
     }
 
-    private function getOrganizationGeometry(SaveReportAddressCommand $command): ?string
+    private function getOrganizationPointGeometry(SaveReportAddressCommand $command): ?string
     {
+        if (!$command->organizationUuid) {
+            return null;
+        }
+
         $organization = $this->organizationRepository->findOneByUuid($command->organizationUuid);
 
-        if (!$organization) {
+        if (!$organization || !$organization->getGeometry()) {
             return null;
         }
 
-        $geoJson = $organization->getGeometry();
+        // Calculate centroid (point central) with PostGIS instead of full geometry
+        $centroidGeoJson = $this->organizationRepository->computeCentroidFromGeoJson($organization->getGeometry());
 
-        if (!$geoJson) {
-            return null;
-        }
-
-        // Convert GeoJSON to WKT
-        return $this->convertGeoJsonToWkt($geoJson);
+        // Convert GeoJSON Point to WKT
+        return $this->convertPointGeoJsonToWkt($centroidGeoJson);
     }
 
-    private function convertGeoJsonToWkt(string $geoJson): ?string
+    private function convertPointGeoJsonToWkt(string $geoJson): string
     {
         $data = json_decode($geoJson, true);
 
-        if (!$data || !isset($data['type']) || !isset($data['coordinates'])) {
-            return null;
-        }
-
-        $type = $data['type'];
-        $coordinates = $data['coordinates'];
-
-        return match ($type) {
-            'Point' => $this->pointToWkt($coordinates),
-            'LineString' => $this->lineStringToWkt($coordinates),
-            'Polygon' => $this->polygonToWkt($coordinates),
-            'MultiPolygon' => $this->multiPolygonToWkt($coordinates),
-            default => null,
-        };
-    }
-
-    private function pointToWkt(array $coordinates): string
-    {
-        // GeoJSON: [lon, lat]
-        return \sprintf('POINT(%s %s)', $coordinates[0], $coordinates[1]);
-    }
-
-    private function lineStringToWkt(array $coordinates): string
-    {
-        $points = array_map(
-            fn (array $coord) => \sprintf('%s %s', $coord[0], $coord[1]),
-            $coordinates,
-        );
-
-        return 'LINESTRING(' . implode(', ', $points) . ')';
-    }
-
-    private function polygonToWkt(array $coordinates): string
-    {
-        // Polygon is an array of rings (first is exterior, others are holes)
-        $rings = array_map(
-            fn (array $ring) => '(' . implode(', ', array_map(
-                fn (array $coord) => \sprintf('%s %s', $coord[0], $coord[1]),
-                $ring,
-            )) . ')',
-            $coordinates,
-        );
-
-        return 'POLYGON(' . implode(', ', $rings) . ')';
-    }
-
-    private function multiPolygonToWkt(array $coordinates): string
-    {
-        // MultiPolygon is an array of polygons, each polygon is an array of rings
-        $polygons = array_map(
-            function (array $polygon) {
-                $rings = array_map(
-                    fn (array $ring) => '(' . implode(', ', array_map(
-                        fn (array $coord) => \sprintf('%s %s', $coord[0], $coord[1]),
-                        $ring,
-                    )) . ')',
-                    $polygon,
-                );
-
-                return '(' . implode(', ', $rings) . ')';
-            },
-            $coordinates,
-        );
-
-        return 'MULTIPOLYGON(' . implode(', ', $polygons) . ')';
+        // GeoJSON Point: [lon, lat]
+        return \sprintf('POINT(%s %s)', $data['coordinates'][0], $data['coordinates'][1]);
     }
 }

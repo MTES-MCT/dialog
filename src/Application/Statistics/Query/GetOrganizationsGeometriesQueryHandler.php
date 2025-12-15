@@ -15,25 +15,21 @@ final readonly class GetOrganizationsGeometriesQueryHandler
 
     public function __invoke(GetOrganizationsGeometriesQuery $query): array
     {
-        $organizations = $this->organizationRepository->findAllForStatistics();
+        $rows = $this->organizationRepository->findAllForStatistics();
 
         $features = [];
 
-        foreach ($organizations as $org) {
-            if (empty($org['geometry'])) {
+        foreach ($rows as $row) {
+            if (empty($row['geometry'])) {
                 continue;
             }
 
             $features[] = [
                 'type' => 'Feature',
-                'geometry' => json_decode($org['geometry'], true),
+                'geometry' => json_decode($row['geometry'], true),
                 'properties' => [
-                    'uuid' => $org['uuid'],
-                    'name' => $org['name'],
-                    'code' => $org['code'],
-                    'codeType' => $org['code_type'],
-                    'departmentName' => $org['department_name'],
-                    'departmentCode' => $org['department_code'],
+                    // Nom agrégé des organisations du cluster, pour affichage éventuel côté front
+                    'clusterName' => $row['cluster_name'],
                 ],
             ];
         }
