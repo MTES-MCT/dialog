@@ -1,6 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { mapStyles } from 'carte-facile';
 
 // Cache global pour éviter de recharger l'API plusieurs fois
 let cachedOrganizationsData = null;
@@ -21,9 +22,6 @@ const FRANCE_METRO_BOUNDS = {
     south: 41.0,
     north: 51.5,
 };
-
-// Style de carte minimaliste
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 
 // Couleur DSFR bleu France
 const ORGANIZATION_COLOR = '#000091';
@@ -99,7 +97,7 @@ export default class extends Controller {
     createMap(container, options) {
         return new maplibregl.Map({
             container,
-            style: MAP_STYLE,
+            style: mapStyles.desaturated,
             center: options.center,
             zoom: options.zoom,
             minZoom: options.minZoom,

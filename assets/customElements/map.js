@@ -1,6 +1,7 @@
 // @ts-check
 
 import { getAttributeOrError } from './util';
+import { mapStyles } from 'carte-facile';
 
 /**
  * A source for map data that reads GeoJSON data in the textContent of an HTML element.
@@ -119,7 +120,7 @@ class MapLibreMap {
             // Create and configure the map
             const map = new maplibregl.Map({
                 container: mapContainer,
-                style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+                style: mapStyles.desaturated,
                 hash: 'mapZoomAndPosition',
                 ...mapOptions,
             });
