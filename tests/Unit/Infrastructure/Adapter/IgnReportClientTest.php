@@ -27,6 +27,7 @@ final class IgnReportClientTest extends TestCase
         $this->client = new IgnReportClient(
             $this->ignReportClient,
             $this->logger,
+            'username:password', // credentials
             'test', // defaultStatus depuis variable d'environnement
         );
     }
@@ -46,14 +47,17 @@ final class IgnReportClientTest extends TestCase
             ->method('request')
             ->with(
                 'POST',
-                '/reports',
+                '/gcms/api/reports',
                 $this->callback(function ($options) use ($comment, $geometry) {
                     $this->assertArrayHasKey('json', $options);
+                    $this->assertArrayHasKey('auth_basic', $options);
+                    $this->assertSame('username:password', $options['auth_basic']);
+
                     $json = $options['json'];
 
                     $this->assertSame(1, $json['community']);
                     $this->assertSame($geometry, $json['geometry']);
-                    $this->assertSame($comment, $json['comment']);
+                    $this->assertSame('[DiaLog] ' . $comment, $json['comment']);
                     $this->assertSame('test', $json['status']);
                     $this->assertArrayHasKey('attributes', $json);
                     $this->assertSame(1, $json['attributes']['community']);
@@ -69,11 +73,17 @@ final class IgnReportClientTest extends TestCase
             ->method('info')
             ->with(
                 'Report sent to IGN API',
-                [
-                    'geometry' => $geometry,
-                    'comment' => $comment,
-                    'statusCode' => 201,
-                ],
+                $this->callback(function ($context) use ($comment, $geometry) {
+                    $this->assertArrayHasKey('json_encoded', $context);
+                    $this->assertArrayHasKey('geometry', $context);
+                    $this->assertArrayHasKey('comment', $context);
+                    $this->assertArrayHasKey('statusCode', $context);
+                    $this->assertSame($geometry, $context['geometry']);
+                    $this->assertSame($comment, $context['comment']);
+                    $this->assertSame(201, $context['statusCode']);
+
+                    return true;
+                }),
             );
 
         $response = $this->client->submitReport($comment, $geometry);
@@ -180,7 +190,7 @@ final class IgnReportClientTest extends TestCase
             ->method('request')
             ->with(
                 'POST',
-                '/reports',
+                '/gcms/api/reports',
                 $this->callback(function ($options) use (&$capturedPayload) {
                     $capturedPayload = $options['json'];
 
@@ -205,6 +215,9 @@ final class IgnReportClientTest extends TestCase
         $this->assertIsArray($capturedPayload['attributes']);
         $this->assertArrayHasKey('community', $capturedPayload['attributes']);
         $this->assertArrayHasKey('theme', $capturedPayload['attributes']);
+
+        // Vérifier que le tag DiaLog est ajouté
+        $this->assertStringStartsWith('[DiaLog] ', $capturedPayload['comment']);
     }
 
     public function testSubmitReportWithCustomStatus(): void
@@ -223,7 +236,7 @@ final class IgnReportClientTest extends TestCase
             ->method('request')
             ->with(
                 'POST',
-                '/reports',
+                '/gcms/api/reports',
                 $this->callback(function ($options) use ($status) {
                     $this->assertArrayHasKey('json', $options);
                     $json = $options['json'];
@@ -256,7 +269,7 @@ final class IgnReportClientTest extends TestCase
             ->method('request')
             ->with(
                 'POST',
-                '/reports',
+                '/gcms/api/reports',
                 $this->callback(function ($options) {
                     $this->assertArrayHasKey('json', $options);
                     $json = $options['json'];
@@ -284,6 +297,7 @@ final class IgnReportClientTest extends TestCase
         $clientWithSubmitStatus = new IgnReportClient(
             $this->ignReportClient,
             $this->logger,
+            'username:password',
             'submit',
         );
 
@@ -297,7 +311,7 @@ final class IgnReportClientTest extends TestCase
             ->method('request')
             ->with(
                 'POST',
-                '/reports',
+                '/gcms/api/reports',
                 $this->callback(function ($options) {
                     $this->assertArrayHasKey('json', $options);
                     $json = $options['json'];

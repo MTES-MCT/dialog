@@ -50,7 +50,9 @@ final class SaveReportAddressCommandHandler
 
         // Try to get geometry from roadBanId first (for entire road), fallback to organization geometry
         $roadBanIdGeometry = $command->roadBanId ? $this->getGeometryFromRoadBanId($command->roadBanId) : null;
-        $geometry = $roadBanIdGeometry ?? $this->getOrganizationPointGeometry($command);
+        $geometry = ($roadBanIdGeometry && trim($roadBanIdGeometry) !== '')
+            ? $roadBanIdGeometry
+            : $this->getOrganizationPointGeometry($command);
 
         if (!$geometry) {
             $context = [
@@ -86,7 +88,6 @@ final class SaveReportAddressCommandHandler
             // Get GeoJSON geometry from roadBanId (for entire road)
             $geoJson = $this->roadGeocoder->computeRoadLine($roadBanId);
 
-            // Calculate centroid with PostGIS
             $centroidGeoJson = $this->organizationRepository->computeCentroidFromGeoJson($geoJson);
 
             // Convert GeoJSON Point to WKT
@@ -111,15 +112,29 @@ final class SaveReportAddressCommandHandler
         // Calculate centroid (point central) with PostGIS instead of full geometry
         $centroidGeoJson = $this->organizationRepository->computeCentroidFromGeoJson($organization->getGeometry());
 
-        // Convert GeoJSON Point to WKT
         return $this->convertPointGeoJsonToWkt($centroidGeoJson);
     }
 
-    private function convertPointGeoJsonToWkt(string $geoJson): string
+    private function convertPointGeoJsonToWkt(string $geoJson): ?string
     {
+        if (empty(trim($geoJson))) {
+            return null;
+        }
+
         $data = json_decode($geoJson, true);
 
+        if (!$data || !isset($data['coordinates']) || !\is_array($data['coordinates']) || \count($data['coordinates']) < 2) {
+            return null;
+        }
+
         // GeoJSON Point: [lon, lat]
-        return \sprintf('POINT(%s %s)', $data['coordinates'][0], $data['coordinates'][1]);
+        $lon = $data['coordinates'][0];
+        $lat = $data['coordinates'][1];
+
+        if ($lon === null || $lat === null || $lon === '' || $lat === '') {
+            return null;
+        }
+
+        return \sprintf('POINT(%s %s)', $lon, $lat);
     }
 }

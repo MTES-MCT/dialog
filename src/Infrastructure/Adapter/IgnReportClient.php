@@ -15,6 +15,8 @@ final class IgnReportClient
         #[Autowire(service: 'ign.report.client')]
         private HttpClientInterface $ignReportClient,
         private LoggerInterface $logger,
+        #[Autowire(env: 'API_IGN_REPORT_AUTH')]
+        private string $credentials,
         #[Autowire(env: 'IGN_REPORT_STATUS')]
         private string $defaultStatus = 'test',
     ) {
@@ -34,22 +36,27 @@ final class IgnReportClient
             throw new \InvalidArgumentException('Geometry is required');
         }
 
+        $taggedComment = '[DiaLog] ' . $comment;
+
         $payload = [
             'community' => 1,
             'geometry' => $geometry,
-            'comment' => $comment,
+            'comment' => $taggedComment,
             'status' => $status,
             'attributes' => [
                 'community' => 1,
                 'theme' => 'Route',
+                'attributes' => new \stdClass(),
             ],
         ];
 
-        $response = $this->ignReportClient->request('POST', '/reports', [
+        $response = $this->ignReportClient->request('POST', '/gcms/api/reports', [
             'json' => $payload,
+            'auth_basic' => $this->credentials,
         ]);
 
         $this->logger->info('Report sent to IGN API', [
+            'json_encoded' => json_encode($payload),
             'geometry' => $geometry,
             'comment' => $comment,
             'statusCode' => $response->getStatusCode(),
