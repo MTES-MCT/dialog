@@ -15,18 +15,22 @@ final class IgnReportClient
         #[Autowire(service: 'ign.report.client')]
         private HttpClientInterface $ignReportClient,
         private LoggerInterface $logger,
+        #[Autowire(env: 'IGN_REPORT_STATUS')]
+        private string $defaultStatus = 'test',
     ) {
     }
 
     public function submitReport(
         string $comment,
         string $geometry,
+        ?string $status = null,
     ): ResponseInterface {
-        if (empty($comment)) {
+        $status = $status ?? $this->defaultStatus;
+        if (empty(trim($comment))) {
             throw new \InvalidArgumentException('Comment is required');
         }
 
-        if (empty($geometry)) {
+        if (empty(trim($geometry))) {
             throw new \InvalidArgumentException('Geometry is required');
         }
 
@@ -34,38 +38,23 @@ final class IgnReportClient
             'community' => 1,
             'geometry' => $geometry,
             'comment' => $comment,
-            'status' => 'test',
+            'status' => $status,
             'attributes' => [
                 'community' => 1,
                 'theme' => 'Route',
             ],
         ];
 
-        $this->logger->info('Sending report to IGN API', [
-            'geometry' => $geometry,
-            'comment' => $comment,
+        $response = $this->ignReportClient->request('POST', '/reports', [
+            'json' => $payload,
         ]);
 
-        try {
-            $response = $this->ignReportClient->request('POST', '/reports', [
-                'json' => $payload,
-            ]);
+        $this->logger->info('Report sent to IGN API', [
+            'geometry' => $geometry,
+            'comment' => $comment,
+            'statusCode' => $response->getStatusCode(),
+        ]);
 
-            $this->logger->info('Report sent to IGN API', [
-                'geometry' => $geometry,
-                'comment' => $comment,
-                'statusCode' => $response->getStatusCode(),
-            ]);
-
-            return $response;
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to send report to IGN API', [
-                'geometry' => $geometry,
-                'comment' => $comment,
-                'error' => $e->getMessage(),
-            ]);
-
-            throw $e;
-        }
+        return $response;
     }
 }

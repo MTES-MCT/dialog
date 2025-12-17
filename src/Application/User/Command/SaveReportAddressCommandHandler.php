@@ -46,6 +46,7 @@ final class SaveReportAddressCommandHandler
     private function sendReportToIgn(SaveReportAddressCommand $command): void
     {
         $comment = $command->content;
+        $userId = $command->user->getUuid();
 
         // Try to get geometry from roadBanId first (for entire road), fallback to organization geometry
         $roadBanIdGeometry = $command->roadBanId ? $this->getGeometryFromRoadBanId($command->roadBanId) : null;
@@ -53,7 +54,7 @@ final class SaveReportAddressCommandHandler
 
         if (!$geometry) {
             $context = [
-                'userId' => $command->user->getUuid(),
+                'userId' => $userId,
                 'organizationUuid' => $command->organizationUuid,
             ];
 
@@ -73,7 +74,7 @@ final class SaveReportAddressCommandHandler
             $this->ignReportClient->submitReport($comment, $geometry);
         } catch (\Exception $e) {
             $this->logger->error('Failed to send report to IGN API', [
-                'userId' => $command->user->getUuid(),
+                'userId' => $userId,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -91,7 +92,6 @@ final class SaveReportAddressCommandHandler
             // Convert GeoJSON Point to WKT
             return $this->convertPointGeoJsonToWkt($centroidGeoJson);
         } catch (GeocodingFailureException $e) {
-            // Silent fallback to organization geometry
             return null;
         }
     }
