@@ -108,7 +108,9 @@ Encore
                 // Map libre classes
                 /^maplibregl/,
                 // Quill classes
-                /^ql-/
+                /^ql-/,
+                // Map filter icons
+                /^map-filter-label--/
             ],
             greedy: [
                 // Source of complex selectors
@@ -138,6 +140,6 @@ Encore
             }
         });
     })
-;
+    ;
 
 module.exports = Encore.getWebpackConfig();

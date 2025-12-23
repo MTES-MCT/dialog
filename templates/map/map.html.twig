@@ -38,7 +38,18 @@
                                     element: 'legend',
                                     label_attr: { id: 'measureTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
                                 }) }}
-                                {{ form_widget(form.measureTypes) }}
+                                <div class="fr-fieldset__content">
+                                    {% for child in form.measureTypes %}
+                                        <div class="fr-fieldset__element">
+                                            <div class="fr-checkbox-group">
+                                                {{ form_widget(child) }}
+                                                <label class="fr-label map-filter-label map-filter-label--{{ child.vars.value }}" for="{{ child.vars.id }}">
+                                                    {{ child.vars.label|trans }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </fieldset>
 
                             <h4 class="fr-h6 fr-mb-2w">{{ 'map.filters.title.type.regulation'|trans }}</h4>
