@@ -50,7 +50,7 @@
     </div>
 
     <!-- Comment ça marche ? -->
-    <div class="fr-x-background-artwork-decorative-blue-france">
+    <div>
         <div class="fr-container fr-py-6w">
             <h2 class="fr-x-text--blue-france">
                 {{ 'landing.how-it-works.title'|trans }}
@@ -62,64 +62,94 @@
         </div>
     </div>
 
-    <!-- Diffuser mes données avec DiaLog -->
-    <div class="fr-container fr-py-6w">
+    <!-- Ouvrir mes réglementations de circulation avec DiaLog -->
+    <div class="fr-container fr-py-6w fr-x-background-artwork-decorative-blue-france">
         <h2>{{ 'landing.distribute.title'|trans }}</h2>
-
-        <!-- Saisir un arrêté -->
-        <div class="app-landing-distribute-input">
-            <div>
-                <h3>
-                    <span aria-hidden="true">✏️</span>
-                    {{ 'landing.distribute.input.title'|trans }}
-                </h3>
-                <p>
-                    {{ 'landing.distribute.input.description'|trans|raw }}
-                </p>
-                <p>
-                    {{ 'landing.distribute.input.more'|trans({'%href%': path('app_landing_details') ~ '#input'})|raw }}
-                </p>
-                <p>
-                    {{ 'landing.distribute.input.test'|trans }}
-                </p>
-                <a href="{{ path('app_register') }}" class="fr-btn fr-btn--secondary fr-icon-user-add-line fr-btn--icon-left" aria-hidden="true" data-testid="register-link">
-                    {{ 'landing.distribute.input.register'|trans }}
-                </a>
+        <p class="fr-text--xl fr-mb-4w">
+            {{ 'landing.distribute.description'|trans|raw }}
+        </p>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="{{ path('app_landing_details') }}#input">{{ 'landing.distribute.card.title'|trans }}</a>
+                            </h3>
+                            <p class="fr-card__desc">{{ 'landing.distribute.card.description'|trans|raw }}</p>
+                        </div>
+                    </div>
+                    <div class="fr-card__header">
+                        <div class="fr-card__img">
+                            <img class="fr-responsive-img" src="{{ asset('images/landing/illustration-arreté-limitation-vitesse.webp') }}" alt="illustration : un formulaire de saisie d'arrêté de limitation de vitesse dans l'interface DiaLog">
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <img src="{{ asset('images/landing/illustration-arreté-temporaire.webp') }}" height="411" loading="lazy" class="fr-hidden fr-unhidden-lg" aria-hidden="true">
-        </div>
-
-        <div class="app-landing-hr">
-            <hr>
-        </div>
-
-        <!-- Intégrer mes données -->
-        <div class="app-landing-distribute-integration">
-            <div>
-                <h3>
-                    <span aria-hidden="true">⚙️</span>
-                    {{ 'landing.distribute.integration.title'|trans }}
-                </h3>
-                <p>
-                    {{ 'landing.distribute.integration.description'|trans|raw }}
-                </p>
-                <p>
-                    {{ 'landing.distribute.integration.more'|trans({'%href%': path('app_landing_details') ~ '#integration' })|raw }}
-                </p>
-                <p>
-                    {{ 'landing.distribute.integration.contact'|trans }}
-                </p>
-                <a href="{{ path('app_contact') }}" class="fr-btn fr-btn--secondary fr-icon-mail-open-line fr-btn--icon-left" data-testid="contact-link">
-                    {{ 'landing.distribute.integration.contact.link'|trans }}
-                </a>
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="{{ path('app_landing_details') }}#api">{{ 'landing.card.api.title'|trans }}</a>
+                            </h3>
+                            <p class="fr-card__desc">{{ 'landing.card.api.description'|trans }}</p>
+                        </div>
+                    </div>
+                    <div class="fr-card__header">
+                        <div class="fr-card__img">
+                            <img class="fr-responsive-img" src="{{ asset('images/landing/Illustration-doc-api.webp') }}" alt="illustration d'une documentation technique de l'API DiaLog">
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <img src="{{ asset('images/landing/illustration-liste-arretés-publiés.webp') }}" height="411" loading="lazy" class="fr-hidden fr-unhidden-lg" aria-hidden="true">
+            <div class="fr-col-12 fr-col-md-4">
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="{{ path('app_landing_details') }}#integration">{{ 'landing.card.integrate.title'|trans }}</a>
+                            </h3>
+                            <p class="fr-card__desc">{{ 'landing.card.integrate.description'|trans|raw }}</p>
+                        </div>
+                    </div>
+                    <div class="fr-card__header">
+                        <div class="fr-card__img">
+                            <img class="fr-responsive-img" src="{{ asset('images/landing/illustration-arrete-de-circulation.webp') }}" alt="illustration d'une liste d'arrêtés de circulation intégrés dans DiaLog">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="fr-background-alt--grey fr-py-6w">
+    <!-- Publier les données de circulation pour les diffuser aux GPS -->
+    <div class="fr-container fr-py-6w fr-x-background-alt--blue-france">
+        <h2>{{ 'landing.distribute.gps.title'|trans }}</h2>
+        <p class="fr-text--xl fr-m-0">
+            {{ 'landing.distribute.gps.description'|trans|raw }}
+        </p>
+        <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+            <div class="fr-col-12 fr-col-md-6">
+                <div class="app-landing-gps-map-bg">
+                    <img src="{{ asset('images/landing/illustration-arrete-sur-carte.webp') }}" class="fr-responsive-img" loading="lazy" aria-hidden="true">
+                    <p class="fr-text--sm fr-mt-2w">
+                        {{ 'landing.distribute.gps.map.caption'|trans }}
+                    </p>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-6">
+                <div class="app-landing-gps-map-bg">
+                    <img src="{{ asset('images/landing/illustration-arrete-waze.webp') }}" class="fr-responsive-img" loading="lazy" aria-hidden="true">
+                    <p class="fr-text--sm fr-mt-2w">
+                        {{ 'landing.distribute.gps.waze.caption'|trans }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fr-py-4w">
         <div class="fr-container">
             <h2 class="fr-x-text--blue-france">
                 {{ 'landing.who-are-we.title'|trans }}
