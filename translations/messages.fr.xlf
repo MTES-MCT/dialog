@@ -2340,15 +2340,15 @@
             </trans-unit>
             <trans-unit id="map.filter.type.noEntry">
                 <source>map.filter.type.noEntry</source>
-                <target>Interdiction de circulation <![CDATA[<i class="ri-circle-fill map-filter-icon map-filter-icon--no-entry"></i>]]></target>
+                <target>Interdiction de circulation</target>
             </trans-unit>
             <trans-unit id="map.filter.type.speedLimitation">
                 <source>map.filter.type.speedLimitation</source>
-                <target><![CDATA[<i class="ri-circle-fill map-filter-icon map-filter-icon--speed-limitation"></i>]]> Limitation de vitesse</target>
+                <target>Limitation de vitesse</target>
             </trans-unit>
             <trans-unit id="map.filter.type.parkingProhibited">
                 <source>map.filter.type.parkingProhibited</source>
-                <target><![CDATA[<i class="ri-circle-fill map-filter-icon map-filter-icon--parking-prohibited"></i>]]> Stationnement interdit</target>
+                <target>Stationnement interdit</target>
             </trans-unit>
             <trans-unit id="map.filters.title.application.period">
                 <source>map.filters.title.application.period</source>
