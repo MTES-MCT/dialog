@@ -52,7 +52,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         return $this->createQueryBuilder('l')
             ->addSelect('m', 'v', 'p', 'd', 't', 'sa')
             ->innerJoin('l.measure', 'm')
-            ->innerjoin('m.periods', 'p')
+            ->leftJoin('m.periods', 'p')
             ->leftJoin('m.vehicleSet', 'v')
             ->leftJoin('p.dailyRange', 'd')
             ->leftJoin('p.timeSlots', 't')
