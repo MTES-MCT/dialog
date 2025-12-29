@@ -50,9 +50,7 @@ final class SaveReportAddressCommandHandler
 
         // Try to get geometry from roadBanId first (for entire road), fallback to organization geometry
         $roadBanIdGeometry = $command->roadBanId ? $this->getGeometryFromRoadBanId($command->roadBanId) : null;
-        $geometry = ($roadBanIdGeometry && trim($roadBanIdGeometry) !== '')
-            ? $roadBanIdGeometry
-            : $this->getOrganizationPointGeometry($command);
+        $geometry = $roadBanIdGeometry ?? $this->getOrganizationPointGeometry($command);
 
         if (!$geometry) {
             $context = [

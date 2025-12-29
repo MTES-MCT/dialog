@@ -71,12 +71,9 @@ export default class extends Controller {
 
             // Ajouter le roadBanId s'il est disponible
             if (roadBanIdFieldId) {
-                const roadBanIdField = document.querySelector(`#${roadBanIdFieldId}`);
-                if (roadBanIdField) {
-                    const roadBanIdValue = roadBanIdField.value || '';
-                    if (roadBanIdValue) {
-                        url.searchParams.set('roadBanId', roadBanIdValue);
-                    }
+                const roadBanIdValue = roadBanIdFieldId && document.querySelector(`#${roadBanIdFieldId}`)?.value;
+                if (roadBanIdValue) {
+                    url.searchParams.set('roadBanId', roadBanIdValue);
                 }
             }
         }

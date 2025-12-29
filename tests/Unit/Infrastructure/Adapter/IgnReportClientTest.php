@@ -220,40 +220,6 @@ final class IgnReportClientTest extends TestCase
         $this->assertStringStartsWith('[DiaLog] ', $capturedPayload['comment']);
     }
 
-    public function testSubmitReportWithCustomStatus(): void
-    {
-        $comment = 'Problème à corriger';
-        $geometry = 'POINT(2.3522 48.8566)';
-        $status = 'submit';
-
-        $this->mockResponse
-            ->expects($this->once())
-            ->method('getStatusCode')
-            ->willReturn(201);
-
-        $this->ignReportClient
-            ->expects($this->once())
-            ->method('request')
-            ->with(
-                'POST',
-                '/gcms/api/reports',
-                $this->callback(function ($options) use ($status) {
-                    $this->assertArrayHasKey('json', $options);
-                    $json = $options['json'];
-                    $this->assertSame($status, $json['status']);
-
-                    return true;
-                }),
-            )
-            ->willReturn($this->mockResponse);
-
-        $this->logger
-            ->expects($this->once())
-            ->method('info');
-
-        $this->client->submitReport($comment, $geometry, $status);
-    }
-
     public function testSubmitReportWithDefaultStatus(): void
     {
         $comment = 'Test avec status par défaut';

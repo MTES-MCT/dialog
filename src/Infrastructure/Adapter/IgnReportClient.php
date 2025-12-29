@@ -18,16 +18,14 @@ final class IgnReportClient
         #[Autowire(env: 'API_IGN_REPORT_AUTH')]
         private string $credentials,
         #[Autowire(env: 'IGN_REPORT_STATUS')]
-        private string $defaultStatus = 'test',
+        private string $status,
     ) {
     }
 
     public function submitReport(
         string $comment,
         string $geometry,
-        ?string $status = null,
     ): ResponseInterface {
-        $status = $status ?? $this->defaultStatus;
         if (empty(trim($comment))) {
             throw new \InvalidArgumentException('Comment is required');
         }
@@ -42,7 +40,7 @@ final class IgnReportClient
             'community' => 1,
             'geometry' => $geometry,
             'comment' => $taggedComment,
-            'status' => $status,
+            'status' => $this->status,
             'attributes' => [
                 'community' => 1,
                 'theme' => 'Route',
