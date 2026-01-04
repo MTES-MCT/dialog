@@ -1,8 +1,11 @@
 # 005 - Choix d'un service de géocodage
 
 * Date : 2023-01-17
+* Mise à jour : 2025-12-24
 * Personnes impliquées : Florimond Manca (auteur principal), Mathieu Marchois (relecture technique), équipe DiaLog (relecture et commentaires)
 * Statut : ACCEPTÉ <!-- [BROUILLON|ACCEPTÉ|REJETÉ|DÉPRÉCIÉ] -->
+
+> **Note (2025)** : L'API Adresse a été [transférée à l'IGN](https://adresse.data.gouv.fr/blog/lapi-adresse-de-la-base-adresse-nationale-est-transferee-a-lign) en 2025. La nouvelle URL est `https://data.geopf.fr/geocodage`. L'API reste iso-fonctionnelle.
 
 ## Contexte
 
@@ -48,7 +51,7 @@ Voir la [Documentation](https://adresse.data.gouv.fr/api-doc/adresse)
 Exemple de requête / réponse :
 
 ```bash
-curl "https://api-adresse.data.gouv.fr/search/?q=17+route+lac+44260+Savenay&limit=1&autocomplete=0" 
+curl "https://data.geopf.fr/geocodage/search/?q=17+route+lac+44260+Savenay&limit=1&autocomplete=0"
 ```
 
 ```json
@@ -137,7 +140,7 @@ Cette API est très similaire à l'API Adresse, de par son interface comme les d
 
 ## Références
 
-* [Documentation de l'API Adresse](https://adresse.data.gouv.fr/api-doc/adresse)
+* [Documentation de l'API Géocodage IGN](https://geoservices.ign.fr/documentation/services/services-geoplateforme/geocodage) (nouvelle documentation depuis le transfert)
+* [Annonce du transfert de l'API Adresse vers l'IGN](https://adresse.data.gouv.fr/blog/lapi-adresse-de-la-base-adresse-nationale-est-transferee-a-lign)
 * [Guide Etalab sur l'API Adresse](https://guides.etalab.gouv.fr/apis-geo/1-api-adresse.html)
 * [Documentation d'adresse.data.gouv.fr](https://doc.adresse.data.gouv.fr/) (portail Base Adresse Nationale (BAN))
-* [Documentation technique de l'API Géocodage 2.0 de l'IGN](https://geoservices.ign.fr/documentation/services/api-et-services-ogc/geocodage-20/doc-technique-api-geocodage)

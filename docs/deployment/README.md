@@ -52,7 +52,7 @@ L'infrastructure d'un environnement est déployée et gérée par Scalingo et s'
 * Le serveur PHP communique avec la base de données PostgreSQL.
 * Le serveur PHP communique avec la base de données Redis, notamment pour le stockage des sessions utilisateurs.
 * Le serveur PHP communique avec des services tiers :
-  * API Adresse : géocodage d'adresses.
+  * API Géocodage IGN (ex-API Adresse) : géocodage d'adresses.
   * [BD TOPO](../tools/bdtopo.md) : données géographiques (hébergées sur l'app `dialog-bdtopo-2025`).
   * [Sentry](../tools/monitoring.md) : collecte et analyse des erreurs applicatives.
   * [Matomo](../tools/analytics.md) : collecte et analyse de données de trafic utilisateur.
@@ -66,9 +66,9 @@ Diagramme :
                                         ┌----  BD TOPO
                                         |    └ - - - - ┘
                       dialog            |
-        ┌-------------------------------|-┐  ┌ - - - - - - ┐
-WWW ------ nginx (:443) --- php --------┼----  API Adresse
-        |                    |          | |  └ - - - - - - ┘
+        ┌-------------------------------|-┐  ┌ - - - - - - - - - ┐
+WWW ------ nginx (:443) --- php --------┼----  API Géocodage IGN
+        |                    |          | |  └ - - - - - - - - - ┘
         |               ┌----┴----┐     | |  ┌ - - - -┐
         |           ┌ - ┴ - ┐ ┌ - ┴ - ┐ ├----  Sentry
         |             PgSQL     Redis   | |  └ - - - -┘
@@ -76,7 +76,7 @@ WWW ------ nginx (:443) --- php --------┼----  API Adresse
         |               |               └----  Matomo
         └---------------|-----------------┘  └ - - - -┘
                         | dialog-metabase
-                        |  ┌ - - - - -┐ 
+                        |  ┌ - - - - -┐
                         └--  Metabase
                            └ - - - - -┘
 ```
@@ -103,7 +103,7 @@ Chaque application peut être configurée avec les variables d'environnement sui
 
 | Variable d'environnement | Description | Valeur par défaut | Notes |
 |--------------------------|-------------|--------|-------|
-| `API_ADRESSE_BASE_URL` | URL de l'instance API Adresse à utiliser | `https://api-adresse.data.gouv.fr` | |
+| `API_ADRESSE_BASE_URL` | URL de l'API de géocodage IGN (anciennement API Adresse) | `https://data.geopf.fr/geocodage` | L'API a été [transférée à l'IGN](https://adresse.data.gouv.fr/blog/lapi-adresse-de-la-base-adresse-nationale-est-transferee-a-lign) en 2025. |
 | `BDTOPO_2025_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
 | `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) (legacy) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
 | `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet-partage.apps.paris.fr | |

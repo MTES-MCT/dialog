@@ -27,7 +27,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
 
     public function computeCoordinates(string $address, string $cityCode, string $type = 'housenumber'): Coordinates
     {
-        // See: https://adresse.data.gouv.fr/api-doc/adresse
+        // See: https://geoservices.ign.fr/documentation/services/services-geoplateforme/geocodage
 
         $query = [
             'q' => $address,
