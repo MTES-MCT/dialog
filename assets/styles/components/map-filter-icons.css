@@ -1,0 +1,25 @@
+/* Icônes de filtres de la carte */
+.map-filter-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.map-filter-label::after {
+    content: '●';
+    font-size: 2rem;
+    line-height: 1;
+    margin-left: 0.25rem;
+}
+
+.map-filter-label--noEntry::after {
+    color: #CE0500;
+}
+
+.map-filter-label--speedLimitation::after {
+    color: #f6c43c;
+}
+
+.map-filter-label--parkingProhibited::after {
+    color: #000000;
+}
