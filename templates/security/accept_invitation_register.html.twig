@@ -1,0 +1,59 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ 'invitation.accept.meta.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-md-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h1>{{ 'invitation.accept.title'|trans }}</h1>
+
+                            <div class="fr-callout fr-mb-4w">
+                                <p class="fr-callout__text">
+                                    {{ 'invitation.accept.description'|trans({
+                                        '%invitedBy%': invitation.owner.fullName,
+                                        '%organizationName%': invitation.organization.name
+                                    }) }}
+                                </p>
+                            </div>
+
+                            <div class="fr-mb-6v">
+                                <h6>{{ 'login.proconnect.title'|trans }}</h6>
+                                {% include 'proconnect/_auth_widget.html.twig' %}
+                            </div>
+
+                            <p class="fr-hr-or">{{ 'common.or'|trans }}</p>
+
+                            <h2>{{ 'invitation.accept.create_account_title'|trans }}</h2>
+
+                            <p class="fr-text--lg fr-mb-3w">
+                                {{ 'invitation.accept.register_info'|trans({
+                                    '%fullName%': invitation.fullName,
+                                    '%email%': invitation.email
+                                }) }}
+                            </p>
+
+                            {{ form_start(form) }}
+                            {{ form_row(form.password, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+                            <div class="fr-fieldset__element">
+                                <div class="fr-checkbox-group">
+                                    {{ form_widget(form.cgu) }}
+                                    <label class="fr-label required" for="{{ form.cgu.vars.id }}">
+                                        {{ 'register.cgu.start'|trans }}&nbsp;<a href="{{ path('app_cgu') }}" target="_blank">{{ 'register.cgu.end'|trans }}</a>
+                                    </label>
+                                </div>
+                            </div>
+                            {{ form_row(form.save, {group_class: 'fr-btns-group'}) }}
+                            {{ form_end(form) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

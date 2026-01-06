@@ -1,0 +1,46 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ 'invitation.accept.meta.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-md-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h1>{{ 'invitation.accept.title'|trans }}</h1>
+
+                            <div class="fr-callout fr-mb-4w">
+                                <p class="fr-callout__text">
+                                    {{ 'invitation.accept.description'|trans({
+                                        '%invitedBy%': invitation.owner.fullName,
+                                        '%organizationName%': invitation.organization.name
+                                    }) }}
+                                </p>
+                            </div>
+
+                            <div class="fr-alert fr-alert--info fr-mb-4w">
+                                <p>{{ 'invitation.accept.existing_account'|trans({'%email%': invitation.email}) }}</p>
+                            </div>
+
+                            <h2>{{ 'invitation.accept.login_title'|trans }}</h2>
+                            <div class="fr-mb-6v">
+                                <h6>{{ 'login.proconnect.title'|trans }}</h6>
+                                {% include 'proconnect/_auth_widget.html.twig' %}
+                            </div>
+                            <p class="fr-hr-or">{{ 'common.or'|trans }}</p>
+                            <p>
+                                <a href="{{ path('app_login') }}" class="fr-btn">
+                                    {{ 'invitation.accept.login_button'|trans }}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
