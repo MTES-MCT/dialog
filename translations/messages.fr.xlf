@@ -1245,51 +1245,51 @@
             </trans-unit>
             <trans-unit id="landing.distribute.title">
                 <source>landing.distribute.title</source>
-                <target>Diffuser mes données avec DiaLog</target>
+                <target>Ouvrir mes réglementations de circulation avec DiaLog</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.input.title">
-                <source>landing.distribute.input.title</source>
-                <target>Saisir un arrêté</target>
+            <trans-unit id="landing.distribute.description">
+                <source>landing.distribute.description</source>
+                <target>DiaLog s’adapte à votre collectivité et vous permet d’intégrer et de diffuser vos restrictions de circulation de différentes façons.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.input.description">
-                <source>landing.distribute.input.description</source>
-            <target>Editez vos <![CDATA[<b>]]>arrêtés de circulation <![CDATA[</b>]]> directement dans DiaLog grâce à un <![CDATA[<b>]]>formulaire <![CDATA[</b>]]> facilitant la saisie, puis mettez <![CDATA[<b>]]>les données <![CDATA[</b>]]> de vos arrêtés <![CDATA[<b>]]> à disposition des GPS <![CDATA[</b>]]> en un clic. <![CDATA[<br/>]]>Des modèles de visas sont fournis pour créer le document final. </target>
+            <trans-unit id="landing.distribute.card.title">
+                <source>landing.distribute.card.title</source>
+                <target>Saisir un arrêté avec le formulaire DiaLog</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.input.more">
-                <source>landing.distribute.input.more</source>
-                <target>Pour en savoir plus, consultez la page : <![CDATA[<a href="%href%" class="fr-link">]]>Comment saisir un arrêté dans DiaLog<![CDATA[</a>]]></target>
+            <trans-unit id="landing.distribute.card.description">
+                <source>landing.distribute.card.description</source>
+                <target>Saisissez vos <![CDATA[<b>]]> arrêtés de circulation <![CDATA[</b>]]> directement dans DiaLog grâce à un <![CDATA[<b>]]> formulaire <![CDATA[</b>]]> facilitant la saisie, puis mettez les <![CDATA[<b>]]> données <![CDATA[</b>]]> de vos arrêtés <![CDATA[<b>]]> à disposition des GPS <![CDATA[</b>]]> en un clic.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.input.test">
-                <source>landing.distribute.input.test</source>
-            <target>Pour tester DiaLog, vous pouvez dès à présent créer un compte pour vous et votre collectivité.</target>
+            <trans-unit id="landing.card.api.title">
+                <source>landing.card.api.title</source>
+                <target>Importer les données via l’API DiaLog</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.input.register">
-                <source>landing.distribute.input.register</source>
-            <target>Créer un compte</target>
+            <trans-unit id="landing.card.api.description">
+                <source>landing.card.api.description</source>
+                <target>Vous avez des données disponibles en open data ou vous avez de nombreux arrêtés de circulation. Vous pouvez intégrer vos arrêtés en masse grâce à l’API DiaLog.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.integration.title">
-                <source>landing.distribute.integration.title</source>
-                <target>Intégrer mes données</target>
+            <trans-unit id="landing.card.integrate.title">
+                <source>landing.card.integrate.title</source>
+                <target>Intégrer les données d’un service tiers</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.integration.description">
-                <source>landing.distribute.integration.description</source>
-                <target>Vous utilisez déjà un outil de saisie des arrêtés mais vous souhaitez <![CDATA[<b>]]> transmettre les données des arrêtés aux GPS <![CDATA[</b>]]>: DiaLog vous permet d'<![CDATA[<b>]]>intégrer ces données <![CDATA[</b>]]>et de les mettre à disposition de services tiers.</target>
+            <trans-unit id="landing.card.integrate.description">
+                <source>landing.card.integrate.description</source>
+            <target>Vous utilisez déjà un outil de saisie des arrêtés mais vous souhaitez <![CDATA[<b>]]>transmettre les données aux GPS <![CDATA[</b>]]> : DiaLog vous permet d’ <![CDATA[<b>]]> intégrer ces données <![CDATA[</b>]]>  et de les mettre à disposition de services GPS.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.integration.more">
-                <source>landing.distribute.integration.more</source>
-                <target>Pour en savoir plus, consultez la page : <![CDATA[<a href="%href%" class="fr-link">]]>Comment intégrer mes arrêtés dans DiaLog<![CDATA[</a>]]></target>
+            <trans-unit id="landing.distribute.gps.title">
+                <source>landing.distribute.gps.title</source>
+            <target>Publier les données de circulation pour les diffuser aux GPS</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.integration.more.link">
-                <source>landing.distribute.integration.more.link</source>
-            <target>Comment intégrer mes arrêtés dans DiaLog</target>
+            <trans-unit id="landing.distribute.gps.description">
+                <source>landing.distribute.gps.description</source>
+            <target>Une fois vos données publiées grâce à DiaLog, elles apparaissent dans la carte DiaLog et sont disponibles aux GPS.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.integration.contact">
-                <source>landing.distribute.integration.contact</source>
-            <target>Pour échanger sur l’intégration possible de vos arrêtés dans DiaLog, n’hésitez pas à nous contacter.</target>
+            <trans-unit id="landing.distribute.gps.map.caption">
+                <source>landing.distribute.gps.map.caption</source>
+                <target>Restriction de circulation publiée dans DiaLog et visible sur la carte.</target>
             </trans-unit>
-            <trans-unit id="landing.distribute.integration.contact.link">
-                <source>landing.distribute.integration.contact.link</source>
-            <target>Nous contacter</target>
+            <trans-unit id="landing.distribute.gps.waze.caption">
+                <source>landing.distribute.gps.waze.caption</source>
+                <target>Restriction issue de DiaLog apparaissant dans Waze</target>
             </trans-unit>
             <trans-unit id="landing.who-are-we.title">
                 <source>landing.who-are-we.title</source>
@@ -1307,7 +1307,7 @@
                 <source>landing.who-are-we.description2</source>
                 <target>
                     Lancée en mars 2022, DiaLog se constitue actuellement d’une équipe de 6
-                    personnes, réparties entre Lille, Paris, Rennes ou Rouen. Le service numérique
+                    personnes, réparties entre Paris, Rennes ou Rouen. Le service numérique
                     est en cours de construction et d’amélioration continue.
                 </target>
             </trans-unit>
@@ -1341,7 +1341,7 @@
             </trans-unit>
             <trans-unit id="landing.details.input.title">
                 <source>landing.details.input.title</source>
-                <target>Saisir un arrêté</target>
+                <target>Saisir un arrêté dans DiaLog</target>
             </trans-unit>
             <trans-unit id="landing.details.input.steps.register">
                 <source>landing.details.input.steps.register</source>
@@ -1387,13 +1387,41 @@
                 <source>landing.details.input.gps_example.caption</source>
                 <target>Restriction issue de DiaLog apparaissant dans Waze</target>
             </trans-unit>
+            <trans-unit id="landing.details.api.title">
+                <source>landing.details.api.title</source>
+                <target>Importer des arrêtés via l'API DiaLog</target>
+            </trans-unit>
+            <trans-unit id="landing.details.api.description">
+                <source>landing.details.api.description</source>
+                <target>Vous avez des jeux de données de circulation en Open Source ou vous avez de <![CDATA[<strong>]]>nombreux arrêtés à importer<![CDATA[</strong>]]>, vous pouvez utiliser l’API de Dialog pour les importer en masse.</target>
+            </trans-unit>
+            <trans-unit id="landing.details.api.detail">
+                <source>landing.details.api.detail</source>
+                <target>DiaLog met à votre disposition une <![CDATA[<strong>]]>API qui vous permettra d'intégrer des arrêtés directement depuis vos propres systèmes <![CDATA[</strong>]]>, avec les mêmes fonctionnalités que notre application web. <![CDATA[<br/>]]>Cette solution vous offrira une plus grande flexibilité dans vos processus de travail et facilitera l'automatisation de vos workflows.</target>
+            </trans-unit>
+            <trans-unit id="landing.details.api.detail.technical.documentation.link">
+                <source>landing.details.api.detail.technical.documentation.link</source>
+                <target>Voir la documentation technique de l’API (Swagger)</target>
+            </trans-unit>
+            <trans-unit id="landing.details.api.detail.technical.documentation.metaTitle">
+                <source>landing.details.api.detail.technical.documentation.metaTitle</source>
+                <target>Documentation technique de l’API</target>
+            </trans-unit>
+            <trans-unit id="landing.details.api.detail.user.guide.link">
+                <source>landing.details.api.detail.user.guide.link</source>
+                <target>Voir le guide d’utilisation de l’API (Github)</target>
+            </trans-unit>
+            <trans-unit id="landing.details.api.detail.user.guide.metaTitle">
+                <source>landing.details.api.detail.user.guide.metaTitle</source>
+                <target>Guide d’utilisation de l’API</target>
+            </trans-unit>
             <trans-unit id="landing.details.integration.title">
                 <source>landing.details.integration.title</source>
-                <target>Intégrer des données depuis votre logiciel de saisie d'arrêtés</target>
+                <target>Récupérer vos données depuis votre logiciel de saisie des arrêtés</target>
             </trans-unit>
             <trans-unit id="landing.details.integration.description1">
                 <source>landing.details.integration.description1</source>
-                <target><![CDATA[<strong>]]>De nombreuses collectivités utilisent déjà une solution d'édition et de gestion<![CDATA[</strong>]]> de leurs arrêtés comme celles proposées par Litteralis, Kadri, Berger-Levrault, Oxyade, etc.</target>
+                <target>De nombreuses <![CDATA[<strong>]]> collectivités utilisent déjà une solution d’édition et de gestion <![CDATA[</strong>]]> de leurs arrêtés comme celles proposées par Litteralis, Kadri, Berger-Levrault, Oxyade,...</target>
             </trans-unit>
             <trans-unit id="landing.details.integration.description2">
                 <source>landing.details.integration.description2</source>

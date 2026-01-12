@@ -41,7 +41,7 @@
     gap: calc(4 * var(--1w));
 }
 
-.app-landing-jumbotron > :first-child {
+.app-landing-jumbotron> :first-child {
     flex-basis: 0;
     flex-grow: 1;
     min-width: 280px;
@@ -54,14 +54,14 @@
     gap: calc(4 * var(--1w));
 }
 
-.app-landing-details-input > :first-child {
+.app-landing-details-input> :first-child {
     flex-basis: 0;
     flex-grow: 999;
     min-width: 280px;
     max-width: 700px;
 }
 
-.app-landing-details-input > :last-child {
+.app-landing-details-input> :last-child {
     flex-basis: 0;
     flex-grow: 1;
     margin-inline: auto;
@@ -77,19 +77,19 @@
     padding-inline-start: 5rem;
 }
 
-.app-landing-details-input-steplist > li {
+.app-landing-details-input-steplist>li {
     position: relative;
 }
 
-.app-landing-details-input-steplist > li + li {
+.app-landing-details-input-steplist>li+li {
     margin-block-start: 2rem;
 }
 
-.app-landing-details-input-steplist > li::marker {
+.app-landing-details-input-steplist>li::marker {
     content: none;
 }
 
-.app-landing-details-input-steplist > li::before {
+.app-landing-details-input-steplist>li::before {
     counter-increment: li-steps;
     content: counter(li-steps) '.';
     position: absolute;
@@ -106,13 +106,13 @@
     align-items: center;
 }
 
-.app-landing-details-integration-stepcard > :first-child {
+.app-landing-details-integration-stepcard> :first-child {
     padding: calc(4 * var(--1w));
     background-color: var(--background-alt-blue-france);
     margin-inline: auto;
 }
 
-.app-landing-details-integration-stepcard > :last-child {
+.app-landing-details-integration-stepcard> :last-child {
     padding: calc(4 * var(--1w));
     min-width: 280px;
     flex-basis: 0;
@@ -125,7 +125,7 @@
     gap: calc(4 * var(--1w));
 }
 
-.app-landing-details-moretiles > * {
+.app-landing-details-moretiles>* {
     max-width: 384px;
 }
 
@@ -133,4 +133,15 @@
     display: flex;
     flex-wrap: wrap;
     gap: calc(4 * var(--1w));
+}
+
+.app-landing-gps-map-bg {
+    background-color: white;
+    padding: 0.5rem;
+}
+
+.app-landing-gps-map-bg img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }

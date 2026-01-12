@@ -41,7 +41,6 @@ yarn-error.log
 tests/tmp
 .cursorrules
 
-###> vscode ###
-.vscode/extensions.json
-.vscode/settings.json
-###< vscode ###
+###> vscode/cursor personal settings ###
+.vscode/
+###< vscode/cursor personal settings ###
