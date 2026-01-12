@@ -176,6 +176,26 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function findOneByIdentifierInOrganization(string $identifier, Organization $organization): ?RegulationOrderRecord
+    {
+        return $this->createQueryBuilder('roc')
+            ->addSelect('o', 'ro')
+            ->where('roc.organization = :organization')
+            ->innerJoin('roc.organization', 'o')
+            ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
+            ->leftJoin('ro.measures', 'm')
+            ->leftJoin('m.locations', 'l')
+            ->leftJoin('l.numberedRoad', 'nr')
+            ->leftJoin('l.namedStreet', 'ns')
+            ->setParameters([
+                'identifier' => $identifier,
+                'organization' => $organization,
+            ])
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     public function findOneUuidByIdentifierInOrganization(string $identifier, Organization $organization): ?string
     {
         $row = $this->createQueryBuilder('roc')
