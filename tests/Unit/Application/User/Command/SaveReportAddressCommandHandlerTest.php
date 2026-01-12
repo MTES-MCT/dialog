@@ -310,7 +310,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->with('road-ban-id-123')
             ->willThrowException(new GeocodingFailureException("no result found for roadBanId='road-ban-id-123'"));
 
-        // Organization has no geometry
         $this->organization
             ->expects(self::once())
             ->method('getGeometry')
@@ -322,17 +321,14 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->with('org-uuid')
             ->willReturn($this->organization);
 
-        // No call to computeCentroidFromGeoJson since both geometries failed
         $this->organizationRepository
             ->expects(self::never())
             ->method('computeCentroidFromGeoJson');
 
-        // No call to IGN API
         $this->ignReportClient
             ->expects(self::never())
             ->method('submitReport');
 
-        // Enriched warning log with context
         $this->logger
             ->expects(self::once())
             ->method('warning')

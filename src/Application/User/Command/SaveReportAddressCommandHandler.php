@@ -39,7 +39,6 @@ final class SaveReportAddressCommandHandler
 
         $this->reportAddressRepository->add($reportAddress);
 
-        // Send report to IGN API
         $this->sendReportToIgn($command);
     }
 
@@ -83,14 +82,17 @@ final class SaveReportAddressCommandHandler
     private function getGeometryFromRoadBanId(string $roadBanId): ?string
     {
         try {
-            // Get GeoJSON geometry from roadBanId (for entire road)
             $geoJson = $this->roadGeocoder->computeRoadLine($roadBanId);
 
             $centroidGeoJson = $this->organizationRepository->computeCentroidFromGeoJson($geoJson);
 
-            // Convert GeoJSON Point to WKT
             return $this->convertPointGeoJsonToWkt($centroidGeoJson);
         } catch (GeocodingFailureException $e) {
+            $this->logger->error('Failed to get centroid geometry from roadBanId', [
+                'roadBanId' => $roadBanId,
+                'error' => $e->getMessage(),
+            ]);
+
             return null;
         }
     }
@@ -125,7 +127,6 @@ final class SaveReportAddressCommandHandler
             return null;
         }
 
-        // GeoJSON Point: [lon, lat]
         $lon = $data['coordinates'][0];
         $lat = $data['coordinates'][1];
 

@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Command\SaveReportAddressCommand;
+use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Infrastructure\Form\User\ReportAddressFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
@@ -53,13 +55,12 @@ final class ReportAddressController
     ): Response {
         $user = $this->authenticatedUser->getUser();
 
-        // Get organization from regulation order record
         $organizationUuid = null;
         try {
             $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
             $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
-        } catch (\Exception $e) {
-            // If regulation order record not found, continue without organization
+        } catch (RegulationOrderRecordNotFoundException) {
+            throw new NotFoundHttpException();
         }
 
         $command = new SaveReportAddressCommand(
