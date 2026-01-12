@@ -31,8 +31,8 @@ final class AcceptInvitationController
     }
 
     #[Route(
-        '/invitations/{uuid}/accept',
-        name: 'app_invitation_accept',
+        '/invitations/{uuid}/join',
+        name: 'app_invitation_join',
         requirements: ['uuid' => Requirement::UUID],
         methods: ['GET'],
     )]

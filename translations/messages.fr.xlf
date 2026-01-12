@@ -2831,6 +2831,54 @@
                 <source>invitation.accept.error_not_owned</source>
                 <target>Cette adresse email ne correspond pas à l'invitation reçue.</target>
             </trans-unit>
+            <trans-unit id="invitation.accept.meta.title">
+                <source>invitation.accept.meta.title</source>
+                <target>Accepter l'invitation</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.title">
+                <source>invitation.accept.title</source>
+                <target>Rejoindre une organisation</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.description">
+                <source>invitation.accept.description</source>
+                <target>%invitedBy% vous invite à rejoindre l'organisation %organizationName%.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.existing_account">
+                <source>invitation.accept.existing_account</source>
+                <target>Un compte existe déjà pour l'adresse %email%. Connectez-vous pour accepter l'invitation.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.login_title">
+                <source>invitation.accept.login_title</source>
+                <target>Se connecter</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.login_button">
+                <source>invitation.accept.login_button</source>
+                <target>Se connecter avec email et mot de passe</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.no_account">
+                <source>invitation.accept.no_account</source>
+                <target>Pour rejoindre cette organisation, vous devez d'abord créer un compte DiaLog avec l'adresse %email%.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.create_account_title">
+                <source>invitation.accept.create_account_title</source>
+                <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.register_button">
+                <source>invitation.accept.register_button</source>
+                <target>Créer un compte avec email et mot de passe</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.register_info">
+                <source>invitation.accept.register_info</source>
+                <target>Vous allez créer un compte pour %fullName% (%email%). Définissez votre mot de passe ci-dessous.</target>
+            </trans-unit>
+            <trans-unit id="invitation.accept.account_created">
+                <source>invitation.accept.account_created</source>
+                <target>Votre compte a été créé et vous avez rejoint l'organisation. Connectez-vous pour continuer.</target>
+            </trans-unit>
+            <trans-unit id="invitation.register.submit">
+                <source>invitation.register.submit</source>
+                <target>Créer mon compte et rejoindre l'organisation</target>
+            </trans-unit>
             <trans-unit id="invitation.delete.error">
                 <source>invitation.delete.error</source>
                 <target>Vous n'avez pas les droits pour supprimer cette invitation.</target>
