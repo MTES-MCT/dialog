@@ -31,18 +31,18 @@ final class LandingControllerTest extends AbstractWebTestCase
                 ['h2', 'Où sont les restrictions de circulation ?'],
                 ['a', 'Voir la carte', ['href' => '/carte']],
                 ['h2', 'Comment ça marche ?'],
-                ['h2', 'Diffuser mes données avec DiaLog'],
-                ['h3', '✏️ Saisir un arrêté'],
-                ['a', 'Comment saisir un arrêté dans DiaLog', ['href' => '/details#input']],
-                ['a', 'Créer un compte', ['href' => '/register']],
-                ['h3', '⚙️ Intégrer mes données'],
-                ['a', 'Comment intégrer mes arrêtés dans DiaLog', ['href' => '/details#integration']],
-                ['a', 'Nous contacter', ['href' => '/contact']],
+                ['h2', 'Ouvrir mes réglementations de circulation avec DiaLog'],
+                ['h3', 'Saisir un arrêté avec le formulaire DiaLog'],
+                ['a', 'Saisir un arrêté avec le formulaire DiaLog', ['href' => '/details#input']],
+                ['h3', 'Importer les données via l’API DiaLog'],
+                ['a', 'Importer les données via l’API DiaLog', ['href' => '/details#api']],
+                ['h3', 'Intégrer les données d’un service tiers'],
+                ['a', 'Intégrer les données d’un service tiers', ['href' => '/details#integration']],
+                ['h2', 'Publier les données de circulation pour les diffuser aux GPS'],
                 ['h2', 'Qui sommes-nous ?'],
                 ['a', 'Découvrir l\'équipe', ['href' => 'https://beta.gouv.fr/startups/dialogue.html']],
             ],
-            $crawler,
-        );
+            $crawler);
     }
 
     public function testLandingWithLoggedUser(): void
@@ -72,12 +72,6 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Aide', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr', 'aria-current' => null]],
             ['Nouveautés', ['href' => 'https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
-
-        $registerLink = $crawler->filter('main')->selectLink('Créer un compte');
-        $this->assertSame('/register', $registerLink->attr('href'));
-
-        $contactLink = $crawler->filter('main')->selectLink('Nous contacter');
-        $this->assertSame('/contact', $contactLink->attr('href'));
 
         $crawler = $client->request('GET', '/regulations');
 
