@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
-use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class PublishRegulationControllerTest extends AbstractWebTestCase
@@ -16,7 +16,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_TYPICAL),
+            \sprintf('/api/regulations/publish/%s', RegulationOrderFixture::TYPICAL_IDENTIFIER),
             [],
             [],
             [
@@ -30,17 +30,18 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame(RegulationOrderRecordFixture::UUID_TYPICAL, $data['uuid']);
+        $this->assertSame(RegulationOrderFixture::TYPICAL_IDENTIFIER, $data['identifier']);
         $this->assertSame(RegulationOrderRecordStatusEnum::PUBLISHED->value, $data['status']);
     }
 
-    public function testPublishForbiddenForAnotherOrganization(): void
+    public function testPublishReturns404ForAnotherOrganization(): void
     {
         $client = static::createClient();
 
+        // L'arrêté '2025-01' appartient à dialogOrg, pas à seineSaintDenisOrg
         $client->request(
             'PUT',
-            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_PARKING_PROHIBITED),
+            '/api/regulations/publish/2025-01',
             [],
             [],
             [
@@ -49,12 +50,13 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
             ],
         );
 
-        $this->assertResponseStatusCodeSame(403);
+        // Retourne 404 car l'arrêté n'est pas trouvé dans l'organisation de l'utilisateur
+        $this->assertResponseStatusCodeSame(404);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertSame(403, $data['status']);
-        $this->assertSame('Forbidden', $data['detail']);
+        $this->assertSame(404, $data['status']);
+        $this->assertSame('Not Found', $data['detail']);
     }
 
     public function testPublishReturns404WhenRegulationDoesNotExist(): void
@@ -63,7 +65,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_DOES_NOT_EXIST),
+            '/api/regulations/publish/DOES-NOT-EXIST',
             [],
             [],
             [
@@ -86,7 +88,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_NO_MEASURES),
+            '/api/regulations/publish/FO14/2023',
             [],
             [],
             [
@@ -109,7 +111,7 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            \sprintf('/api/regulations/%s/publish', RegulationOrderRecordFixture::UUID_TYPICAL),
+            \sprintf('/api/regulations/publish/%s', RegulationOrderFixture::TYPICAL_IDENTIFIER),
             [],
             [],
             [

@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\PublishRegulationCommand;
-use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
+use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -19,7 +19,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Requirement\Requirement;
 
 final class PublishRegulationController
 {
@@ -31,10 +30,10 @@ final class PublishRegulationController
     }
 
     #[Route(
-        '/api/regulations/{uuid}/publish',
+        '/api/regulations/publish/{identifier}',
         name: 'api_regulations_publish',
         methods: ['PUT'],
-        requirements: ['uuid' => Requirement::UUID],
+        requirements: ['identifier' => '.+'],
     )]
     #[OA\Tag(name: 'Private')]
     #[OA\Response(
@@ -43,7 +42,7 @@ final class PublishRegulationController
         content: new OA\JsonContent(
             type: 'object',
             properties: [
-                new OA\Property(property: 'uuid', type: 'string', example: 'e413a47e-5928-4353-a8b2-8b7dda27f9a5'),
+                new OA\Property(property: 'identifier', type: 'string', example: 'ARR-2024-001'),
                 new OA\Property(property: 'status', type: 'string', example: RegulationOrderRecordStatusEnum::PUBLISHED->value),
             ],
         ),
@@ -70,17 +69,6 @@ final class PublishRegulationController
         ),
     )]
     #[OA\Response(
-        response: 403,
-        description: 'Organisation non autorisée à modifier cet arrêté',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'status', type: 'integer', example: 403),
-                new OA\Property(property: 'detail', type: 'string', example: 'Forbidden'),
-            ],
-        ),
-    )]
-    #[OA\Response(
         response: 404,
         description: 'Arrêté introuvable',
         content: new OA\JsonContent(
@@ -91,26 +79,21 @@ final class PublishRegulationController
             ],
         ),
     )]
-    public function __invoke(string $uuid): JsonResponse
+    public function __invoke(string $identifier): JsonResponse
     {
         /** @var OrganizationAwareUserInterface $user */
         $user = $this->security->getUser();
 
         try {
             /** @var RegulationOrderRecord $regulationOrderRecord */
-            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
+            $regulationOrderRecord = $this->queryBus->handle(
+                new GetRegulationOrderRecordByIdentifierQuery($identifier, $user->getOrganization()),
+            );
         } catch (RegulationOrderRecordNotFoundException) {
             return new JsonResponse([
                 'status' => Response::HTTP_NOT_FOUND,
                 'detail' => 'Not Found',
             ], Response::HTTP_NOT_FOUND);
-        }
-
-        if ($regulationOrderRecord->getOrganizationUuid() !== $user->getOrganization()->getUuid()) {
-            return new JsonResponse([
-                'status' => Response::HTTP_FORBIDDEN,
-                'detail' => 'Forbidden',
-            ], Response::HTTP_FORBIDDEN);
         }
 
         try {
@@ -124,7 +107,7 @@ final class PublishRegulationController
         }
 
         return new JsonResponse([
-            'uuid' => $regulationOrderRecord->getUuid(),
+            'identifier' => $regulationOrderRecord->getRegulationOrder()->getIdentifier(),
             'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
         ], Response::HTTP_OK);
     }
