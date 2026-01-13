@@ -529,4 +529,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
            ->getSingleScalarResult()
         ;
     }
+
+    public function detach(RegulationOrderRecord $regulationOrderRecord): void
+    {
+        $this->getEntityManager()->detach($regulationOrderRecord);
+    }
 }

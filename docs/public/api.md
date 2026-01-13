@@ -13,8 +13,9 @@ L’API utilise une authentification par en-têtes HTTP spécifiques. Ces identi
 
 L’authentification est requise pour les endpoints suivants :
 
-- POST `/api/regulations` (création d’un arrêté)
+- POST `/api/regulations` (création d'un arrêté)
 - PUT `/api/regulations/publish/{identifier}` (publication d'un arrêté existant)
+- DELETE `/api/regulations/{identifier}` (suppression d'un arrêté)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 
 Les exports (lecture) via GET (`/api/regulations.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
@@ -284,6 +285,56 @@ Remarques :
 - Seuls les arrêtés appartenant à l’organisation liée aux identifiants API peuvent être publiés.
 - Si l'arrêté n'existe pas ou appartient à une autre organisation, une erreur 404 est retournée.
 - Si la publication échoue (erreur 400), corrigez les données via l'interface avant de relancer l'appel.
+
+### Supprimer un arrêté
+
+- Méthode: DELETE
+- URL: `/api/regulations/{identifier}`
+- Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
+- Corps: aucun
+- Réponses: 204, 401, 403, 404
+
+Ce endpoint supprime définitivement un arrêté existant. L'identifiant utilisé dans l'URL correspond à l'identifiant de l'arrêté (ex: `F2025/001`), qui est unique au sein de votre organisation.
+
+#### Exemple de requête
+
+```bash
+curl -X DELETE \
+  'https://dialog.beta.gouv.fr/api/regulations/F2025/001' \
+  -H 'X-Client-Id: VOTRE_CLIENT_ID' \
+  -H 'X-Client-Secret: VOTRE_CLIENT_SECRET'
+```
+
+> **Note:** L'identifiant est placé à la fin de l'URL, ce qui permet d'utiliser des caractères spéciaux comme `/` sans encodage.
+
+#### Exemples de réponses
+
+- 204 No Content (suppression réussie)
+
+Aucun corps de réponse n'est retourné.
+
+- 403 Suppression impossible
+
+```json
+{
+  "status": 403,
+  "detail": "L'arrêté ne peut pas être supprimé."
+}
+```
+
+- 404 Arrêté inexistant ou n'appartenant pas à votre organisation
+
+```json
+{
+  "status": 404,
+  "detail": "Not Found"
+}
+```
+
+Remarques :
+- Seuls les arrêtés appartenant à l'organisation liée aux identifiants API peuvent être supprimés.
+- Si l'arrêté n'existe pas ou appartient à une autre organisation, une erreur 404 est retournée.
+- La suppression est définitive et irréversible.
 
 ### Lister les identifiants existants de son organisation
 
