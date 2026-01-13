@@ -30,7 +30,7 @@ final class APIAdresseGeocoderTest extends TestCase
 
         $this->assertSame('GET', $response->getRequestMethod());
         $this->assertSame(
-            'https://testserver/search/?q=15%20Route%20du%20Grand%20Brossais&limit=1&type=housenumber&citycode=44195',
+            'https://testserver/geocodage/search?q=15%20Route%20du%20Grand%20Brossais&limit=1&type=housenumber&citycode=44195',
             $response->getRequestUrl(),
         );
     }
@@ -99,7 +99,7 @@ final class APIAdresseGeocoderTest extends TestCase
                 $this->assertSame('GET', $method);
                 $this->assertEmpty(
                     array_diff(
-                        ['scheme' => 'http', 'host' => 'testserver', 'path' => '/search/'],
+                        ['scheme' => 'http', 'host' => 'testserver', 'path' => '/geocodage/search'],
                         parse_url($url),
                     ),
                 );
