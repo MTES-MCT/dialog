@@ -19,7 +19,7 @@ final class APIAdresseMockClient extends MockHttpClient
 
     private function handleRequests(string $method, string $url, array $options): MockResponse
     {
-        if ($method === 'GET' && str_starts_with($url, $this->baseUri . '/search/')) {
+        if ($method === 'GET' && str_starts_with($url, $this->baseUri . '/geocodage/search')) {
             return $this->getSearchMock($options);
         }
 

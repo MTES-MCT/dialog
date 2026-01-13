@@ -36,7 +36,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             'citycode' => $cityCode,
         ];
 
-        $response = $this->apiAdresseClient->request('GET', '/search/', [
+        $response = $this->apiAdresseClient->request('GET', '/geocodage/search', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -117,7 +117,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             return [];
         }
 
-        $response = $this->apiAdresseClient->request('GET', '/search/', [
+        $response = $this->apiAdresseClient->request('GET', '/geocodage/search', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
@@ -161,7 +161,7 @@ final class APIAdresseGeocoder implements GeocoderInterface
             return [];
         }
 
-        $response = $this->apiAdresseClient->request('GET', '/search/', [
+        $response = $this->apiAdresseClient->request('GET', '/geocodage/search', [
             'headers' => [
                 'Accept' => 'application/json',
             ],
