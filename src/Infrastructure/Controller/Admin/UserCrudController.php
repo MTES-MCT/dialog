@@ -6,10 +6,14 @@ namespace App\Infrastructure\Controller\Admin;
 
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
+use App\Application\QueryBusInterface;
+use App\Application\User\Query\GetAllUsersForExport;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -24,6 +28,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Response;
 
 final class UserCrudController extends AbstractCrudController
 {
@@ -31,6 +36,7 @@ final class UserCrudController extends AbstractCrudController
         private readonly PasswordHasherInterface $passwordHasher,
         private readonly IdFactoryInterface $idFactory,
         private readonly PasswordUserRepositoryInterface $passwordUserRepository,
+        private readonly QueryBusInterface $queryBus,
     ) {
     }
 
@@ -51,6 +57,27 @@ final class UserCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Utilisateurs')
             ->setDefaultSort(['uuid' => 'ASC'])
         ;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $exportCsv = Action::new('exportCsv', 'Exporter les utilisateurs en CSV')
+            ->linkToCrudAction('exportCsv')
+            ->setIcon('fa fa-download')
+            ->createAsGlobalAction();
+
+        return $actions
+            ->add(Crud::PAGE_INDEX, $exportCsv);
+    }
+
+    public function exportCsv(): Response
+    {
+        $csv = $this->queryBus->handle(new GetAllUsersForExport());
+
+        return new Response($csv, headers: [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="Utilisateurs_DiaLog_' . date('Y-m-d_His') . '.csv"',
+        ]);
     }
 
     public function configureFields(string $pageName): iterable
