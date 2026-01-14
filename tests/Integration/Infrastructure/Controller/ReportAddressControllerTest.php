@@ -57,6 +57,24 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
         $this->assertSame('Paris - Rue de la Paix', $locationInput->attr('value'));
     }
 
+    public function testGetFormWithRoadBanId(): void
+    {
+        $client = $this->login();
+        $queryParams = [
+            'cityLabel' => 'Paris',
+            'roadName' => 'Rue de la Paix',
+            'roadBanId' => '42059_0815',
+        ];
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address', $queryParams);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
+
+        $template = $crawler->filter('turbo-stream template');
+        $locationInput = $template->filter('input[name*="location"]');
+        $this->assertSame('Paris - Rue de la Paix', $locationInput->attr('value'));
+    }
+
     public function testSubmitValidForm(): void
     {
         $client = $this->login();
@@ -82,6 +100,24 @@ final class ReportAddressControllerTest extends AbstractWebTestCase
         $script = $template->filter('script');
         $this->assertCount(1, $script);
         $this->assertStringContainsString('/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL, $script->text());
+    }
+
+    public function testSubmitValidFormWithRoadBanId(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/report-address?cityLabel=Paris&roadName=Rue%20de%20la%20Paix&roadBanId=42059_0815');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $template = $crawler->filter('turbo-stream template');
+        $saveButton = $template->selectButton('Signaler');
+        $form = $saveButton->form();
+        $form['report_address_form[content]'] = 'Il y a un problème avec cette adresse, le roadBanId n\'est pas reconnu.';
+
+        $crawler = $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseFormatSame(TurboBundle::STREAM_FORMAT);
     }
 
     public function testEmptyData(): void

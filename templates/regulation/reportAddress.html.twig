@@ -4,6 +4,7 @@
     {{ form_start(form) }}
     {{ form_row(form.location, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
     {{ form_row(form.content, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
+    {{ form_row(form.roadBanId) }}
     <ul class="fr-fieldset__element fr-btns-group fr-btns-group--inline fr-btns-group--right fr-mt-3w">
         <li>
             <button type="button" class="fr-btn fr-btn--tertiary fr-btns-group--right" data-controller="modal-close" data-action="click->modal-close#close">

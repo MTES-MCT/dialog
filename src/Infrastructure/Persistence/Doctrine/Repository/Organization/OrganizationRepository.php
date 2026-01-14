@@ -139,4 +139,14 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             ],
         );
     }
+
+    public function computeCentroidFromGeoJson(string $geoJson): string
+    {
+        $result = $this->getEntityManager()->getConnection()->fetchAssociative(
+            'SELECT ST_AsGeoJSON(ST_PointOnSurface(ST_SetSRID(ST_GeomFromGeoJSON(:geoJson), 4326))) AS centroid',
+            ['geoJson' => $geoJson],
+        );
+
+        return $result['centroid'];
+    }
 }

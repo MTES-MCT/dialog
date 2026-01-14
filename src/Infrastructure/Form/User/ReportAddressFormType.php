@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\User;
 
 use App\Application\User\Command\SaveReportAddressCommand;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,6 +32,13 @@ final class ReportAddressFormType extends AbstractType
                 options: [
                     'label' => 'report_address.content.label',
                     'help' => 'report_address.content.help',
+                ],
+            )
+            ->add(
+                'roadBanId',
+                HiddenType::class,
+                options: [
+                    'required' => false,
                 ],
             )
             ->add('save', SubmitType::class,

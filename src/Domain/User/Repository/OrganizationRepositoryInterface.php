@@ -27,4 +27,12 @@ interface OrganizationRepositoryInterface
     public function canInterveneOnGeometry(string $uuid, string $geometry): bool;
 
     public function findAllForStatistics(): array;
+
+    /**
+     * Calcule le centroïde d'une géométrie GeoJSON avec PostGIS.
+     * Utilise ST_PointOnSurface pour garantir que le point est sur la surface de la géométrie.
+     *
+     * @return string GeoJSON Point
+     */
+    public function computeCentroidFromGeoJson(string $geoJson): string;
 }

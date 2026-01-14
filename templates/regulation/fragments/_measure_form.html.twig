@@ -235,7 +235,7 @@
         <div data-controller="report-address-modal">
             <d-modal-trigger modal="{{ reportModalId }}" submitvalue="upload">
                 <button
-                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line"
+                    class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line fr-text--right"
                     aria-controls="{{ reportModalId }}"
                     data-action="click->report-address-modal#updateModalUrl"
                     data-administrator-field-id="{{ form[roadType].administrator.vars.id }}"
@@ -526,27 +526,29 @@
 
                             {% set reportModalIdLane = 'create-report-address-form-modal-' ~ index ~ '-lane' %}
                             {% set reportFrameIdLane = 'create-report-address-form-frame-' ~ index ~ '-lane' %}
-                            <div data-controller="report-address-modal">
-                                <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
-                                    <button
-                                        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line"
-                                        aria-controls="{{ reportModalIdLane }}"
-                                        data-action="click->report-address-modal#updateModalUrl"
-                                        data-city-label-field-id="{{ form.namedStreet.cityLabel.vars.id }}"
-                                        data-road-name-field-id="{{ form.namedStreet.roadName.vars.id }}"
-                                        data-frame-id="{{ reportFrameIdLane }}"
-                                        data-base-url="{{ path('app_report_address', { uuid: regulationOrderRecord.uuid }) }}"
-                                    >
-                                        {{'regulation.location.report.problem.btn'|trans}}
-                                    </button>
-                                </d-modal-trigger>
+                            <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line">
+                                <li data-controller="report-address-modal">
+                                    <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
+                                        <button
+                                            aria-controls="{{ reportModalIdLane }}"
+                                            data-action="click->report-address-modal#updateModalUrl"
+                                            data-city-label-field-id="{{ form.namedStreet.cityLabel.vars.id }}"
+                                            data-road-name-field-id="{{ form.namedStreet.roadName.vars.id }}"
+                                            data-road-ban-id-field-id="{{ form.namedStreet.roadBanId.vars.id }}"
+                                            data-frame-id="{{ reportFrameIdLane }}"
+                                            data-base-url="{{ path('app_report_address', { uuid: regulationOrderRecord.uuid }) }}"
+                                        >
+                                            {{'regulation.location.report.problem.btn'|trans}}
+                                        </button>
+                                    </d-modal-trigger>
+                                </li>
+                            </ul>
 
-                                {% include "common/form-modal.html.twig" with {
-                                        id: reportModalIdLane,
-                                        frameId: reportFrameIdLane,
-                                        src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
-                                } only %}
-                            </div>
+                            {% include "common/form-modal.html.twig" with {
+                                    id: reportModalIdLane,
+                                    frameId: reportFrameIdLane,
+                                    src: path('app_report_address', { uuid: regulationOrderRecord.uuid }),
+                            } only %}
                             <hr class="fr-mt-3w" />
 
                             <fieldset
