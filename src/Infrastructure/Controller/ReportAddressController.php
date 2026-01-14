@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller;
 
 use App\Application\CommandBusInterface;
+use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Command\SaveReportAddressCommand;
+use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Infrastructure\Form\User\ReportAddressFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -13,7 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,6 +30,7 @@ final class ReportAddressController
         private AuthenticatedUser $authenticatedUser,
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
+        private QueryBusInterface $queryBus,
         private TranslatorInterface $translator,
         private \Twig\Environment $twig,
     ) {
@@ -46,14 +51,26 @@ final class ReportAddressController
         #[MapQueryParameter] ?string $roadNumber = null,
         #[MapQueryParameter] ?string $cityLabel = null,
         #[MapQueryParameter] ?string $roadName = null,
+        #[MapQueryParameter] ?string $roadBanId = null,
     ): Response {
         $user = $this->authenticatedUser->getUser();
+
+        $organizationUuid = null;
+        try {
+            $regulationOrderRecord = $this->queryBus->handle(new GetRegulationOrderRecordByUuidQuery($uuid));
+            $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
+        } catch (RegulationOrderRecordNotFoundException) {
+            throw new NotFoundHttpException();
+        }
+
         $command = new SaveReportAddressCommand(
             $user,
             $administrator,
             $roadNumber,
             $cityLabel,
             $roadName,
+            $roadBanId,
+            $organizationUuid,
         );
 
         $frameId = $frameId ?? 'create-report-address-form-frame';
