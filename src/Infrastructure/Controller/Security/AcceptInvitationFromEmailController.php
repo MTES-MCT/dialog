@@ -134,6 +134,7 @@ final class AcceptInvitationFromEmailController
                 $this->commandBus->handle($command);
 
                 $session->getFlashBag()->add('success', $this->translator->trans('invitation.accept.account_created'));
+                $session->set('_security.main.target_path', $this->urlGenerator->generate('app_my_organizations'));
 
                 return new RedirectResponse(
                     url: $this->urlGenerator->generate('app_login'),

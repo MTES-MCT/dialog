@@ -14,7 +14,7 @@ L’API utilise une authentification par en-têtes HTTP spécifiques. Ces identi
 L’authentification est requise pour les endpoints suivants :
 
 - POST `/api/regulations` (création d’un arrêté)
-- PUT `/api/regulations/{uuid}/publish` (publication d’un arrêté existant)
+- PUT `/api/regulations/publish/{identifier}` (publication d'un arrêté existant)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 
 Les exports (lecture) via GET (`/api/regulations.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
@@ -231,12 +231,25 @@ Remarques:
 ### Publier un arrêté existant
 
 - Méthode: PUT
-- URL: `/api/regulations/{uuid}/publish`
+- URL: `/api/regulations/publish/{identifier}`
 - Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
 - Corps: aucun
-- Réponses: 200, 400, 401, 403, 404
+- Réponses: 200, 400, 401, 404
 
-Ce endpoint publie un arrêté déjà créé (statut `draft`). Il applique les mêmes règles métier que l’interface: au moins une mesure, données complètes, etc.
+Ce endpoint publie un arrêté déjà créé (statut `draft`). Il applique les mêmes règles métier que l'interface: au moins une mesure, données complètes, etc.
+
+L'identifiant utilisé dans l'URL correspond à l'identifiant de l'arrêté (ex: `F2025/001`), qui est unique au sein de votre organisation.
+
+#### Exemple de requête
+
+```bash
+curl -X PUT \
+  'https://dialog.beta.gouv.fr/api/regulations/publish/F2025/001' \
+  -H 'X-Client-Id: VOTRE_CLIENT_ID' \
+  -H 'X-Client-Secret: VOTRE_CLIENT_SECRET'
+```
+
+> **Note:** L'identifiant est placé à la fin de l'URL, ce qui permet d'utiliser des caractères spéciaux comme `/` sans encodage.
 
 #### Exemples de réponses
 
@@ -244,7 +257,7 @@ Ce endpoint publie un arrêté déjà créé (statut `draft`). Il applique les m
 
 ```json
 {
-  "uuid": "e413a47e-5928-4353-a8b2-8b7dda27f9a5",
+  "identifier": "F2025/001",
   "status": "published"
 }
 ```
@@ -258,16 +271,7 @@ Ce endpoint publie un arrêté déjà créé (statut `draft`). Il applique les m
 }
 ```
 
-- 403 Organisation non autorisée / arrêté appartenant à une autre organisation
-
-```json
-{
-  "status": 403,
-  "detail": "Forbidden"
-}
-```
-
-- 404 Arrêté inexistant
+- 404 Arrêté inexistant ou n'appartenant pas à votre organisation
 
 ```json
 {
@@ -278,7 +282,8 @@ Ce endpoint publie un arrêté déjà créé (statut `draft`). Il applique les m
 
 Remarques :
 - Seuls les arrêtés appartenant à l’organisation liée aux identifiants API peuvent être publiés.
-- Si la publication échoue, corrigez les données via l’interface avant de relancer l’appel.
+- Si l'arrêté n'existe pas ou appartient à une autre organisation, une erreur 404 est retournée.
+- Si la publication échoue (erreur 400), corrigez les données via l'interface avant de relancer l'appel.
 
 ### Lister les identifiants existants de son organisation
 

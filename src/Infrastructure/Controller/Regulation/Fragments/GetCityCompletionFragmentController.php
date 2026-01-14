@@ -26,7 +26,6 @@ final class GetCityCompletionFragmentController
     public function __invoke(Request $request): Response
     {
         $search = $request->query->get('search');
-
         if (!$search) {
             throw new BadRequestHttpException();
         }

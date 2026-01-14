@@ -98,6 +98,28 @@
             </div>
         </div>
 
+    <div class="fr-py-6w">
+        <h2 id="api">{{ 'landing.details.api.title'|trans }}</h2>
+        <p class="fr-text--lg">{{ 'landing.details.api.description'|trans|raw }}</p>
+        <p class="fr-text--lg">{{ 'landing.details.api.detail'|trans|raw }}</p>
+        <a 
+            href="https://dialog.beta.gouv.fr/api/doc"
+            title="{{ 'common.targetblank'|trans({'%metaTitle%': 'landing.details.api.detail.technical.documentation.metaTitle'|trans}) }}"
+            target="_blank"
+            class="fr-link"
+        >
+            {{ 'landing.details.api.detail.technical.documentation.link'|trans }}
+        </a>
+        <br>
+        <br>
+        <a 
+        href="https://github.com/MTES-MCT/dialog/blob/main/docs/public/api.md"
+        title="{{ 'common.targetblank'|trans({'%metaTitle%': 'landing.details.api.detail.user.guide.metaTitle'|trans}) }}"
+        target="_blank"
+        class="fr-link"
+        >{{ 'landing.details.api.detail.user.guide.link'|trans }}</a>
+    </div>
+
         <h2 id="integration" class="fr-pt-4w">
             {{ 'landing.details.integration.title'|trans }}
         </h2>
