@@ -4,20 +4,13 @@ doctrine:
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
-                platform_service: App\Infrastructure\Persistence\Doctrine\DBAL\CustomPostgreSQLPlatformService
-                schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
-                use_savepoints: true
             bdtopo:
                 url: '%env(BDTOPO_DATABASE_URL)%'
-                use_savepoints: true
             bdtopo2025:
                 url: '%env(BDTOPO_2025_DATABASE_URL)%'
-                use_savepoints: true
             metabase:
                 url: '%env(METABASE_DATABASE_URL)%'
-                use_savepoints: true
     orm:
-        auto_generate_proxy_classes: true
         default_entity_manager: default
         entity_managers:
             default:
@@ -55,16 +48,6 @@ when@test:
                     dbname_suffix: '_test%env(default::TEST_TOKEN)%'
 
 when@prod:
-    doctrine:
-        orm:
-            auto_generate_proxy_classes: false
-            query_cache_driver:
-                type: pool
-                pool: doctrine.system_cache_pool
-            result_cache_driver:
-                type: pool
-                pool: doctrine.result_cache_pool
-
     framework:
         cache:
             pools:

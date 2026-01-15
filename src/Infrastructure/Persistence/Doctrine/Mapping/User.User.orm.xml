@@ -6,13 +6,13 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="fullName" type="string" column="full_name" nullable="false"/>
     <field name="email" type="string" column="email" nullable="false"/>
-    <field name="roles" type="array" column="roles" nullable="false"/>
-    <field name="registrationDate" type="datetimetz" nullable="false">
+    <field name="roles" type="json" column="roles" nullable="false"/>
+    <field name="registrationDate" type="datetimetz_immutable" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
         </options>
     </field>
-    <field name="lastActiveAt" type="datetimetz" column="last_active_at" nullable="true" />
+    <field name="lastActiveAt" type="datetimetz_immutable" column="last_active_at" nullable="true" />
     <field name="isVerified" type="boolean" nullable="false"/>
     <one-to-one field="proConnectUser" target-entity="App\Domain\User\ProConnectUser" mapped-by="user" />
     <one-to-one field="passwordUser" target-entity="App\Domain\User\PasswordUser" mapped-by="user" />

@@ -11,7 +11,7 @@
         <option name="default">false</option>
       </options>
     </field>
-    <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
+    <field name="createdAt" type="datetimetz_immutable" column="created_at" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
         </options>

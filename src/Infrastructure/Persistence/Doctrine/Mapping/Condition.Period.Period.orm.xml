@@ -4,8 +4,8 @@
     name="App\Domain\Condition\Period\Period"
     table="period">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="startDateTime" type="datetimetz" column="start_datetime" nullable="true"/>
-    <field name="endDateTime" type="datetimetz" column="end_datetime" nullable="true"/>
+    <field name="startDateTime" type="datetimetz_immutable" column="start_datetime" nullable="true"/>
+    <field name="endDateTime" type="datetimetz_immutable" column="end_datetime" nullable="true"/>
     <field name="recurrenceType" type="string" column="recurrence_type" nullable="false"/>
     <one-to-many field="timeSlots" target-entity="App\Domain\Condition\Period\TimeSlot" mapped-by="period"/>
     <one-to-one field="dailyRange" target-entity="App\Domain\Condition\Period\DailyRange" mapped-by="period" fetch="EAGER"/>

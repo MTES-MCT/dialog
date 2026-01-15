@@ -21,7 +21,7 @@
             {% include "regulation/_items.html.twig" with { pagination: regulations } only %}
             {% include "common/pagination.html.twig" with {
                 pagination: regulations,
-                currentPage: app.request.get('page', 1),
+                currentPage: app.request.query.get('page', 1),
                 queryParams: app.request.query.all(),
             } only %}
         </div>

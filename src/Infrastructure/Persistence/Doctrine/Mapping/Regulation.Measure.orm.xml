@@ -5,7 +5,7 @@
     table="measure">
     <id name="uuid" type="guid" column="uuid"/>
     <field name="type" type="string" column="type" nullable="false" length="17"/>
-    <field name="createdAt" type="datetimetz" column="created_at" nullable="false"/>
+    <field name="createdAt" type="datetimetz_immutable" column="created_at" nullable="false"/>
     <many-to-one field="regulationOrder" target-entity="App\Domain\Regulation\RegulationOrder" inversed-by="measures">
         <join-columns>
             <join-column name="regulation_order_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>

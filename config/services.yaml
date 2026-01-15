@@ -43,6 +43,13 @@ services:
             - '../src/Infrastructure/Persistence/Doctrine/Migrations'
             - '../src/Kernel.php'
 
+    # ----------------
+    # Doctrine Middleware
+    # ----------------
+    App\Infrastructure\Persistence\Doctrine\DBAL\CustomPlatformMiddleware:
+        tags:
+            - { name: 'doctrine.middleware', connections: ['default'] }
+
     # ------------
     # Controllers
     # ------------
