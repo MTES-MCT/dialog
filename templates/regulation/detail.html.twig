@@ -15,6 +15,7 @@
 
 {% block body %}
     {% set isDraft = generalInfo.isDraft %}
+    {% set storageFileName = storageRegulationOrderFile ? storageRegulationOrderFile|split('/')|last|split('#')|first|split('?')|first : null %}
     <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
             { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
@@ -90,7 +91,7 @@
                                     <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
                                         {{ 'regulation.import.storage.description'|trans }}
                                     </div>
-                                    <a target="_top" download class="fr-link {{ storageRegulationOrder.url is defined and storageRegulationOrder.url ? 'fr-icon-links-line' : 'fr-icon-download-line' }} fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url}}">{{ (storageRegulationOrderFile ? storageRegulationOrderFile|split('/')|last|split('#')|first|split('?')|first : storageRegulationOrder.title)|u.truncate(25, '...') }}</a>
+                                    <a target="_top" download class="fr-link {{ storageRegulationOrder.url is defined and storageRegulationOrder.url ? 'fr-icon-links-line' : 'fr-icon-download-line' }} fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url}}">{{ (storageFileName ?? storageRegulationOrder.title)|u.truncate(25, '...') }}</a>
                                     {% if storageRegulationOrder.mimeType and storageRegulationOrder.fileSize %}
                                         <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
                                             {{ storageRegulationOrder.mimeType }}
@@ -174,7 +175,7 @@
                             <div class="app-card app-card--raised fr-mt-2w">
                                 <div class="app-card__content">
                                     <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.import'|trans }}</h3>
-                                    <a target="_top" download class="fr-link fr-icon-download-line fr-link--icon-right" href="/storage/{{ storageRegulationOrder.path }}">{{ storageRegulationOrder.title|u.truncate(25, '...')}}</a>
+                                    <a target="_top" download class="fr-link {{ storageRegulationOrder.url is defined and storageRegulationOrder.url ? 'fr-icon-links-line' : 'fr-icon-download-line' }} fr-link--icon-right" href="{{ storageRegulationOrderFile ?? storageRegulationOrder.url }}">{{ (storageFileName ?? storageRegulationOrder.title)|u.truncate(25, '...') }}</a>
                                     <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
                                         {{ 'storageRegulationOrder.export.pdf.mention'|trans }}
                                     </div>
