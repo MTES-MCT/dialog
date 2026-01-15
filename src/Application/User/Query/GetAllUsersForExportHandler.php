@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Application\User\Query;
 
+use App\Application\CsvExporterInterface;
 use App\Domain\User\Exception\EmptyUsersRepositoryException;
 use App\Domain\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
-use Symfony\Component\Serializer\SerializerInterface;
 
 final readonly class GetAllUsersForExportHandler
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private SerializerInterface $serializer,
+        private CsvExporterInterface $csvExporter,
     ) {
     }
 
@@ -25,6 +24,6 @@ final readonly class GetAllUsersForExportHandler
             throw new EmptyUsersRepositoryException();
         }
 
-        return $this->serializer->serialize($users, CsvEncoder::FORMAT);
+        return $this->csvExporter->export($users);
     }
 }
