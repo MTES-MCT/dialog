@@ -10,22 +10,19 @@ use App\Application\Integration\Litteralis\Command\CleanUpLitteralisRegulationsB
 use App\Application\Regulation\Command\DeleteRegulationCommand;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
 final class CleanUpLitteralisRegulationsBeforeImportCommandHandlerTest extends TestCase
 {
     private $commandBus;
     private $regulationOrderRecordRepository;
-    private $entityManager;
     private CleanUpLitteralisRegulationsBeforeImportCommandHandler $handler;
 
     protected function setUp(): void
     {
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->handler = new CleanUpLitteralisRegulationsBeforeImportCommandHandler($this->commandBus, $this->regulationOrderRecordRepository, $this->entityManager);
+        $this->handler = new CleanUpLitteralisRegulationsBeforeImportCommandHandler($this->commandBus, $this->regulationOrderRecordRepository);
     }
 
     public function testCommand(): void
@@ -46,11 +43,6 @@ final class CleanUpLitteralisRegulationsBeforeImportCommandHandlerTest extends T
             ->expects(self::once())
             ->method('handle')
             ->with(new DeleteRegulationCommand([$organizationId], $regulationOrderRecord1));
-
-        $this->entityManager
-            ->expects(self::once())
-            ->method('detach')
-            ->with($regulationOrderRecord1);
 
         ($this->handler)($command);
     }
