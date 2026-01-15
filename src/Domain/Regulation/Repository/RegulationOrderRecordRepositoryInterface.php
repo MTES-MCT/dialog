@@ -56,4 +56,6 @@ interface RegulationOrderRecordRepositoryInterface
     public function countTemporaryRegulationOrderRecords(): int;
 
     public function countRegulationOrderRecordsForOrganizationDuringCurrentMonth(string $uuid): int;
+
+    public function detach(RegulationOrderRecord $regulationOrderRecord): void;
 }

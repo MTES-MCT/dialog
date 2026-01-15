@@ -10,6 +10,7 @@ use App\Application\Regulation\Command\DeleteRegulationCommandHandler;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\Organization;
@@ -21,6 +22,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
     private $organizationUuids;
     private $canOrganizationAccessToRegulation;
     private $regulationOrderRepository;
+    private $regulationOrderRecordRepository;
     private $regulationOrderRecord;
     private $regulationOrder;
     private $commandBus;
@@ -30,6 +32,7 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
         $this->organizationUuids = ['c3d4444e-5e45-4134-ad22-32f1a72b8214'];
         $this->canOrganizationAccessToRegulation = $this->createMock(CanOrganizationAccessToRegulation::class);
         $this->regulationOrderRepository = $this->createMock(RegulationOrderRepositoryInterface::class);
+        $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $this->regulationOrder = $this->createMock(RegulationOrder::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
@@ -51,6 +54,11 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
             ->method('delete')
             ->with($this->equalTo($this->regulationOrder));
 
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('detach')
+            ->with($this->equalTo($this->regulationOrderRecord));
+
         $this->regulationOrderRecord
             ->expects(self::once())
             ->method('getRegulationOrder')
@@ -58,7 +66,9 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRepository,
-            $this->canOrganizationAccessToRegulation, $this->commandBus,
+            $this->regulationOrderRecordRepository,
+            $this->canOrganizationAccessToRegulation,
+            $this->commandBus,
         );
 
         $command = new DeleteRegulationCommand($this->organizationUuids, $this->regulationOrderRecord);
@@ -81,12 +91,17 @@ final class DeleteRegulationCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('delete');
 
+        $this->regulationOrderRecordRepository
+            ->expects(self::never())
+            ->method('detach');
+
         $this->regulationOrderRecord
             ->expects(self::once())
             ->method('getRegulationOrder');
 
         $handler = new DeleteRegulationCommandHandler(
             $this->regulationOrderRepository,
+            $this->regulationOrderRecordRepository,
             $this->canOrganizationAccessToRegulation,
             $this->commandBus,
         );
