@@ -7,7 +7,7 @@ namespace App\Infrastructure\Controller\Admin;
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
 use App\Application\QueryBusInterface;
-use App\Application\User\Query\GetAllUsersForExport;
+use App\Application\User\Query\GetAllUsersForExportQuery;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\PasswordUserRepositoryInterface;
@@ -72,7 +72,7 @@ final class UserCrudController extends AbstractCrudController
 
     public function exportCsv(): Response
     {
-        $csv = $this->queryBus->handle(new GetAllUsersForExport());
+        $csv = $this->queryBus->handle(new GetAllUsersForExportQuery());
 
         return new Response($csv, headers: [
             'Content-Type' => 'text/csv; charset=utf-8',

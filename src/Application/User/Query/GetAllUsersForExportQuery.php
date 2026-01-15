@@ -6,6 +6,6 @@ namespace App\Application\User\Query;
 
 use App\Application\QueryInterface;
 
-final readonly class GetAllUsersForExport implements QueryInterface
+final readonly class GetAllUsersForExportQuery implements QueryInterface
 {
 }

@@ -8,7 +8,7 @@ use App\Application\CsvExporterInterface;
 use App\Domain\User\Exception\EmptyUsersRepositoryException;
 use App\Domain\User\Repository\UserRepositoryInterface;
 
-final readonly class GetAllUsersForExportHandler
+final readonly class GetAllUsersForExportQueryHandler
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
@@ -16,7 +16,7 @@ final readonly class GetAllUsersForExportHandler
     ) {
     }
 
-    public function __invoke(GetAllUsersForExport $query): string
+    public function __invoke(GetAllUsersForExportQuery $query): string
     {
         $users = $this->userRepository->findAllForExport();
 
