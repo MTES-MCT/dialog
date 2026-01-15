@@ -11,6 +11,8 @@ final class SaveReportAddressCommand implements CommandInterface
 {
     public ?string $content = null;
     public ?string $location = null;
+    public ?string $roadBanId = null;
+    public ?string $organizationUuid = null;
 
     public function __construct(
         public User $user,
@@ -18,8 +20,12 @@ final class SaveReportAddressCommand implements CommandInterface
         ?string $roadNumber = null,
         ?string $cityLabel = null,
         ?string $roadName = null,
+        ?string $roadBanId = null,
+        ?string $organizationUuid = null,
     ) {
         $this->location = $this->buildLocation($administrator, $roadNumber, $cityLabel, $roadName);
+        $this->roadBanId = $roadBanId;
+        $this->organizationUuid = $organizationUuid;
     }
 
     /**

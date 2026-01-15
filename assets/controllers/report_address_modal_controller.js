@@ -11,6 +11,7 @@ export default class extends Controller {
         const roadNumberFieldId = button.dataset.roadNumberFieldId;
         const cityLabelFieldId = button.dataset.cityLabelFieldId;
         const roadNameFieldId = button.dataset.roadNameFieldId;
+        const roadBanIdFieldId = button.dataset.roadBanIdFieldId;
         const baseUrl = button.dataset.baseUrl;
         const frameId = button.dataset.frameId;
         const modalId = button.getAttribute('aria-controls');
@@ -51,7 +52,7 @@ export default class extends Controller {
             }
         }
 
-        // Cas 2 : Routes nommées (cityLabel + roadName)
+        // Cas 2 : Routes nommées (cityLabel + roadName + roadBanId)
         if (cityLabelFieldId && roadNameFieldId) {
             const cityLabelField = document.querySelector(`#${cityLabelFieldId}`);
             const roadNameField = document.querySelector(`#${roadNameFieldId}`);
@@ -65,6 +66,14 @@ export default class extends Controller {
                 }
                 if (roadNameValue) {
                     url.searchParams.set('roadName', roadNameValue);
+                }
+            }
+
+            // Ajouter le roadBanId s'il est disponible
+            if (roadBanIdFieldId) {
+                const roadBanIdValue = roadBanIdFieldId && document.querySelector(`#${roadBanIdFieldId}`)?.value;
+                if (roadBanIdValue) {
+                    url.searchParams.set('roadBanId', roadBanIdValue);
                 }
             }
         }
