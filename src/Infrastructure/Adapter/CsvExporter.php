@@ -17,6 +17,11 @@ final readonly class CsvExporter implements CsvExporterInterface
 
     public function export(array $data): string
     {
-        return $this->serializer->serialize($data, CsvEncoder::FORMAT);
+        $csv = $this->serializer->serialize($data, CsvEncoder::FORMAT, [
+            CsvEncoder::DELIMITER_KEY => ';',
+            CsvEncoder::KEY_SEPARATOR_KEY => ',',
+        ]);
+
+        return mb_convert_encoding($csv, 'ISO-8859-1', 'UTF-8');
     }
 }
