@@ -44,3 +44,5 @@ tests/tmp
 ###> vscode/cursor personal settings ###
 .vscode/
 ###< vscode/cursor personal settings ###
+
+docker-compose.override.yml

@@ -35,7 +35,7 @@ RUN pecl install apcu && docker-php-ext-enable apcu
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 # Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash \
     && apt-get install -y nodejs
 
 # Install Symfony cli
