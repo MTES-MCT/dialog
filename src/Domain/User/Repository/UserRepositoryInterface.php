@@ -17,4 +17,6 @@ interface UserRepositoryInterface
     public function remove(User $user): void;
 
     public function findAllForStatistics(): array;
+
+    public function findAllForExport(): array;
 }
