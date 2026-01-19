@@ -12,6 +12,7 @@ use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\User;
+use App\Infrastructure\Controller\Admin\Common\CommonAdminConfiguration;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -37,6 +38,7 @@ final class UserCrudController extends AbstractCrudController
         private readonly IdFactoryInterface $idFactory,
         private readonly PasswordUserRepositoryInterface $passwordUserRepository,
         private readonly QueryBusInterface $queryBus,
+        private readonly CommonAdminConfiguration $commonAdminConfiguration,
     ) {
     }
 
@@ -66,8 +68,11 @@ final class UserCrudController extends AbstractCrudController
             ->setIcon('fa fa-download')
             ->createAsGlobalAction();
 
+        $this->commonAdminConfiguration->configureCommonActions($actions);
+
         return $actions
-            ->add(Crud::PAGE_INDEX, $exportCsv);
+            ->add(Crud::PAGE_INDEX, $exportCsv)
+        ;
     }
 
     public function exportCsv(): Response
