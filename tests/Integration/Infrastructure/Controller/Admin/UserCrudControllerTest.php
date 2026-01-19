@@ -38,20 +38,28 @@ final class UserCrudControllerTest extends AbstractWebTestCase
 
     public function testExportCsvAsAdmin(): void
     {
-        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $needleContent = mb_convert_encoding(
+            '2024-04-02T00:00:00+00:00;2024-06-08T00:00:00+00:00;Oui;"Mathieu FERNANDEZ";mathieu.fernandez@beta.gouv.fr;"Département de Seine-Saint-Denis"',
+            'ISO-8859-1',
+            'UTF-8',
+        );
 
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $client->request('GET', '/admin', [
             'crudAction' => 'exportCsv',
             'crudControllerFqcn' => UserCrudController::class,
         ]);
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertResponseHeaderSame('Content-Type', 'text/csv; charset=utf-8');
+        $this->assertResponseHeaderSame('Content-Type', 'text/csv; charset=ISO-8859-1');
         $this->assertStringContainsString('attachment; filename="Utilisateurs_DiaLog_', $client->getResponse()->headers->get('Content-Disposition'));
         $this->assertStringContainsString('.csv"', $client->getResponse()->headers->get('Content-Disposition'));
 
         $content = $client->getResponse()->getContent();
-        $this->assertStringContainsString('"Mathieu FERNANDEZ",mathieu.fernandez@beta.gouv.fr', $content);
+        $this->assertStringContainsString(
+            $needleContent,
+            $content,
+        );
 
         $request = $client->getRequest();
         $this->assertSame('exportCsv', $request->query->get('crudAction'));

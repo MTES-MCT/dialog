@@ -75,7 +75,7 @@ final class UserCrudController extends AbstractCrudController
         $csv = $this->queryBus->handle(new GetAllUsersForExportQuery());
 
         return new Response($csv, headers: [
-            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Type' => 'text/csv; charset=ISO-8859-1',
             'Content-Disposition' => 'attachment; filename="Utilisateurs_DiaLog_' . date('Y-m-d_His') . '.csv"',
         ]);
     }
