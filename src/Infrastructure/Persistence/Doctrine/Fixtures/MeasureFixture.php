@@ -31,14 +31,14 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             self::UUID_TYPICAL,
             $this->getReference('typicalRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-05-11'),
+            new \DateTimeImmutable('2023-05-11'),
         );
 
         $typicalMeasureToRemove = new Measure(
             '0658d836-de22-75f2-8000-bb36c98113a5',
             $this->getReference('typicalRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::SPEED_LIMITATION->value,
-            new \DateTime('2023-05-11'),
+            new \DateTimeImmutable('2023-05-11'),
             maxSpeed: 50,
         );
 
@@ -46,63 +46,63 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             self::UUID_PUBLISHED,
             $this->getReference('publishedRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-06-01'),
+            new \DateTimeImmutable('2023-06-01'),
         );
 
         $permanentMeasure = new Measure(
             'fa8f07e7-2db6-444d-bb41-3815b46198be',
             $this->getReference('regulationOrderPermanent', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-05-12'),
+            new \DateTimeImmutable('2023-05-12'),
         );
 
         $fullCityMeasure = new Measure(
             self::UUID_FULL_CITY,
             $this->getReference('fullCityRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-05-12'),
+            new \DateTimeImmutable('2023-05-12'),
         );
 
         $cifsMeasure = new Measure(
             self::UUID_CIFS,
             $this->getReference('regulationOrderCifs', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-09-06'),
+            new \DateTimeImmutable('2023-09-06'),
         );
 
         $outDatedCifsMeasure = new Measure(
             'd4823170-e47d-4a83-80c3-67078554651c',
             $this->getReference('outDatedRegulationOrderCifs', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2021-11-02'),
+            new \DateTimeImmutable('2021-11-02'),
         );
 
         $rawGeoJSONMeasure = new Measure(
             self::UUID_RAWGEOJSON,
             $this->getReference('rawGeoJSONRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-01-06'),
+            new \DateTimeImmutable('2023-01-06'),
         );
 
         $litteralisMeasure = new Measure(
             '066e984c-9939-76ed-8000-d070d574f378',
             $this->getReference('litteralisRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2023-06-01'),
+            new \DateTimeImmutable('2023-06-01'),
         );
 
         $winterMaintenanceMeasure = new Measure(
             self::UUID_WINTER_MAINTENANCE,
             $this->getReference('winterMaintenanceRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
-            new \DateTime('2025-01-15'),
+            new \DateTimeImmutable('2025-01-15'),
         );
 
         $parkingProhibitedMeasure = new Measure(
             self::UUID_PARKING_PROHIBITED,
             $this->getReference('parkingProhibitedRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::PARKING_PROHIBITED->value,
-            new \DateTime('2025-01-15'),
+            new \DateTimeImmutable('2025-01-15'),
         );
 
         $manager->persist($typicalMeasure);

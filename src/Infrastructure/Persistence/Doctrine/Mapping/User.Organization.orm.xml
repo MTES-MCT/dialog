@@ -5,12 +5,12 @@
     <field name="name" type="string" column="name" nullable="false"/>
     <field name="siret" type="string" length="14" nullable="true"/>
     <field name="logo" type="string" length="200" nullable="true"/>
-    <field name="createdAt" type="datetimetz" nullable="false">
+    <field name="createdAt" type="datetimetz_immutable" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
         </options>
     </field>
-    <field name="updatedAt" type="datetimetz" nullable="true"/>
+    <field name="updatedAt" type="datetimetz_immutable" nullable="true"/>
     <field name="code" length="10" type="string" nullable="true"/>
     <field name="codeType" length="15" type="string" nullable="true"/>
     <field name="departmentName" length="150" type="string" nullable="true"/>

@@ -9,8 +9,8 @@
           <option name="default">true</option>
         </options>
     </field>
-    <field name="lastUsedAt" type="datetimetz" nullable="true"/>
-    <field name="createdAt" type="datetimetz" nullable="false">
+    <field name="lastUsedAt" type="datetimetz_immutable" nullable="true"/>
+    <field name="createdAt" type="datetimetz_immutable" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
         </options>

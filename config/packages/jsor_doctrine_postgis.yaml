@@ -7,12 +7,10 @@ doctrine:
     dbal:
         schema_filter: ~^(?!tiger)(?!topology)~
         types:
-            geometry: 
+            geometry:
                 class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
-                commented: false
             geojson_geometry:
                 class: 'App\Infrastructure\Persistence\Doctrine\DBAL\Types\GeoJSONGeometryType'
-                commented: true
     orm:
         dql:
             string_functions:

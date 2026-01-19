@@ -133,7 +133,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             $parameters['published'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
         }
 
-        $query->setParameters($parameters);
+        foreach ($parameters as $key => $value) {
+            $query->setParameter($key, $value);
+        }
 
         $query
             ->innerJoin('roc.organization', 'o')
@@ -187,10 +189,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.locations', 'l')
             ->leftJoin('l.numberedRoad', 'nr')
             ->leftJoin('l.namedStreet', 'ns')
-            ->setParameters([
-                'identifier' => $identifier,
-                'organization' => $organization,
-            ])
+            ->setParameter('identifier', $identifier)
+            ->setParameter('organization', $organization)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -202,10 +202,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->select('roc.uuid')
             ->where('roc.organization = :organization')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
-            ->setParameters([
-                'identifier' => $identifier,
-                'organization' => $organization,
-            ])
+            ->setParameter('identifier', $identifier)
+            ->setParameter('organization', $organization)
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -320,8 +318,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             $parameters['now'] = $this->dateUtils->getNow();
         }
 
+        foreach ($parameters as $key => $value) {
+            $qb->setParameter($key, $value);
+        }
+
         return $qb
-            ->setParameters($parameters)
             ->getQuery()
             ->getResult();
     }
@@ -387,19 +388,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'm.type = :measureType',
                 'v IS NULL or v.restrictedTypes = \'a:0:{}\'',
             )
-            ->setParameters([
-                ...($allowedSources ? ['allowedSources' => $allowedSources] : []),
-                ...($excludedIdentifiers ? ['excludedIdentifiers' => $excludedIdentifiers] : []),
-                ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
-                ...($excludedOrgUuids ? ['excludedOrgUuids' => $excludedOrgUuids] : []),
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                'measureType' => MeasureTypeEnum::NO_ENTRY->value,
-                'today' => $this->dateUtils->getNow(),
-                'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
-                // Allow RawGeoJSON locations only for Litteralis source
-                'rawGeoJSONRoadType' => RoadTypeEnum::RAW_GEOJSON->value,
-                'litteralisSource' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
-            ])
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED->value)
+            ->setParameter('measureType', MeasureTypeEnum::NO_ENTRY->value)
+            ->setParameter('today', $this->dateUtils->getNow())
+            ->setParameter('excludedRoadTypes', [RoadTypeEnum::RAW_GEOJSON->value])
+            ->setParameter('rawGeoJSONRoadType', RoadTypeEnum::RAW_GEOJSON->value)
+            ->setParameter('litteralisSource', RegulationOrderRecordSourceEnum::LITTERALIS->value)
+            ->setParameter('allowedSources', $allowedSources ?: null)
+            ->setParameter('excludedIdentifiers', $excludedIdentifiers ?: null)
+            ->setParameter('allowedLocationIds', $allowedLocationIds ?: null)
+            ->setParameter('excludedOrgUuids', $excludedOrgUuids ?: null)
             ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
             ->getResult()
@@ -417,13 +415,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.status = :status',
                 \sprintf('ro.category = :permanentCategory OR (%s) >= :laterThan', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE)),
             )
-            ->setParameters([
-                'source' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
-                'organizationId' => $organizationId,
-                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                'laterThan' => $laterThan,
-                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            ])
+            ->setParameter('source', RegulationOrderRecordSourceEnum::LITTERALIS->value)
+            ->setParameter('organizationId', $organizationId)
+            ->setParameter('status', RegulationOrderRecordStatusEnum::PUBLISHED->value)
+            ->setParameter('laterThan', $laterThan)
+            ->setParameter('permanentCategory', RegulationOrderCategoryEnum::PERMANENT_REGULATION->value)
             ->getQuery()
             ->getResult()
         ;
@@ -488,10 +484,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'o.uuid <> :uuid',
                 'ro.category = :permanentCategory',
             )
-            ->setParameters([
-                'uuid' => $this->dialogOrgId,
-                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            ])
+            ->setParameter('uuid', $this->dialogOrgId)
+            ->setParameter('permanentCategory', RegulationOrderCategoryEnum::PERMANENT_REGULATION->value)
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -506,10 +500,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'o.uuid <> :uuid',
                 'ro.category <> :permanentCategory',
             )
-            ->setParameters([
-                'uuid' => $this->dialogOrgId,
-                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            ])
+            ->setParameter('uuid', $this->dialogOrgId)
+            ->setParameter('permanentCategory', RegulationOrderCategoryEnum::PERMANENT_REGULATION->value)
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -524,7 +516,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
            ->select('COUNT(ror) + 1 AS number_of_records')
            ->where('ror.organization = :uuid')
            ->andWhere('ror.createdAt BETWEEN :startDate AND :endDate')
-           ->setParameters(['startDate' => $startDate, 'endDate' => $endDate, 'uuid' => $uuid])
+           ->setParameter('startDate', $startDate)
+           ->setParameter('endDate', $endDate)
+           ->setParameter('uuid', $uuid)
            ->getQuery()
            ->getSingleScalarResult()
         ;

@@ -6,7 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="content" type="text" column="content" nullable="false"/>
     <field name="location" type="string" column="location" nullable="false" length="255"/>
-    <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
+    <field name="createdAt" type="datetimetz_immutable" column="created_at" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>
         </options>

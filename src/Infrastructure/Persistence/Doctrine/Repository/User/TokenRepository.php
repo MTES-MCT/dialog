@@ -36,10 +36,8 @@ final class TokenRepository extends ServiceEntityRepository implements TokenRepo
         return $this->createQueryBuilder('t')
             ->where('t.token = :token')
             ->andWhere('t.type = :type')
-            ->setParameters([
-                'token' => $token,
-                'type' => $type,
-            ])
+            ->setParameter('token', $token)
+            ->setParameter('type', $type)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -51,9 +49,7 @@ final class TokenRepository extends ServiceEntityRepository implements TokenRepo
         $this->createQueryBuilder('t')
             ->delete()
             ->where('t.expirationDate < :now')
-            ->setParameters([
-                'now' => $this->dateUtils->getNow(),
-            ])
+            ->setParameter('now', $this->dateUtils->getNow())
             ->getQuery()
             ->execute();
     }

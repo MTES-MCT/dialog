@@ -20,7 +20,7 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'confirmAccountToken',
             TokenTypeEnum::CONFIRM_ACCOUNT->value,
             $this->getReference('otherOrgUser', User::class),
-            new \DateTime('2025-08-26 09:00:00'),
+            new \DateTimeImmutable('2025-08-26 09:00:00'),
         );
 
         $expiredConfirmAccountToken = new Token(
@@ -28,7 +28,7 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'expiredConfirmAccountToken',
             TokenTypeEnum::CONFIRM_ACCOUNT->value,
             $this->getReference('otherOrgUser', User::class),
-            new \DateTime('2023-01-01 19:00:00'),
+            new \DateTimeImmutable('2023-01-01 19:00:00'),
         );
 
         $forgotPasswordToken = new Token(
@@ -36,7 +36,7 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'forgotPasswordToken',
             TokenTypeEnum::FORGOT_PASSWORD->value,
             $this->getReference('department93User', User::class),
-            new \DateTime('2025-08-26 09:00:00'),
+            new \DateTimeImmutable('2025-08-26 09:00:00'),
         );
 
         $expiredForgotPasswordToken = new Token(
@@ -44,7 +44,7 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'expiredForgotPasswordToken',
             TokenTypeEnum::FORGOT_PASSWORD->value,
             $this->getReference('department93User', User::class),
-            new \DateTime('2023-01-01 19:00:00'),
+            new \DateTimeImmutable('2023-01-01 19:00:00'),
         );
 
         $manager->persist($forgotPasswordToken);

@@ -47,10 +47,8 @@ final class InvitationRepository extends ServiceEntityRepository implements Invi
         return $this->createQueryBuilder('i')
             ->where('i.email = :email')
             ->andWhere('i.organization = :organization')
-            ->setParameters([
-                'organization' => $organization,
-                'email' => $email,
-            ])
+            ->setParameter('organization', $organization)
+            ->setParameter('email', $email)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

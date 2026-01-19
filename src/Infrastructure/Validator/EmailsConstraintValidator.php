@@ -15,7 +15,7 @@ class EmailsConstraintValidator extends ConstraintValidator
     {
     }
 
-    public function validate($value, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (null === $value || '' === $value) {
             return;

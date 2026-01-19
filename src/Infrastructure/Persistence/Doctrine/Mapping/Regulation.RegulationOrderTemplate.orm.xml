@@ -7,7 +7,7 @@
     <field name="visaContent" type="text" nullable="false"/>
     <field name="consideringContent" type="text" nullable="false"/>
     <field name="articleContent" type="text" nullable="false"/>
-    <field name="createdAt" type="datetimetz" column="created_at" nullable="false">
+    <field name="createdAt" type="datetimetz_immutable" column="created_at" nullable="false">
         <options>
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>

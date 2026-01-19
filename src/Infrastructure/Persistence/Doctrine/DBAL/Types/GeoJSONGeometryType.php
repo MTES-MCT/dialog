@@ -22,7 +22,7 @@ class GeoJSONGeometryType extends GeometryType
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
-        return true;
+        return false;
     }
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string

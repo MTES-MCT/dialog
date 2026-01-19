@@ -21,7 +21,7 @@ final class RegulationOrderTemplateFixture extends Fixture implements DependentF
             ->setVisaContent('VU ...')
             ->setConsideringContent('CONSIDERANT ...')
             ->setArticleContent('ARTICLES ...')
-            ->setCreatedAt(new \DateTime('2023-01-01'));
+            ->setCreatedAt(new \DateTimeImmutable('2023-01-01'));
 
         $regulationOrderTemplate = new RegulationOrderTemplate('54eacea0-e1e0-4823-828d-3eae72b76da8');
         $regulationOrderTemplate
@@ -30,7 +30,7 @@ final class RegulationOrderTemplateFixture extends Fixture implements DependentF
             ->setVisaContent('VU ...')
             ->setConsideringContent('CONSIDERANT ...')
             ->setArticleContent('ARTICLES ...')
-            ->setCreatedAt(new \DateTime('2025-04-08'))
+            ->setCreatedAt(new \DateTimeImmutable('2025-04-08'))
             ->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
 
         $manager->persist($globalRegulationOrderTemplate);

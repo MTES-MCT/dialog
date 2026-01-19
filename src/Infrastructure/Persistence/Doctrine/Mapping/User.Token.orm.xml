@@ -7,7 +7,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="token" type="string" length="100" nullable="false"/>
     <field name="type" type="string" length="20" nullable="false"/>
-    <field name="expirationDate" type="datetimetz" nullable="false"/>
+    <field name="expirationDate" type="datetimetz_immutable" nullable="false"/>
     <many-to-one field="user" target-entity="App\Domain\User\User">
         <join-column name="user_uuid" nullable="false" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>

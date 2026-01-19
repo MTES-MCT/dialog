@@ -81,10 +81,8 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->andWhere('ou.user = :userUuid')
             ->innerJoin('ou.user', 'u')
             ->innerJoin('ou.organization', 'o')
-            ->setParameters([
-                'organizationUuid' => $organizationUuid,
-                'userUuid' => $userUuid,
-            ])
+            ->setParameter('organizationUuid', $organizationUuid)
+            ->setParameter('userUuid', $userUuid)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -97,10 +95,8 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->andWhere('u.email = :email')
             ->innerJoin('ou.user', 'u')
             ->innerJoin('ou.organization', 'o')
-            ->setParameters([
-                'organizationUuid' => $organizationUuid,
-                'email' => $email,
-            ])
+            ->setParameter('organizationUuid', $organizationUuid)
+            ->setParameter('email', $email)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

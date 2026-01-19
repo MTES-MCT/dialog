@@ -1,4 +1,4 @@
-{% set routeName = app.request.get('_route') %}
+{% set routeName = app.request.attributes.get('_route') %}
 
 <nav class="fr-sidemenu" role="navigation" aria-labelledby="sidemenu-title">
     <div class="fr-sidemenu__inner">

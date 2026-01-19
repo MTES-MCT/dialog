@@ -11,7 +11,7 @@
     <field name="regulationOrderUuid" type="guid" column="regulation_order_uuid" nullable="false"/>
     <field name="userUuid" type="guid" column="user_uuid" nullable="false"/>
     <field name="action" type="string" column="action" length="20" nullable="false"/>
-    <field name="date" type="datetimetz" column="date" nullable="false">
+    <field name="date" type="datetimetz_immutable" column="date" nullable="false">
         <options>
             <option name="default">CURRENT_TIMESTAMP</option>
         </options>
