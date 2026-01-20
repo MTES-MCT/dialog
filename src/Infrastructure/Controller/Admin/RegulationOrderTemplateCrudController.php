@@ -7,9 +7,11 @@ namespace App\Infrastructure\Controller\Admin;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\Regulation\RegulationOrderTemplate;
+use App\Infrastructure\Controller\Admin\Common\CommonAdminConfiguration;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -26,6 +28,7 @@ final class RegulationOrderTemplateCrudController extends AbstractCrudController
         private readonly IdFactoryInterface $idFactory,
         private readonly EntityRepository $entityRepository,
         private readonly DateUtilsInterface $dateUtils,
+        private readonly CommonAdminConfiguration $commonAdminConfiguration,
     ) {
     }
 
@@ -42,6 +45,11 @@ final class RegulationOrderTemplateCrudController extends AbstractCrudController
     {
         return $assets
             ->addWebpackEncoreEntry('quill');
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $this->commonAdminConfiguration->configureCommonActions($actions);
     }
 
     public function configureFields(string $pageName): iterable

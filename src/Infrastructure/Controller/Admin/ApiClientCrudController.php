@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\Organization\ApiClient;
 use App\Domain\User\TokenGenerator;
+use App\Infrastructure\Controller\Admin\Common\CommonAdminConfiguration;
 use App\Infrastructure\Security\User\ApiClientUser;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -35,6 +36,7 @@ final class ApiClientCrudController extends AbstractCrudController
         private readonly DateUtilsInterface $dateUtils,
         private readonly EntityManagerInterface $entityManager,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly CommonAdminConfiguration $commonAdminConfiguration,
     ) {
     }
 
@@ -62,6 +64,8 @@ final class ApiClientCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
+        $this->commonAdminConfiguration->configureCommonActions($actions);
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::new('regenerateApiAccess', 'Régénérer le secret')
             ->linkToCrudAction('regenerateApiAccess'))

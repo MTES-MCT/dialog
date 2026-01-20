@@ -11,6 +11,7 @@ use App\Application\Organization\Command\SyncOrganizationAdministrativeBoundarie
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
+use App\Infrastructure\Controller\Admin\Common\CommonAdminConfiguration;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -36,6 +37,7 @@ final class OrganizationCrudController extends AbstractCrudController
         private readonly CommandBusInterface $commandBus,
         private readonly OrganizationRepositoryInterface $organizationRepository,
         private readonly DateUtilsInterface $dateUtils,
+        private readonly CommonAdminConfiguration $commonAdminConfiguration,
     ) {
     }
 
@@ -95,9 +97,12 @@ final class OrganizationCrudController extends AbstractCrudController
                 return null !== $organization->getGeometry();
             });
 
+        $this->commonAdminConfiguration->configureCommonActions($actions);
+
         return $actions
             ->add(Crud::PAGE_INDEX, $syncAllGeometries)
-            ->add(Crud::PAGE_INDEX, $showMap);
+            ->add(Crud::PAGE_INDEX, $showMap)
+        ;
     }
 
     public function syncAllGeometries(): RedirectResponse

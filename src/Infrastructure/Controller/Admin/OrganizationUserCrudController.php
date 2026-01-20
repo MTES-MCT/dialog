@@ -7,6 +7,8 @@ namespace App\Infrastructure\Controller\Admin;
 use App\Application\IdFactoryInterface;
 use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\OrganizationUser;
+use App\Infrastructure\Controller\Admin\Common\CommonAdminConfiguration;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -16,6 +18,7 @@ final class OrganizationUserCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly IdFactoryInterface $idFactory,
+        private readonly CommonAdminConfiguration $commonAdminConfiguration,
     ) {
     }
 
@@ -37,6 +40,11 @@ final class OrganizationUserCrudController extends AbstractCrudController
             ->setSearchFields(['organization.name', 'user.fullName'])
             ->setDefaultSort(['organization' => 'ASC'])
         ;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $this->commonAdminConfiguration->configureCommonActions($actions);
     }
 
     public function configureFields(string $pageName): iterable

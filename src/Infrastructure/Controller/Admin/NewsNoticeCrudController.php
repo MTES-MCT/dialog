@@ -7,6 +7,8 @@ namespace App\Infrastructure\Controller\Admin;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Domain\User\News;
+use App\Infrastructure\Controller\Admin\Common\CommonAdminConfiguration;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -19,6 +21,7 @@ final class NewsNoticeCrudController extends AbstractCrudController
     public function __construct(
         private readonly IdFactoryInterface $idFactory,
         private readonly DateUtilsInterface $dateUtils,
+        private readonly CommonAdminConfiguration $commonAdminConfiguration,
     ) {
     }
 
@@ -29,6 +32,11 @@ final class NewsNoticeCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Bandeau dernières nouveautés')
             ->setDefaultSort(['createdAt' => 'DESC'])
         ;
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $this->commonAdminConfiguration->configureCommonActions($actions);
     }
 
     public function configureFields(string $pageName): iterable
