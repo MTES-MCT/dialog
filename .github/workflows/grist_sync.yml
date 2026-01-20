@@ -1,0 +1,56 @@
+name: Grist Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 8 * * *' # Voir https://crontab.guru/ : tous les jours à 8h00 GMT
+
+jobs:
+  grist_sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Init environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.GRIST_SYNC_DATABASE_URL }}" >> .env.local
+          echo "GRIST_BASE_URL=${{ secrets.GRIST_BASE_URL }}" >> .env.local
+          echo "GRIST_API_KEY=${{ secrets.GRIST_API_KEY }}" >> .env.local
+          echo "GRIST_DOC_ID=${{ secrets.GRIST_DOC_ID }}" >> .env.local
+          echo "GRIST_ORGANIZATION_TABLE_ID=${{ secrets.GRIST_ORGANIZATION_TABLE_ID }}" >> .env.local
+          echo "GRIST_CONTACT_TABLE_ID=${{ secrets.GRIST_CONTACT_TABLE_ID }}" >> .env.local
+
+      - name: Run sync
+        run: make ci_grist_sync BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
