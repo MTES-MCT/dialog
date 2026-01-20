@@ -12,9 +12,6 @@ interface RoadGeocoderInterface
 
     public function computeRoadLine(string $roadBanId): string;
 
-    // Pour la migration BDTOPO 2023 -> 2025
-    public function computeRoadBanId(string $roadName, string $inseeCode): string;
-
     public function findRoads(string $search, string $roadType, string $administrator): array;
 
     public function computeRoad(string $roadType, string $administrator, string $roadNumber): string;
