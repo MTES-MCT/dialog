@@ -37,6 +37,10 @@ framework:
                 base_uri: '%env(API_GEO_URL)%'
             ign.report.client:
                 base_uri: '%env(API_IGN_REPORT_BASE_URL)%'
+            grist.client:
+                base_uri: '%env(GRIST_BASE_URL)%'
+                headers:
+                    Authorization: 'Bearer %env(GRIST_API_KEY)%'
 
 when@test:
     framework:
