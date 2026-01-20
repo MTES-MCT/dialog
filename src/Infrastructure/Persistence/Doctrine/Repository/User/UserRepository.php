@@ -68,7 +68,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
     {
         return $this->createQueryBuilder('u')
             ->select('NEW ' . UserExportView::class . '(
-                u.fullName, 
+                u.fullName,
                 u.email,
                 u.registrationDate,
                 u.lastActiveAt,
@@ -88,5 +88,12 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->getQuery()
+            ->getResult();
     }
 }

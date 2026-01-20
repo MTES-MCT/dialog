@@ -10,7 +10,7 @@ class User
     private string $email;
     private array $roles = [];
     private \DateTimeInterface $registrationDate;
-    private ?\DateTimeInterface $lastActiveAt;
+    private ?\DateTimeInterface $lastActiveAt = null;
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
     private bool $isVerified = false;
