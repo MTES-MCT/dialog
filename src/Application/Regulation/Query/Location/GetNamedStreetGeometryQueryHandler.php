@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query\Location;
 
+use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\QueryInterface;
@@ -39,17 +40,17 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             throw new GeocodingFailureException('not implemented: full city geocoding');
         }
 
-        // if (!$command->roadBanId) {
-        //     $command->roadBanId = $this->roadGeocoder->computeRoadBanId($command->roadName, $command->cityCode);
-        // }
+        if (!$command->roadBanId) {
+            throw new EmptyRoadBanIdException();
+        }
 
-        // if ($command->fromRoadName && !$command->fromRoadBanId) {
-        //     $command->fromRoadBanId = $this->roadGeocoder->computeRoadBanId($command->fromRoadName, $command->cityCode);
-        // }
+        if ($command->fromRoadName && !$command->fromRoadBanId) {
+            throw new EmptyRoadBanIdException();
+        }
 
-        // if ($command->toRoadName && !$command->toRoadBanId) {
-        //     $command->toRoadBanId = $this->roadGeocoder->computeRoadBanId($command->toRoadName, $command->cityCode);
-        // }
+        if ($command->toRoadName && !$command->toRoadBanId) {
+            throw new EmptyRoadBanIdException();
+        }
 
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Infrastructure\Symfony\EventSubscriber;
 
 use App\Application\Exception\AbscissaOutOfRangeException;
+use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -20,6 +22,7 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private TranslatorInterface $translator,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -52,6 +55,14 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
 
     private function createApiErrorResponse(\Throwable $exception): ?JsonResponse
     {
+        if ($exception instanceof EmptyRoadBanIdException) {
+            $this->logger->error('Empty roadBanId in the command GetNamedStreetGeometryQuery', [
+                'exception' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
+
         if ($exception instanceof ValidationFailedException) {
             return new JsonResponse([
                 'status' => 422,
