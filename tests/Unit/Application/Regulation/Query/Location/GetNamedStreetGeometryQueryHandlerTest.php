@@ -309,9 +309,6 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
      * @dataProvider emptyRoadBanIdDataProvider
      */
     public function testThrowEmptyRoadBanIdExceptionWhenRoadBanIdEmpty(
-        ?string $fromRoadName,
-        ?string $toRoadName,
-        ?string $roadBanId,
         ?string $fromRoadBanId,
         ?string $toRoadBanId,
     ): void {
@@ -319,7 +316,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 
         $this->roadGeocoder
             ->expects(self::never())
-            ->method('computeRoadLine');
+            ->method('computeRoadLineFromName');
 
         $this->laneSectionMaker
             ->expects(self::never())
@@ -336,9 +333,9 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->cityCode = $this->cityCode;
         $saveNamedStreetCommand->cityLabel = $this->cityLabel;
         $saveNamedStreetCommand->roadName = $this->roadName;
-        $saveNamedStreetCommand->fromRoadName = $fromRoadName;
-        $saveNamedStreetCommand->toRoadName = $toRoadName;
-        $saveNamedStreetCommand->roadBanId = $roadBanId;
+        $saveNamedStreetCommand->fromRoadName = 'Route du Mia';
+        $saveNamedStreetCommand->toRoadName = 'Impasse des Sapins';
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
         $saveNamedStreetCommand->fromRoadBanId = $fromRoadBanId;
         $saveNamedStreetCommand->toRoadBanId = $toRoadBanId;
 
@@ -348,9 +345,8 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     public static function emptyRoadBanIdDataProvider(): iterable
     {
         return [
-            'roadBanId empty' => ['Route du Mia', 'Impasse des Sapins', null, '62108_0100', '62108_0100'],
-            'fromRoadBanId empty' => ['Route du Mia', 'Impasse des Sapins', '44195_0137', null, '62108_0100'],
-            'toRoadBanId empty' => ['Route du Mia', 'Impasse des Sapins', '44195_0137', '62108_0100', null],
+            'fromRoadBanId empty' => [null, '62108_0100'],
+            'toRoadBanId empty' => ['62108_0100', null],
         ];
     }
 
@@ -360,17 +356,17 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     public function testRoadBanIsFilled(
         ?string $fromRoadName,
         ?string $toRoadName,
-        ?string $roadBanId,
-        ?string $fromRoadBanId,
-        ?string $toRoadBanId,
     ): void {
         $this->roadGeocoder
-            ->expects(self::once())
-            ->method('computeRoadLine');
+            ->expects(self::atMost(1))
+            ->method('computeRoadLineFromName')
+            ->with($fromRoadName, $this->cityCode)
+        ;
 
         $this->laneSectionMaker
             ->expects(self::once())
-            ->method('computeSection');
+            ->method('computeSection')
+        ;
 
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
@@ -385,9 +381,9 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromRoadName = $fromRoadName;
         $saveNamedStreetCommand->toRoadName = $toRoadName;
-        $saveNamedStreetCommand->roadBanId = $roadBanId;
-        $saveNamedStreetCommand->fromRoadBanId = $fromRoadBanId;
-        $saveNamedStreetCommand->toRoadBanId = $toRoadBanId;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
+        $saveNamedStreetCommand->fromRoadBanId = '62108_0100';
+        $saveNamedStreetCommand->toRoadBanId = '62108_0100';
 
         $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
     }
@@ -395,9 +391,9 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     public static function roadBanIdDataProvider(): iterable
     {
         return [
-            'full filled' => ['Route du Mia', 'Impasse des Sapins', '44195_0137', '62108_0100', '62108_0100'],
-            'fromRoadName empty' => [null, 'Impasse des Sapins', '44195_0137', '62108_0100', '62108_0100'],
-            'toRoadName empty' => ['Route du Mia', null, '44195_0137', '62108_0100', '62108_0100'],
+            'full filled' => ['Route du Mia', 'Impasse des Sapins'],
+            'fromRoadName empty' => [null, 'Impasse des Sapins'],
+            'toRoadName empty' => ['Route du Mia', null],
         ];
     }
 }

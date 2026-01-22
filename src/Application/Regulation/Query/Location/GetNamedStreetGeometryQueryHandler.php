@@ -40,10 +40,6 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             throw new GeocodingFailureException('not implemented: full city geocoding');
         }
 
-        if (!$command->roadBanId) {
-            throw new EmptyRoadBanIdException();
-        }
-
         if ($command->fromRoadName && !$command->fromRoadBanId) {
             throw new EmptyRoadBanIdException();
         }
@@ -55,10 +51,24 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
-        $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadBanId);
+        // Determine which road to use for geometry
+        if ($command->fromRoadName) {
+            // Use fromRoadName if provided
+            $fullLaneGeometry = $this->roadGeocoder->computeRoadLineFromName($command->fromRoadName, $command->cityCode);
+        } elseif ($command->roadBanId) {
+            // Use roadBanId if available (and no fromRoadName)
+            $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadBanId);
+        } else {
+            // Fall back to main roadName
+            $fullLaneGeometry = $this->roadGeocoder->computeRoadLineFromName($command->roadName, $command->cityCode);
+        }
 
         if ($hasNoStart && $hasNoEnd) {
             return $fullLaneGeometry;
+        }
+
+        if (!$command->roadBanId) {
+            $command->roadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->roadName, $command->cityCode);
         }
 
         return $this->laneSectionMaker->computeSection(
