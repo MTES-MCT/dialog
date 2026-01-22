@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -34,5 +35,29 @@ final class RegulationOrderHistoryRepository extends ServiceEntityRepository imp
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function countCreatedRegulationOrdersByUserUuids(array $userUuids): array
+    {
+        if (0 === \count($userUuids)) {
+            return [];
+        }
+
+        $results = $this->createQueryBuilder('roh')
+            ->select('roh.userUuid, COUNT(DISTINCT roh.regulationOrderUuid) as count')
+            ->where('roh.userUuid IN (:userUuids)')
+            ->andWhere('roh.action = :action')
+            ->setParameter('userUuids', $userUuids)
+            ->setParameter('action', ActionTypeEnum::CREATE->value)
+            ->groupBy('roh.userUuid')
+            ->getQuery()
+            ->getResult();
+
+        $counts = [];
+        foreach ($results as $row) {
+            $counts[$row['userUuid']] = (int) $row['count'];
+        }
+
+        return $counts;
     }
 }
