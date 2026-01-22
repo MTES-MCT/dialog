@@ -105,4 +105,23 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function findAllUsersWithOrganizations(): array
+    {
+        return $this->createQueryBuilder('ou')
+            ->select(
+                'u.uuid as userUuid',
+                'u.fullName',
+                'u.email',
+                'u.registrationDate',
+                'u.lastActiveAt',
+                'o.uuid as organizationUuid',
+                'o.name as organizationName',
+            )
+            ->innerJoin('ou.user', 'u')
+            ->innerJoin('ou.organization', 'o')
+            ->orderBy('u.email', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
