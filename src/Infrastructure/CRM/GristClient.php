@@ -25,9 +25,26 @@ final class GristClient
             'json' => ['records' => $records],
         ]);
 
+        if ($response->getStatusCode() !== 200) {
+            throw new \Exception('Error syncing records to Grist: ' . $response->getContent());
+        }
+
         $this->logger->info('Records synced to Grist', [
             'count' => \count($records),
             'statusCode' => $response->getStatusCode(),
         ]);
+    }
+
+    public function getRecords(string $tableId): array
+    {
+        $response = $this->gristClient->request('GET', \sprintf('/api/docs/%s/tables/%s/records', $this->docId, $tableId));
+
+        if ($response->getStatusCode() !== 200) {
+            throw new \Exception('Error fetching records from Grist: ' . $response->getContent());
+        }
+
+        $data = $response->toArray();
+
+        return $data['records'] ?? [];
     }
 }

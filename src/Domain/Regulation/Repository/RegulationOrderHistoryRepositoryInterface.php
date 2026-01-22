@@ -11,4 +11,6 @@ interface RegulationOrderHistoryRepositoryInterface
     public function add(RegulationOrderHistory $regulationOrderHistory): RegulationOrderHistory;
 
     public function findLastRegulationOrderHistoryByUuid(string $regulationOrderUuid): ?array;
+
+    public function countCreatedRegulationOrdersByUserUuids(array $userUuids): array;
 }

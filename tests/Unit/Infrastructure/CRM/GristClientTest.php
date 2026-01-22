@@ -48,7 +48,7 @@ final class GristClientTest extends TestCase
 
         $response = $this->createMock(ResponseInterface::class);
         $response
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getStatusCode')
             ->willReturn(200);
 
