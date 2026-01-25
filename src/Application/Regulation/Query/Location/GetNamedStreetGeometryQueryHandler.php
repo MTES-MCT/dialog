@@ -8,6 +8,7 @@ use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\QueryInterface;
+use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\RoadGeocoderInterface;
 
 final class GetNamedStreetGeometryQueryHandler implements QueryInterface
@@ -51,17 +52,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
-        // Determine which road to use for geometry
-        if ($command->fromRoadName) {
-            // Use fromRoadName if provided
-            $fullLaneGeometry = $this->roadGeocoder->computeRoadLineFromName($command->fromRoadName, $command->cityCode);
-        } elseif ($command->roadBanId) {
-            // Use roadBanId if available (and no fromRoadName)
-            $fullLaneGeometry = $this->roadGeocoder->computeRoadLine($command->roadBanId);
-        } else {
-            // Fall back to main roadName
-            $fullLaneGeometry = $this->roadGeocoder->computeRoadLineFromName($command->roadName, $command->cityCode);
-        }
+        $fullLaneGeometry = $this->getFullGeometryLane($command);
 
         if ($hasNoStart && $hasNoEnd) {
             return $fullLaneGeometry;
@@ -84,6 +75,19 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             $command->toHouseNumber,
             $command->toRoadBanId,
         );
+    }
+
+    private function getFullGeometryLane(SaveNamedStreetCommand $command): string
+    {
+        if ($command->roadBanId) {
+            return $this->roadGeocoder->computeRoadLine($command->roadBanId);
+        }
+
+        if ($command->fromRoadBanId) {
+            return $this->roadGeocoder->computeRoadLineFromName($command->fromRoadName, $command->cityCode);
+        }
+
+        return $this->roadGeocoder->computeRoadLineFromName($command->roadName, $command->cityCode);
     }
 
     private function shouldRecomputeGeometry(GetNamedStreetGeometryQuery $query): bool

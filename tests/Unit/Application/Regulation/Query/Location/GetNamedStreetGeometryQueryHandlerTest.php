@@ -335,7 +335,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromRoadName = 'Route du Mia';
         $saveNamedStreetCommand->toRoadName = 'Impasse des Sapins';
-        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
+        $saveNamedStreetCommand->roadBanId = null;
         $saveNamedStreetCommand->fromRoadBanId = $fromRoadBanId;
         $saveNamedStreetCommand->toRoadBanId = $toRoadBanId;
 
@@ -354,6 +354,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
      * @dataProvider roadBanIdDataProvider
      */
     public function testRoadBanIsFilled(
+        ?string $roadBanId,
         ?string $fromRoadName,
         ?string $toRoadName,
     ): void {
@@ -381,7 +382,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->roadName = $this->roadName;
         $saveNamedStreetCommand->fromRoadName = $fromRoadName;
         $saveNamedStreetCommand->toRoadName = $toRoadName;
-        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
+        $saveNamedStreetCommand->roadBanId = $roadBanId;
         $saveNamedStreetCommand->fromRoadBanId = '62108_0100';
         $saveNamedStreetCommand->toRoadBanId = '62108_0100';
 
@@ -391,9 +392,10 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     public static function roadBanIdDataProvider(): iterable
     {
         return [
-            'full filled' => ['Route du Mia', 'Impasse des Sapins'],
-            'fromRoadName empty' => [null, 'Impasse des Sapins'],
-            'toRoadName empty' => ['Route du Mia', null],
+            'roadBanId empty' => [null, 'Route du Mia', 'Impasse des Sapins'],
+            'full filled' => ['44195_0137', 'Route du Mia', 'Impasse des Sapins'],
+            'fromRoadName empty' => ['44195_0137', null, 'Impasse des Sapins'],
+            'toRoadName empty' => ['44195_0137', 'Route du Mia', null],
         ];
     }
 }
