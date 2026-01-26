@@ -1,0 +1,616 @@
+#!/usr/bin/env python3
+"""
+Script d'automatisation pour télécharger, dézipper et importer les données BDTOPO EXPRESS.
+
+Compatible avec macOS, Linux et la CI GitHub Actions.
+
+Usage:
+    ./tools/bdtopo_download_and_update [--download-dir DIR] [--keep-archives] [--skip-download] [--skip-import] [--prod] [--overwrite] [-y]
+
+Options:
+    --download-dir DIR     Répertoire où télécharger et dézipper les données
+                           (défaut: ./dump en local, /tmp/bdtopo_download dans la CI)
+    --keep-archives         Conserver les archives .7z après dézippage
+    --skip-download         Ignorer le téléchargement (utiliser les fichiers déjà présents)
+    --skip-import           Ignorer l'import (seulement télécharger et dézipper)
+    --prod                  Déployer vers l'environnement de production
+    --overwrite             Réécrire les tables au lieu d'ajouter
+    --skip-migrate          Ignorer l'exécution des migrations d'index après l'import
+    -y, --yes               Accepter toutes les confirmations
+
+Note:
+    Après un --overwrite, les migrations d'index sont automatiquement exécutées
+    (sauf si --skip-migrate est spécifié) pour recréer tous les index.
+
+Prérequis:
+    - Python 3 avec requests et beautifulsoup4:
+      * Sur macOS (Python géré par Homebrew): pip3 install --user requests beautifulsoup4
+        (ou utiliser un environnement virtuel: python3 -m venv venv && source venv/bin/activate && pip install requests beautifulsoup4)
+      * Sur Linux: pip install requests beautifulsoup4 (ou pip3 install requests beautifulsoup4)
+    - 7z (p7zip) ou py7zr:
+      * macOS: brew install p7zip
+      * Linux: sudo apt-get install p7zip-full (Debian/Ubuntu) ou sudo yum install p7zip-plugins (RedHat/CentOS)
+      * ou: pip3 install --user py7zr (mais ne gère pas les archives multi-volumes)
+"""
+import argparse
+import os
+import platform
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+from urllib.parse import urlparse
+
+try:
+    import requests
+except ImportError:
+    print(
+        "ERROR: Le module 'requests' est requis. Installez-le avec: pip install requests",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    print(
+        "ERROR: Le module 'beautifulsoup4' est requis. Installez-le avec: pip install beautifulsoup4",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
+def _check_command_exists(cmd: str) -> bool:
+    """Vérifie si une commande système existe."""
+    return shutil.which(cmd) is not None
+
+
+def _get_os_name() -> str:
+    """Retourne le nom de l'OS de manière simplifiée."""
+    system = platform.system().lower()
+    if system == "darwin":
+        return "macos"
+    elif system == "linux":
+        return "linux"
+    elif system == "windows":
+        return "windows"
+    else:
+        return system
+
+
+def _get_7z_installation_instructions() -> str:
+    """Retourne les instructions d'installation de 7z selon l'OS."""
+    os_name = _get_os_name()
+    if os_name == "macos":
+        return "brew install p7zip"
+    elif os_name == "linux":
+        return "sudo apt-get install p7zip-full  # ou sudo yum install p7zip-plugins selon la distribution"
+    else:
+        return "Installez p7zip depuis https://www.7-zip.org/download.html"
+
+
+def _download_file(url: str, dest_path: Path, chunk_size: int = 8192) -> None:
+    """Télécharge un fichier depuis une URL."""
+    print(f"Téléchargement: {url}")
+    print(f"Destination: {dest_path}")
+
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+
+    total_size = int(response.headers.get("content-length", 0))
+    downloaded = 0
+
+    with open(dest_path, "wb") as f:
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            if chunk:
+                f.write(chunk)
+                downloaded += len(chunk)
+                if total_size > 0:
+                    percent = (downloaded / total_size) * 100
+                    print(f"\rProgression: {percent:.1f}% ({downloaded}/{total_size} bytes)", end="", flush=True)
+
+    print()  # Nouvelle ligne après la barre de progression
+    print(f"✓ Téléchargement terminé: {dest_path}")
+
+
+def _extract_7z(archive_path: Path, dest_dir: Path, is_multi_volume: bool = False) -> None:
+    """
+    Extrait une archive .7z.
+
+    Args:
+        archive_path: Chemin vers l'archive .7z (ou première partie pour multi-volumes)
+        dest_dir: Répertoire de destination
+        is_multi_volume: Si True, l'archive est multi-volumes et archive_path est la première partie
+    """
+    print(f"Extraction de: {archive_path}")
+
+    # Essayer d'abord avec 7z (plus rapide et gère les multi-volumes)
+    if _check_command_exists("7z"):
+        # 7z peut extraire les archives multi-volumes automatiquement
+        # si toutes les parties sont dans le même répertoire
+        # 7z peut avoir des chemins différents selon l'OS
+        # Sur macOS avec Homebrew, c'est souvent dans /usr/local/bin
+        # Sur Linux, c'est généralement dans /usr/bin
+        cmd = ["7z", "x", str(archive_path), f"-o{str(dest_dir)}", "-y"]
+        result = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if result.returncode == 0:
+            print(f"✓ Extraction terminée avec 7z")
+            return
+        else:
+            print(f"⚠ 7z a échoué, tentative avec py7zr...")
+            if result.stderr:
+                print(result.stderr)
+
+    # Fallback sur py7zr (Python)
+    # Note: py7zr nécessite que les archives multi-volumes soient fusionnées
+    if is_multi_volume:
+        install_cmd = _get_7z_installation_instructions()
+        print(
+            f"ERROR: py7zr ne peut pas extraire directement les archives multi-volumes.\n"
+            f"Veuillez installer '7z' (p7zip) avec: {install_cmd}\n"
+            f"Ou fusionnez les parties manuellement avant l'extraction.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    try:
+        import py7zr
+
+        with py7zr.SevenZipFile(archive_path, mode="r") as archive:
+            archive.extractall(path=dest_dir)
+        print(f"✓ Extraction terminée avec py7zr")
+    except ImportError:
+        install_cmd = _get_7z_installation_instructions()
+        print(
+            f"ERROR: Aucun outil d'extraction .7z trouvé.\n"
+            f"Option 1 - Installer 7z: {install_cmd}\n"
+            f"Option 2 - Installer py7zr: pip install py7zr",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    except Exception as e:
+        print(f"ERROR: Échec de l'extraction: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _get_download_urls_from_page() -> list[str]:
+    """
+    Récupère les URLs de téléchargement depuis la page IGN.
+    Retourne les URLs pour la version LATEST de BDTOPO EXPRESS FXX (France métropolitaine).
+    """
+    url = "https://geoservices.ign.fr/telechargement-api/BDTOPO_EXPRESS"
+
+    print(f"Récupération des URLs depuis: {url}")
+    response = requests.get(url)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    # Chercher les liens de téléchargement pour BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST
+    download_urls = []
+    pattern = re.compile(r"BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST")
+
+    # Chercher dans tous les liens
+    for link in soup.find_all("a", href=True):
+        href = link.get("href", "")
+        if "data.geopf.fr" in href and pattern.search(href):
+            # Les URLs peuvent être dans des attributs data-* ou dans href
+            if href.startswith("http"):
+                download_urls.append(href)
+            elif href.startswith("/"):
+                download_urls.append(f"https://geoservices.ign.fr{href}")
+
+    # Si on ne trouve pas via les liens, chercher dans les scripts JavaScript
+    if not download_urls:
+        for script in soup.find_all("script"):
+            if script.string:
+                # Chercher les URLs dans le JavaScript
+                matches = re.findall(
+                    r'https://data\.geopf\.fr/telechargement/download/BDTOPO_EXPRESS/[^"\']+\.7z(?:\.\d+)?',
+                    script.string,
+                )
+                download_urls.extend(matches)
+
+    # Chercher aussi dans les attributs data-* des éléments
+    for element in soup.find_all(attrs={"data-url": True}):
+        data_url = element.get("data-url", "")
+        if "data.geopf.fr" in data_url and pattern.search(data_url):
+            download_urls.append(data_url)
+
+    # Filtrer pour ne garder que les fichiers .7z de la version LATEST FXX
+    filtered_urls = [
+        url
+        for url in download_urls
+        if "BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST" in url
+        and (url.endswith(".7z") or re.search(r"\.7z\.\d+$", url))
+    ]
+
+    # Trier et dédupliquer
+    filtered_urls = sorted(set(filtered_urls))
+
+    if not filtered_urls:
+        print(
+            "ERROR: Aucune URL de téléchargement trouvée. "
+            "La structure de la page a peut-être changé.",
+            file=sys.stderr,
+        )
+        print(
+            "Vous pouvez fournir les URLs manuellement avec --urls",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    print(f"✓ {len(filtered_urls)} fichier(s) trouvé(s)")
+    return filtered_urls
+
+
+def _merge_7z_parts(parts: list[Path], output_path: Path) -> None:
+    """
+    Fusionne les parties d'une archive .7z multi-volumes.
+    Les archives .7z multi-volumes doivent être fusionnées avant extraction.
+    """
+    if len(parts) == 1:
+        # Pas de fusion nécessaire, juste copier
+        shutil.copy2(parts[0], output_path)
+        return
+
+    print(f"Fusion de {len(parts)} parties en: {output_path}")
+
+    # Trier les parties par numéro
+    sorted_parts = sorted(parts, key=lambda p: int(p.suffix) if p.suffix.isdigit() else 0)
+
+    with open(output_path, "wb") as outfile:
+        for part in sorted_parts:
+            print(f"  Ajout de: {part.name}")
+            with open(part, "rb") as infile:
+                shutil.copyfileobj(infile, outfile)
+
+    print(f"✓ Fusion terminée")
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Télécharge, dézippe et importe les données BDTOPO EXPRESS",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=__doc__,
+    )
+    parser.add_argument(
+        "--download-dir",
+        type=Path,
+        default=None,  # Sera défini plus bas
+        help="Répertoire de téléchargement (défaut: ./dump dans le projet)",
+    )
+    parser.add_argument(
+        "--keep-archives",
+        action="store_true",
+        help="Conserver les archives .7z après dézippage",
+    )
+    parser.add_argument(
+        "--skip-download",
+        action="store_true",
+        help="Ignorer le téléchargement (utiliser fichiers existants)",
+    )
+    parser.add_argument(
+        "--skip-import",
+        action="store_true",
+        help="Ignorer l'import (seulement télécharger/dézipper)",
+    )
+    parser.add_argument(
+        "--urls",
+        nargs="+",
+        help="URLs de téléchargement manuelles (sinon récupérées automatiquement)",
+    )
+    parser.add_argument(
+        "--url",
+        help="URL de la base PostgreSQL (au lieu de --prod)",
+    )
+    parser.add_argument(
+        "--prod",
+        action="store_true",
+        help="Déployer vers l'environnement de production",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Réécrire les tables au lieu d'ajouter",
+    )
+    parser.add_argument(
+        "-y",
+        "--yes",
+        action="store_true",
+        help="Accepter toutes les confirmations",
+    )
+    parser.add_argument(
+        "--skip-migrate",
+        action="store_true",
+        help="Ignorer l'exécution des migrations d'index après l'import",
+    )
+
+    args = parser.parse_args()
+
+    # Définir le répertoire de téléchargement par défaut
+    if args.download_dir is None:
+        # Détecter si on est dans un environnement CI (GitHub Actions)
+        is_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+        
+        if is_ci:
+            # Dans la CI, utiliser /tmp qui a généralement plus d'espace disponible
+            default_download_dir = Path("/tmp/bdtopo_download")
+            print(f"Utilisation du répertoire par défaut pour la CI: {default_download_dir}")
+        else:
+            # En local, utiliser ./dump dans le répertoire du projet
+            # (évite les problèmes de RAM sur Linux où /tmp est monté en RAM)
+            script_dir = Path(__file__).parent
+            project_root = script_dir.parent
+            default_download_dir = project_root / "dump"
+            print(f"Utilisation du répertoire par défaut: {default_download_dir}")
+            print("(Note: ce répertoire est dans .gitignore)")
+        
+        download_dir = default_download_dir
+    else:
+        download_dir = args.download_dir
+
+    try:
+        download_dir = download_dir.resolve()
+    except (OSError, RuntimeError) as e:
+        print(
+            f"ERROR: Impossible de résoudre le chemin {download_dir}: {e}",
+            file=sys.stderr,
+        )
+        return 1
+    archives_dir = download_dir / "archives"
+    extracted_dir = download_dir / "extracted"
+
+    # Étape 1: Téléchargement
+    if not args.skip_download:
+        print("=" * 60)
+        print("ÉTAPE 1: Téléchargement des archives")
+        print("=" * 60)
+
+        archives_dir.mkdir(parents=True, exist_ok=True)
+
+        if args.urls:
+            download_urls = args.urls
+        else:
+            download_urls = _get_download_urls_from_page()
+
+        downloaded_parts = []
+        for url in download_urls:
+            filename = Path(urlparse(url).path).name
+            dest_path = archives_dir / filename
+            _download_file(url, dest_path)
+            downloaded_parts.append(dest_path)
+
+        print(f"\n✓ Tous les téléchargements terminés dans: {archives_dir}")
+
+        # Détecter si c'est une archive multi-volumes
+        # Les archives multi-volumes ont des extensions .001, .002, etc.
+        base_names = {}
+        for part in downloaded_parts:
+            # Chercher le nom de base (sans .001, .002, etc.)
+            # Format: BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_2026-01-18.7z.001
+            base_match = re.match(r"(.+\.7z)(?:\.(\d+))?$", part.name)
+            if base_match:
+                base_name = base_match.group(1)
+                if base_name not in base_names:
+                    base_names[base_name] = []
+                base_names[base_name].append(part)
+
+        # Étape 2: Fusion et extraction
+        print("\n" + "=" * 60)
+        print("ÉTAPE 2: Fusion et extraction des archives")
+        print("=" * 60)
+
+        extracted_dir.mkdir(parents=True, exist_ok=True)
+
+        for base_name, parts in base_names.items():
+            if len(parts) > 1:
+                # Archive multi-volumes: 7z peut extraire directement si toutes les parties sont présentes
+                print(f"Archive multi-volumes détectée: {base_name} ({len(parts)} parties)")
+
+                # Trier les parties par numéro pour s'assurer qu'elles sont dans le bon ordre
+                sorted_parts = sorted(
+                    parts,
+                    key=lambda p: int(re.search(r"\.(\d+)$", p.name).group(1))
+                    if re.search(r"\.(\d+)$", p.name)
+                    else 0,
+                )
+
+                # Vérifier que toutes les parties sont présentes (001, 002, ...)
+                if len(sorted_parts) > 0:
+                    print(f"Parties trouvées: {', '.join(p.name for p in sorted_parts)}")
+
+                # Essayer d'extraire directement avec 7z (plus efficace)
+                if _check_command_exists("7z"):
+                    # 7z peut extraire les archives multi-volumes directement
+                    # Il suffit de spécifier la première partie
+                    first_part = sorted_parts[0]
+                    _extract_7z(first_part, extracted_dir, is_multi_volume=True)
+                    archive_to_extract = first_part
+                else:
+                    # Avec py7zr, il faut fusionner d'abord
+                    merged_path = archives_dir / base_name
+                    _merge_7z_parts(sorted_parts, merged_path)
+                    _extract_7z(merged_path, extracted_dir, is_multi_volume=False)
+                    archive_to_extract = merged_path
+            else:
+                # Archive simple
+                archive_to_extract = parts[0]
+                _extract_7z(archive_to_extract, extracted_dir, is_multi_volume=False)
+
+            if not args.keep_archives:
+                # Supprimer les parties après extraction
+                for part in parts:
+                    if part.exists() and part != archive_to_extract:
+                        part.unlink()
+                # Supprimer l'archive fusionnée si elle existe et est différente des parties
+                merged_path = archives_dir / base_name
+                if merged_path.exists() and merged_path != archive_to_extract:
+                    merged_path.unlink()
+
+        print(f"\n✓ Extraction terminée dans: {extracted_dir}")
+    else:
+        print("⏭ Téléchargement ignoré (--skip-download)")
+        if not extracted_dir.exists():
+            print(
+                f"ERROR: Le répertoire d'extraction {extracted_dir} n'existe pas",
+                file=sys.stderr,
+            )
+            return 1
+
+    # Étape 3: Import
+    if not args.skip_import:
+        print("\n" + "=" * 60)
+        print("ÉTAPE 3: Import dans la base de données")
+        print("=" * 60)
+
+        bdtopo_update_script = Path(__file__).parent / "bdtopo_update"
+        if not bdtopo_update_script.exists():
+            print(
+                f"ERROR: Script bdtopo_update introuvable: {bdtopo_update_script}",
+                file=sys.stderr,
+            )
+            return 1
+
+        cmd = [
+            str(bdtopo_update_script),
+            str(extracted_dir),
+        ]
+
+        # Utiliser la variable d'environnement BDTOPO_2025_DATABASE_URL si disponible
+        # Sinon, utiliser --prod ou --url selon les arguments
+        database_url_from_env = os.environ.get("BDTOPO_2025_DATABASE_URL")
+        database_url_for_migrations = None  # Sera utilisé pour les migrations
+
+        if database_url_from_env:
+            cmd.extend(["--url", database_url_from_env])
+            database_url_for_migrations = database_url_from_env
+            print(f"Utilisation de BDTOPO_2025_DATABASE_URL depuis l'environnement")
+        elif args.prod:
+            cmd.append("--prod")
+            # Pour --prod, on récupérera l'URL depuis l'environnement après l'import
+            database_url_for_migrations = os.environ.get("BDTOPO_2025_DATABASE_URL")
+        elif args.url:
+            cmd.extend(["--url", args.url])
+            database_url_for_migrations = args.url
+
+        if args.overwrite:
+            cmd.append("--overwrite")
+        if args.yes:
+            cmd.append("-y")
+
+        print(f"Exécution de: {' '.join(cmd)}")
+        result = subprocess.run(cmd)
+
+        if result.returncode != 0:
+            print("ERROR: L'import a échoué", file=sys.stderr)
+            return result.returncode
+
+        print("\n✓ Import terminé avec succès")
+
+        # Étape 4: Migrations d'index (si --overwrite et pas --skip-migrate)
+        if args.overwrite and not args.skip_migrate:
+            print("\n" + "=" * 60)
+            print("ÉTAPE 4: Exécution des migrations d'index")
+            print("=" * 60)
+
+            # Trouver le répertoire racine du projet (où se trouve le Makefile)
+            script_dir = Path(__file__).parent
+            project_root = script_dir.parent
+            makefile_path = project_root / "Makefile"
+
+            if not makefile_path.exists():
+                print(
+                    f"WARNING: Makefile introuvable à {makefile_path}. "
+                    "Les migrations ne seront pas exécutées.",
+                    file=sys.stderr,
+                )
+                print(
+                    "Vous pouvez les exécuter manuellement avec: "
+                    "make bdtopo_migrate",
+                    file=sys.stderr,
+                )
+            else:
+                # Vérifier si make est disponible
+                if not _check_command_exists("make"):
+                    print(
+                        "WARNING: make n'est pas disponible. "
+                        "Les migrations ne seront pas exécutées.",
+                        file=sys.stderr,
+                    )
+                    print(
+                        "Vous pouvez les exécuter manuellement avec: "
+                        "make bdtopo_migrate",
+                        file=sys.stderr,
+                    )
+                else:
+                    # Utiliser le Makefile pour exécuter les migrations
+                    # Détecter si on est dans un environnement CI (GitHub Actions)
+                    is_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+
+                    # Utiliser la même URL de base de données que pour l'import
+                    env = os.environ.copy()
+                    if database_url_for_migrations:
+                        env["BDTOPO_2025_DATABASE_URL"] = database_url_for_migrations
+
+                    if is_ci:
+                        # Dans la CI, utiliser directement php bin/console si disponible
+                        # Sinon utiliser le Makefile avec BIN_CONSOLE défini
+                        console_path = project_root / "bin" / "console"
+                        if _check_command_exists("php") and console_path.exists():
+                            migrate_config = str(
+                                project_root
+                                / "config"
+                                / "packages"
+                                / "bdtopo"
+                                / "doctrine_migrations.yaml"
+                            )
+                            migrate_cmd = [
+                                "php",
+                                str(console_path),
+                                "doctrine:migrations:migrate",
+                                "-n",
+                                "--all-or-nothing",
+                                "--configuration",
+                                migrate_config,
+                            ]
+                            print(f"Exécution de: {' '.join(migrate_cmd)}")
+                            print("(Environnement CI détecté, utilisation directe de PHP)")
+                        else:
+                            # Utiliser le Makefile avec BIN_CONSOLE défini pour la CI
+                            env["BIN_CONSOLE"] = "php bin/console"
+                            migrate_cmd = ["make", "bdtopo_migrate"]
+                            print(f"Exécution de: {' '.join(migrate_cmd)}")
+                            print("(Environnement CI détecté, utilisation du Makefile avec BIN_CONSOLE)")
+                    else:
+                        # En local, utiliser le Makefile qui gère Docker automatiquement
+                        migrate_cmd = ["make", "bdtopo_migrate"]
+                        print(f"Exécution de: {' '.join(migrate_cmd)}")
+                        print("(Le Makefile utilisera Docker si PHP n'est pas disponible localement)")
+
+                    result = subprocess.run(migrate_cmd, env=env, cwd=project_root)
+
+                    if result.returncode != 0:
+                        print(
+                            "WARNING: Les migrations ont échoué. "
+                            "Vous pouvez les exécuter manuellement avec: "
+                            "make bdtopo_migrate",
+                            file=sys.stderr,
+                        )
+                    else:
+                        print("\n✓ Migrations d'index exécutées avec succès")
+    else:
+        print("⏭ Import ignoré (--skip-import)")
+
+    print("\n" + "=" * 60)
+    print("✓ Processus terminé avec succès")
+    print("=" * 60)
+    print(f"Données extraites dans: {extracted_dir}")
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

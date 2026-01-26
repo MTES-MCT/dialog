@@ -64,43 +64,135 @@ Une fois la PR mergée, les migrations seront exécutées par GitHub Actions gr�
 
 ### Mettre à jour les données
 
-**Prérequis** : [Accès SSH aux DB Scalingo](./db.md#utiliser-une-db-scalingo-en-local)
+La BD TOPO EXPRESS est millésimée. Une nouvelle version sort **tous les 15 jours**. Le workflow GitHub Actions vérifie automatiquement tous les 15 jours si une nouvelle version est disponible et la télécharge/importe automatiquement.
 
-La BD TOPO est millésimée. Une nouvelle version sort environ tous les 3 mois.
+#### 🧪 Mise à jour en local (pour tester)
 
-Pour mettre à jour les données, suivez ces étapes :
+Cette section explique comment mettre à jour une base BDTOPO locale pour tester le processus avant de le faire en production.
 
-1. Téléchargez chaque partie du [BD TOPO Tous Thèmes France entière format GeoPackage WGS84](https://geoservices.ign.fr/bdtopo#telechargementgpkgfra) : ce sont des parties d'un fichier compressé avec 7Zip. Total compressé : 40 Go environ
-2. Décompressez :
-    1. Assurez-vous d'avoir 7zip installé : `sudo apt install p7zip-full`
-    2. Placez les fichiers `.7z.001`, `.7z.002`, etc dans le même dossier
-    3. Double-cliquez sur le fichier numéro 001 pour lancer la décompression.
+**Prérequis** :
+- Docker et Docker Compose en cours d'exécution
+- Python 3 avec les modules `requests` et `beautifulsoup4` :
+- Un outil d'extraction .7z :
+  - **`7z` (p7zip)**
+    - Sur macOS : `brew install p7zip`
+    - Sur Linux (Debian/Ubuntu) : `sudo apt-get install p7zip-full`
+    - Sur Linux (RedHat/CentOS) : `sudo yum install p7zip-plugins`
+- PHP et Composer (pour les migrations d'index)
 
-    Total décompressé : 130 Go environ.
+**Étapes** :
 
-3. Testez sur une BD TOPO locale :
+1. **Préparer la base de données locale** :
 
-    1. Créez une base de données locale avec `docker-compose exec database createdb -U dialog dialog_bdtopo`
-    2. Installez-y postgis : `make dbshell` puis `\c dialog_bdtopo` puis `create extension postgis;`
-    3. Lancez le script suivant pour importer les données BD TOPO en local (prend plusieurs minutes) :
+   ```bash
+   # Démarrer Docker Compose si ce n'est pas déjà fait
+   make start
 
-      ```bash
-      ./tools/bdtopo_update ~/path/to/bdtopo --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo
-      ```
+   # Créer la base de données BDTOPO locale
+   docker-compose exec database createdb -U dialog dialog_bdtopo
 
-    4. Modifiez votre .env.local avec `BDTOPO_2025_DATABASE_URL=postgresql://dialog:dialog@localhost:5432/dialog_bdtopo` puis naviguez sur DiaLog en local pour voir si le géocodage fonctionne comme prévu. Lancez aussi les tests d'intégration.
+   # Installer PostGIS dans la base
+   docker-compose exec database psql -U dialog -d dialog_bdtopo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+   ```
 
-4. Une fois que tout semble OK, vous pouvez mettre à jour la BD TOPO de prod.
+2. **Télécharger, dézipper et importer les données** :
 
-  :warning: **Attention** : le faire à une heure de faible trafic car cela prendra typiquement une heure voire plus. Pendant ce temps le géocodage sera indisponible, les utilisateurs peuvent rencontrer des plantages.
+   ```bash
+   ./tools/bdtopo_download_and_update \
+     --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo \
+     --overwrite \
+     -y
+   ```
 
-    ```bash
-    ./tools/bdtopo_update ~/path/to/bdtopo --prod
-    ```
+   :information_source: **Note** : Le téléchargement peut prendre du temps (~40 Go compressé, ~130 Go décompressé). Le script affiche une barre de progression.
 
-5. Une fois l'exécution réussie, vérifiez le bon fonctionnement en se connectant à staging et en modifiant par exemple la voie nommée d'une localisation.
+3. **Vérifier que les données ont été importées** :
 
-6. (Optionnel) Si des indexes doivent être ajoutés aux tables, suivez la section [Configurer des indexes](#configurer-des-indexes).
+   ```bash
+   # Vérifier que les tables ont été créées
+   docker-compose exec database psql -U dialog -d dialog_bdtopo -c "\dt"
+
+   # Vérifier que les migrations ont été appliquées
+   docker-compose exec database psql -U dialog -d dialog_bdtopo -c "SELECT * FROM doctrine_migration_versions;"
+   ```
+
+4. **Configurer l'application pour utiliser la base locale** :
+
+   Ajoutez dans votre `.env.local` :
+
+   ```bash
+   # Pour l'application qui tourne dans Docker, utilisez le nom du service
+   BDTOPO_2025_DATABASE_URL=postgresql://dialog:dialog@database:5432/dialog_bdtopo
+   ```
+
+#### 🚀 Mise à jour en production
+
+:warning: **Attention** : La mise à jour en production prend typiquement une heure voire plus. Pendant ce temps, le géocodage sera indisponible et les utilisateurs peuvent rencontrer des plantages. **Faites-le à une heure de faible trafic**.
+
+**Méthode recommandée : GitHub Actions**
+
+Le workflow GitHub Actions `bdtopo_update` automatise tout le processus et est la méthode recommandée pour la production.
+
+**Avantages** :
+- Exécution automatisée (peut être planifiée)
+- Pas besoin d'installer les dépendances localement
+- Gestion automatique du tunnel vers la base de données Scalingo
+- Logs et artefacts disponibles dans GitHub
+
+**Utilisation** :
+
+1. **Déclenchement manuel** :
+   - Allez dans l'onglet "Actions" de GitHub
+   - Sélectionnez le workflow "BD TOPO Update"
+   - Cliquez sur "Run workflow"
+   - Optionnellement, configurez les options :
+     - `skip_download` : Ignorer le téléchargement (utiliser fichiers existants)
+     - `skip_import` : Ignorer l'import (seulement télécharger/dézipper)
+     - `keep_archives` : Conserver les archives .7z après dézippage
+
+2. **Planification automatique** :
+   - Le workflow est configuré pour s'exécuter automatiquement tous les 15 jours à 2h00 UTC
+   - Vous pouvez modifier la planification dans `.github/workflows/bdtopo_update.yml` si nécessaire
+
+3. **Vérification** :
+   - Une fois l'exécution réussie, vérifiez le bon fonctionnement en vous connectant à staging et en modifiant par exemple la voie nommée d'une localisation
+   - Les logs et artefacts sont disponibles dans l'onglet "Actions" de GitHub
+
+**Prérequis GitHub Actions** :
+- Le secret `BDTOPO_2025_DATABASE_URL` doit être configuré dans les secrets GitHub Actions
+- Le secret `GH_SCALINGO_SSH_PRIVATE_KEY` doit être configuré (déjà fait pour les autres workflows)
+
+**Méthode alternative : Script en local**
+
+Si vous préférez exécuter le script depuis votre machine locale vers la production :
+
+```bash
+# S'assurer d'être authentifié sur Scalingo
+scalingo login --ssh
+
+# Lancer la mise à jour
+./tools/bdtopo_download_and_update \
+  --prod \
+  --overwrite \
+  -y
+```
+
+:information_source: **Note** : Cette méthode nécessite que votre machine locale ait accès à Scalingo et suffisamment d'espace disque pour télécharger les données (~40 Go compressé).
+
+**Options du script** :
+- `--download-dir DIR` : Répertoire où télécharger et dézipper
+  - Défaut : `./dump` en local (évite les problèmes de RAM sur Linux où `/tmp` est monté en RAM)
+  - Dans la CI GitHub Actions : `/tmp/bdtopo_download` (plus d'espace disponible)
+- `--keep-archives` : Conserver les archives .7z après dézippage
+- `--skip-download` : Ignorer le téléchargement (utiliser fichiers existants)
+- `--skip-import` : Ignorer l'import (seulement télécharger/dézipper)
+- `--prod` : Déployer vers l'environnement de production (`dialog-bdtopo-2025`)
+- `--overwrite` : Réécrire les tables au lieu d'ajouter
+- `--skip-migrate` : Ignorer l'exécution des migrations d'index après l'import
+- `-y, --yes` : Accepter toutes les confirmations
+
+**Note importante** :
+Après un `--overwrite`, les migrations d'index sont **automatiquement exécutées** pour recréer tous les index (sauf si `--skip-migrate` est spécifié).
 
 ### Configurer des indexes
 
@@ -127,9 +219,43 @@ On entend par "déploiement" une base de données PostgreSQL où sont ingérées
 
 Voir la liste `"tables"` dans [`tools/bdtopo_update.config.json`](../../tools/bdtopo_update.config.json).
 
-### Script `tools/bdtopo_update`
+### Scripts de mise à jour
 
-Ce script Python permet de déployer les tables de la BD TOPO sur une base PostgreSQL.
+#### `tools/bdtopo_download_and_update`
+
+Script d'automatisation complet qui télécharge, dézippe et importe les données BDTOPO EXPRESS.
+
+Ce script :
+1. Récupère automatiquement les URLs de téléchargement depuis la page IGN
+2. Télécharge toutes les parties de l'archive .7z
+3. Dézippe les archives (gère les archives multi-volumes)
+4. Appelle `bdtopo_update` pour importer les données
+
+**Prérequis** :
+- Python 3 avec `requests` et `beautifulsoup4` : `pip install requests beautifulsoup4`
+- Un outil d'extraction .7z : `7z` (p7zip) ou `py7zr` (`pip install py7zr`)
+
+**Utilisation** :
+
+```bash
+# Télécharger, dézipper et importer en local (utilise ./dump par défaut)
+./tools/bdtopo_download_and_update --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo --overwrite -y
+
+# Télécharger, dézipper et importer en production (utilise ./dump par défaut)
+./tools/bdtopo_download_and_update --prod --overwrite -y
+
+# Seulement télécharger et dézipper (sans importer)
+./tools/bdtopo_download_and_update --skip-import
+
+# Utiliser des URLs de téléchargement manuelles
+./tools/bdtopo_download_and_update --urls https://data.geopf.fr/.../file.7z.001 https://data.geopf.fr/.../file.7z.002 ...
+```
+
+Voir `./tools/bdtopo_download_and_update --help` pour toutes les options.
+
+#### `tools/bdtopo_update`
+
+Script Python qui permet de déployer les tables de la BD TOPO sur une base PostgreSQL.
 
 Fonctionnement : ce script intègre à la base PostgreSQL cible les tables configurées dans le fichier de configuration `tools/bdtopo_update.config.json`. Pour cela, il ingère les données BD TOPO (format GeoPackage) à l'aide de **`ogr2ogr`** dans des tables temporaires, puis remplace les éventuelles anciennes tables par ces nouvelles.
 

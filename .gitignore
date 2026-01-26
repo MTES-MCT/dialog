@@ -46,3 +46,5 @@ tests/tmp
 ###< vscode/cursor personal settings ###
 
 docker-compose.override.yml
+tools/__pycache__/
+dump/

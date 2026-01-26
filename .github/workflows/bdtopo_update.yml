@@ -1,0 +1,107 @@
+name: BD TOPO Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_download:
+        description: "Ignorer le téléchargement (utiliser fichiers existants)"
+        required: false
+        default: "false"
+        type: boolean
+      skip_import:
+        description: "Ignorer l'import (seulement télécharger/dézipper)"
+        required: false
+        default: "false"
+        type: boolean
+      keep_archives:
+        description: "Conserver les archives .7z après dézippage"
+        required: false
+        default: "false"
+        type: boolean
+  schedule:
+    # Tous les 15 jours à 2h00 UTC (la BDTOPO EXPRESS sort tous les 15 jours)
+    - cron: '0 2 */15 * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180  # 3 heures max (le téléchargement et l'import peuvent prendre du temps)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install requests beautifulsoup4 py7zr
+
+      - name: Install 7z (p7zip)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Setup Docker for GDAL
+        run: |
+          # Vérifier que Docker est disponible (nécessaire pour ogr2ogr via docker-compose)
+          docker --version
+          docker compose version
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: |
+          composer install -n --prefer-dist --no-dev
+
+      - name: Init environment variables
+        run: |
+          echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> $GITHUB_ENV
+
+      - name: Run BD TOPO update
+        run: |
+          make ci_bdtopo_update \
+            SKIP_DOWNLOAD=${{ inputs.skip_download || 'false' }} \
+            SKIP_IMPORT=${{ inputs.skip_import || 'false' }} \
+            KEEP_ARCHIVES=${{ inputs.keep_archives || 'false' }}
+
+      - name: Upload logs and artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bdtopo_update_logs
+          path: |
+            /tmp/bdtopo_download/
+          retention-days: 7
+          if-no-files-found: ignore
