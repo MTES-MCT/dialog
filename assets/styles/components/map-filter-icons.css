@@ -12,6 +12,10 @@
     margin-left: 0.25rem;
 }
 
+.map-filter-label--alternate::after {
+    color: #6A6AF4;
+}
+
 .map-filter-label--noEntry::after {
     color: #CE0500;
 }

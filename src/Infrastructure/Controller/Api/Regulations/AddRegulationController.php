@@ -52,7 +52,7 @@ final class AddRegulationController
                     items: new OA\Items(
                         type: 'object',
                         properties: [
-                            new OA\Property(property: 'type', type: 'string', enum: ['noEntry', 'speedLimitation', 'parkingProhibited'], example: 'speedLimitation'),
+                            new OA\Property(property: 'type', type: 'string', enum: ['alternate', 'noEntry', 'speedLimitation', 'parkingProhibited'], example: 'speedLimitation'),
                             new OA\Property(property: 'maxSpeed', type: 'integer', nullable: true, example: 30),
                             new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', nullable: true, example: '2025-10-09T08:00:00Z'),
                             new OA\Property(

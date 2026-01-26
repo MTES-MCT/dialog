@@ -1688,6 +1688,10 @@
                 <source>regulation.measure.type.placeholder</source>
                 <target>Sélectionner un type de restriction...</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.alternate">
+                <source>regulation.measure.type.alternate</source>
+                <target>Circulation alternée</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.type.noEntry">
                 <source>regulation.measure.type.noEntry</source>
                 <target>Circulation interdite</target>
@@ -2365,6 +2369,10 @@
             <trans-unit id="map.filter.temporaries">
                 <source>map.filter.temporaries</source>
                 <target>Restrictions temporaires</target>
+            </trans-unit>
+            <trans-unit id="map.filter.type.alternate">
+                <source>map.filter.type.alternate</source>
+                <target>Circulation alternée</target>
             </trans-unit>
             <trans-unit id="map.filter.type.noEntry">
                 <source>map.filter.type.noEntry</source>
