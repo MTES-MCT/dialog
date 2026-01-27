@@ -113,7 +113,11 @@ final readonly class LitteralisTransformer
             return null;
         }
 
-        return new ImportLitteralisRegulationCommand($generalInfoCommand, $measureCommands);
+        return new ImportLitteralisRegulationCommand(
+            $generalInfoCommand,
+            $measureCommands,
+            $properties['shorturl'] ?? null,
+        );
     }
 
     private function setCategory(SaveRegulationGeneralInfoCommand $generalInfoCommand, array $properties): void
