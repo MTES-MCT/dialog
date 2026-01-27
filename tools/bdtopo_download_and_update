@@ -40,6 +40,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -175,75 +176,65 @@ def _extract_7z(archive_path: Path, dest_dir: Path, is_multi_volume: bool = Fals
         sys.exit(1)
 
 
+def _get_latest_date_from_api() -> str:
+    """
+    Récupère la date de la dernière version en testant directement les URLs.
+    Commence par la date d'aujourd'hui et remonte les jours précédents jusqu'à trouver une date valide.
+    Retourne la date au format YYYY-MM-DD.
+    """
+    max_retries = 30
+    today = datetime.now()
+    
+    print("Recherche de la date de la dernière version disponible...")
+    
+    # Tester les URLs en remontant depuis aujourd'hui
+    for days_back in range(max_retries):
+        test_date = (today - timedelta(days=days_back)).strftime("%Y-%m-%d")
+        # Tester si une URL avec cette date existe (en testant le fichier .001)
+        # Structure: BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_YYYY-MM-DD.7z.001
+        test_url = f"https://data.geopf.fr/telechargement/download/BDTOPO_EXPRESS/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_{test_date}.7z.001"
+        
+        try:
+            # Utiliser HEAD pour vérifier rapidement si le fichier existe
+            test_response = requests.head(test_url, timeout=10, allow_redirects=True)
+            if test_response.status_code == 200:
+                if days_back == 0:
+                    print(f"✓ Date trouvée: {test_date} (aujourd'hui)")
+                else:
+                    print(f"✓ Date trouvée: {test_date} (en remontant {days_back} jour(s))")
+                return test_date
+        except requests.exceptions.RequestException:
+            # En cas d'erreur réseau, continuer avec la date suivante
+            pass
+    
+    print(
+        f"ERROR: Impossible de trouver une date valide après {max_retries} tentatives.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
 def _get_download_urls_from_page() -> list[str]:
     """
-    Récupère les URLs de téléchargement depuis la page IGN.
+    Récupère les URLs de téléchargement en construisant les URLs avec la date de la dernière version.
     Retourne les URLs pour la version LATEST de BDTOPO EXPRESS FXX (France métropolitaine).
     """
-    url = "https://geoservices.ign.fr/telechargement-api/BDTOPO_EXPRESS"
-
-    print(f"Récupération des URLs depuis: {url}")
-    response = requests.get(url)
-    response.raise_for_status()
-
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    # Chercher les liens de téléchargement pour BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST
+    # Récupérer la date de la dernière version
+    date = _get_latest_date_from_api()
+    
+    # Construire les URLs avec le pattern: 
+    # https://data.geopf.fr/telechargement/download/BDTOPO_EXPRESS/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_YYYY-MM-DD.7z.001 à .006
+    base_url = f"https://data.geopf.fr/telechargement/download/BDTOPO_EXPRESS/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST/BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_{date}.7z"
+    
     download_urls = []
-    pattern = re.compile(r"BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST")
-
-    # Chercher dans tous les liens
-    for link in soup.find_all("a", href=True):
-        href = link.get("href", "")
-        if "data.geopf.fr" in href and pattern.search(href):
-            # Les URLs peuvent être dans des attributs data-* ou dans href
-            if href.startswith("http"):
-                download_urls.append(href)
-            elif href.startswith("/"):
-                download_urls.append(f"https://geoservices.ign.fr{href}")
-
-    # Si on ne trouve pas via les liens, chercher dans les scripts JavaScript
-    if not download_urls:
-        for script in soup.find_all("script"):
-            if script.string:
-                # Chercher les URLs dans le JavaScript
-                matches = re.findall(
-                    r'https://data\.geopf\.fr/telechargement/download/BDTOPO_EXPRESS/[^"\']+\.7z(?:\.\d+)?',
-                    script.string,
-                )
-                download_urls.extend(matches)
-
-    # Chercher aussi dans les attributs data-* des éléments
-    for element in soup.find_all(attrs={"data-url": True}):
-        data_url = element.get("data-url", "")
-        if "data.geopf.fr" in data_url and pattern.search(data_url):
-            download_urls.append(data_url)
-
-    # Filtrer pour ne garder que les fichiers .7z de la version LATEST FXX
-    filtered_urls = [
-        url
-        for url in download_urls
-        if "BDTOPO-EXPRESS_3-5__GPKG_LAMB93_FXX_LATEST" in url
-        and (url.endswith(".7z") or re.search(r"\.7z\.\d+$", url))
-    ]
-
-    # Trier et dédupliquer
-    filtered_urls = sorted(set(filtered_urls))
-
-    if not filtered_urls:
-        print(
-            "ERROR: Aucune URL de téléchargement trouvée. "
-            "La structure de la page a peut-être changé.",
-            file=sys.stderr,
-        )
-        print(
-            "Vous pouvez fournir les URLs manuellement avec --urls",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    print(f"✓ {len(filtered_urls)} fichier(s) trouvé(s)")
-    return filtered_urls
+    # Générer les URLs pour les fichiers .001 à .006
+    for i in range(1, 7):
+        part_num = f"{i:03d}"  # Format: 001, 002, ..., 006
+        url = f"{base_url}.{part_num}"
+        download_urls.append(url)
+    
+    print(f"✓ {len(download_urls)} fichier(s) à télécharger pour la version du {date}")
+    return download_urls
 
 
 def _merge_7z_parts(parts: list[Path], output_path: Path) -> None:
