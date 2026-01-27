@@ -56,16 +56,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 <<<'SQL'
                     SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(t.geometrie)))) AS geometry
                     FROM troncon_de_route AS t
-                    WHERE ST_Intersects(
-                        t.geometrie,
-                        (
-                            SELECT v.geometrie
-                            FROM voie_nommee AS v
-                            WHERE LOWER(v.nom_voie_ban) = LOWER(:road_name)
-                            AND v.insee_commune = :insee_code
-                            LIMIT 1
-                        )
-                    )
+                    INNER JOIN voie_nommee AS v ON ST_Intersects(t.geometrie, v.geometrie)
+                    WHERE f_normalize_accents(v.nom_voie_ban) = f_normalize_accents(:road_name)
+                    AND v.insee_commune = :insee_code
                 SQL,
                 [
                     'road_name' => $roadName,
@@ -90,7 +83,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             <<<'SQL'
                 SELECT v.identifiant_voie_ban
                 FROM voie_nommee AS v
-                WHERE LOWER(v.nom_voie_ban) = LOWER(:road_name)
+                WHERE f_normalize_accents(v.nom_voie_ban) = f_normalize_accents(:road_name)
                 AND v.insee_commune = :insee_code
                 LIMIT 1
             SQL,
