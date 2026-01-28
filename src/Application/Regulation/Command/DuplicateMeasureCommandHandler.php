@@ -109,7 +109,7 @@ final class DuplicateMeasureCommandHandler
             : null;
 
         $measureCommand = new SaveMeasureCommand($originalRegulationOrder);
-        $measureCommand->type = $measure->getType();
+        $measureCommand->type = $measure->getType()->value;
         $measureCommand->createdAt = $measure->getCreatedAt();
         $measureCommand->maxSpeed = $measure->getMaxSpeed();
         $measureCommand->vehicleSet = $vehicleSetCommand;

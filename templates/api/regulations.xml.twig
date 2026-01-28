@@ -58,6 +58,29 @@
                                     <unitOfMeasure>kilometresPerHour</unitOfMeasure>
                                 </maxValue>
                             </typeOfRegulation>
+
+                        {# {% elseif trafficRegulation.type == 'alternateRoad' %}
+                            <typeOfRegulation xsi:type='AlternateRoadOrCarriagewayOrLaneLayout'>
+                                <roadOrCarriagewayOrLaneLayoutType>road</roadOrCarriagewayOrLaneLayoutType>
+                                <deviationToOtherCarrriageway>true</deviationToOtherCarrriageway>
+                                {% if trafficRegulation.yellowMarkings %}
+                                    <yellowMarkings>true</yellowMarkings>
+                                {% endif %}
+                                {% if trafficRegulation.maxSpeed %}
+                                    <speedLimit>
+                                        <maxValue>
+                                            <numericValue>{{ trafficRegulation.maxSpeed }}</numericValue>
+                                            <unitOfMeasure>kilometresPerHour</unitOfMeasure>
+                                        </maxValue>
+                                    </speedLimit>
+                                {% endif %}
+                            </typeOfRegulation> #}
+
+                        {% elseif trafficRegulation.type == 'alternateRoad' %}
+                            <typeOfRegulation xsi:type="RoadOrCarriagewayOrLaneManagement">
+                                <roadOrCarriagewayOrLaneManagementType>singleAlternateLineTraffic</roadOrCarriagewayOrLaneManagementType>
+                            </typeOfRegulation>
+
                         {% elseif trafficRegulation.type == 'storageArea' %}
                             <typeOfRegulation xsi:type="MandatoryRoadOrCarriagewayOrLaneUsage">
                                 <otherObligation>
