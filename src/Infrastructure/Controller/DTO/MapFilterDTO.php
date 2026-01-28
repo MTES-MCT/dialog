@@ -11,6 +11,7 @@ final class MapFilterDTO
     public bool $displayPermanentRegulations = true;
     public bool $displayTemporaryRegulations = true;
     public array $measureTypes = [
+        MeasureTypeEnum::ALTERNATE_ROAD->value,
         MeasureTypeEnum::NO_ENTRY->value,
         MeasureTypeEnum::SPEED_LIMITATION->value,
     ];

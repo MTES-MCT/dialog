@@ -47,7 +47,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
 - `otherCategoryText` (string, nullable, max 100)
 - `title` (string, max 255)
 - `measures` (array<object>, nullable)
-  - `type` (string) — enum: `alternate` | `noEntry` | `speedLimitation` | `parkingProhibited`
+  - `type` (string) — enum: `alternateRoad` | `noEntry` | `speedLimitation` | `parkingProhibited`
   - `maxSpeed` (integer, nullable) — requis uniquement si `type = speedLimitation`
   - `createdAt` (string, date-time ISO, nullable)
   - `vehicleSet` (object, nullable)
@@ -96,7 +96,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
 
 ##### Enums détaillés
 
-- `measures[*].type` (MeasureTypeEnum): `alternate`, `noEntry`, `speedLimitation`, `parkingProhibited`
+- `measures[*].type` (MeasureTypeEnum): `alternateRoad`, `noEntry`, `speedLimitation`, `parkingProhibited`
 - `locations[*].roadType` (RoadTypeEnum): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`
 - `namedStreet.direction`, `departmentalRoad.direction`, `nationalRoad.direction` (DirectionEnum): `BOTH`, `A_TO_B`, `B_TO_A`
 - `periods[*].recurrenceType`, `dailyRange.recurrenceType` (PeriodRecurrenceTypeEnum): `everyDay`, `certainDays`
