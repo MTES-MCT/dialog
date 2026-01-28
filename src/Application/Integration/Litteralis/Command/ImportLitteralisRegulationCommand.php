@@ -15,6 +15,7 @@ final class ImportLitteralisRegulationCommand implements CommandInterface
         public SaveRegulationGeneralInfoCommand $generalInfoCommand,
         /** @var SaveMeasureCommand[] */
         public readonly array $measureCommands,
+        public readonly ?string $downloadUrl = null,
     ) {
         $generalInfoCommand->source = RegulationOrderRecordSourceEnum::LITTERALIS->value;
     }

@@ -137,7 +137,7 @@ final class LitteralisTransformerTest extends TestCase
 
         $measureCommands[] = $measureCommand2;
 
-        $expectedCommand = new ImportLitteralisRegulationCommand($generalInfo, $measureCommands);
+        $expectedCommand = new ImportLitteralisRegulationCommand($generalInfo, $measureCommands, 'https://dl.sogelink.fr/?0dbjHha7');
 
         $command = $this->transformer->transform($this->reporter, $identifier, $this->realWorldFeatures, $this->organization);
         $this->assertFalse($this->reporter->hasNewErrors());
