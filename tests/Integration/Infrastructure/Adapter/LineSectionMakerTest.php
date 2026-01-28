@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 final class LineSectionMakerTest extends KernelTestCase
 {
     /** @var Connection */
-    private $bdtopoConnection;
+    private $bdtopo2025Connection;
     private $lineGeometry;
     private $em;
     private $lineSectionMaker;
@@ -22,7 +22,7 @@ final class LineSectionMakerTest extends KernelTestCase
     {
         $container = self::getContainer();
 
-        $this->bdtopoConnection = $container->get('doctrine.dbal.bdtopo2025_connection');
+        $this->bdtopo2025Connection = $container->get('doctrine.dbal.bdtopo2025_connection');
 
         $lineStrings = [
             /*
@@ -81,9 +81,9 @@ final class LineSectionMakerTest extends KernelTestCase
     /**
      * Return the tolerance radius to apply so that $pointA and $pointB are exactly equally distant to $point.
      */
-    private static function getThresholdTolerance(Connection $bdtopoConnection, Coordinates $point, Coordinates $pointA, Coordinates $pointB): float
+    private static function getThresholdTolerance(Connection $bdtopo2025Connection, Coordinates $point, Coordinates $pointA, Coordinates $pointB): float
     {
-        $distA = $bdtopoConnection->fetchOne(
+        $distA = $bdtopo2025Connection->fetchOne(
             'SELECT ST_Distance(ST_GeomFromGeoJSON(:p)::geography, ST_GeomFromGeoJSON(:a)::geography)',
             [
                 'p' => $point->asGeoJSON(),
@@ -91,7 +91,7 @@ final class LineSectionMakerTest extends KernelTestCase
             ],
         );
 
-        $distB = $bdtopoConnection->fetchOne(
+        $distB = $bdtopo2025Connection->fetchOne(
             'SELECT ST_Distance(ST_GeomFromGeoJSON(:p)::geography, ST_GeomFromGeoJSON(:b)::geography)',
             [
                 'p' => $point->asGeoJSON(),
@@ -161,9 +161,9 @@ final class LineSectionMakerTest extends KernelTestCase
                         [7, 1],
                     ],
                 ]),
-                'getTolerance' => fn ($bdtopoConnection) => 1.01 // Just above
+                'getTolerance' => fn ($bdtopo2025Connection) => 1.01 // Just above
                     * self::getThresholdTolerance(
-                        $bdtopoConnection,
+                        $bdtopo2025Connection,
                         point: Coordinates::fromLonLat(9.6, 2), // P
                         pointA: Coordinates::fromLonLat(7, 2), // Point of c that is closest to P
                         pointB: Coordinates::fromLonLat(12, 2), // Point of d that is closest to P
@@ -177,7 +177,7 @@ final class LineSectionMakerTest extends KernelTestCase
      */
     public function testComputeSection(Coordinates $fromCoords, Coordinates $toCoords, string $section, ?\Closure $getTolerance = null): void
     {
-        $tolerance = $getTolerance ? $getTolerance($this->bdtopoConnection) : 1;
+        $tolerance = $getTolerance ? $getTolerance($this->bdtopo2025Connection) : 1;
 
         $this->assertSame($section, $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords, $tolerance));
     }
@@ -220,9 +220,9 @@ final class LineSectionMakerTest extends KernelTestCase
                         [12, 2],
                     ],
                 ]),
-                'getTolerance' => fn ($bdtopoConnection) => 0.99 // Just below
+                'getTolerance' => fn ($bdtopo2025Connection) => 0.99 // Just below
                     * self::getThresholdTolerance(
-                        $bdtopoConnection,
+                        $bdtopo2025Connection,
                         point: Coordinates::fromLonLat(9.6, 2), // P
                         pointA: Coordinates::fromLonLat(7, 2), // Point of c that is closest to P
                         pointB: Coordinates::fromLonLat(12, 2), // Point of d that is closest to P
@@ -236,7 +236,7 @@ final class LineSectionMakerTest extends KernelTestCase
      */
     public function testComputeSectionCrossSegments(Coordinates $fromCoords, Coordinates $toCoords, string $section, ?\Closure $getTolerance = null): void
     {
-        $tolerance = $getTolerance ? $getTolerance($this->bdtopoConnection) : 1;
+        $tolerance = $getTolerance ? $getTolerance($this->bdtopo2025Connection) : 1;
 
         $this->assertSame($section, $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords, $tolerance));
     }

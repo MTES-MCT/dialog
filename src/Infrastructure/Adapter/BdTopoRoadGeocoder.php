@@ -18,7 +18,6 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 {
     public function __construct(
         private Connection $bdtopo2025Connection,
-        private Connection $bdtopoConnection,
     ) {
     }
 
@@ -48,75 +47,58 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
-    // Pour la migration BDTOPO 2023 -> 2025
-    public function computeRoadBanId(string $roadName, string $inseeCode): string
+    // Utilisé uniquement dans l'API, car sur le web on a le roadBanId.
+    // On récupère les tronçons en utilisant une intersection géométrique avec voie_nommee.
+    public function computeRoadLineFromName(string $roadName, string $inseeCode): string
     {
-        // Dans la BDTOPO à partir de janvier 2025, la table voie_nommee a été remodelée. La colonne 'nom_minuscule'
-        // sur laquelle on se basait pour trouver une voie nommée a disparu. Dans la nouvelle table on doit utiliser la colonne
-        // 'identifiant_voie_ban'. Les géométries n'ont pas changé, mais aucune clé d'interopérabilité n'a été conservée entre ces
-        // deux tables qui permettrait de trouver l'identifiant_voie_ban d'une ancienne voie nommée. L'IGN nous a suggéré de faire
-        // un "rapprochement géométrique" : on trouve la nouvelle voie nommée dont la géométrie est la plus proche de l'ancienne.
-
-        // D'abord on récupère le linéaire de la voie tel que calculé auparavant, avec nom_minuscule.
-
         try {
-            $row = $this->bdtopoConnection->fetchAssociative(
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 <<<'SQL'
-                    SELECT ST_AsGeoJSON(geometrie) AS geom
-                    FROM voie_nommee
-                    WHERE f_bdtopo_voie_nommee_normalize_nom_minuscule(nom_minuscule) = f_bdtopo_voie_nommee_normalize_nom_minuscule(:nom_minuscule)
-                    AND code_insee = :code_insee
-                    LIMIT 1
+                    SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(t.geometrie)))) AS geometry
+                    FROM troncon_de_route AS t
+                    INNER JOIN voie_nommee AS v ON ST_Intersects(t.geometrie, v.geometrie)
+                    WHERE f_normalize_accents(v.nom_voie_ban) = f_normalize_accents(:road_name)
+                    AND v.insee_commune = :insee_code
                 SQL,
                 [
-                    'nom_minuscule' => $roadName,
-                    'code_insee' => $inseeCode,
+                    'road_name' => $roadName,
+                    'insee_code' => $inseeCode,
                 ],
             );
         } catch (\Exception $exc) {
-            throw new GeocodingFailureException(\sprintf('Road line 2023 query has failed: %s', $exc->getMessage()), previous: $exc);
+            throw new GeocodingFailureException(\sprintf('Road line from name query has failed: %s', $exc->getMessage()), previous: $exc);
         }
 
-        if (empty($row['geom'])) {
-            $message = \sprintf("no result found in voie_nommee 2023 for roadName='%s', inseeCode='%s'", $roadName, $inseeCode);
-            throw new GeocodingFailureException($message);
+        if ($rows && $rows[0]['geometry']) {
+            return $rows[0]['geometry'];
         }
 
-        $roadLine2023 = $row['geom'];
+        $message = \sprintf("no result found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
+        throw new GeocodingFailureException($message);
+    }
 
-        // On trouve ensuite l'identifiant voie BAN de la voie nommée dont la géométrie est la plus proche.
+    public function getRoadBanIdFromName(string $roadName, string $inseeCode): string
+    {
+        $roadBanId = $this->bdtopo2025Connection->fetchOne(
+            <<<'SQL'
+                SELECT v.identifiant_voie_ban
+                FROM voie_nommee AS v
+                WHERE f_normalize_accents(v.nom_voie_ban) = f_normalize_accents(:road_name)
+                AND v.insee_commune = :insee_code
+                LIMIT 1
+            SQL,
+            [
+                'road_name' => $roadName,
+                'insee_code' => $inseeCode,
+            ],
+        );
 
-        try {
-            $row = $this->bdtopo2025Connection->fetchAssociative(
-                <<<'SQL'
-                    SELECT v.identifiant_voie_ban AS road_ban_id
-                    FROM voie_nommee AS v
-                    WHERE v.insee_commune = :city_code
-                    -- ST_HausdorffDistance() donne un indice de la "similarité" entre deux géométries.
-                    -- C'est la plus grande distance qui sépare deux points de deux géométries A et B.
-                    -- Donc A et B sont similaires si leur distance de Hausdorff est petite.
-                    -- https://postgis.net/docs/ST_HausdorffDistance.html
-                    -- (On ne pouvait pas utiliser ST_Distance() car elle renvoie au contraire la plus *petite* des
-                    -- distances entre deux points de A et B. Or deux géométries peuvent avoir quelques points très proches
-                    -- mais être très différentes pour le reste...)
-                    ORDER BY ST_HausdorffDistance(v.geometrie, ST_SetSRID(ST_GeomFromGeoJSON(:road_line_2023), 4326)) ASC
-                    LIMIT 1
-                SQL,
-                [
-                    'road_line_2023' => $roadLine2023,
-                    'city_code' => $inseeCode,
-                ],
-            );
-        } catch (\Exception $exc) {
-            throw new GeocodingFailureException(\sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
+        if (!empty($roadBanId)) {
+            return $roadBanId;
         }
 
-        if (empty($row['road_ban_id'])) {
-            $message = \sprintf("No road_ban_id found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
-            throw new GeocodingFailureException($message);
-        }
-
-        return $row['road_ban_id'];
+        $message = \sprintf("no result found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
+        throw new GeocodingFailureException($message);
     }
 
     public function findRoads(string $search, string $roadType, string $administrator): array
