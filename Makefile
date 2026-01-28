@@ -97,6 +97,10 @@ dropdb: ## Remove branch db
 listdb: ## Show local databases
 	docker compose exec database psql -U dialog -c "\l"
 
+bdtopo_create: ## Crée la base de donnée bdtopo
+	docker compose exec database createdb -U dialog dialog_bdtopo
+	$(MAKE) bdtopo_migrate ARGS="App\\\Infrastructure\\\Persistence\\\Doctrine\\\BdTopoMigrations\\\Version20250507085352"
+
 bdtopo_migration: ## Generate new db migration for bdtopo
 	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/bdtopo/doctrine_migrations.yaml
 

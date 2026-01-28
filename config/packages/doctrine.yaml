@@ -7,9 +7,6 @@ doctrine:
                 platform_service: App\Infrastructure\Persistence\Doctrine\DBAL\CustomPostgreSQLPlatformService
                 schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
                 use_savepoints: true
-            bdtopo:
-                url: '%env(BDTOPO_DATABASE_URL)%'
-                use_savepoints: true
             bdtopo2025:
                 url: '%env(BDTOPO_2025_DATABASE_URL)%'
                 use_savepoints: true
@@ -37,8 +34,6 @@ doctrine:
                         dir: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine/Mapping'
                         prefix: 'App\Domain'
                         alias: 'App\Domain'
-            bdtopo:
-                connection: bdtopo
             bdtopo2025:
                 connection: bdtopo2025
             metabase:

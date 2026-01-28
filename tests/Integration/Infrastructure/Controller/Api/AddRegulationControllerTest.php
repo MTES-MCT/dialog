@@ -59,7 +59,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
                     'namedStreet' => [
                         'cityCode' => '93070',
                         'cityLabel' => 'saint ouen sur seine',
-                        'roadName' => 'rue eugene berthoud',
+                        'roadName' => 'rue eugène berthoud',
                         'direction' => 'BOTH',
                     ],
                 ]],

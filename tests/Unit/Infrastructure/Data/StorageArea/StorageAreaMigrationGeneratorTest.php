@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Encoder\CsvEncoder;
 
 final class StorageAreaMigrationGeneratorTest extends TestCase
 {
-    private $bdtopoConnection;
+    private $bdtopo2025Connection;
     private $roadGeocoder;
     private $roadSectionMaker;
     private $testRows;
@@ -23,10 +23,10 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->bdtopoConnection = $this->createMock(Connection::class);
+        $this->bdtopo2025Connection = $this->createMock(Connection::class);
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->roadSectionMaker = $this->createMock(RoadSectionMakerInterface::class);
-        $this->generator = new StorageAreaMigrationGenerator($this->bdtopoConnection, $this->roadGeocoder, $this->roadSectionMaker);
+        $this->generator = new StorageAreaMigrationGenerator($this->bdtopo2025Connection, $this->roadGeocoder, $this->roadSectionMaker);
         $decoder = new CsvEncoder();
         $this->testRows = $decoder->decode(file_get_contents(__DIR__ . '/../../../../fixtures/aires_de_stockage_test.csv'), 'csv');
     }
@@ -40,7 +40,7 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
     {
         $rows = [$this->testRows[0]];
 
-        $this->bdtopoConnection
+        $this->bdtopo2025Connection
             ->expects(self::once())
             ->method('fetchAssociative')
             ->willReturn(['gestionnaire' => 'DIR Centre-Est']);
@@ -61,7 +61,7 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
 
     public function testGenerate(): void
     {
-        $this->bdtopoConnection
+        $this->bdtopo2025Connection
             ->expects(self::exactly(3))
             ->method('fetchAssociative')
             ->willReturnOnConsecutiveCalls(
