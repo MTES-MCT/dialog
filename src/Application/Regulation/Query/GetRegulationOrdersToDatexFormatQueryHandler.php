@@ -152,7 +152,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 }
 
                 $trafficRegulations[] = new DatexTrafficRegulationView(
-                    $measureType,
+                    $measureType->value,
                     $locationConditions,
                     $vehicleConditions,
                     $validityConditions,

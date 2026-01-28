@@ -165,7 +165,7 @@ final class GetCifsIncidentsQueryHandler
                             $incidents[] = new CifsIncidentView(
                                 id: $id,
                                 creationTime: $incidentCreationTime,
-                                type: 'ROAD_CLOSED',
+                                type: $measure->getType()->getCifsKey(),
                                 subType: $subType,
                                 street: $street,
                                 direction: $direction,

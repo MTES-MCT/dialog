@@ -93,7 +93,7 @@ readonly class MeasureView
 
         return new MeasureView(
             $measure->getUuid(),
-            $measure->getType(),
+            $measure->getType()->value,
             $periods,
             VehicleSetView::fromEntity($measure->getVehicleSet()),
             $measure->getMaxSpeed(),

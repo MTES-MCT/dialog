@@ -7,7 +7,7 @@
             <constraint name="NotBlank" />
             <constraint name="Choice">
                 <option name="choices">
-                    <value>alternate</value>
+                    <value>alternateRoad</value>
                     <value>noEntry</value>
                     <value>speedLimitation</value>
                     <value>parkingProhibited</value>
