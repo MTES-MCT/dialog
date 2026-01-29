@@ -454,10 +454,10 @@
                         data-autocomplete-url-value="{{ path('fragment_namedStreet_completion') }}"
                         data-autocomplete-query-param-value="search"
                         data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
-                        data-autocomplete-min-length-value="3"
+                        data-autocomplete-min-length-value="2"
                         data-autocomplete-delay-value="500"
                         data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
-                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
                         data-reset-key-param="roadName"
                         data-fetch-url-value="{{ url('fragment_intersection_options') }}"
                         data-fetch-extra-query-params-value="{{ {
