@@ -6,7 +6,6 @@ namespace App\Domain\Regulation;
 
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
-use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -33,9 +32,9 @@ class Measure
         return $this->uuid;
     }
 
-    public function getType(): MeasureTypeEnum
+    public function getType(): string
     {
-        return MeasureTypeEnum::from($this->type);
+        return $this->type;
     }
 
     public function getMaxSpeed(): ?int

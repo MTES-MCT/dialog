@@ -36,7 +36,7 @@ final class SaveMeasureCommand implements CommandInterface
     ): self {
         $command = new self($regulationOrder, $measure);
 
-        $command->type = $measure?->getType()->value;
+        $command->type = $measure?->getType();
         $command->createdAt = $measure?->getCreatedAt();
         $command->maxSpeed = $measure?->getMaxSpeed();
 

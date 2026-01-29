@@ -16,16 +16,8 @@ enum MeasureTypeEnum: string
         return match ($this) {
             self::ALTERNATE_ROAD => 'HAZARD_ON_ROAD_LANE_CLOSED',
             self::NO_ENTRY => 'ROAD_CLOSED',
-            self::SPEED_LIMITATION => 'SPEED_LIMIT',
-            self::PARKING_PROHIBITED => 'PARKING_PROHIBITED',
+            self::SPEED_LIMITATION => 'HAZARD_ON_ROAD',
+            default => 'HAZARD',
         };
-    }
-
-    /**
-     * @return array<string>
-     */
-    public static function toArray(): array
-    {
-        return array_map(fn (self $case) => $case->value, self::cases());
     }
 }

@@ -12,6 +12,7 @@ use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
 use App\Domain\Regulation\Enum\DirectionEnum;
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
@@ -165,7 +166,7 @@ final class GetCifsIncidentsQueryHandler
                             $incidents[] = new CifsIncidentView(
                                 id: $id,
                                 creationTime: $incidentCreationTime,
-                                type: $measure->getType()->getCifsKey(),
+                                type: MeasureTypeEnum::from($measure->getType())->getCifsKey(),
                                 subType: $subType,
                                 street: $street,
                                 direction: $direction,
