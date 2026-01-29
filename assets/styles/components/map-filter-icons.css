@@ -1,8 +1,14 @@
 /* Icônes de filtres de la carte */
 .map-filter-label {
-    display: inline-flex;
-    align-items: center;
     gap: 0.5rem;
+}
+
+#measureTypes.fr-fieldset {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
 }
 
 .map-filter-label::after {
