@@ -59,19 +59,19 @@ final class RegulationOrderTemplateCrudController extends AbstractCrudController
             TextareaField::new('title')
                 ->setLabel('Titre')
                 ->hideOnIndex()
-                ->setFormTypeOptions(['block_name' => 'rich_textarea']),
+                ->setFormTypeOptions(['block_name' => 'rich_textarea_title']),
             TextareaField::new('visaContent')
                 ->setLabel('Contenu du visa')
                 ->hideOnIndex()
-                ->setFormTypeOptions(['block_name' => 'rich_textarea']),
+                ->setFormTypeOptions(['block_name' => 'rich_textarea_visa']),
             TextareaField::new('consideringContent')
                 ->setLabel('Contenu de la considération')
                 ->hideOnIndex()
-                ->setFormTypeOptions(['block_name' => 'rich_textarea']),
+                ->setFormTypeOptions(['block_name' => 'rich_textarea_considering']),
             TextareaField::new('articleContent')
                 ->setLabel('Contenu de l\'article')
                 ->hideOnIndex()
-                ->setFormTypeOptions(['block_name' => 'rich_textarea']),
+                ->setFormTypeOptions(['block_name' => 'rich_textarea_article']),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
         ];
     }

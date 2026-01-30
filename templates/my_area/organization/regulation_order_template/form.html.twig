@@ -1,15 +1,8 @@
 {% extends 'layouts/layout.html.twig' %}
+{% import 'admin/form.html.twig' as adminForm %}
 {% set metaTitle = regulationOrderTemplate is defined ? regulationOrderTemplate.name : 'regulation_order_template.add.title'|trans %}
 
-{% set variables = [
-    { label: 'regulation_order_template.variables.list.numero_arrete'|trans, value: '[numero_arrete]' },
-    { label: 'regulation_order_template.variables.list.intitule_arrete'|trans, value: '[intitule_arrete]' },
-    { label: 'regulation_order_template.variables.list.pouvoir_de_signature'|trans, value: '[pouvoir_de_signature]' },
-    { label: 'regulation_order_template.variables.list.nom_commune'|trans, value: '[nom_commune]' },
-    { label: 'regulation_order_template.variables.list.nom_signataire'|trans, value: '[nom_signataire]' },
-    { label: 'regulation_order_template.variables.list.mesures'|trans, value: '[mesures]' },
-    { label: 'regulation_order_template.variables.list.departement'|trans, value: '[departement]' }
-] %}
+{% set variableNames = ['mesures', 'numero_arrete', 'intitule_arrete', 'pouvoir_de_signature', 'nom_commune', 'nom_signataire', 'departement'] %}
 
 {% block title %}
     {{ metaTitle }} - {{ parent() }}
@@ -58,10 +51,10 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% for variable in variables %}
+                                                    {% for variable in variableNames %}
                                                         <tr>
-                                                            <td>{{ variable.label }}</td>
-                                                            <td>{{ variable.value }}</td>
+                                                            <td>{{ ('regulation_order_template.variables.list.' ~ variable)|trans }}</td>
+                                                            <td>{{ ('[' ~ variable ~ ']') }}</td>
                                                         </tr>
                                                     {% endfor %}
                                                 </tbody>
@@ -79,7 +72,14 @@
                         attr: {
                             'data-controller': 'rich-text',
                             'data-rich-text-height-value': 100,
-                            'data-rich-text-variables-value': variables|json_encode|raw
+                            'data-rich-text-variables-value': adminForm.labelsValues([
+                                'numero_arrete',
+                                'intitule_arrete',
+                                'pouvoir_de_signature',
+                                'nom_commune',
+                                'nom_signataire',
+                                'departement'
+                            ])|raw
                         }
                     }) }}
                     {{ form_row(form.visaContent, {
@@ -88,7 +88,14 @@
                         attr: {
                             'data-controller': 'rich-text',
                             'data-rich-text-height-value': 400,
-                            'data-rich-text-variables-value': variables|json_encode|raw
+                            'data-rich-text-variables-value': adminForm.labelsValues([
+                                'numero_arrete',
+                                'intitule_arrete',
+                                'pouvoir_de_signature',
+                                'nom_commune',
+                                'nom_signataire',
+                                'departement'
+                            ])|raw
                         }
                     }) }}
                     {{ form_row(form.consideringContent, {
@@ -97,7 +104,14 @@
                         attr: {
                             'data-controller': 'rich-text',
                             'data-rich-text-height-value': 100,
-                            'data-rich-text-variables-value': variables|json_encode|raw
+                            'data-rich-text-variables-value': adminForm.labelsValues([
+                                'numero_arrete',
+                                'intitule_arrete',
+                                'pouvoir_de_signature',
+                                'nom_commune',
+                                'nom_signataire',
+                                'departement'
+                            ])|raw
                         }
                     }) }}
                     {{ form_row(form.articleContent, {
@@ -106,7 +120,15 @@
                         attr: {
                             'data-controller': 'rich-text',
                             'data-rich-text-height-value': 400,
-                            'data-rich-text-variables-value': variables|json_encode|raw
+                            'data-rich-text-variables-value': adminForm.labelsValues([
+                                'mesures',
+                                'numero_arrete',
+                                'intitule_arrete',
+                                'pouvoir_de_signature',
+                                'nom_commune',
+                                'nom_signataire',
+                                'departement'
+                            ])|raw
                         }
                     }) }}
                     <a href="{{ path('app_config_regulation_order_templates_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
