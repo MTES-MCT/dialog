@@ -81,10 +81,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Install Composer dependencies
-        run: |
-          composer install -n --prefer-dist --no-dev
-
       - name: Init environment variables
         run: |
           echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> $GITHUB_ENV
