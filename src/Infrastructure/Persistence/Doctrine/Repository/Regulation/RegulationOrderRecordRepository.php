@@ -384,7 +384,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 $excludedIdentifiers ? 'ro.identifier NOT IN (:excludedIdentifiers)' : null,
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
                 $excludedOrgUuids ? 'roc.organization NOT IN (:excludedOrgUuids)' : null,
-                'm.type = :measureType',
+                'm.type IN (:measureTypes)',
                 'v IS NULL or v.restrictedTypes = \'a:0:{}\'',
             )
             ->setParameters([
@@ -393,7 +393,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
                 ...($excludedOrgUuids ? ['excludedOrgUuids' => $excludedOrgUuids] : []),
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                'measureType' => MeasureTypeEnum::NO_ENTRY->value,
+                'measureTypes' => [MeasureTypeEnum::NO_ENTRY->value, MeasureTypeEnum::ALTERNATE_ROAD->value],
                 'today' => $this->dateUtils->getNow(),
                 'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
                 // Allow RawGeoJSON locations only for Litteralis source

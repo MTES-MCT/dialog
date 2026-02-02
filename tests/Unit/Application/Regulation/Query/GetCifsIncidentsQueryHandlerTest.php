@@ -14,6 +14,7 @@ use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
+use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\RawGeoJSON;
@@ -134,7 +135,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $incident3 = new CifsIncidentView(
             id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
-            type: 'ROAD_CLOSED',
+            type: 'HAZARD_ON_ROAD_LANE_CLOSED',
             subType: 'ROAD_BLOCKED_CONSTRUCTION',
             street: 'Avenue de Fonneuve',
             direction: 'BOTH_DIRECTIONS',
@@ -275,6 +276,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn(RegulationSubjectEnum::INCIDENT->value);
 
         $measure1 = $this->createMock(Measure::class);
+        $measure1
+            ->expects(self::atLeastOnce())
+            ->method('getType')
+            ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
 
         $measure1
             ->expects(self::once())
@@ -366,6 +371,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn(RegulationSubjectEnum::ROAD_MAINTENANCE->value);
 
         $measure2 = $this->createMock(Measure::class);
+        $measure2
+            ->expects(self::atLeastOnce())
+            ->method('getType')
+            ->willReturn(MeasureTypeEnum::ALTERNATE_ROAD->value);
 
         $period1 = $this->createMock(Period::class);
         $period1
