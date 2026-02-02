@@ -22,10 +22,11 @@ final class LitteralisImportCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful($commandTester->getDisplay());
 
         $output = $commandTester->getDisplay();
-        // These results depend on LitteralisMockHttpClient
+
+        // These results depend on LitteralisMockHttpClient.data.json
         $this->assertStringContainsString("Nombre total d'emprises dans Litteralis pour cette organisation : 2", $output);
         $this->assertStringContainsString("Emprises d'intérêt récupérées dans Litteralis : 2", $output);
-        $this->assertStringContainsString("Emprises effectivement candidates à l'import : 2 (dans 1 arrêtés)", $output);
-        $this->assertStringContainsString('Emprises importées avec succès : 2 (dans 1 arrêtés)', $output);
+        $this->assertStringContainsString("Emprises effectivement candidates à l'import : 3 (dans 2 arrêtés)", $output);
+        $this->assertStringContainsString('Emprises importées avec succès : 3 (dans 2 arrêtés)', $output);
     }
 }
