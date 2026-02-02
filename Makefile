@@ -295,6 +295,7 @@ ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make bdtopo_migrate
 
 ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow
+	make composer CMD="install -n --prefer-dist"
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
 	# Créer le tunnel vers la base BDTOPO
 	# On utilise scalingo db-tunnel directement car scalingodbtunnel nécessite Docker
