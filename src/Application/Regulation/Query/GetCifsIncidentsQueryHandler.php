@@ -37,7 +37,6 @@ final class GetCifsIncidentsQueryHandler
             $this->cifsFilterSet->allowedLocationIds,
             $this->cifsFilterSet->excludedOrgUuids,
         );
-
         $uuids = [];
 
         /** @var RegulationOrderRecord $regulationOrderRecord */
@@ -46,7 +45,6 @@ final class GetCifsIncidentsQueryHandler
         }
 
         $overallDates = $this->repository->getOverallDatesByRegulationUuids($uuids);
-
         // Reference: https://developers.google.com/waze/data-feed/cifs-specification?hl=fr
         $incidents = [];
 
@@ -142,7 +140,15 @@ final class GetCifsIncidentsQueryHandler
                     $street = $location->getCifsStreetLabel();
 
                     $geometry = $location->getGeometry();
+                    if ($geometry === null) {
+                        continue;
+                    }
 
+                    // S'assurer que la géométrie est du GeoJSON LineString ou MultiLineString (sans GeometryCollection, points, etc.).
+                    $geometry = $this->polylineMaker->normalizeToLineStringGeoJSON($geometry);
+                    if ($geometry === null) {
+                        continue;
+                    }
                     $direction = 'BOTH_DIRECTIONS';
 
                     if ($location->getNamedStreet()) {
@@ -154,28 +160,29 @@ final class GetCifsIncidentsQueryHandler
                         $geometry = $this->polylineMaker->attemptMergeLines($geometry);
                     }
 
-                    $polylines = $this->polylineMaker->getPolylines($geometry);
+                    $polyline = $this->polylineMaker->getMergedPolyline($geometry);
+                    if (!$polyline) {
+                        continue;
+                    }
 
                     foreach ($incidentPeriods as $incidentPeriod) {
-                        foreach ($polylines as $polyline) {
-                            // The ID of a CIFS incident is opaque to Waze, we can define it as we want.
-                            // But it must be "unique inside the feed and remain stable over an incident's lifetime".
-                            // We include the regulation order identifier and location ID so that we can identify where an incident comes from.
-                            $id = $identifier . ':' . $locationId . ':' . md5($polyline) . ':' . $incidentPeriod['id'];
+                        // L'ID d'un incident CIFS est opaque pour Waze, on le définit comme on veut.
+                        // Il doit être "unique dans le flux et rester stable pendant toute la vie de l'incident".
+                        // Un incident logique par (règlement, lieu, période) — pas de hash de la polyline pour éviter les doublons avec un MultiLineString.
+                        $id = $identifier . ':' . $locationId . ':' . $incidentPeriod['id'];
 
-                            $incidents[] = new CifsIncidentView(
-                                id: $id,
-                                creationTime: $incidentCreationTime,
-                                type: MeasureTypeEnum::from($measure->getType())->getCifsKey(),
-                                subType: $subType,
-                                street: $street,
-                                direction: $direction,
-                                polyline: $polyline,
-                                startTime: $incidentPeriod['start'],
-                                endTime: $incidentPeriod['end'],
-                                schedule: $incidentPeriod['schedule'],
-                            );
-                        }
+                        $incidents[] = new CifsIncidentView(
+                            id: $id,
+                            creationTime: $incidentCreationTime,
+                            type: MeasureTypeEnum::from($measure->getType())->getCifsKey(),
+                            subType: $subType,
+                            street: $street,
+                            direction: $direction,
+                            polyline: $polyline,
+                            startTime: $incidentPeriod['start'],
+                            endTime: $incidentPeriod['end'],
+                            schedule: $incidentPeriod['schedule'],
+                        );
                     }
                 }
             }
