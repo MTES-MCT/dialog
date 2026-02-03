@@ -58,6 +58,10 @@
                                     <unitOfMeasure>kilometresPerHour</unitOfMeasure>
                                 </maxValue>
                             </typeOfRegulation>
+                        {% elseif trafficRegulation.type == 'alternateRoad' %}
+                            <typeOfRegulation xsi:type="RoadOrCarriagewayOrLaneManagement">
+                                <roadOrCarriagewayOrLaneManagementType>singleAlternateLineTraffic</roadOrCarriagewayOrLaneManagementType>
+                            </typeOfRegulation>
                         {% elseif trafficRegulation.type == 'storageArea' %}
                             <typeOfRegulation xsi:type="MandatoryRoadOrCarriagewayOrLaneUsage">
                                 <otherObligation>
