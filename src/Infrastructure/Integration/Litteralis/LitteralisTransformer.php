@@ -37,6 +37,7 @@ final readonly class LitteralisTransformer
         'Circulation interdite RD' => MeasureTypeEnum::NO_ENTRY->value,
         'Limitation de vitesse RD' => MeasureTypeEnum::SPEED_LIMITATION->value,
         'Stationnement - Interdiction' => MeasureTypeEnum::PARKING_PROHIBITED->value,
+        'Circulation alternée' => MeasureTypeEnum::ALTERNATE_ROAD->value,
     ];
 
     public function __construct(
@@ -321,7 +322,7 @@ final readonly class LitteralisTransformer
 
             [$name, $item] = array_map(fn ($s) => trim($s), $parts);
 
-            if (preg_match('/^(?P<name>[\s|\w]+) (?P<number>\d+)$/i', $name, $matches)) {
+            if (preg_match('/^(?P<name>[\s|\w|-]+) (?P<number>\d+)$/i', $name, $matches)) {
                 // Si un numéro est indiqué, il doit correspondre au index commençant à 1 de la mesure dans le champ 'mesures'.
                 $cleanedName = $matches['name'];
                 $number = (int) $matches['number'];

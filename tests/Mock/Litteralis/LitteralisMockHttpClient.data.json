@@ -272,6 +272,135 @@
                 3.0516626551,
                 50.6876142861
             ]
+        },
+        {
+            "type": "Feature",
+            "id": "litteralis.878968",
+            "geometry": {
+                "type": "MultiLineString",
+                "coordinates": [
+                    [
+                        [
+                            3.8535594645,
+                            43.6468188876
+                        ],
+                        [
+                            3.8537447725,
+                            43.6467295899
+                        ],
+                        [
+                            3.8538135156,
+                            43.6467039522
+                        ],
+                        [
+                            3.8538506703,
+                            43.6466459351
+                        ],
+                        [
+                            3.8538671646,
+                            43.6465930998
+                        ],
+                        [
+                            3.8538524817,
+                            43.6465354898
+                        ],
+                        [
+                            3.8537501327,
+                            43.6463932352
+                        ],
+                        [
+                            3.8536722367,
+                            43.646268357
+                        ]
+                    ],
+                    [
+                        [
+                            3.8526160426,
+                            43.6454333531
+                        ],
+                        [
+                            3.8527336132,
+                            43.6454374506
+                        ],
+                        [
+                            3.8529560514,
+                            43.645521039
+                        ],
+                        [
+                            3.853077974,
+                            43.6455853371
+                        ],
+                        [
+                            3.8532073312,
+                            43.6456847139
+                        ],
+                        [
+                            3.8533051387,
+                            43.6457542204
+                        ],
+                        [
+                            3.8534177406,
+                            43.6458888658
+                        ]
+                    ],
+                    [
+                        [
+                            3.8521116019,
+                            43.6509455398
+                        ],
+                        [
+                            3.8520225753,
+                            43.6505900795
+                        ],
+                        [
+                            3.8520390986,
+                            43.6504943956
+                        ],
+                        [
+                            3.852138774,
+                            43.6503589695
+                        ]
+                    ]
+                ]
+            },
+            "geometry_name": "geometry",
+            "properties": {
+                "idemprise": 878968,
+                "idarrete": 850841692,
+                "shorturl": "https://dl.sogelink.fr/?yCAUcdlG",
+                "arretesrcid": "2025_TPTM4402",
+                "collectivitelibelle": "MONTPELLIER MEDITERRANEE METROPOLE",
+                "collectiviteid": null,
+                "collectiviteagencelibelle": "Pôle Territorial Montpellier",
+                "collectiviteagenceid": 126055,
+                "documenttype": "ARRETE TEMPORAIRE",
+                "arretedebut": "2025-10-17T02:00:00Z",
+                "arretefin": "2025-11-28T01:00:00Z",
+                "empriseno": 1,
+                "emprisetype": "STATIONNEMENT",
+                "emprisedebut": "2025-10-17T02:00:00Z",
+                "emprisefin": "2025-11-28T01:00:00Z",
+                "mesures": "2021 - Circulation alternée;2021 - Limitation de vitesse;2021 - Interdiction de stationnement",
+                "localisations": "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY",
+                "idagence": 126055,
+                "fournisseur": "LIEX",
+                "publicationinternet": true,
+                "emetteurlibelle": "ORANGE Ingénierie Gestion Affaires",
+                "emetteurid": null,
+                "categoriesmodele": "Travaux",
+                "nommodele": "Arrêté temporaire travaux",
+                "parametresarrete": "Date d'envoi de la demande : 17/10/2025 00:00:00 ; Date de réception de la demande : 17/10/2025 00:00:00 ; Numéro de dossier demandeur : PMR 9634 ; Date de début de l'arrêté : 17/10/2025 00:00:00 ; Date de fin de l'arrêté : 28/11/2025 00:00:00 ; ajout annexe : N ; chargé de MEP de la signalisation : Le demandeur de l'acte",
+                "parametresemprise": "Dates de l'emprise : Du 17/10/2025 00:00:00 au 28/11/2025 00:00:00",
+                "parametresmesures": "2021 - Circulation alternée | type d'alternat : B15+C18 ; 2021 - Circulation alternée | longueur maximale alternat : 0 ; 2021 - Limitation de vitesse 2 | limite de vitesse : 30 km/h ; 2021 - Interdiction de stationnement 3 | Nombre de places neutralisées : au droit des interventions ; 2021 - Interdiction de stationnement 3 | dérogations : véhicules de l'entreprise exécutant les travaux ; 2021 - Interdiction de stationnement 3 | caractère aggravant : gênant ; 2021 - Interdiction de stationnement 3 | fourrière  : Oui",
+                "datecreation": "2025-10-18T08:50:35.378Z",
+                "datemodification": "2025-10-18T08:50:35.908Z"
+            },
+            "bbox": [
+                3.8520225753,
+                43.6454333531,
+                3.8538671646,
+                43.6509455398
+            ]
         }
     ],
     "totalFeatures": 2,

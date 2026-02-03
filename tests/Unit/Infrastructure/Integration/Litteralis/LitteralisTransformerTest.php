@@ -62,12 +62,13 @@ final class LitteralisTransformerTest extends TestCase
         $identifier = '173214#24/0194';
 
         $this->roadGeocoder
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('convertPolygonRoadToLines')
-            ->withConsecutive([self::anything()], [self::anything()])
-            ->willReturnOnConsecutiveCalls('geometry1', 'geometry2');
+            ->withConsecutive([self::anything()], [self::anything()], [self::anything()])
+            ->willReturnOnConsecutiveCalls('geometry1', 'geometry2', 'geometry3');
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
+
         $generalInfo->identifier = $identifier;
         $generalInfo->category = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
         $generalInfo->subject = RegulationSubjectEnum::ROAD_MAINTENANCE->value;
@@ -137,9 +138,97 @@ final class LitteralisTransformerTest extends TestCase
 
         $measureCommands[] = $measureCommand2;
 
+        $measureCommand3 = new SaveMeasureCommand();
+        $measureCommand3->type = MeasureTypeEnum::ALTERNATE_ROAD->value;
+        $measureCommand3->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
+
+        $location3 = new SaveLocationCommand();
+        $location3->organization = $this->organization;
+        $location3->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $rawGeoJSON3 = new SaveRawGeoJSONCommand();
+        $rawGeoJSON3->label = "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY";
+        $rawGeoJSON3->geometry = 'geometry3';
+        $location3->rawGeoJSON = $rawGeoJSON3;
+        $measureCommand3->addLocation($location3);
+
+        $vehicleSet3 = new SaveVehicleSetCommand();
+        $vehicleSet3->allVehicles = true;
+        $vehicleSet3->restrictedTypes = [];
+        $vehicleSet3->otherRestrictedTypeText = null;
+        $vehicleSet3->heavyweightMaxWeight = null;
+        $measureCommand3->vehicleSet = $vehicleSet3;
+
+        $period3 = new SavePeriodCommand();
+        $period3->startDate = $period3->startTime = new \DateTimeImmutable('2025-10-17T02:00:00Z');
+        $period3->endDate = $period3->endTime = new \DateTimeImmutable('2025-11-28T01:00:00Z');
+        $period3->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $measureCommand3->periods[] = $period3;
+
+        $measureCommands[] = $measureCommand3;
+
+        $measureCommand4 = new SaveMeasureCommand();
+        $measureCommand4->type = MeasureTypeEnum::SPEED_LIMITATION->value;
+        $measureCommand4->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
+        $measureCommand4->maxSpeed = 30;
+
+        $location4 = new SaveLocationCommand();
+        $location4->organization = $this->organization;
+        $location4->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $rawGeoJSON4 = new SaveRawGeoJSONCommand();
+        $rawGeoJSON4->label = "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY";
+        $rawGeoJSON4->geometry = 'geometry3';
+        $location4->rawGeoJSON = $rawGeoJSON4;
+        $measureCommand4->addLocation($location4);
+
+        $vehicleSet4 = new SaveVehicleSetCommand();
+        $vehicleSet4->allVehicles = true;
+        $vehicleSet4->restrictedTypes = [];
+        $vehicleSet4->otherRestrictedTypeText = null;
+        $vehicleSet4->heavyweightMaxWeight = null;
+        $measureCommand4->vehicleSet = $vehicleSet4;
+
+        $period4 = new SavePeriodCommand();
+        $period4->startDate = $period4->startTime = new \DateTimeImmutable('2025-10-17T02:00:00Z');
+        $period4->endDate = $period4->endTime = new \DateTimeImmutable('2025-11-28T01:00:00Z');
+        $period4->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $measureCommand4->periods[] = $period4;
+
+        $measureCommands[] = $measureCommand4;
+
+        $measureCommand5 = new SaveMeasureCommand();
+        $measureCommand5->type = MeasureTypeEnum::PARKING_PROHIBITED->value;
+        $measureCommand5->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
+
+        $location5 = new SaveLocationCommand();
+        $location5->organization = $this->organization;
+        $location5->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $rawGeoJSON5 = new SaveRawGeoJSONCommand();
+        $rawGeoJSON5->label = "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY";
+        $rawGeoJSON5->geometry = 'geometry3';
+        $location5->rawGeoJSON = $rawGeoJSON5;
+        $measureCommand5->addLocation($location5);
+
+        $vehicleSet5 = new SaveVehicleSetCommand();
+        $vehicleSet5->allVehicles = true;
+        $vehicleSet5->restrictedTypes = [];
+        $vehicleSet5->exemptedTypes = [VehicleTypeEnum::OTHER->value];
+        $vehicleSet5->otherExemptedTypeText = "véhicules de l'entreprise exécutant les travaux";
+        $vehicleSet5->otherRestrictedTypeText = null;
+        $vehicleSet5->heavyweightMaxWeight = null;
+        $measureCommand5->vehicleSet = $vehicleSet5;
+
+        $period5 = new SavePeriodCommand();
+        $period5->startDate = $period5->startTime = new \DateTimeImmutable('2025-10-17T02:00:00Z');
+        $period5->endDate = $period5->endTime = new \DateTimeImmutable('2025-11-28T01:00:00Z');
+        $period5->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY->value;
+        $measureCommand5->periods[] = $period5;
+
+        $measureCommands[] = $measureCommand5;
+
         $expectedCommand = new ImportLitteralisRegulationCommand($generalInfo, $measureCommands, 'https://dl.sogelink.fr/?0dbjHha7');
 
         $command = $this->transformer->transform($this->reporter, $identifier, $this->realWorldFeatures, $this->organization);
+
         $this->assertFalse($this->reporter->hasNewErrors());
         $this->assertEquals([], $this->reporter->getRecords());
         $this->assertEquals($expectedCommand, $command);
@@ -530,6 +619,7 @@ final class LitteralisTransformerTest extends TestCase
     {
         // Test avec différentes années pour vérifier que c'est bien dynamique
         $testCases = [
+            ['year' => '2021', 'measure' => 'Circulation alternée'],
             ['year' => '2022', 'measure' => 'Interdiction de stationnement'],
             ['year' => '2023', 'measure' => 'Circulation interdite'],
             ['year' => '2024', 'measure' => 'Limitation de vitesse'],
