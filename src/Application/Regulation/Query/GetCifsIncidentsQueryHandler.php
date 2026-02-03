@@ -8,6 +8,7 @@ use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\View\CifsIncidentView;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
@@ -24,6 +25,7 @@ final class GetCifsIncidentsQueryHandler
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
+        private RoadGeocoderInterface $roadGeocoder,
         private DateUtilsInterface $dateUtils,
         private CifsFilterSet $cifsFilterSet = new CifsFilterSet(),
     ) {
@@ -149,11 +151,11 @@ final class GetCifsIncidentsQueryHandler
                         $direction = DirectionEnum::toCifsDirection($location->getNamedStreet()->getDirection());
                     }
 
+                    // Pour les RawGeoJSON (ex. Litteralis), convertir polygon → linéaire uniquement à l'export CIFS
+                    // (no-op pour LineString/MultiLineString). Le reste est géométrie brute → polyline.
                     if ($location->getRawGeoJSON()) {
-                        // Simplify the geometry to a (MULTI)LINESTRING with deduplicated segments.
-                        $geometry = $this->polylineMaker->attemptMergeLines($geometry);
+                        $geometry = $this->roadGeocoder->convertPolygonRoadToLines($geometry);
                     }
-
                     $polylines = $this->polylineMaker->getPolylines($geometry);
 
                     foreach ($incidentPeriods as $incidentPeriod) {

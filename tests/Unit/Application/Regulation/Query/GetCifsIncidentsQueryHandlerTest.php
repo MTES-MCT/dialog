@@ -10,6 +10,7 @@ use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
@@ -28,12 +29,14 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
     private $regulationOrderRecordRepository;
     private $polylineMaker;
+    private $roadGeocoder;
     private $dateUtils;
 
     protected function setUp(): void
     {
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
+        $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
@@ -44,7 +47,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->roadGeocoder, $this->dateUtils);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -325,11 +328,11 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getGeometry')
             ->willReturn($geometry1bis);
 
-        $this->polylineMaker
+        $this->roadGeocoder
             ->expects(self::once())
-            ->method('attemptMergeLines')
+            ->method('convertPolygonRoadToLines')
             ->with($geometry1bis)
-            ->willReturn('mergedGeometry1bis');
+            ->willReturn($geometry1bis);
 
         $measure1
             ->expects(self::once())
@@ -609,7 +612,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->polylineMaker
             ->expects(self::exactly(3))
             ->method('getPolylines')
-            ->withConsecutive([$geometry1], ['mergedGeometry1bis'], [$geometry2])
+            ->withConsecutive([$geometry1], [$geometry1bis], [$geometry2])
             ->willReturnOnConsecutiveCalls([$polyline1, $polyline2], [$polyline1bis], [$polyline3]);
 
         $this->regulationOrderRecordRepository
@@ -631,7 +634,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 $uuid2 => ['uuid' => $uuid2, 'overallStartDate' => $startDate2, 'overallEndDate' => $endDate2],
             ]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->roadGeocoder, $this->dateUtils);
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
             [$incident1, $incident2, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
@@ -650,6 +653,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $handler = new GetCifsIncidentsQueryHandler(
             $this->regulationOrderRecordRepository,
             $this->polylineMaker,
+            $this->roadGeocoder,
             $this->dateUtils,
             new CifsFilterSet(
                 allowedSources: ['my_source'],

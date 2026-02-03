@@ -10,7 +10,6 @@ use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\RoadGeocoderInterface;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
@@ -40,7 +39,6 @@ final readonly class LitteralisTransformer
     ];
 
     public function __construct(
-        private RoadGeocoderInterface $roadGeocoder,
         private LitteralisPeriodParser $periodParser,
     ) {
     }
@@ -196,12 +194,9 @@ final readonly class LitteralisTransformer
         $properties = $feature['properties'];
         $label = trim($properties['localisations'] ?? 'Localisation sans description');
 
-        // Selon la collectivité, la géométrie peut être de plusieurs sortes :
-        // * (Cas par défaut) Un linéaire, sous forme de LINESTRING ou MULTILINESTRING => on importe tel quel.
-        // * Un POLYGON ou un MULTIPOLYGON dessiné(s) par un agent dans Litteralis => On convertit en linéaire en s'aidant des tronçons de route de la BDTOPO.
-        $geometry = json_encode($feature['geometry']);
-
-        $sectionsGeometry = $this->roadGeocoder->convertPolygonRoadToLines($geometry);
+        // On stocke la géométrie brute telle que reçue de Litteralis (aucune transformation à l'import).
+        // La conversion polygon → linéaire (si besoin) se fait à l'export CIFS uniquement.
+        $sectionsGeometry = json_encode($feature['geometry']);
 
         $locationCommand = new SaveLocationCommand();
         $locationCommand->organization = $organization;
