@@ -57,5 +57,7 @@ interface RegulationOrderRecordRepositoryInterface
 
     public function countRegulationOrderRecordsForOrganizationDuringCurrentMonth(string $uuid): int;
 
+    public function findAllForMetabaseExport(): array;
+
     public function detach(RegulationOrderRecord $regulationOrderRecord): void;
 }

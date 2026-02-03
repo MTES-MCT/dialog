@@ -530,6 +530,51 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ;
     }
 
+    public function findAllForMetabaseExport(): array
+    {
+        $query = $this->createQueryBuilder('roc')
+            ->select(
+                'roc.uuid AS record_uuid',
+                'o.uuid AS organization_uuid',
+                'ro.uuid AS regulation_order_uuid',
+                'roc.status',
+                'ro.category',
+                'ro.subject',
+                'roc.source',
+                'roc.createdAt AS created_at',
+            )
+            ->addSelect(\sprintf('(%s) AS overall_start_date', str_replace('%%n', '20', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
+            ->addSelect(\sprintf('(%s) AS overall_end_date', str_replace('%%n', '21', self::OVERALL_END_DATE_QUERY_TEMPLATE)))
+            ->innerJoin('roc.organization', 'o')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where('o.uuid <> :dialogOrgId')
+            ->setParameter('dialogOrgId', $this->dialogOrgId)
+            ->addGroupBy('roc', 'ro', 'o')
+            ->getQuery();
+
+        $rows = $query->getResult();
+
+        return array_map(function (array $row): array {
+            $createdAt = $row['created_at'] ?? null;
+            $overallStart = $row['overall_start_date'] ?? null;
+            $overallEnd = $row['overall_end_date'] ?? null;
+
+            return [
+                'record_uuid' => $row['record_uuid'],
+                'organization_uuid' => $row['organization_uuid'],
+                'regulation_order_uuid' => $row['regulation_order_uuid'],
+                'status' => $row['status'],
+                'category' => $row['category'],
+                'subject' => $row['subject'],
+                'source' => $row['source'],
+                'created_at' => $createdAt instanceof \DateTimeInterface ? $createdAt->format(\DateTimeInterface::ATOM) : (string) $createdAt,
+                'overall_start_date' => $overallStart instanceof \DateTimeInterface ? $overallStart->format(\DateTimeInterface::ATOM) : ($overallStart ? (string) $overallStart : null),
+                'overall_end_date' => $overallEnd instanceof \DateTimeInterface ? $overallEnd->format(\DateTimeInterface::ATOM) : ($overallEnd ? (string) $overallEnd : null),
+                'is_permanent' => $row['category'] === RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
+            ];
+        }, $rows);
+    }
+
     public function detach(RegulationOrderRecord $regulationOrderRecord): void
     {
         $this->getEntityManager()->detach($regulationOrderRecord);

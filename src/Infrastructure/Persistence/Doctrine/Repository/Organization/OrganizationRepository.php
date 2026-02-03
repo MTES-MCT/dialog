@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Organization;
 
 use App\Application\User\View\OrganizationView;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -138,6 +139,23 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
                 'regionCodeType' => OrganizationCodeTypeEnum::REGION->value,
             ],
         );
+    }
+
+    public function findAllForMetabaseExport(): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->select(
+                'o.uuid AS organization_uuid',
+                'o.name AS organization_name',
+                'o.codeType AS code_type',
+                '(SELECT COUNT(ou.uuid) FROM App\Domain\User\OrganizationUser ou WHERE ou.organization = o) AS nb_users',
+                '(SELECT COUNT(ror.uuid) FROM App\Domain\Regulation\RegulationOrderRecord ror WHERE ror.organization = o AND ror.status = :published) AS nb_published_regulation_orders',
+            )
+            ->where('o.uuid <> :dialogOrgId')
+            ->setParameter('dialogOrgId', $this->dialogOrgId)
+            ->setParameter('published', RegulationOrderRecordStatusEnum::PUBLISHED->value);
+
+        return $qb->getQuery()->getResult();
     }
 
     public function computeCentroidFromGeoJson(string $geoJson): string

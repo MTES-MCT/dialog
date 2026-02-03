@@ -62,6 +62,25 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
         $this->assertSame('2023-06-09 00:00:00', $rows[2]['uploaded_at']);
         $this->assertSame(null, $rows[2]['last_active_at']);
 
+        // Check organization extract (organizations excluding DiaLog org)
+        $orgRows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_organization_extract');
+        $this->assertGreaterThanOrEqual(1, \count($orgRows));
+        $this->assertEqualsCanonicalizing(
+            ['id', 'uploaded_at', 'organization_uuid', 'organization_name', 'organization_type', 'nb_users', 'nb_published_regulation_orders'],
+            array_keys($orgRows[0]),
+        );
+        foreach ($orgRows as $row) {
+            $this->assertSame($executionDate, $row['uploaded_at']);
+        }
+
+        // Check regulation order records extract
+        $rorRows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_regulation_order_record');
+        $this->assertGreaterThanOrEqual(1, \count($rorRows));
+        $this->assertEqualsCanonicalizing(
+            ['id', 'uploaded_at', 'record_uuid', 'organization_uuid', 'status', 'category', 'subject', 'source', 'created_at', 'publication_date', 'start_date', 'end_date', 'is_permanent', 'validity_status'],
+            array_keys($rorRows[0]),
+        );
+
         // Execute again to test for uuid conflicts
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();

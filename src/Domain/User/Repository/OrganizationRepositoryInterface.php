@@ -28,6 +28,8 @@ interface OrganizationRepositoryInterface
 
     public function findAllForStatistics(): array;
 
+    public function findAllForMetabaseExport(): array;
+
     /**
      * Calcule le centroïde d'une géométrie GeoJSON avec PostGIS.
      * Utilise ST_PointOnSurface pour garantir que le point est sur la surface de la géométrie.

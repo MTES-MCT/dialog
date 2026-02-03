@@ -37,6 +37,34 @@ final class RegulationOrderHistoryRepository extends ServiceEntityRepository imp
         ;
     }
 
+    public function findPublicationDatesByRegulationOrderUuids(array $regulationOrderUuids): array
+    {
+        if (0 === \count($regulationOrderUuids)) {
+            return [];
+        }
+
+        $results = $this->createQueryBuilder('roh')
+            ->select('roh.regulationOrderUuid, MAX(roh.date) as publication_date')
+            ->where('roh.regulationOrderUuid IN (:uuids)')
+            ->andWhere('roh.action = :action')
+            ->setParameter('uuids', $regulationOrderUuids)
+            ->setParameter('action', ActionTypeEnum::PUBLISH->value)
+            ->groupBy('roh.regulationOrderUuid')
+            ->getQuery()
+            ->getResult();
+
+        $map = [];
+
+        foreach ($results as $row) {
+            $date = $row['publication_date'];
+            $map[$row['regulationOrderUuid']] = $date instanceof \DateTimeInterface
+                ? $date->format(\DateTimeInterface::ATOM)
+                : (string) $date;
+        }
+
+        return $map;
+    }
+
     public function countCreatedRegulationOrdersByUserUuids(array $userUuids): array
     {
         if (0 === \count($userUuids)) {
