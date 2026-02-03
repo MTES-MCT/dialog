@@ -38,15 +38,26 @@ def _popen_terminate_on_exit(*args, **kwargs):
             proc.terminate()
 
 
+def _scalingo_cmd(region: str | None, *args: str) -> list[str]:
+    cmd = ["scalingo"]
+    if region:
+        cmd.extend(["--region", region])
+    cmd.extend(args)
+    return cmd
+
+
 def main(
     app: str,
     port: int,
     host_url: bool = False,
+    region: str = "osc-fr1",
 ):
     # Ensure Scalingo CLI is authenticated
-    result = subprocess.run(["scalingo", "whoami"], capture_output=True)
+    result = subprocess.run(_scalingo_cmd(region, "whoami"), capture_output=True)
     if result.returncode:
-        result = subprocess.run(["scalingo", "login", "--ssh"], capture_output=True)
+        result = subprocess.run(
+            _scalingo_cmd(region, "login", "--ssh"), capture_output=True
+        )
         if result.returncode:
             print("ERROR: not authenticated and failed to run 'scalingo login --ssh'")
             print(
@@ -58,15 +69,9 @@ def main(
     # 1) Forward Scalingo -> host.
 
     # https://doc.scalingo.com/platform/databases/access#encrypted-tunnel
-    db_tunnel_command = [
-        "scalingo",
-        "--app",
-        app,
-        "db-tunnel",
-        "-p",
-        str(port),
-        "DATABASE_URL",
-    ]
+    db_tunnel_command = _scalingo_cmd(
+        region, "--app", app, "db-tunnel", "-p", str(port), "DATABASE_URL"
+    )
 
     with _popen_terminate_on_exit(
         db_tunnel_command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
@@ -101,7 +106,7 @@ def main(
             # The tunnel database URL uses the same credentials, so we grab them
             # from the configured DATABASE_URL.
             database_url = urlparse(
-                _get_output(["scalingo", "--app", app, "env-get", "DATABASE_URL"])
+                _get_output(_scalingo_cmd(region, "--app", app, "env-get", "DATABASE_URL"))
             )
 
             # DB tunnel is always available on localhost, so we can show either.
@@ -135,7 +140,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Show URL of the tunnel on the host, not Docker",
     )
+    parser.add_argument(
+        "--region",
+        default="osc-fr1",
+        help="Scalingo region (default: osc-fr1).",
+    )
 
     args = parser.parse_args()
 
-    sys.exit(main(args.app, args.port, host_url=args.host_url))
+    sys.exit(main(args.app, args.port, host_url=args.host_url, region=args.region))
