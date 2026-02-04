@@ -18,41 +18,38 @@ final class PolylineMakerTest extends WebTestCase
         $this->polylineMaker = $container->get(PolylineMakerInterface::class);
     }
 
-    private function provideConvertToPolylines(): array
+    public function testGetMergedPolyline(): void
     {
-        return [
-            'empty' => [
-                'geometry' => '{"type": "LineString", "coordinates": []}',
-                'polylines' => [],
-            ],
-            'line' => [
-                'geometry' => '{"type": "LineString", "coordinates": [[0, 1], [2, 3]]}',
-                'polylines' => ['1 0 3 2'],
-            ],
-            'multiline-mergeable' => [
-                'geometry' => '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[2, 3], [4, 5]]]}',
-                'polylines' => ['1 0 3 2', '3 2 5 4'],
-            ],
-            'multiline-separate' => [
-                'geometry' => '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[4, 5], [6, 7]]]}',
-                'polylines' => ['1 0 3 2', '5 4 7 6'],
-            ],
-            'point' => [
-                'geometry' => '{"type": "Point", "coordinates": [0, 1]}',
-                'polylines' => [],
-            ],
-            'line-actually-point' => [
-                'geometry' => '{"type": "LineString", "coordinates": [[0, 1]]}',
-                'polylines' => [],
-            ],
-        ];
+        $geometry = '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[2, 3], [4, 5]]]}';
+        $merged = $this->polylineMaker->getMergedPolyline($geometry);
+        $this->assertSame('1 0 3 2 5 4', $merged);
     }
 
-    /**
-     * @dataProvider provideConvertToPolylines
-     */
-    public function testConvertToPolylines(string $geometry, array $polylines): void
+    public function testGetMergedPolylineEmpty(): void
     {
-        $this->assertEquals($polylines, $this->polylineMaker->getPolylines($geometry));
+        $this->assertSame('', $this->polylineMaker->getMergedPolyline('{"type": "Point", "coordinates": [0, 1]}'));
+        $this->assertSame('', $this->polylineMaker->getMergedPolyline('{"type": "LineString", "coordinates": []}'));
+    }
+
+    public function testNormalizeToLineStringGeoJSON(): void
+    {
+        $line = '{"type": "LineString", "coordinates": [[0, 1], [2, 3]]}';
+        $result = $this->polylineMaker->normalizeToLineStringGeoJSON($line);
+        $this->assertNotNull($result);
+        $decoded = json_decode($result, true);
+        $this->assertSame('LineString', $decoded['type']);
+        $this->assertArrayHasKey('coordinates', $decoded);
+        $this->assertCount(2, $decoded['coordinates']);
+
+        $multi = '{"type": "MultiLineString", "coordinates": [[[0, 1], [2, 3]], [[2, 3], [4, 5]]]}';
+        $resultMulti = $this->polylineMaker->normalizeToLineStringGeoJSON($multi);
+        $this->assertNotNull($resultMulti);
+        $decodedMulti = json_decode($resultMulti, true);
+        $this->assertContains($decodedMulti['type'], ['LineString', 'MultiLineString']);
+    }
+
+    public function testNormalizeToLineStringGeoJSONReturnsNullForPoint(): void
+    {
+        $this->assertNull($this->polylineMaker->normalizeToLineStringGeoJSON('{"type": "Point", "coordinates": [0, 1]}'));
     }
 }

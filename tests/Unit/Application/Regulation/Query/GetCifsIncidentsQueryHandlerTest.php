@@ -53,13 +53,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     public function testGetAll(): void
     {
         $polyline1 = '44.0289961 1.362275 44.0256652 1.359310';
-        $polyline1Hash = md5($polyline1);
-        $polyline1bis = '44.028906 1.3621753 44.045665 1.3533105';
-        $polyline1bisHash = md5($polyline1bis);
         $polyline2 = '44.0256652 1.359310 44.1545432 1.34541242';
-        $polyline2Hash = md5($polyline2);
+        $polyline1Merged = '44.0289961 1.362275 44.0256652 1.359310 44.1545432 1.34541242';
+        $polyline1bis = '44.028906 1.3621753 44.045665 1.3533105';
         $polyline3 = '44.028996 1.3622753 44.025665 1.3593105';
-        $polyline3Hash = md5($polyline3);
 
         $geometry1 = json_encode([
             'type' => 'MultiLineString',
@@ -94,33 +91,20 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period5Id = '066e2bff-d436-7f16-8000-57d9f6b99960';
 
         $incident1 = new CifsIncidentView(
-            id: \sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline1Hash),
+            id: '2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:0',
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'ROAD_CLOSED',
             subType: 'ROAD_BLOCKED_HAZARD',
             street: 'Rue des Arts',
             direction: 'BOTH_DIRECTIONS',
-            polyline: $polyline1,
+            polyline: $polyline1Merged,
             startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
             endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: [],
         );
 
-        $incident2 = new CifsIncidentView(
-            id: \sprintf('2024T1:02d5eb61-9ca3-4e67-aacd-726f124382d0:%s:0', $polyline2Hash),
-            creationTime: $incident1->creationTime,
-            type: $incident1->type,
-            subType: $incident1->subType,
-            street: $incident1->street,
-            direction: $incident1->direction,
-            polyline: $polyline2,
-            startTime: $incident1->startTime,
-            endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
-            schedule: $incident1->schedule,
-        );
-
         $incident1bis = new CifsIncidentView(
-            id: \sprintf('2024T1:066e98a9-0ce0-7e4b-8000-677c1eafc53d:%s:0', $polyline1bisHash),
+            id: '2024T1:066e98a9-0ce0-7e4b-8000-677c1eafc53d:0',
             creationTime: $incident1->creationTime,
             type: $incident1->type,
             subType: $incident1->subType,
@@ -133,7 +117,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident3 = new CifsIncidentView(
-            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period1Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s', $period1Id),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
             type: 'HAZARD_ON_ROAD_LANE_CLOSED',
             subType: 'ROAD_BLOCKED_CONSTRUCTION',
@@ -167,7 +151,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident4 = new CifsIncidentView(
-            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period2Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s', $period2Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -193,7 +177,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident5 = new CifsIncidentView(
-            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period3Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s', $period3Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -213,7 +197,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident6 = new CifsIncidentView(
-            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period4Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s', $period4Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -233,7 +217,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
 
         $incident7 = new CifsIncidentView(
-            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s:%s', $polyline3Hash, $period5Id),
+            id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s', $period5Id),
             creationTime: $incident3->creationTime,
             type: $incident3->type,
             subType: $incident3->subType,
@@ -324,6 +308,12 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getGeometry')
             ->willReturn($geometry1bis);
+
+        $this->polylineMaker
+            ->expects(self::exactly(3))
+            ->method('normalizeToLineStringGeoJSON')
+            ->withConsecutive([$geometry1], [$geometry1bis], [$geometry2])
+            ->willReturnOnConsecutiveCalls($geometry1, $geometry1bis, $geometry2);
 
         $this->polylineMaker
             ->expects(self::once())
@@ -608,9 +598,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 
         $this->polylineMaker
             ->expects(self::exactly(3))
-            ->method('getPolylines')
+            ->method('getMergedPolyline')
             ->withConsecutive([$geometry1], ['mergedGeometry1bis'], [$geometry2])
-            ->willReturnOnConsecutiveCalls([$polyline1, $polyline2], [$polyline1bis], [$polyline3]);
+            ->willReturnOnConsecutiveCalls($polyline1Merged, $polyline1bis, $polyline3);
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
@@ -634,7 +624,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils);
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
-            [$incident1, $incident2, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
+            [$incident1, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
             $incidents,
         );
     }
