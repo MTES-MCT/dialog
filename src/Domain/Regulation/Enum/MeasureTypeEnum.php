@@ -14,7 +14,7 @@ enum MeasureTypeEnum: string
     public function getCifsKey(): string
     {
         return match ($this) {
-            self::ALTERNATE_ROAD => 'HAZARD_ON_ROAD_LANE_CLOSED',
+            self::ALTERNATE_ROAD => 'HAZARD',
             self::NO_ENTRY => 'ROAD_CLOSED',
             self::SPEED_LIMITATION => 'HAZARD_ON_ROAD',
             default => 'HAZARD',
