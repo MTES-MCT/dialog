@@ -53,13 +53,7 @@ final class GetCifsIncidentsQueryHandler
             $uuid = $regulationOrderRecord->getUuid();
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
             $identifier = $regulationOrder->getIdentifier();
-
-            $subType = match ($regulationOrder->getSubject()) {
-                RegulationSubjectEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
-                RegulationSubjectEnum::ROAD_MAINTENANCE->value => 'ROAD_BLOCKED_CONSTRUCTION',
-                RegulationSubjectEnum::INCIDENT->value => 'ROAD_BLOCKED_HAZARD',
-                default => null,
-            };
+            $regulationSubject = $regulationOrder->getSubject();
 
             $incidentCreationTime = $regulationOrderRecord->getCreatedAt();
             $regulationStart = $overallDates[$uuid]['overallStartDate'];
@@ -170,12 +164,13 @@ final class GetCifsIncidentsQueryHandler
                         // Il doit être "unique dans le flux et rester stable pendant toute la vie de l'incident".
                         // Un incident logique par (règlement, lieu, période) — pas de hash de la polyline pour éviter les doublons avec un MultiLineString.
                         $id = $identifier . ':' . $locationId . ':' . $incidentPeriod['id'];
+                        $measureType = MeasureTypeEnum::from($measure->getType());
 
                         $incidents[] = new CifsIncidentView(
                             id: $id,
                             creationTime: $incidentCreationTime,
-                            type: MeasureTypeEnum::from($measure->getType())->getCifsKey(),
-                            subType: $subType,
+                            type: $measureType->getCifsKey(),
+                            subType: $this->getSubType($regulationSubject, $measureType),
                             street: $street,
                             direction: $direction,
                             polyline: $polyline,
@@ -189,5 +184,19 @@ final class GetCifsIncidentsQueryHandler
         }
 
         return $incidents;
+    }
+
+    private function getSubType(?string $regulationSubject, MeasureTypeEnum $measureType): ?string
+    {
+        if ($measureType === MeasureTypeEnum::ALTERNATE_ROAD) {
+            return 'HAZARD_ON_ROAD_LANE_CLOSED';
+        }
+
+        return match ($regulationSubject) {
+            RegulationSubjectEnum::EVENT->value => 'ROAD_BLOCKED_EVENT',
+            RegulationSubjectEnum::ROAD_MAINTENANCE->value => 'ROAD_BLOCKED_CONSTRUCTION',
+            RegulationSubjectEnum::INCIDENT->value => 'ROAD_BLOCKED_HAZARD',
+            default => null,
+        };
     }
 }
