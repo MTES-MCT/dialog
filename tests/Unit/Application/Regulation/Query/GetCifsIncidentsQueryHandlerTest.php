@@ -119,8 +119,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $incident3 = new CifsIncidentView(
             id: \sprintf('2024T2:9698b212-705c-4c46-8968-63b5a55a4d66:%s', $period1Id),
             creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
-            type: 'HAZARD_ON_ROAD_LANE_CLOSED',
-            subType: 'ROAD_BLOCKED_CONSTRUCTION',
+            type: 'HAZARD',
+            subType: 'HAZARD_ON_ROAD_LANE_CLOSED',
             street: 'Avenue de Fonneuve',
             direction: 'BOTH_DIRECTIONS',
             polyline: $polyline3,
