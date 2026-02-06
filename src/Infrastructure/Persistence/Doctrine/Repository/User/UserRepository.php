@@ -72,7 +72,6 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
                 u.email,
                 u.registrationDate,
                 u.lastActiveAt,
-                u.isVerified,
                 o.name
             )')
             ->innerJoin(

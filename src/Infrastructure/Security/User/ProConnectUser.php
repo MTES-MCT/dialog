@@ -6,11 +6,6 @@ namespace App\Infrastructure\Security\User;
 
 class ProConnectUser extends AbstractAuthenticatedUser
 {
-    public function isVerified(): bool
-    {
-        return true;
-    }
-
     public function getAuthOrigin(): string
     {
         return 'proconnect';

@@ -8,18 +8,15 @@ final readonly class UserExportView
 {
     public string $registrationDate;
     public ?string $lastActiveAt;
-    public string $isVerified;
 
     public function __construct(
         public string $fullName,
         public string $email,
         \DateTimeInterface $registrationDate,
         ?\DateTimeInterface $lastActiveAt,
-        bool $isVerified,
         public string $organizationName,
     ) {
         $this->registrationDate = $registrationDate->format(\DateTimeImmutable::ATOM);
         $this->lastActiveAt = $lastActiveAt?->format(\DateTimeImmutable::ATOM);
-        $this->isVerified = $isVerified ? 'Oui' : 'Non';
     }
 }
