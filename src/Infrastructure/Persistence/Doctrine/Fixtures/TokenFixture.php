@@ -15,22 +15,6 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $confirmAccountToken = new Token(
-            '7b9ed5b3-cb2e-4f77-88ef-5371a98de677',
-            'confirmAccountToken',
-            TokenTypeEnum::CONFIRM_ACCOUNT->value,
-            $this->getReference('otherOrgUser', User::class),
-            new \DateTime('2025-08-26 09:00:00'),
-        );
-
-        $expiredConfirmAccountToken = new Token(
-            '217993a8-af4c-40ad-8afc-75d0e9415865',
-            'expiredConfirmAccountToken',
-            TokenTypeEnum::CONFIRM_ACCOUNT->value,
-            $this->getReference('otherOrgUser', User::class),
-            new \DateTime('2023-01-01 19:00:00'),
-        );
-
         $forgotPasswordToken = new Token(
             '8edb17c6-9346-4e64-8a0d-bf1e4762802c',
             'forgotPasswordToken',
@@ -49,8 +33,6 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
 
         $manager->persist($forgotPasswordToken);
         $manager->persist($expiredForgotPasswordToken);
-        $manager->persist($confirmAccountToken);
-        $manager->persist($expiredConfirmAccountToken);
         $manager->flush();
     }
 

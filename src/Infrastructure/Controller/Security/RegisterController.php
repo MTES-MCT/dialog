@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Security;
 
 use App\Application\CommandBusInterface;
-use App\Application\User\Command\Mail\SendConfirmationMailCommand;
 use App\Application\User\Command\RegisterCommand;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -40,8 +39,7 @@ final class RegisterController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $user = $this->commandBus->handle($command);
-                $this->commandBus->dispatchAsync(new SendConfirmationMailCommand($user->getEmail()));
+                $this->commandBus->handle($command);
 
                 /** @var FlashBagAwareSessionInterface */
                 $session = $request->getSession();

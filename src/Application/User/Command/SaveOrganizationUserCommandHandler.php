@@ -70,8 +70,7 @@ final class SaveOrganizationUserCommandHandler
                 ->setEmail($email)
                 ->setFullName($command->fullName)
                 ->setRoles([UserRolesEnum::ROLE_USER->value])
-                ->setRegistrationDate($this->dateUtils->getNow())
-                ->setIsVerified();
+                ->setRegistrationDate($this->dateUtils->getNow());
 
             $passwordUser = new PasswordUser(
                 uuid: $this->idFactory->make(),

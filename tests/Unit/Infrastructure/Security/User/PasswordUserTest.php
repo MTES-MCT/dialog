@@ -24,7 +24,6 @@ class PasswordUserTest extends TestCase
         $user->expects(self::once())->method('getUuid')->willReturn('2d3724f1-2910-48b4-ba56-81796f6e100b');
         $user->expects(self::once())->method('getEmail')->willReturn('mathieu.marchois@beta.gouv.fr');
         $user->expects(self::once())->method('getFullName')->willReturn('Mathieu MARCHOIS');
-        $user->expects(self::once())->method('isVerified')->willReturn(false);
         $user->expects(self::once())->method('getRoles')->willReturn([UserRolesEnum::ROLE_USER->value]);
         $user->expects(self::once())->method('getPasswordUser')->willReturn($userPasswordUser);
 
@@ -40,7 +39,6 @@ class PasswordUserTest extends TestCase
         $this->assertSame([$organizationUser], $passwordUser->getUserOrganizations());
         $this->assertSame(['133fb411-7754-4749-9590-ce05a2abe108'], $passwordUser->getUserOrganizationUuids());
         $this->assertEmpty($passwordUser->eraseCredentials());
-        $this->assertFalse($passwordUser->isVerified());
         $this->assertSame('local', $passwordUser->getAuthOrigin());
         $this->assertTrue($passwordUser->isOrganizationsCompleted());
     }

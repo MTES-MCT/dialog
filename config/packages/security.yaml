@@ -26,7 +26,6 @@ security:
         main:
             lazy: true
             provider: all
-            user_checker: App\Infrastructure\Security\UserChecker
             custom_authenticator:
                 - App\Infrastructure\Security\Authenticator\ProConnectAuthenticator
             form_login:

@@ -39,7 +39,7 @@ final class UserCrudControllerTest extends AbstractWebTestCase
     public function testExportCsvAsAdmin(): void
     {
         $needleContent = mb_convert_encoding(
-            '2024-04-02T00:00:00+00:00;2024-06-08T00:00:00+00:00;Oui;"Mathieu FERNANDEZ";mathieu.fernandez@beta.gouv.fr;"Département de Seine-Saint-Denis"',
+            '2024-04-02T00:00:00+00:00;2024-06-08T00:00:00+00:00;"Mathieu FERNANDEZ";mathieu.fernandez@beta.gouv.fr;"Département de Seine-Saint-Denis"',
             'ISO-8859-1',
             'UTF-8',
         );

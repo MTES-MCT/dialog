@@ -28,8 +28,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
             ->setEmail(self::DEPARTMENT_93_USER_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-03-01'))
-            ->setLastActiveAt(new \DateTimeImmutable('2024-06-07'))
-            ->setIsVerified();
+            ->setLastActiveAt(new \DateTimeImmutable('2024-06-07'));
         $department93UserPassword = new PasswordUser('e06f9972-6add-403d-82d9-bd7370b7668f', self::PASSWORD, $department93User);
 
         $department93Admin = (new User('5bc831a3-7a09-44e9-aefa-5ce3588dac33'))
@@ -37,8 +36,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
             ->setEmail(self::DEPARTMENT_93_ADMIN_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_SUPER_ADMIN->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-04-02'))
-            ->setLastActiveAt(new \DateTimeImmutable('2024-06-08'))
-            ->setIsVerified();
+            ->setLastActiveAt(new \DateTimeImmutable('2024-06-08'));
         $department93AdminPassword = new PasswordUser('437dd344-0b78-4aa6-ba79-112cb6827516', self::PASSWORD, $department93Admin);
 
         $otherOrgUser = (new User('d47badd9-989e-472b-a80e-9df642e93880'))

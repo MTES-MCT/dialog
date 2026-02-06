@@ -29,13 +29,10 @@ final class RegisterControllerTest extends AbstractWebTestCase
         $client->submit($form);
         $this->assertResponseStatusCodeSame(303);
 
-        $this->assertEmailCount(1);
-        $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Pour activer votre compte, veuillez valider votre adresse email en utilisant le bouton de confirmation ci-dessous :');
-
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_login');
+        $this->assertSelectorTextContains('[data-test-flash-type="success"]', 'Vous pouvez vous connecter');
     }
 
     public function testRegisterSiretNotExists(): void

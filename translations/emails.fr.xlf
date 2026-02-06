@@ -22,22 +22,6 @@
                 <source>forgot_password.reset</source>
                 <target>Modifier mon mot de passe</target>
             </trans-unit>
-            <trans-unit id="confirm_user_account.subject">
-                <source>confirm_user_account.subject</source>
-                <target>Confirmez votre compte DiaLog</target>
-            </trans-unit>
-            <trans-unit id="confirm_user_account.thanks">
-                <source>confirm_user_account.thanks</source>
-                <target>Merci d’avoir rejoint DiaLog !</target>
-            </trans-unit>
-            <trans-unit id="confirm_user_account.confirm_email">
-                <source>confirm_user_account.confirm_email</source>
-                <target>Pour activer votre compte, veuillez valider votre adresse email en utilisant le bouton de confirmation ci-dessous :</target>
-            </trans-unit>
-            <trans-unit id="confirm_user_account.confirm_email_button">
-                <source>confirm_user_account.confirm_email_button</source>
-                <target>Je confirme mon adresse e-mail</target>
-            </trans-unit>
             <trans-unit id="organization_invitation.subject">
                 <source>organization_invitation.subject</source>
                 <target>Invitation à rejoindre une organisation DiaLog</target>

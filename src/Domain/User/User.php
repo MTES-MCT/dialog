@@ -13,7 +13,6 @@ class User
     private ?\DateTimeInterface $lastActiveAt = null;
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
-    private bool $isVerified = false;
 
     public function __construct(
         private string $uuid,
@@ -107,18 +106,6 @@ class User
     public function getPasswordUser(): ?PasswordUser
     {
         return $this->passwordUser;
-    }
-
-    public function isVerified(): bool
-    {
-        return $this->isVerified;
-    }
-
-    public function setIsVerified(bool $isVerified = true): self
-    {
-        $this->isVerified = $isVerified;
-
-        return $this;
     }
 
     public function __toString(): string

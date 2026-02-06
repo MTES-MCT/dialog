@@ -20,7 +20,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -98,8 +97,6 @@ final class UserCrudController extends AbstractCrudController
             DateField::new('lastActiveAt')
                 ->setLabel('Dernière activité')
                 ->setDisabled(true),
-            BooleanField::new('isVerified')
-                ->setLabel('Actif'),
             ChoiceField::new('roles')
                 ->setLabel('Rôles')
                 ->allowMultipleChoices()
