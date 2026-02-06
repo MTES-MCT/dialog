@@ -109,8 +109,7 @@ final class CreateAccountFromInvitationCommandHandlerTest extends TestCase
                     && $user->getFullName() === 'Nouveau Utilisateur'
                     && $user->getEmail() === 'nouveau.utilisateur@example.com'
                     && $user->getRoles() === [UserRolesEnum::ROLE_USER->value]
-                    && $user->getRegistrationDate() === $now
-                    && $user->isVerified() === true;
+                    && $user->getRegistrationDate() === $now;
             }));
 
         $this->passwordUserRepository

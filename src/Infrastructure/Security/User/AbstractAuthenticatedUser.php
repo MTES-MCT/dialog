@@ -99,7 +99,5 @@ abstract class AbstractAuthenticatedUser implements UserInterface
         $this->fullName = $fullName;
     }
 
-    abstract public function isVerified(): bool;
-
     abstract public function getAuthOrigin(): string;
 }

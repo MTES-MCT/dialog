@@ -20,8 +20,8 @@ final class GetAllUsersForExportQueryHandlerTest extends TestCase
         $lastActiveAt = new \DateTimeImmutable('2026-01-15');
 
         $users = [
-            new UserExportView('John Doe', 'john@example.com', $registrationDate, $lastActiveAt, true, 'Orry la Ville'),
-            new UserExportView('Jane Smith', 'jane@example.com', $registrationDate, null, false, 'Mairie de Paris'),
+            new UserExportView('John Doe', 'john@example.com', $registrationDate, $lastActiveAt, 'Orry la Ville'),
+            new UserExportView('Jane Smith', 'jane@example.com', $registrationDate, null, 'Mairie de Paris'),
         ];
 
         $userRepository = $this->createMock(UserRepositoryInterface::class);

@@ -10,7 +10,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenticatedUserInterface
 {
     private string $password;
-    private bool $isVerified;
 
     public function __construct(
         User $user,
@@ -19,12 +18,6 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
         parent::__construct($user, $userOrganizations);
 
         $this->password = $user->getPasswordUser()->getPassword();
-        $this->isVerified = $user->isVerified();
-    }
-
-    public function isVerified(): bool
-    {
-        return $this->isVerified;
     }
 
     public function getPassword(): string

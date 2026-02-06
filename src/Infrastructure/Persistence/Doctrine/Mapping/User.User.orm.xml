@@ -13,7 +13,6 @@
         </options>
     </field>
     <field name="lastActiveAt" type="datetimetz" column="last_active_at" nullable="true" />
-    <field name="isVerified" type="boolean" nullable="false"/>
     <one-to-one field="proConnectUser" target-entity="App\Domain\User\ProConnectUser" mapped-by="user" />
     <one-to-one field="passwordUser" target-entity="App\Domain\User\PasswordUser" mapped-by="user" />
     <unique-constraints>

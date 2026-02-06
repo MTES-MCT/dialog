@@ -49,8 +49,7 @@ final class CreateProConnectUserCommandHandler
                     ->setFullName(\sprintf('%s %s', $command->givenName, $command->usualName))
                     ->setEmail($command->email)
                     ->setRoles([UserRolesEnum::ROLE_USER->value])
-                    ->setRegistrationDate($this->dateUtils->getNow())
-                    ->setIsVerified();
+                    ->setRegistrationDate($this->dateUtils->getNow());
 
                 $this->userRepository->add($user);
             }
