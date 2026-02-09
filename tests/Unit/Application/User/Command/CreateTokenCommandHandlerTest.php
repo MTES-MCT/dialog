@@ -73,7 +73,7 @@ final class CreateTokenCommandHandlerTest extends TestCase
             token: 'myToken',
             type: TokenTypeEnum::FORGOT_PASSWORD->value,
             user: $user,
-            expirationDate: new \DateTime('2023-09-01 08:00:00'),
+            expirationDate: new \DateTime('2023-09-31 08:00:00'),
         );
 
         $this->tokenRepository
