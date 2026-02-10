@@ -28,6 +28,19 @@ jobs:
     timeout-minutes: 180  # 3 heures max (le téléchargement et l'import peuvent prendre du temps)
 
     steps:
+      - name: Free disk space (Ubuntu runner)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          # Supprimer les images Docker pré-cachées (plusieurs Go). Seule l'image GDAL
+          # (alpine-small) est nécessaire ; elle sera téléchargée à la demande.
+          docker-images: true
+          swap-storage: true
+
       - uses: actions/checkout@v4
 
       - name: Setup Python
@@ -88,6 +101,8 @@ jobs:
       - name: Run BD TOPO update
         run: |
           make ci_bdtopo_update \
+            BIN_COMPOSER="composer" \
+            BIN_CONSOLE="php bin/console" \
             SKIP_DOWNLOAD=${{ inputs.skip_download || 'false' }} \
             SKIP_IMPORT=${{ inputs.skip_import || 'false' }} \
             KEEP_ARCHIVES=${{ inputs.keep_archives || 'false' }}
