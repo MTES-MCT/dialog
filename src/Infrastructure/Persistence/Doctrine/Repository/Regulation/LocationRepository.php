@@ -164,6 +164,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 AND m.type IN (:measureTypes)
                 %s
                 %s
+                ORDER BY CASE m.type
+                    WHEN \'alternateRoad\' THEN 1
+                    WHEN \'parkingProhibited\' THEN 2
+                    WHEN \'speedLimitation\' THEN 3
+                    WHEN \'noEntry\' THEN 4
+                    ELSE 5
+                END
                 ',
                 $regulationTypeWhereClause,
                 $measureDatesCondition,
