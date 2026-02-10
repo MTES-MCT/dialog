@@ -159,10 +159,11 @@ class MapLibreMap {
                         'paint': {
                             'line-color': [
                                 'case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
-                                ['==', ['get', 'measure_type'], 'noEntry'], '#CE0500', // red
-                                ['==', ['get', 'measure_type'], 'speedLimitation'], '#f6c43c', // yellow
-                                ['==', ['get', 'measure_type'], 'alternateRoad'], '#6A6AF4', // purple
-                                '#000000'], // black ; note : blue -> 0063cb
+                                ['==', ['get', 'measure_type'], 'noEntry'], '#CE0500', // red — priorité 1
+                                ['==', ['get', 'measure_type'], 'speedLimitation'], '#f6c43c', // yellow — priorité 2
+                                ['==', ['get', 'measure_type'], 'parkingProhibited'], '#000000', // black — priorité 3
+                                ['==', ['get', 'measure_type'], 'alternateRoad'], '#6A6AF4', // purple — priorité 4
+                                '#000000'], // default
                             'line-dasharray': [
                                 'case',
                                 ['==', ['get', 'measure_type'], 'alternateRoad'], ['literal', [1, 2]],

@@ -73,9 +73,15 @@ final class MapFilterFormType extends AbstractType
 
     private function getMeasureTypesOptions(): array
     {
-        $choices = [];
+        $displayOrder = [
+            MeasureTypeEnum::NO_ENTRY,
+            MeasureTypeEnum::SPEED_LIMITATION,
+            MeasureTypeEnum::PARKING_PROHIBITED,
+            MeasureTypeEnum::ALTERNATE_ROAD,
+        ];
 
-        foreach (MeasureTypeEnum::cases() as $case) {
+        $choices = [];
+        foreach ($displayOrder as $case) {
             $choices[\sprintf('map.filter.type.%s', $case->value)] = $case->value;
         }
 
