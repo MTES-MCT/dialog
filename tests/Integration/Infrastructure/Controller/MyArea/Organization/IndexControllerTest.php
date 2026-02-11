@@ -35,7 +35,7 @@ final class IndexControllerTest extends AbstractWebTestCase
 
         $newsNotice = $crawler->filter('[data-testid="notice-news"]');
 
-        $this->assertSame('Découvrez les dernières nouveautés sur DiaLog ! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Exporter mes arrêtés de circulation Masquer le message', $newsNotice->filter('[data-testid="news-notice-content"]')->text());
+        $this->assertSame('Dernières nouveautés Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Exporter mes arrêtés de circulation Masquer le message', $newsNotice->filter('[data-testid="news-notice-content"]')->text());
     }
 
     public function testWithOrganizationsNotCompleted(): void
