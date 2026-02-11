@@ -18,6 +18,8 @@ interface UserRepositoryInterface
 
     public function findAllForStatistics(): array;
 
+    public function findActiveUsersLastWeek(): array;
+
     public function findAllForExport(): array;
 
     public function findAll(): array;

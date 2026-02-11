@@ -60,7 +60,7 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
         // À chaque export des statistiques, on ajoute la liste des dates de dernière activité pour chaque utilisateur, et la date d'exécution.
         // Dans Metabase cela permet de calculer le nombre d'utilisateurs actifs au moment de chaque exécution.
         // (Par exemple avec un filtre : "[last_active_at] >= [uploaded_at] - 7 jours", puis en groupant sur le uploaded_at.)
-        $userRows = $this->userRepository->findAllForStatistics();
+        $userRows = $this->userRepository->findActiveUsersLastWeek();
         $this->bulkInsertUserActiveStatistics($now, $userRows);
     }
 

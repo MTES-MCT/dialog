@@ -113,6 +113,9 @@ bdtopo_migrate_redo: ## Revert db migrations for bdtopo and run them again
 	# Re-run migrations from there
 	make bdtopo_migrate
 
+metabase_create: ## Crée la base de donnée metabase
+	docker compose exec database createdb -U dialog dialog_metabase
+
 metabase_migration: ## Generate new migration for metabase
 	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/metabase/doctrine_migrations.yaml
 

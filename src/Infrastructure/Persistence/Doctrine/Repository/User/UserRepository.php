@@ -61,6 +61,16 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             );
     }
 
+    public function findActiveUsersLastWeek(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.uuid, u.lastActiveAt')
+            ->where('u.lastActiveAt >= :sevenDaysAgo')
+            ->setParameter('sevenDaysAgo', new \DateTimeImmutable('-7 days'))
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @return UserExportView[]
      */
