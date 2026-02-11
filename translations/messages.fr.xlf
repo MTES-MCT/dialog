@@ -1915,7 +1915,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.other_restricted_type_text.help">
                 <source>regulation.vehicle_set.other_restricted_type_text.help</source>
-                <target>Spécifiez les véhicles pour lesquels la restriction s'applique :</target>
+                <target>Spécifiez les véhicules pour lesquels la restriction s'applique :</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.exempted_vehicles">
                 <source>regulation.vehicle_set.exempted_vehicles</source>
@@ -1939,7 +1939,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.other_exempted_type_text.help">
                 <source>regulation.vehicle_set.other_exempted_type_text.help</source>
-                <target>Spécifiez les véhicles pour lesquels la restriction ne s'applique pas :</target>
+                <target>Spécifiez les véhicules pour lesquels la restriction ne s'applique pas :</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.exempted_vehicles.delete">
                 <source>regulation.measure.exempted_vehicles.delete</source>
@@ -2320,7 +2320,7 @@
             </trans-unit>
             <trans-unit id="api.cifs.incident.description">
                 <source>api.cifs.incident.description</source>
-                <target>%street% : circulation interdite tous les jours pour tous les véhicles</target>
+                <target>%street% : circulation interdite tous les jours pour tous les véhicules</target>
             </trans-unit>
             <trans-unit id="map.meta.title">
                 <source>map.meta.title</source>
