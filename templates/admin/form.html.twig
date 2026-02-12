@@ -1,19 +1,79 @@
-{% block _RegulationOrderTemplate_rich_textarea_widget %}
-    {% set variables = [
-        { label: 'regulation_order_template.variables.list.numero_arrete'|trans, value: '[numero_arrete]' },
-        { label: 'regulation_order_template.variables.list.intitule_arrete'|trans, value: '[intitule_arrete]' },
-        { label: 'regulation_order_template.variables.list.pouvoir_de_signature'|trans, value: '[pouvoir_de_signature]' },
-        { label: 'regulation_order_template.variables.list.nom_commune'|trans, value: '[nom_commune]' },
-        { label: 'regulation_order_template.variables.list.nom_signataire'|trans, value: '[nom_signataire]' },
-        { label: 'regulation_order_template.variables.list.mesures'|trans, value: '[mesures]' },
-        { label: 'regulation_order_template.variables.list.departement'|trans, value: '[departement]' }
-    ] %}
+{% macro labelsValues(variables) %}
+    {%- set labelValue = [] -%}
+    {%- for variable in variables -%}
+        {%- set labelValue = labelValue|merge([{
+                label: ('regulation_order_template.variables.list.'~variable)|trans, 
+                value: ('[' ~ variable ~ ']')
+            }]) -%}
+    {%- endfor -%}
+    {{- labelValue|json_encode -}}
+{% endmacro labelsValues %}
 
+{% block _RegulationOrderTemplate_rich_textarea_title_widget %}
     {{ form_widget(form, {
         attr: {
             'data-controller': 'rich-text',
             'data-rich-text-height-value': 300,
-            'data-rich-text-variables-value': variables|json_encode|raw
+            'data-rich-text-variables-value': _self.labelsValues([
+                    'numero_arrete', 
+                    'intitule_arrete', 
+                    'pouvoir_de_signature', 
+                    'nom_commune', 
+                    'nom_signataire', 
+                    'departement',
+                ])|raw
+        }
+    }) }}
+{% endblock %}
+
+{% block _RegulationOrderTemplate_rich_textarea_visa_widget %}
+    {{ form_widget(form, {
+        attr: {
+            'data-controller': 'rich-text',
+            'data-rich-text-height-value': 300,
+            'data-rich-text-variables-value': _self.labelsValues([
+                    'numero_arrete',
+                    'intitule_arrete',
+                    'pouvoir_de_signature',
+                    'nom_commune',
+                    'nom_signataire',
+                    'departement',
+                ])|raw
+        }
+    }) }}
+{% endblock %}
+
+{% block _RegulationOrderTemplate_rich_textarea_considering_widget %}
+    {{ form_widget(form, {
+        attr: {
+            'data-controller': 'rich-text',
+            'data-rich-text-height-value': 300,
+            'data-rich-text-variables-value': _self.labelsValues([
+                    'numero_arrete',
+                    'intitule_arrete',
+                    'pouvoir_de_signature',
+                    'nom_commune',
+                    'nom_signataire',
+                    'departement',
+                ])|raw
+        }
+    }) }}
+{% endblock %}
+
+{% block _RegulationOrderTemplate_rich_textarea_article_widget %}
+    {{ form_widget(form, {
+        attr: {
+            'data-controller': 'rich-text',
+            'data-rich-text-height-value': 300,
+            'data-rich-text-variables-value': _self.labelsValues([
+                    'mesures',
+                    'numero_arrete',
+                    'intitule_arrete',
+                    'pouvoir_de_signature',
+                    'nom_commune',
+                    'nom_signataire',
+                    'departement',
+                ])|raw
         }
     }) }}
 {% endblock %}
