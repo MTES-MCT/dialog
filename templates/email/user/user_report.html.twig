@@ -3,7 +3,12 @@
 
 {% block body %}
     <h1>{{ 'contact.email.user_report'|trans }}</h1>
-    <p>{{ fullName }} {{ email }}</p>
-    <p>{{ location }}</p>
-    <p>{{ content }}</p>
+    <address>
+        {{ 'contact'|trans ~ fullName }}</br>
+        {{ 'email'|trans ~ contactEmail }}</br>
+        {{ 'user_report.location'|trans ~ location }}</br>
+    </address>
+    <blockquote>
+        <p>{{ content }}</p>
+    </blockquote>
 {% endblock %}

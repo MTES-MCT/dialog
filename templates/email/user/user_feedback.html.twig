@@ -3,6 +3,11 @@
 
 {% block body %}
     <h1>{{ 'contact.email.user_feedback'|trans }}</h1>
-    <p>{{ fullName }} {{ email }}</p>
-    <p>{{ content }}</p>
+    <address>
+        {{ 'contact'|trans ~ fullName }}</br>
+        {{ 'email'|trans ~ contactEmail }}</br>
+    </address>
+    <blockquote>
+        <p>{{ content }}</p>
+    </blockquote
 {% endblock %}

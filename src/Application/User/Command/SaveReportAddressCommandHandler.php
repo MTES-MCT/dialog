@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\User\Command;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\EmailSendingException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
 use App\Application\MailerInterface;
@@ -50,7 +51,7 @@ final readonly class SaveReportAddressCommandHandler
     private function sendReportByEmail(SaveReportAddressCommand $command): void
     {
         try {
-            $email = new Mail(
+            $this->mailer->send(new Mail(
                 address: $this->emailSupport,
                 subject: 'contact.email.user_report_subject',
                 template: 'email/user/user_report.html.twig',
@@ -58,16 +59,11 @@ final readonly class SaveReportAddressCommandHandler
                     'content' => $command->content,
                     'location' => $command->location,
                     'fullName' => $command->user->getFullName(),
-                    'email' => $command->user->getEmail(),
+                    'contactEmail' => $command->user->getEmail(),
                 ],
-            );
-
-            $this->mailer->send($email);
+            ));
         } catch (\Exception $e) {
-            $this->logger->error('Failed to send report by email', [
-                'userId' => $command->user->getUuid(),
-                'error' => $e->getMessage(),
-            ]);
+            throw new EmailSendingException('Failed to send feedback by email : ' . $e->getMessage());
         }
     }
 

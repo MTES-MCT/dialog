@@ -1503,22 +1503,6 @@
                 <source>contact.email.description2</source>
                 <target>L'équipe DiaLog vous répondra dans les meilleurs délais. </target>
             </trans-unit>
-            <trans-unit id="contact.email.user_report">
-                <source>contact.email.user_report</source>
-                <target>Signalement</target>
-            </trans-unit>
-            <trans-unit id="contact.email.user_report_subject">
-                <source>contact.email.user_report_subject</source>
-                <target>Nouveau signalement sur le site DiaLog</target>
-            </trans-unit>
-            <trans-unit id="contact.email.user_feedback">
-                <source>contact.email.user_feedback</source>
-                <target>Avis</target>
-            </trans-unit>
-            <trans-unit id="contact.email.user_feedback_subject">
-                <source>contact.email.user_feedback_subject</source>
-                <target>Nouvel avis sur le site DiaLog</target>
-            </trans-unit>
             <trans-unit id="landing.diagram.authorities">
                 <source>landing.diagram.authorities</source>
                 <target>Collectivités</target>
