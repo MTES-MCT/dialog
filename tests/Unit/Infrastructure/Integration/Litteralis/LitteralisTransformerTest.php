@@ -674,4 +674,50 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[1]->type);
         $this->assertEquals(70, $command->measureCommands[1]->maxSpeed);
     }
+
+    public function testTransformNumericPrefixMeasures(): void
+    {
+        // Format LIEX : préfixe "N - " (ex. "3 - Limitation de vitesse" → "Limitation de vitesse")
+        // Le numéro dans parametresmesures (1, 2) doit correspondre à l'index 1-based dans 'mesures'
+        $feature = json_decode(self::feature, true);
+        $feature['properties']['mesures'] = '3 - Limitation de vitesse;3 - Circulation alternée';
+        $feature['properties']['parametresmesures'] = '3 - Limitation de vitesse 1 | vitesse : 50 ; 3 - Circulation alternée 2 | type d\'alternat : par feux tricolores';
+        $identifier = $feature['properties']['arretesrcid'];
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('convertPolygonRoadToLines')
+            ->willReturn('geometry1');
+
+        $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
+
+        $this->assertNotNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(2, $command->measureCommands);
+        $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[0]->type);
+        $this->assertEquals(50, $command->measureCommands[0]->maxSpeed);
+        $this->assertEquals(MeasureTypeEnum::ALTERNATE_ROAD->value, $command->measureCommands[1]->type);
+    }
+
+    public function testTransformSpeedLimitWithVitesseParameter(): void
+    {
+        // Paramètre "vitesse" en plus de "limite de vitesse" (flux LIEX)
+        $feature = json_decode(self::feature, true);
+        $feature['properties']['mesures'] = '3 - Limitation de vitesse';
+        $feature['properties']['parametresmesures'] = '3 - Limitation de vitesse | vitesse : 30';
+        $identifier = $feature['properties']['arretesrcid'];
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('convertPolygonRoadToLines')
+            ->willReturn('geometry1');
+
+        $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
+
+        $this->assertNotNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(1, $command->measureCommands);
+        $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[0]->type);
+        $this->assertEquals(30, $command->measureCommands[0]->maxSpeed);
+    }
 }

@@ -448,7 +448,8 @@ final readonly class LitteralisTransformer
 
     private function parseMaxSpeed(array $properties, array $parameters, Reporter $reporter): ?int
     {
-        $value = $this->findParameterValue($parameters, 'limite de vitesse');
+        $value = $this->findParameterValue($parameters, 'limite de vitesse')
+            ?? $this->findParameterValue($parameters, 'vitesse');
 
         if (!$value) {
             $reporter->addError(LitteralisRecordEnum::ERROR_MAX_SPEED_VALUE_MISSING->value, [
@@ -484,12 +485,13 @@ final readonly class LitteralisTransformer
      *
      * Gère les préfixes dynamiques :
      * - "YYYY - " (ex: "2021 - ", "2022 - ", "2023 - ", etc.) pour Montpellier
+     * - "N - " (ex: "3 - ") pour certains flux Litteralis (LIEX, etc.)
      * - "AP - " (Arrêté Permanent) pour Montpellier
      * - "ATemp - " (Arrêté Temporaire) pour Montpellier
      *
      * Exemples :
      * - "2021 - Circulation interdite" => "Circulation interdite"
-     * - "2025 - Limitation de vitesse" => "Limitation de vitesse"
+     * - "3 - Limitation de vitesse" => "Limitation de vitesse"
      * - "AP - Interdiction de stationnement" => "Interdiction de stationnement"
      * - "SOGELINK - Circulation interdite" => "SOGELINK - Circulation interdite" (inchangé)
      */
@@ -498,6 +500,12 @@ final readonly class LitteralisTransformer
         // Gestion des préfixes avec année (format "YYYY - ")
         // Exemples: "2021 - Circulation interdite", "2025 - Limitation de vitesse"
         if (preg_match('/^\d{4} - (.+)$/', $name, $matches)) {
+            return $matches[1];
+        }
+
+        // Gestion du préfixe numérique (format "N - ") utilisé par certains flux Litteralis
+        // Exemples: "3 - Limitation de vitesse", "3 - Circulation alternée"
+        if (preg_match('/^\d+ - (.+)$/', $name, $matches)) {
             return $matches[1];
         }
 
