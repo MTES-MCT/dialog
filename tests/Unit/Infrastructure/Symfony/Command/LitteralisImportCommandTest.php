@@ -88,6 +88,6 @@ class LitteralisImportCommandTest extends TestCase
         $commandTester->execute([]);
 
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
-        $this->assertSame(['report1', 'Failed', 'report3', ''], explode(PHP_EOL, $commandTester->getDisplay()));
+        $this->assertSame(['report1', 'Organization "fougeres": import failed: Failed', 'report3', ''], explode(PHP_EOL, $commandTester->getDisplay()));
     }
 }
