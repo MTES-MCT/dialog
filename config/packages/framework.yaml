@@ -27,6 +27,17 @@ framework:
                 base_uri: '%env(APP_EUDONET_PARIS_BASE_URL)%'
             litteralis.wfs.http.client:
                 base_uri: '%env(APP_LITTERALIS_WFS_BASE_URL)%'
+                timeout: 120
+                retry_failed:
+                    http_codes:
+                        - { code: 429, methods: ['GET'] }
+                        - { code: 500, methods: ['GET'] }
+                        - { code: 502, methods: ['GET'] }
+                        - { code: 503, methods: ['GET'] }
+                    max_retries: 3
+                    delay: 2000
+                    multiplier: 3
+                    max_delay: 30000
             ign.geocoder.client:
                 base_uri: '%env(APP_IGN_GEOCODER_BASE_URL)%'
             dialog.http.client:
