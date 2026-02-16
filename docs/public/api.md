@@ -62,12 +62,12 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `maxHeight` (number, nullable)
     - `critairTypes` (string[], nullable) — valeurs: `critair0` (ex. VE), `critair1`, `critair2`, `critair3`, `critair4`, `critair5`
 - `periods` (array<object>, nullable)
-  - `startDate` (string, date-time ISO) — **obligatoire**
+  - `startDate` (string, date-time ISO) — **obligatoire** (ex. date de publication pour un arrêté permanent)
   - `startTime` (string, date-time ISO, nullable) — requis si `isPermanent = false`
-  - `endDate` (string, date-time ISO, nullable) — requis si `isPermanent = false`
-  - `endTime` (string, date-time ISO, nullable) — requis si `isPermanent = false`
+  - `endDate` (string, date-time ISO, nullable) — requis si `isPermanent = false` ; à omettre si période permanente
+  - `endTime` (string, date-time ISO, nullable) — requis si `isPermanent = false` ; à omettre si période permanente
   - `recurrenceType` (string) — enum: `everyDay` | `certainDays` — **obligatoire**
-  - `isPermanent` (boolean, nullable)
+  - `isPermanent` (boolean, nullable) — **à mettre à `true` dans chaque période** pour un arrêté permanent (sans date de fin) ; si absent ou `false`, `endDate` et `endTime` sont requis
   - `dailyRange` (object, nullable)
     - `applicableDays` (string[], nullable) — enum: `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`
   - `timeSlots` (array<object>, nullable)
@@ -162,6 +162,31 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
           }
         }
       ]
+    }
+  ]
+}
+```
+
+#### Exemple : arrêté permanent (sans date de fin)
+
+Pour un arrêté permanent (`category: "permanentRegulation"`), il faut **indiquer `"isPermanent": true` dans chaque période** (dans chaque mesure). Les champs `endDate` et `endTime` ne doivent pas être envoyés (ou peuvent être omis) pour ces périodes. Exemple minimal :
+
+```json
+{
+  "identifier": "F2025/PERM-001",
+  "category": "permanentRegulation",
+  "title": "Interdiction de stationnement - Rue Exemple",
+  "measures": [
+    {
+      "type": "parkingProhibited",
+      "periods": [
+        {
+          "startDate": "2025-02-01T00:00:00Z",
+          "recurrenceType": "everyDay",
+          "isPermanent": true
+        }
+      ],
+      "locations": [ { "roadType": "lane", "namedStreet": { ... } } ]
     }
   ]
 }
