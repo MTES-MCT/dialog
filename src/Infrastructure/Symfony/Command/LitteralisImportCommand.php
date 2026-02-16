@@ -43,20 +43,20 @@ class LitteralisImportCommand extends Command
         foreach ($this->litteralisEnabledOrgs as $name) {
             $this->reporter->reset();
 
-            $orgId = $this->litteralisCredentials->getOrgId($name);
-
-            if (empty($orgId)) {
-                $output->writeln(\sprintf('Organization "%s": missing orgId (check APP_LITTERALIS_ORG_%s_ID)', $name, strtoupper($name)));
-                $returnCode = Command::FAILURE;
-                continue;
-            }
-
             try {
+                $orgId = $this->litteralisCredentials->getOrgId($name);
+
+                if (empty($orgId)) {
+                    $output->writeln(\sprintf('Organization "%s": missing orgId (check APP_LITTERALIS_ORG_%s_ID)', $name, strtoupper($name)));
+                    $returnCode = Command::FAILURE;
+                    continue;
+                }
+
                 $report = $this->executor->execute($name, $orgId, $now, $this->reporter);
 
                 $output->write($report);
             } catch (\Throwable $exc) {
-                $output->writeln($exc->getMessage());
+                $output->writeln(\sprintf('Organization "%s": import failed: %s', $name, $exc->getMessage()));
 
                 $returnCode = Command::FAILURE;
             }
