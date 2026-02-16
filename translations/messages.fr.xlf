@@ -1497,7 +1497,7 @@
             </trans-unit>
             <trans-unit id="contact.email.description1">
                 <source>contact.email.description1</source>
-                <target>Écrivez-nous par email à <![CDATA[<a href="mailto:dialog@beta.gouv.fr" data-testid="contact-email">]]>dialog@beta.gouv.fr<![CDATA[</a>]]>.</target>
+                <target>Écrivez-nous par email à <![CDATA[<a href="mailto:support@dialog.beta.gouv.fr" data-testid="contact-email">]]>support@dialog.beta.gouv.fr<![CDATA[</a>]]>.</target>
             </trans-unit>
             <trans-unit id="contact.email.description2">
                 <source>contact.email.description2</source>

@@ -2,6 +2,34 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="fr" datatype="plaintext" original="file.ext">
         <body>
+            <trans-unit id="contact">
+                <source>contact</source>
+                <target>Contact : </target>
+            </trans-unit>
+            <trans-unit id="email">
+                <source>email</source>
+                <target>Email : </target>
+            </trans-unit>
+            <trans-unit id="user_report.location">
+                <source>user_report.location</source>
+                <target>Addresse signalée : </target>
+            </trans-unit>
+            <trans-unit id="contact.email.user_report">
+                <source>contact.email.user_report</source>
+                <target>Signalement d'adresse</target>
+            </trans-unit>
+            <trans-unit id="contact.email.user_report_subject">
+                <source>contact.email.user_report_subject</source>
+                <target>Nouveau signalement d'adresse sur le site DiaLog</target>
+            </trans-unit>
+            <trans-unit id="contact.email.user_feedback">
+                <source>contact.email.user_feedback</source>
+                <target>Avis</target>
+            </trans-unit>
+            <trans-unit id="contact.email.user_feedback_subject">
+                <source>contact.email.user_feedback_subject</source>
+                <target>Nouvel avis sur le site DiaLog</target>
+            </trans-unit>
             <trans-unit id="forgot_password.subject">
                 <source>forgot_password.subject</source>
                 <target>Réinitialisation du mot de passe de votre compte DiaLog</target>
@@ -76,7 +104,7 @@
             </trans-unit>
             <trans-unit id="mailing_list.email.help">
                 <source>mailing_list.email.help</source>
-                <target>Si vous avez des difficultés à accéder à DiaLog, écrivez-nous à : dialog@beta.gouv.fr</target>
+                <target>Si vous avez des difficultés à accéder à DiaLog, écrivez-nous à : support@dialog.beta.gouv.fr</target>
             </trans-unit>
             <trans-unit id="welcome.email.help.subject">
                 <source>welcome.email.help.subject</source>
@@ -108,7 +136,7 @@
             </trans-unit>
             <trans-unit id="welcome.email.contact">
                 <source>welcome.email.contact</source>
-                <target>Posez-nous <![CDATA[<strong>]]>vos questions<![CDATA[</strong>]]> et faites nous part de <![CDATA[<strong>]]>vos retours <![CDATA[</strong>]]>: Envoyer un mail à dialog@beta.gouv.fr</target>
+                <target>Posez-nous <![CDATA[<strong>]]>vos questions<![CDATA[</strong>]]> et faites nous part de <![CDATA[<strong>]]>vos retours <![CDATA[</strong>]]>: Envoyer un mail à support@dialog.beta.gouv.fr</target>
             </trans-unit>
             <trans-unit id="welcome.email.feedback">
                 <source>welcome.email.feedback</source>

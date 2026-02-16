@@ -31,6 +31,7 @@ services:
             $proConnectClientId: '%env(PRO_CONNECT_CLIENT_ID)%'
             $proConnectClientSecret: '%env(PRO_CONNECT_CLIENT_SECRET)%'
             $proConnectDomain: '%env(PRO_CONNECT_DOMAIN)%'
+            $emailSupport: '%env(EMAIL_SUPPORT)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

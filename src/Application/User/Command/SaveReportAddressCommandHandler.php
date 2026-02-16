@@ -5,16 +5,19 @@ declare(strict_types=1);
 namespace App\Application\User\Command;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\EmailSendingException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
+use App\Application\MailerInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Domain\Mail;
 use App\Domain\User\ReportAddress;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\ReportAddressRepositoryInterface;
 use App\Infrastructure\Adapter\IgnReportClient;
 use Psr\Log\LoggerInterface;
 
-final class SaveReportAddressCommandHandler
+final readonly class SaveReportAddressCommandHandler
 {
     public function __construct(
         private IdFactoryInterface $idFactory,
@@ -24,6 +27,8 @@ final class SaveReportAddressCommandHandler
         private OrganizationRepositoryInterface $organizationRepository,
         private RoadGeocoderInterface $roadGeocoder,
         private LoggerInterface $logger,
+        private MailerInterface $mailer,
+        private string $emailSupport,
     ) {
     }
 
@@ -40,6 +45,26 @@ final class SaveReportAddressCommandHandler
         $this->reportAddressRepository->add($reportAddress);
 
         $this->sendReportToIgn($command);
+        $this->sendReportByEmail($command);
+    }
+
+    private function sendReportByEmail(SaveReportAddressCommand $command): void
+    {
+        try {
+            $this->mailer->send(new Mail(
+                address: $this->emailSupport,
+                subject: 'contact.email.user_report_subject',
+                template: 'email/user/user_report.html.twig',
+                payload: [
+                    'content' => $command->content,
+                    'location' => $command->location,
+                    'fullName' => $command->user->getFullName(),
+                    'contactEmail' => $command->user->getEmail(),
+                ],
+            ));
+        } catch (\Exception $e) {
+            throw new EmailSendingException('Failed to send feedback by email : ' . $e->getMessage());
+        }
     }
 
     private function sendReportToIgn(SaveReportAddressCommand $command): void
