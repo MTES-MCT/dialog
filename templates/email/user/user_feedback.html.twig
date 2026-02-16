@@ -1,0 +1,13 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <h1>{{ 'contact.email.user_feedback'|trans }}</h1>
+    <address>
+        {{ 'contact'|trans ~ fullName }}</br>
+        {{ 'email'|trans ~ contactEmail }}</br>
+    </address>
+    <blockquote>
+        <p>{{ content }}</p>
+    </blockquote
+{% endblock %}
