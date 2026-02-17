@@ -156,7 +156,6 @@ when@test:
             resource: '../src/Infrastructure/Persistence/Doctrine/Fixtures/'
             tags: ['doctrine.fixture.orm']
 
-        # En test : garder API Adresse (mock) pour l'autocomplétion des voies
         App\Application\GeocoderInterface: '@App\Infrastructure\Adapter\APIAdresseGeocoder'
 
         App\Tests\Mock\APIAdresseMockClient:

@@ -101,12 +101,6 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
-    /**
-     * Recherche de voies nommées par libellé et code Insee (autocomplétion).
-     * Utilise la table voie_nommee de la BD Topo.
-     *
-     * @return array<int, array{roadBanId: string, roadName: string}>
-     */
     public function findNamedStreets(string $search, string $cityCode): array
     {
         if (\strlen($search) < 2) {
