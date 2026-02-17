@@ -23,4 +23,5 @@ enum LitteralisRecordEnum: string
 
     case NOTICE_UNSUPPORTED_MEASURE = 'litteralis.unsupported_measure';
     case NOTICE_NO_MEASURES_FOUND = 'litteralis.no_measures_found';
+    case NOTICE_POLYGON_LOCATION_EXCLUDED = 'litteralis.polygon_location_excluded';
 }
