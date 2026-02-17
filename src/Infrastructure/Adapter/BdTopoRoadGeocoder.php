@@ -101,6 +101,46 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
+    public function findNamedStreets(string $search, string $cityCode): array
+    {
+        if (\strlen($search) < 2) {
+            return [];
+        }
+
+        $searchEscaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+
+        try {
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                <<<'SQL'
+                    SELECT DISTINCT ON (identifiant_voie_ban) identifiant_voie_ban, nom_voie_ban
+                    FROM voie_nommee
+                    WHERE insee_commune = :city_code
+                    AND f_normalize_accents(nom_voie_ban) LIKE '%' || f_normalize_accents(:search) || '%'
+                    ORDER BY identifiant_voie_ban, nom_voie_ban
+                    LIMIT 7
+                SQL,
+                [
+                    'city_code' => $cityCode,
+                    'search' => $searchEscaped,
+                ],
+            );
+        } catch (\Exception $exc) {
+            \Sentry\captureException($exc);
+
+            return [];
+        }
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[] = [
+                'roadBanId' => $row['identifiant_voie_ban'],
+                'roadName' => $row['nom_voie_ban'],
+            ];
+        }
+
+        return $result;
+    }
+
     public function findRoads(string $search, string $roadType, string $administrator): array
     {
         // Can search for a departmental road with the prefix "RD"

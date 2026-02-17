@@ -139,6 +139,9 @@ services:
         tags:
             - { name: monolog.logger, channel: litteralis_import }
 
+    # Géocodeur : voies via BD Topo, villes et coordonnées via API Adresse
+    App\Application\GeocoderInterface: '@App\Infrastructure\Adapter\BdTopoStreetGeocoderAdapter'
+
 when@dev:
     services:
         # Load fixtures in dev environment (override default exclusion)
@@ -152,6 +155,8 @@ when@test:
         App\Infrastructure\Persistence\Doctrine\Fixtures\:
             resource: '../src/Infrastructure/Persistence/Doctrine/Fixtures/'
             tags: ['doctrine.fixture.orm']
+
+        App\Application\GeocoderInterface: '@App\Infrastructure\Adapter\APIAdresseGeocoder'
 
         App\Tests\Mock\APIAdresseMockClient:
             # See: https://symfony.com/doc/current/service_container/service_decoration.html
