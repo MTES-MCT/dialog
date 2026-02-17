@@ -38,7 +38,7 @@ final class LitteralisTransformerTest extends TestCase
     private $logger;
     private $reporter;
     private $realWorldFeatures;
-    private const feature = '{"type": "Feature", "id": "litteralis.493136", "geometry": {"type": "Polygon", "coordinates": [[[2.866303738, 50.6088816513], [2.866193844, 50.6090613967], [2.8659891868, 50.6093207548], [2.8658674961, 50.6094690524], [2.8658663892, 50.609470461], [2.8657726265, 50.6095952074], [2.8655193523, 50.6099280242], [2.8655162285, 50.6099328174], [2.8631138613, 50.6143199385], [2.8632470584, 50.6143494684], [2.8656480715, 50.6099647992], [2.8658996393, 50.6096342235], [2.8658997873, 50.6096340278], [2.8659930894, 50.609509894], [2.866114466, 50.6093619787], [2.8661149762, 50.6093613448], [2.8663213774, 50.6090997758], [2.8663240773, 50.6090959097], [2.8664367693, 50.608911587], [2.8664394331, 50.6089062743], [2.8665523929, 50.6086208051], [2.8664156265, 50.6085988914], [2.866303738, 50.6088816513]]]}, "geometry_name": "geometry", "properties": {"idemprise": 493136, "idarrete": 850503590, "shorturl": "https://dl.sogelink.fr/?n3omzTyS", "arretesrcid": "24-A-0126", "collectivitelibelle": "LILLE METROPOLE COMMUNAUTE URBAINE (LMCU)", "collectiviteid": null, "collectiviteagencelibelle": "MEL", "collectiviteagenceid": 117374, "documenttype": "ARRETE PERMANENT", "arretedebut": "2024-03-18T01:00:00Z", "arretefin": null, "empriseno": 1, "emprisetype": "CIRCULATION", "emprisedebut": null, "emprisefin": null, "mesures": "Limitation de vitesse", "localisations": " RUE DE LA MARLACQUE (FROMELLES) ENTRE LES PR0+066 ET PR0+750", "idagence": 117374, "fournisseur": "LIPRIME", "publicationinternet": true, "emetteurlibelle": "", "emetteurid": null, "categoriesmodele": "Réglementation permanente", "nommodele": "[MEL] - Arr\u00eat\u00e9 permanent", "parametresarrete": "entr\u00e9e en vigueur : \u00e0 la mise en place de la signalisation r\u00e9glementaire ; Date d\'envoi de la demande : 04/03/2024 00:00:00 ; Date de r\u00e9ception de la demande : 04/03/2024 00:00:00 ; Date de d\u00e9but de l\'arr\u00eat\u00e9 : 18/03/2024 00:00:00 ; ajout annexe : O ; nom annexe : plan ; MEP signa : Oui ; charg\u00e9 de MEP de la signalisation : Les services techniques de la collectivit\u00e9 ; MEL Avis suppl\u00e9mentaires : 0 ; Description des travaux : regulation description", "parametresemprise": "", "parametresmesures": "Limitation de vitesse | limite de vitesse : 70 km/h", "datecreation": "2024-03-15T10:39:00.269Z", "datemodification": "2024-03-15T10:39:00.739Z"}, "bbox": [2.8631138613, 50.6085988914, 2.8665523929, 50.6143494684]}';
+    private const feature = '{"type": "Feature", "id": "litteralis.493136", "geometry": {"type": "LineString", "coordinates": [[2.866303738, 50.6088816513], [2.866193844, 50.6090613967], [2.8659891868, 50.6093207548]]}, "geometry_name": "geometry", "properties": {"idemprise": 493136, "idarrete": 850503590, "shorturl": "https://dl.sogelink.fr/?n3omzTyS", "arretesrcid": "24-A-0126", "collectivitelibelle": "LILLE METROPOLE COMMUNAUTE URBAINE (LMCU)", "collectiviteid": null, "collectiviteagencelibelle": "MEL", "collectiviteagenceid": 117374, "documenttype": "ARRETE PERMANENT", "arretedebut": "2024-03-18T01:00:00Z", "arretefin": null, "empriseno": 1, "emprisetype": "CIRCULATION", "emprisedebut": null, "emprisefin": null, "mesures": "Limitation de vitesse", "localisations": " RUE DE LA MARLACQUE (FROMELLES) ENTRE LES PR0+066 ET PR0+750", "idagence": 117374, "fournisseur": "LIPRIME", "publicationinternet": true, "emetteurlibelle": "", "emetteurid": null, "categoriesmodele": "Réglementation permanente", "nommodele": "[MEL] - Arr\u00eat\u00e9 permanent", "parametresarrete": "entr\u00e9e en vigueur : \u00e0 la mise en place de la signalisation r\u00e9glementaire ; Date d\'envoi de la demande : 04/03/2024 00:00:00 ; Date de r\u00e9ception de la demande : 04/03/2024 00:00:00 ; Date de d\u00e9but de l\'arr\u00eat\u00e9 : 18/03/2024 00:00:00 ; ajout annexe : O ; nom annexe : plan ; MEP signa : Oui ; charg\u00e9 de MEP de la signalisation : Les services techniques de la collectivit\u00e9 ; MEL Avis suppl\u00e9mentaires : 0 ; Description des travaux : regulation description", "parametresemprise": "", "parametresmesures": "Limitation de vitesse | limite de vitesse : 70 km/h", "datecreation": "2024-03-15T10:39:00.269Z", "datemodification": "2024-03-15T10:39:00.739Z"}, "bbox": [2.8631138613, 50.6085988914, 2.8665523929, 50.6143494684]}';
 
     protected function setUp(): void
     {
@@ -719,5 +719,102 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertCount(1, $command->measureCommands);
         $this->assertEquals(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[0]->type);
         $this->assertEquals(30, $command->measureCommands[0]->maxSpeed);
+    }
+
+    public function testTransformPolygonLocationExcluded(): void
+    {
+        $feature = json_decode(self::feature, true);
+        $feature['geometry'] = [
+            'type' => 'Polygon',
+            'coordinates' => [[[2.0, 50.0], [2.1, 50.0], [2.1, 50.1], [2.0, 50.1], [2.0, 50.0]]],
+        ];
+
+        $command = $this->transformer->transform($this->reporter, '24-A-0126', [$feature], $this->organization);
+
+        $this->assertNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(2, $this->reporter->getRecords());
+        $this->assertEquals([
+            [
+                RecordTypeEnum::NOTICE->value,
+                [
+                    RecordTypeEnum::NOTICE->value => LitteralisRecordEnum::NOTICE_POLYGON_LOCATION_EXCLUDED->value,
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
+                    CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
+                    CommonRecordEnum::ATTR_DETAILS->value => [
+                        'idemprise' => 493136,
+                        'geometry_type' => 'Polygon',
+                    ],
+                ],
+            ],
+            [
+                RecordTypeEnum::NOTICE->value,
+                [
+                    RecordTypeEnum::NOTICE->value => LitteralisRecordEnum::NOTICE_NO_MEASURES_FOUND->value,
+                    CommonRecordEnum::ATTR_REGULATION_ID->value => '24-A-0126',
+                    CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
+                ],
+            ],
+        ], $this->reporter->getRecords());
+    }
+
+    public function testTransformMultiPolygonLocationExcluded(): void
+    {
+        $feature = json_decode(self::feature, true);
+        $feature['geometry'] = [
+            'type' => 'MultiPolygon',
+            'coordinates' => [
+                [[[2.0, 50.0], [2.1, 50.0], [2.1, 50.1], [2.0, 50.1], [2.0, 50.0]]],
+            ],
+        ];
+
+        $command = $this->transformer->transform($this->reporter, '24-A-0126', [$feature], $this->organization);
+
+        $this->assertNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $records = $this->reporter->getRecords();
+        $this->assertCount(2, $records);
+        $this->assertSame(LitteralisRecordEnum::NOTICE_POLYGON_LOCATION_EXCLUDED->value, $records[0][1][RecordTypeEnum::NOTICE->value]);
+        $this->assertSame('MultiPolygon', $records[0][1][CommonRecordEnum::ATTR_DETAILS->value]['geometry_type']);
+    }
+
+    public function testTransformMixedGeometryPolygonExcludedLineStringImported(): void
+    {
+        $polygonFeature = json_decode(self::feature, true);
+        $polygonFeature['geometry'] = [
+            'type' => 'Polygon',
+            'coordinates' => [[[2.0, 50.0], [2.1, 50.0], [2.1, 50.1], [2.0, 50.1], [2.0, 50.0]]],
+        ];
+        $polygonFeature['properties']['idemprise'] = 111;
+
+        $lineStringFeature = json_decode(self::feature, true);
+        $lineStringFeature['geometry'] = [
+            'type' => 'LineString',
+            'coordinates' => [[2.866303738, 50.6088816513], [2.866193844, 50.6090613967]],
+        ];
+        $lineStringFeature['properties']['idemprise'] = 222;
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('convertPolygonRoadToLines')
+            ->willReturn('geometryLineString');
+
+        $command = $this->transformer->transform(
+            $this->reporter,
+            '24-A-0126',
+            [$polygonFeature, $lineStringFeature],
+            $this->organization,
+        );
+
+        $this->assertNotNull($command);
+        $this->assertFalse($this->reporter->hasNewErrors());
+        $this->assertCount(1, $command->measureCommands);
+        $this->assertCount(1, $command->measureCommands[0]->locations);
+        $this->assertSame('geometryLineString', $command->measureCommands[0]->locations[0]->rawGeoJSON->geometry);
+
+        $records = $this->reporter->getRecords();
+        $this->assertCount(1, $records);
+        $this->assertSame(LitteralisRecordEnum::NOTICE_POLYGON_LOCATION_EXCLUDED->value, $records[0][1][RecordTypeEnum::NOTICE->value]);
+        $this->assertSame(111, $records[0][1][CommonRecordEnum::ATTR_DETAILS->value]['idemprise']);
     }
 }

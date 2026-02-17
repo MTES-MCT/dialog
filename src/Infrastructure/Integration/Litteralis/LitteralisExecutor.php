@@ -15,6 +15,7 @@ use App\Domain\User\Organization;
 use App\Infrastructure\Integration\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
 final class LitteralisExecutor
@@ -24,6 +25,7 @@ final class LitteralisExecutor
         LitteralisCredentials $litteralisCredentials,
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
+        private EntityManagerInterface $entityManager,
         private LitteralisExtractor $extractor,
         private LitteralisTransformer $transformer,
         private ReportFormatter $reportFormatter,
@@ -44,39 +46,52 @@ final class LitteralisExecutor
         $startTime = $this->dateUtils->getNow();
         $reporter->start($name, $startTime, $organization);
 
-        $this->commandBus->handle(new CleanUpLitteralisRegulationsBeforeImportCommand($organization->getUuid(), $laterThan));
-
         $featuresByRegulation = $this->extractor->extractFeaturesByRegulation($name, $laterThan, $reporter);
         $numImportedRegulations = 0;
         $numImportedFeatures = 0;
 
-        foreach ($featuresByRegulation as $identifier => $regulationFeatures) {
-            $command = $this->transformer->transform($reporter, $identifier, $regulationFeatures, $organization);
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
 
-            if ($command === null) {
-                // If errors have occurred, they have already been logged to the reporter by the transformer,
-                // so we should just continue to the next set of features.
+        try {
+            $this->commandBus->handle(new CleanUpLitteralisRegulationsBeforeImportCommand($organization->getUuid(), $laterThan));
+
+            foreach ($featuresByRegulation as $identifier => $regulationFeatures) {
+                $command = $this->transformer->transform($reporter, $identifier, $regulationFeatures, $organization);
+
+                if ($command === null) {
+                    $reporter->acknowledgeNewErrors();
+                    continue;
+                }
+
+                try {
+                    $this->commandBus->handle($command);
+                    ++$numImportedRegulations;
+                    $numImportedFeatures += \count($regulationFeatures);
+                } catch (\Exception $exc) {
+                    $reporter->addError(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
+                        CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationFeatures[0]['properties']['arretesrcid'],
+                        CommonRecordEnum::ATTR_URL->value => $regulationFeatures[0]['properties']['shorturl'],
+                        CommonRecordEnum::ATTR_DETAILS->value => [
+                            'message' => $exc->getMessage(),
+                        ],
+                        'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
+                        'command' => $command,
+                    ]);
+                    $reporter->acknowledgeNewErrors();
+                    throw $exc;
+                }
+
                 $reporter->acknowledgeNewErrors();
-                continue;
             }
 
-            try {
-                $this->commandBus->handle($command);
-                ++$numImportedRegulations;
-                $numImportedFeatures += \count($regulationFeatures);
-            } catch (\Exception $exc) {
-                $reporter->addError(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
-                    CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationFeatures[0]['properties']['arretesrcid'],
-                    CommonRecordEnum::ATTR_URL->value => $regulationFeatures[0]['properties']['shorturl'],
-                    CommonRecordEnum::ATTR_DETAILS->value => [
-                        'message' => $exc->getMessage(),
-                    ],
-                    'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
-                    'command' => $command,
-                ]);
+            $connection->commit();
+        } catch (\Throwable $e) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
             }
-
-            $reporter->acknowledgeNewErrors();
+            $this->entityManager->clear();
+            throw $e;
         }
 
         $reporter->addCount(LitteralisRecordEnum::COUNT_IMPORTED_FEATURES->value, $numImportedFeatures, ['regulationsCount' => $numImportedRegulations]);

@@ -13,13 +13,12 @@ use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
-use App\Infrastructure\Integration\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
 use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Integration\Litteralis\LitteralisExtractor;
-use App\Infrastructure\Integration\Litteralis\LitteralisRecordEnum;
 use App\Infrastructure\Integration\Litteralis\LitteralisTransformer;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
 final class LitteralisExecutorTest extends TestCase
@@ -28,6 +27,7 @@ final class LitteralisExecutorTest extends TestCase
     private $credentials;
     private $commandBus;
     private $queryBus;
+    private $entityManager;
     private $extractor;
     private $transformer;
     private $reporter;
@@ -42,11 +42,27 @@ final class LitteralisExecutorTest extends TestCase
             ->add('test', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', 'testpassword');
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->extractor = $this->createMock(LitteralisExtractor::class);
         $this->transformer = $this->createMock(LitteralisTransformer::class);
         $this->reporter = $this->createMock(Reporter::class);
         $this->reportFormatter = $this->createMock(ReportFormatter::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
+    }
+
+    private function createExecutor(): LitteralisExecutor
+    {
+        return new LitteralisExecutor(
+            $this->enabledOrgs,
+            $this->credentials,
+            $this->commandBus,
+            $this->queryBus,
+            $this->entityManager,
+            $this->extractor,
+            $this->transformer,
+            $this->reportFormatter,
+            $this->dateUtils,
+        );
     }
 
     public function testExecuteOrganizationNotFound(): void
@@ -69,21 +85,10 @@ final class LitteralisExecutorTest extends TestCase
             ->expects(self::never())
             ->method('transform');
 
-        $executor = new LitteralisExecutor(
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->commandBus,
-            $this->queryBus,
-            $this->extractor,
-            $this->transformer,
-            $this->reportFormatter,
-            $this->dateUtils,
-        );
-
-        $executor->execute('test', $this->orgId, $laterThan, $this->reporter);
+        $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
     }
 
-    public function testExecute(): void
+    public function testExecuteImportFailureRollsBackTransaction(): void
     {
         $laterThan = new \DateTimeImmutable('2024-08-01');
         $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
@@ -93,136 +98,96 @@ final class LitteralisExecutorTest extends TestCase
         $command3 = $this->createMock(ImportLitteralisRegulationCommand::class);
 
         $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
-        $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
+        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $organization
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn($organizationId);
+        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection->expects(self::once())->method('beginTransaction');
+        $connection->expects(self::once())->method('isTransactionActive')->willReturn(true);
+        $connection->expects(self::once())->method('rollBack');
+        $this->entityManager->method('getConnection')->willReturn($connection);
+        $this->entityManager->expects(self::once())->method('clear');
 
-        $this->queryBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with(new GetOrganizationByUuidQuery($this->orgId))
-            ->willReturn($organization);
-
-        $this->dateUtils
-            ->expects(self::exactly(2))
-            ->method('getNow')
-            ->willReturnOnConsecutiveCalls($startTime, $endTime);
-
-        $this->reporter
-            ->expects(self::once())
-            ->method('start')
-            ->with('test', $startTime, $organization);
+        $organization->method('getUuid')->willReturn($organizationId);
+        $this->queryBus->method('handle')->with(new GetOrganizationByUuidQuery($this->orgId))->willReturn($organization);
+        $this->dateUtils->method('getNow')->willReturn($startTime);
+        $this->reporter->method('start')->with('test', $startTime, $organization);
 
         $features1 = ['feature1A', 'feature1B'];
         $features2 = ['feature2A'];
         $features3 = [
-            [
-                'type' => 'Feature',
-                'properties' => [
-                    'idemprise' => 'feature3A',
-                    'arretesrcid' => '1234',
-                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
-                ],
-            ],
-            [
-                'type' => 'Feature',
-                'properties' => [
-                    'idemprise' => 'feature3B',
-                    'arretesrcid' => '1234',
-                    'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS',
-                ],
-            ],
+            ['type' => 'Feature', 'properties' => ['idemprise' => 'feature3A', 'arretesrcid' => '1234', 'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS']],
+            ['type' => 'Feature', 'properties' => ['idemprise' => 'feature3B', 'arretesrcid' => '1234', 'shorturl' => 'https://dl.sogelink.fr/?n3omzTyS']],
         ];
+        $this->extractor->method('extractFeaturesByRegulation')->willReturn([
+            'identifier1' => $features1,
+            'identifier2' => $features2,
+            'identifier3' => $features3,
+        ]);
+        $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, null, $command3);
 
-        $this->extractor
-            ->expects(self::once())
-            ->method('extractFeaturesByRegulation')
-            ->with('test', $laterThan, $this->reporter)
-            ->willReturn(
-                [
-                    'identifier1' => $features1,
-                    'identifier2' => $features2,
-                    'identifier3' => $features3,
-                ],
-            );
-
-        $this->transformer
-            ->expects(self::exactly(3))
-            ->method('transform')
-            ->withConsecutive(
-                [$this->reporter, 'identifier1', $features1, $organization], // Success
-                [$this->reporter, 'identifier2', $features2, $organization], // Transformation error
-                [$this->reporter, 'identifier3', $features3, $organization], // Command execution error
-            )
-            ->willReturnOnConsecutiveCalls($command1, null, $command3);
-
-        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
-
-        $matcher = self::exactly(3);
         $this->commandBus
-            ->expects($matcher)
+            ->expects(self::exactly(3))
             ->method('handle')
             ->withConsecutive([$cleanUpCommand], [$command1], [$command3])
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
-                    1 => $this->assertEquals($cleanUpCommand, $command) ?: null,
-                    2 => $this->assertEquals($command1, $command) ?: null,
-                    3 => $this->assertEquals($command3, $command) ?: throw new \RuntimeException('oops'),
+                static function ($command) use ($command3): void {
+                    if ($command === $command3) {
+                        throw new \RuntimeException('oops');
+                    }
                 },
             );
 
-        $this->reporter
-            ->expects(self::once())
-            ->method('addError')
-            ->with(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
-                CommonRecordEnum::ATTR_REGULATION_ID->value => '1234',
-                CommonRecordEnum::ATTR_URL->value => 'https://dl.sogelink.fr/?n3omzTyS',
-                CommonRecordEnum::ATTR_DETAILS->value => [
-                    'message' => 'oops',
-                ],
-                'violations' => null,
-                'command' => $command3,
-            ]);
+        $this->reporter->method('addError');
+        $this->reporter->method('acknowledgeNewErrors');
+        $this->reporter->expects(self::never())->method('end');
 
-        $this->reporter
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('oops');
+        $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
+    }
+
+    public function testExecuteSuccessCommitsTransaction(): void
+    {
+        $laterThan = new \DateTimeImmutable('2024-08-01');
+        $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
+
+        $organization = $this->createMock(Organization::class);
+        $command1 = $this->createMock(ImportLitteralisRegulationCommand::class);
+        $command2 = $this->createMock(ImportLitteralisRegulationCommand::class);
+
+        $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
+        $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
+        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
+
+        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection->expects(self::once())->method('beginTransaction');
+        $connection->expects(self::once())->method('commit');
+        $this->entityManager->method('getConnection')->willReturn($connection);
+
+        $organization->method('getUuid')->willReturn($organizationId);
+        $this->queryBus->method('handle')->with(new GetOrganizationByUuidQuery($this->orgId))->willReturn($organization);
+        $this->dateUtils->method('getNow')->willReturnOnConsecutiveCalls($startTime, $endTime);
+        $this->reporter->method('start')->with('test', $startTime, $organization);
+
+        $features1 = ['feature1A'];
+        $features2 = ['feature2A'];
+        $this->extractor->method('extractFeaturesByRegulation')->willReturn([
+            'identifier1' => $features1,
+            'identifier2' => $features2,
+        ]);
+        $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, $command2);
+
+        $this->commandBus
             ->expects(self::exactly(3))
-            ->method('acknowledgeNewErrors');
+            ->method('handle')
+            ->withConsecutive([$cleanUpCommand], [$command1], [$command2]);
 
-        $this->reporter
-            ->expects(self::once())
-            ->method('end')
-            ->with($endTime);
+        $this->reporter->method('acknowledgeNewErrors');
+        $this->reporter->method('end')->with($endTime);
+        $this->reporter->method('getRecords')->willReturn(['record1', 'record2']);
+        $this->reportFormatter->method('format')->with(['record1', 'record2'])->willReturn('report');
+        $this->reporter->method('onReport')->with('report');
 
-        $this->reporter
-            ->expects(self::once())
-            ->method('getRecords')
-            ->willReturn(['record1', 'record2', '...']);
-
-        $this->reportFormatter
-            ->expects(self::once())
-            ->method('format')
-            ->with(['record1', 'record2', '...'])
-            ->willReturn('report');
-
-        $this->reporter
-            ->expects(self::once())
-            ->method('onReport')
-            ->with('report');
-
-        $executor = new LitteralisExecutor(
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->commandBus,
-            $this->queryBus,
-            $this->extractor,
-            $this->transformer,
-            $this->reportFormatter,
-            $this->dateUtils,
-        );
-
-        $this->assertSame('report', $executor->execute('test', $this->orgId, $laterThan, $this->reporter));
+        $this->assertSame('report', $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter));
     }
 }

@@ -86,7 +86,10 @@ final readonly class LitteralisTransformer
             // Une feature (emprise) contient une seule "geometry" pouvant rassembler plusieurs endroits précisés dans la propriété 'localisations'.
             // On crée donc une seule SaveCommandLocation de type RawGeoJSON.
             // On l'assigne ensuite à chaque mesure présente dans la propriété 'mesures'.
-            $locationCommand = $this->parseLocation($feature, $organization);
+            $locationCommand = $this->parseLocation($feature, $organization, $reporter, $properties);
+            if ($locationCommand === null) {
+                continue;
+            }
             $featureMeasureCommands = $this->parseMeasures($feature['properties'], $reporter);
 
             foreach ($featureMeasureCommands as $measureCommand) {
@@ -192,14 +195,28 @@ final readonly class LitteralisTransformer
         return $parameters;
     }
 
-    private function parseLocation(array $feature, Organization $organization): SaveLocationCommand
+    private function parseLocation(array $feature, Organization $organization, Reporter $reporter, array $regulationProperties): ?SaveLocationCommand
     {
+        $geometryType = $feature['geometry']['type'] ?? null;
+        if ($geometryType === 'Polygon' || $geometryType === 'MultiPolygon') {
+            $reporter->addNotice(LitteralisRecordEnum::NOTICE_POLYGON_LOCATION_EXCLUDED->value, [
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationProperties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $regulationProperties['shorturl'],
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'idemprise' => $feature['properties']['idemprise'] ?? null,
+                    'geometry_type' => $geometryType,
+                ],
+            ]);
+
+            return null;
+        }
+
         $properties = $feature['properties'];
         $label = trim($properties['localisations'] ?? 'Localisation sans description');
 
         // Selon la collectivité, la géométrie peut être de plusieurs sortes :
         // * (Cas par défaut) Un linéaire, sous forme de LINESTRING ou MULTILINESTRING => on importe tel quel.
-        // * Un POLYGON ou un MULTIPOLYGON dessiné(s) par un agent dans Litteralis => On convertit en linéaire en s'aidant des tronçons de route de la BDTOPO.
+        // * Un POLYGON ou un MULTIPOLYGON dessiné(s) par un agent dans Litteralis => exclus (voir ci-dessus).
         $geometry = json_encode($feature['geometry']);
 
         $sectionsGeometry = $this->roadGeocoder->convertPolygonRoadToLines($geometry);
