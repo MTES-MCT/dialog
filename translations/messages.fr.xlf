@@ -2719,10 +2719,6 @@
                 <source>integration.report.notice.litteralis.no_measures_found</source>
                 <target>Arrêtés sans aucune mesure connue de DiaLog</target>
             </trans-unit>
-            <trans-unit id="integration.report.notice.litteralis.polygon_location_excluded">
-                <source>integration.report.notice.litteralis.polygon_location_excluded</source>
-                <target>Emprise ignorée : localisation de type polygon non importée</target>
-            </trans-unit>
             <trans-unit id="config.menu.organization">
                 <source>config.menu.organization</source>
                 <target>Mon organisation</target>
