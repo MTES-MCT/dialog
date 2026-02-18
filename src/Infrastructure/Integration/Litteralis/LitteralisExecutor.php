@@ -79,7 +79,12 @@ final class LitteralisExecutor
                         'command' => $command,
                     ]);
                     $reporter->acknowledgeNewErrors();
-                    throw $exc;
+
+                    // Erreur de validation : on signale et on passe à l'arrêté suivant (pas de rollback).
+                    // Erreur technique : on relance pour provoquer le rollback et arrêter l'import.
+                    if (!$exc instanceof ValidationFailedException) {
+                        throw $exc;
+                    }
                 }
 
                 $reporter->acknowledgeNewErrors();
