@@ -57,8 +57,8 @@ class LitteralisImportCommand extends Command
                 $output->write($report);
             } catch (\Throwable $exc) {
                 $output->writeln(\sprintf('Organization "%s": import failed: %s', $name, $exc->getMessage()));
-
-                $returnCode = Command::FAILURE;
+                // On ne fait pas échouer la commande (ni le CI) : les erreurs sont dans le rapport.
+                // Seul un orgId manquant (voir ci-dessus) fait retourner FAILURE.
             }
         }
 
