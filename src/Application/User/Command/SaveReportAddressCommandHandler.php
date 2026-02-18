@@ -44,7 +44,7 @@ final readonly class SaveReportAddressCommandHandler
 
         $this->reportAddressRepository->add($reportAddress);
 
-        $this->sendReportToIgn($command);
+        $this->sendReportToIgn($command, $reportAddress);
         $this->sendReportByEmail($command);
     }
 
@@ -67,7 +67,7 @@ final readonly class SaveReportAddressCommandHandler
         }
     }
 
-    private function sendReportToIgn(SaveReportAddressCommand $command): void
+    private function sendReportToIgn(SaveReportAddressCommand $command, ReportAddress $reportAddress): void
     {
         $comment = $command->content;
         $userId = $command->user->getUuid();
@@ -95,7 +95,12 @@ final readonly class SaveReportAddressCommandHandler
         }
 
         try {
-            $this->ignReportClient->submitReport($comment, $geometry);
+            $result = $this->ignReportClient->submitReport($comment, $geometry);
+            if ($result) {
+                $reportAddress->setIgnReportId($result->id);
+                $reportAddress->setIgnReportStatus($result->status);
+                $reportAddress->setIgnStatusUpdatedAt($this->dateUtils->getNow());
+            }
         } catch (\Exception $e) {
             $this->logger->error('Failed to send report to IGN API', [
                 'userId' => $userId,

@@ -382,6 +382,34 @@ Remarques :
 
 Cet endpoint est utile pour vérifier rapidement la disponibilité d’un identifiant avant la création d’un nouvel arrêté. Seuls les arrêtés appartenant à l’organisation associée à vos identifiants API sont renvoyés.
 
+## Webhooks
+
+Ces endpoints sont appelés par des partenaires (et non par les clients de l'API réglementations). Ils ne nécessitent pas l'authentification X-Client-Id / X-Client-Secret mais peuvent utiliser un secret dédié.
+
+### Webhook IGN : mise à jour du statut des signalements
+
+Utilisé par l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) pour notifier DiaLog des changements de statut des signalements d'adresse (signalements envoyés par DiaLog vers l'IGN).
+
+- **Méthode** : POST  
+- **URL** : `/api/webhooks/ign-report-status`  
+- **Authentification** : en-tête `X-IGN-Webhook-Secret` (valeur partagée avec l'IGN, configurée via `IGN_WEBHOOK_SECRET`).  
+- **Corps** : JSON  
+  - `reportId` ou `id` (string) : identifiant du signalement côté IGN  
+  - `status` (string) : nouveau statut  
+
+**Exemple de requête :**
+
+```bash
+curl -X POST 'https://dialog.beta.gouv.fr/api/webhooks/ign-report-status' \
+  -H 'Content-Type: application/json' \
+  -H 'X-IGN-Webhook-Secret: <secret>' \
+  -d '{"reportId": "1109223", "status": "treated"}'
+```
+
+**Réponses :** 200 (succès), 400 (JSON invalide ou champs manquants), 401 (secret absent ou incorrect), 404 (signalement non trouvé).
+
+Documentation détaillée (configuration, backoffice, email) : [Signalements adresse IGN](../tools/ign-signalements.md).
+
 ## Support
 
 Pour obtenir des identifiants d’accès ou signaler un problème, contactez l’équipe DiaLog.

@@ -9,4 +9,6 @@ use App\Domain\User\ReportAddress;
 interface ReportAddressRepositoryInterface
 {
     public function add(ReportAddress $reportAddress): ReportAddress;
+
+    public function findOneByIgnReportId(string $ignReportId): ?ReportAddress;
 }
