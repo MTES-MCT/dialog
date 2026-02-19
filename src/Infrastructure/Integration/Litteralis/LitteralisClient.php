@@ -49,11 +49,7 @@ final class LitteralisClient
     public function fetchAllPaginated(string $cqlFilter, ?Reporter $reporter = null): array
     {
         $features = [];
-
-        // L'API Litteralis est paginée. Pour récupérer toutes les données, on fixe un nombre maximum d'emprises
-        // par page et on détermine le nombre total de pages à partir du champ GeoJSON 'totalFeatures' qu'on récupèrera
-        // dans la réponse à la 1ère requête.
-        $numPerPage = 1000;
+        $numPerPage = 500;
         $totalPages = INF;
 
         for ($pageNumber = 1; $pageNumber <= $totalPages; ++$pageNumber) {

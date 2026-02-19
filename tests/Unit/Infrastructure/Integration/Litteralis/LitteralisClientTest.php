@@ -71,7 +71,7 @@ final class LitteralisClientTest extends TestCase
         $this->httpClient->setResponseFactory([
             function (string $method, string $url, array $options) use ($features) {
                 $this->assertSame($method, 'GET');
-                $this->assertSame($url, 'http://testserver/maplink/public/wfs?outputFormat=application/json&SERVICE=wfs&VERSION=2&REQUEST=GetFeature&TYPENAME=litteralis:litteralis&cql_filter=test&count=1000&startIndex=0');
+                $this->assertSame($url, 'http://testserver/maplink/public/wfs?outputFormat=application/json&SERVICE=wfs&VERSION=2&REQUEST=GetFeature&TYPENAME=litteralis:litteralis&cql_filter=test&count=500&startIndex=0');
                 $this->assertContains('Authorization: Basic Y3JlZGVudGlhbHM=', $options['headers']);
 
                 return new MockResponse(

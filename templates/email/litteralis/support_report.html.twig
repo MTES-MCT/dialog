@@ -1,0 +1,19 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <h1>{{ 'litteralis.support_report.title'|trans }}</h1>
+    <p>{{ 'litteralis.support_report.intro'|trans({'%date%': reportDate}) }}</p>
+
+    <ul>
+        {% for summary in orgSummaries %}
+            <li>
+                {% if summary.success %}
+                    <strong>{{ summary.name }}</strong> : {{ 'litteralis.support_report.success'|trans }}
+                {% else %}
+                    Organization "{{ summary.name }}": import failed: {{ summary.failureMessage }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

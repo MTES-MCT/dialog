@@ -30,6 +30,7 @@ framework:
                 timeout: 120
                 retry_failed:
                     http_codes:
+                        - { code: 0, methods: ['GET'] }
                         - { code: 429, methods: ['GET'] }
                         - { code: 500, methods: ['GET'] }
                         - { code: 502, methods: ['GET'] }
