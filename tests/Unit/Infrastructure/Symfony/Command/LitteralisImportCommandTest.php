@@ -6,6 +6,8 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
+use App\Application\MailerInterface;
+use App\Domain\Mail;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommand;
@@ -16,12 +18,15 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class LitteralisImportCommandTest extends TestCase
 {
+    private const EMAIL_SUPPORT = 'support@dialog.beta.gouv.fr';
+
     private $enabledOrgs;
     private $credentials;
     private $logger;
     private $reporter;
     private $executor;
     private $dateUtils;
+    private $mailer;
 
     protected function setUp(): void
     {
@@ -36,14 +41,15 @@ class LitteralisImportCommandTest extends TestCase
         $this->reporter = $this->createMock(Reporter::class);
         $this->executor = $this->createMock(LitteralisExecutor::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
+        $this->mailer = $this->createMock(MailerInterface::class);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $now = new \DateTimeImmutable();
 
         $this->dateUtils
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getNow')
             ->willReturn($now);
 
@@ -59,9 +65,27 @@ class LitteralisImportCommandTest extends TestCase
                 ['mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', $now, $this->reporter],
                 ['fougeres', 'fe8ef74d-c948-4782-b6dd-979ca9b8ca67', $now, $this->reporter],
                 ['lonslesaunier', '8ac986f1-1c7e-4131-a485-8cc258bda1f3', $now, $this->reporter],
-            );
+            )
+            ->willReturn('Rapport');
 
-        $command = new LitteralisImportCommand($this->logger, $this->enabledOrgs, $this->credentials, $this->reporter, $this->executor, $this->dateUtils);
+        $this->mailer
+            ->expects(self::once())
+            ->method('send')
+            ->with(self::callback(function (Mail $mail): bool {
+                return $mail->address === self::EMAIL_SUPPORT
+                    && $mail->template === 'email/litteralis/support_report.html.twig';
+            }));
+
+        $command = new LitteralisImportCommand(
+            $this->logger,
+            $this->enabledOrgs,
+            $this->credentials,
+            $this->reporter,
+            $this->executor,
+            $this->dateUtils,
+            $this->mailer,
+            self::EMAIL_SUPPORT,
+        );
         $this->assertSame('app:litteralis:import', $command->getName());
 
         $commandTester = new CommandTester($command);
@@ -69,8 +93,11 @@ class LitteralisImportCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function testExecuteError()
+    public function testExecuteError(): void
     {
+        $now = new \DateTimeImmutable();
+        $this->dateUtils->method('getNow')->willReturn($now);
+
         $matcher = self::exactly(3);
         $this->executor
             ->expects($matcher)
@@ -83,12 +110,78 @@ class LitteralisImportCommandTest extends TestCase
                 },
             );
 
-        $command = new LitteralisImportCommand($this->logger, $this->enabledOrgs, $this->credentials, $this->reporter, $this->executor, $this->dateUtils);
+        $this->mailer
+            ->expects(self::once())
+            ->method('send')
+            ->with(self::callback(function (Mail $mail): bool {
+                return $mail->address === self::EMAIL_SUPPORT;
+            }));
+
+        $command = new LitteralisImportCommand(
+            $this->logger,
+            $this->enabledOrgs,
+            $this->credentials,
+            $this->reporter,
+            $this->executor,
+            $this->dateUtils,
+            $this->mailer,
+            self::EMAIL_SUPPORT,
+        );
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         // Une exception pendant l'import ne fait plus échouer la commande (les erreurs sont dans le rapport).
         $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
-        $this->assertSame(['report1', 'Organization "fougeres": import failed: Failed', 'report3', ''], explode(PHP_EOL, $commandTester->getDisplay()));
+        $this->assertSame(['report1', 'Organization "fougeres": import failed: Failed (Exception)', 'report3', 'Sending support report...', ''], explode(PHP_EOL, $commandTester->getDisplay()));
+    }
+
+    public function testExecuteSendsSupportReportWithExpectedPayload(): void
+    {
+        $now = new \DateTimeImmutable();
+        $this->dateUtils->method('getNow')->willReturn($now);
+        $this->reporter->method('setLogger')->with($this->logger);
+
+        $this->executor
+            ->expects(self::exactly(3))
+            ->method('execute')
+            ->willReturn('Rapport org');
+
+        $this->mailer
+            ->expects(self::once())
+            ->method('send')
+            ->with(self::callback(function (Mail $mail): bool {
+                if ($mail->address !== self::EMAIL_SUPPORT || $mail->template !== 'email/litteralis/support_report.html.twig') {
+                    return false;
+                }
+                $payload = $mail->payload;
+                if (!\is_array($payload) || !isset($payload['orgSummaries'], $payload['reportDate'])) {
+                    return false;
+                }
+                $summaries = $payload['orgSummaries'];
+                if (!\is_array($summaries) || \count($summaries) !== 3) {
+                    return false;
+                }
+                foreach ($summaries as $summary) {
+                    if (!\is_array($summary) || !isset($summary['name'], $summary['success']) || $summary['success'] !== true) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }));
+
+        $command = new LitteralisImportCommand(
+            $this->logger,
+            $this->enabledOrgs,
+            $this->credentials,
+            $this->reporter,
+            $this->executor,
+            $this->dateUtils,
+            $this->mailer,
+            self::EMAIL_SUPPORT,
+        );
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([]);
+        $commandTester->assertCommandIsSuccessful();
     }
 }

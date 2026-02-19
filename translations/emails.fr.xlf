@@ -162,6 +162,30 @@
                 <source>welcome.email.signature</source>
                 <target>L’équipe DiaLog</target>
             </trans-unit>
+            <trans-unit id="litteralis.support_report.subject">
+                <source>litteralis.support_report.subject</source>
+                <target>DiaLog – Rapport d’intégration Litteralis</target>
+            </trans-unit>
+            <trans-unit id="litteralis.support_report.title">
+                <source>litteralis.support_report.title</source>
+                <target>Rapport d’intégration Litteralis</target>
+            </trans-unit>
+            <trans-unit id="litteralis.support_report.intro">
+                <source>litteralis.support_report.intro</source>
+                <target>Rapport généré le %date%.</target>
+            </trans-unit>
+            <trans-unit id="litteralis.support_report.success">
+                <source>litteralis.support_report.success</source>
+                <target>Importé avec succès</target>
+            </trans-unit>
+            <trans-unit id="litteralis.support_report.timeout">
+                <source>litteralis.support_report.timeout</source>
+                <target>Timeout / échec de connexion</target>
+            </trans-unit>
+            <trans-unit id="litteralis.support_report.failure">
+                <source>litteralis.support_report.failure</source>
+                <target>Échec de l’import</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
