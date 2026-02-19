@@ -22,4 +22,14 @@ final class ReportAddressRepository extends ServiceEntityRepository implements R
 
         return $reportAddress;
     }
+
+    public function findOneByIgnReportId(string $ignReportId): ?ReportAddress
+    {
+        return $this->createQueryBuilder('r')
+            ->where('r.ignReportId = :ignReportId')
+            ->setParameter('ignReportId', $ignReportId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

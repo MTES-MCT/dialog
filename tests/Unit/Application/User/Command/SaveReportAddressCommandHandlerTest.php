@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Exception\EmailSendingException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
+use App\Application\Ign\IgnReportSubmissionResult;
 use App\Application\MailerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Application\User\Command\SaveReportAddressCommand;
@@ -21,7 +22,6 @@ use App\Infrastructure\Adapter\IgnReportClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class SaveReportAddressCommandHandlerTest extends TestCase
 {
@@ -34,7 +34,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
     private MockObject&LoggerInterface $logger;
     private MockObject&MailerInterface $mailer;
     private MockObject&User $user;
-    private MockObject&ResponseInterface $response;
     private MockObject&Organization $organization;
 
     public function setUp(): void
@@ -48,7 +47,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->mailer = $this->createMock(MailerInterface::class);
         $this->user = $this->createMock(User::class);
-        $this->response = $this->createMock(ResponseInterface::class);
         $this->organization = $this->createMock(Organization::class);
     }
 
@@ -111,7 +109,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
                 'Il y a un problème avec cette adresse.',
                 'POINT(2.5 46.5)',
             )
-            ->willReturn($this->response);
+            ->willReturn(new IgnReportSubmissionResult('42', 'submit'));
 
         $handler = new SaveReportAddressCommandHandler(
             $this->idFactory,
@@ -182,7 +180,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
                 'Il y a un problème avec cette adresse.',
                 'POINT(2.5 46.5)',
             )
-            ->willReturn($this->response);
+            ->willReturn(new IgnReportSubmissionResult('99', 'submit'));
 
         $handler = new SaveReportAddressCommandHandler(
             $this->idFactory,
@@ -263,7 +261,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
                 'Il y a un problème avec cette adresse.',
                 'POINT(2.5 46.5)',
             )
-            ->willReturn($this->response);
+            ->willReturn(new IgnReportSubmissionResult('42', 'submit'));
 
         $handler = new SaveReportAddressCommandHandler(
             $this->idFactory,
@@ -948,7 +946,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
                 'Il y a un problème avec cette adresse.',
                 'POINT(2.5 46.5)',
             )
-            ->willReturn($this->response);
+            ->willReturn(new IgnReportSubmissionResult('42', 'submit'));
 
         $this->mailer
             ->expects(self::once())

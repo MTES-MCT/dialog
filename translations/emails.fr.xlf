@@ -22,6 +22,22 @@
                 <source>contact.email.user_report_subject</source>
                 <target>Nouveau signalement d'adresse sur le site DiaLog</target>
             </trans-unit>
+            <trans-unit id="contact.email.user_report_status">
+                <source>contact.email.user_report_status</source>
+                <target>Mise à jour du statut d'un signalement adresse (IGN)</target>
+            </trans-unit>
+            <trans-unit id="contact.email.user_report_status_subject">
+                <source>contact.email.user_report_status_subject</source>
+                <target>Changement de statut IGN pour un signalement d'adresse DiaLog</target>
+            </trans-unit>
+            <trans-unit id="user_report_status.intro">
+                <source>user_report_status.intro</source>
+                <target>Le statut du signalement suivant a été mis à jour par l'IGN :</target>
+            </trans-unit>
+            <trans-unit id="user_report_status.new_status">
+                <source>user_report_status.new_status</source>
+                <target>Nouveau statut :</target>
+            </trans-unit>
             <trans-unit id="contact.email.user_feedback">
                 <source>contact.email.user_feedback</source>
                 <target>Avis</target>

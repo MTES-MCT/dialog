@@ -16,6 +16,9 @@
         <option name="default">false</option>
       </options>
     </field>
+    <field name="ignReportId" type="string" column="ign_report_id" nullable="true" length="255"/>
+    <field name="ignReportStatus" type="string" column="ign_report_status" nullable="true" length="64"/>
+    <field name="ignStatusUpdatedAt" type="datetimetz" column="ign_status_updated_at" nullable="true"/>
     <many-to-one field="user" target-entity="App\Domain\User\User">
         <join-columns>
             <join-column name="user_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>

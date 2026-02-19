@@ -42,3 +42,9 @@ DiaLog s'interface avec l'[API WFS de l'IGN](https://geoservices.ign.fr/document
 * [Documentation de l'API ] (https://geoservices.ign.fr/documentation/services/services-geoplateforme/diffusion#70070)
 * [Documentation de la BDTOPO] (https://geoservices.ign.fr/sites/default/files/2023-10/DC_BDTOPO_3-3.pdf)
 * [Fonctions de filtrage qui peuvent être utilisées dans le filtrage WFS] (https://docs.geoserver.org/main/en/user/filter/function_reference.html)
+
+## Signalements adresse vers l'IGN (Espace collaboratif / GCMS)
+
+Les signalements d'adresses non reconnues sont envoyés à l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) (API GCMS). DiaLog enregistre l'identifiant et le statut, reçoit les mises à jour de statut via un webhook et notifie l'équipe support par email.
+
+**Documentation dédiée** : [Signalements adresse IGN (configuration, webhook, backoffice)](./ign-signalements.md).

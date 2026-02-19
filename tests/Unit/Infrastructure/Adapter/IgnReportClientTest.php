@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
+use App\Application\Ign\IgnReportSubmissionResult;
 use App\Infrastructure\Adapter\IgnReportClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -41,6 +42,11 @@ final class IgnReportClientTest extends TestCase
             ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(201);
+        $this->mockResponse
+            ->expects($this->once())
+            ->method('toArray')
+            ->with(false)
+            ->willReturn(['id' => 42, 'status' => 'submit']);
 
         $this->ignReportClient
             ->expects($this->once())
@@ -86,9 +92,11 @@ final class IgnReportClientTest extends TestCase
                 }),
             );
 
-        $response = $this->client->submitReport($comment, $geometry);
+        $result = $this->client->submitReport($comment, $geometry);
 
-        $this->assertSame($this->mockResponse, $response);
+        $this->assertInstanceOf(IgnReportSubmissionResult::class, $result);
+        $this->assertSame('42', $result->id);
+        $this->assertSame('submit', $result->status);
     }
 
     public function testSubmitReportWithEmptyCommentThrowsException(): void
@@ -132,6 +140,11 @@ final class IgnReportClientTest extends TestCase
             ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(200);
+        $this->mockResponse
+            ->expects($this->once())
+            ->method('toArray')
+            ->with(false)
+            ->willReturn(['id' => 99, 'status' => 'submit']);
 
         $this->ignReportClient
             ->expects($this->once())
@@ -155,7 +168,9 @@ final class IgnReportClientTest extends TestCase
                 }),
             );
 
-        $this->client->submitReport($comment, $geometry);
+        $result = $this->client->submitReport($comment, $geometry);
+        $this->assertInstanceOf(IgnReportSubmissionResult::class, $result);
+        $this->assertSame('99', $result->id);
     }
 
     public function testSubmitReportWithWhitespaceOnlyCommentThrowsException(): void
@@ -182,6 +197,10 @@ final class IgnReportClientTest extends TestCase
         $this->mockResponse
             ->method('getStatusCode')
             ->willReturn(201);
+        $this->mockResponse
+            ->method('toArray')
+            ->with(false)
+            ->willReturn(['id' => 1, 'status' => 'test']);
 
         $capturedPayload = null;
 
@@ -229,6 +248,11 @@ final class IgnReportClientTest extends TestCase
             ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(201);
+        $this->mockResponse
+            ->expects($this->once())
+            ->method('toArray')
+            ->with(false)
+            ->willReturn(['id' => 10, 'status' => 'test']);
 
         $this->ignReportClient
             ->expects($this->once())
@@ -271,6 +295,11 @@ final class IgnReportClientTest extends TestCase
             ->expects($this->once())
             ->method('getStatusCode')
             ->willReturn(201);
+        $this->mockResponse
+            ->expects($this->once())
+            ->method('toArray')
+            ->with(false)
+            ->willReturn(['id' => 5, 'status' => 'submit']);
 
         $this->ignReportClient
             ->expects($this->once())
@@ -294,5 +323,51 @@ final class IgnReportClientTest extends TestCase
 
         // Ne pas passer de status, doit utiliser 'submit' depuis la variable d'environnement
         $clientWithSubmitStatus->submitReport($comment, $geometry);
+    }
+
+    public function testSubmitReportReturnsNullWhenResponseHasNoId(): void
+    {
+        $this->mockResponse
+            ->method('getStatusCode')
+            ->willReturn(201);
+        $this->mockResponse
+            ->method('toArray')
+            ->with(false)
+            ->willReturn([]);
+
+        $this->ignReportClient->method('request')->willReturn($this->mockResponse);
+        $this->logger->method('info');
+
+        $result = $this->client->submitReport('Comment', 'POINT(0 0)');
+        $this->assertNull($result);
+    }
+
+    public function testGetReportStatusReturnsStatusFromApi(): void
+    {
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(200);
+        $mockResponse->method('toArray')->with(false)->willReturn(['status' => 'treated']);
+
+        $this->ignReportClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('GET', '/gcms/api/reports/123', $this->anything())
+            ->willReturn($mockResponse);
+
+        $status = $this->client->getReportStatus('123');
+        $this->assertSame('treated', $status);
+    }
+
+    public function testGetReportStatusReturnsNullOnError(): void
+    {
+        $this->ignReportClient
+            ->expects($this->once())
+            ->method('request')
+            ->willThrowException(new \Exception('Network error'));
+
+        $this->logger->expects($this->once())->method('warning');
+
+        $status = $this->client->getReportStatus('456');
+        $this->assertNull($status);
     }
 }
