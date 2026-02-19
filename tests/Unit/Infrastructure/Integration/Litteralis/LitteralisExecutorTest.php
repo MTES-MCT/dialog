@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Integration\Litteralis;
 
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\GeocodingFailureException;
 use App\Application\Integration\Litteralis\Command\CleanUpLitteralisRegulationsBeforeImportCommand;
 use App\Application\Integration\Litteralis\Command\ImportLitteralisRegulationCommand;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
@@ -144,6 +145,62 @@ final class LitteralisExecutorTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('oops');
         $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
+    }
+
+    public function testExecuteRecoverableExceptionContinuesImport(): void
+    {
+        $laterThan = new \DateTimeImmutable('2024-08-01');
+        $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
+
+        $organization = $this->createMock(Organization::class);
+        $command1 = $this->createMock(ImportLitteralisRegulationCommand::class);
+        $command2 = $this->createMock(ImportLitteralisRegulationCommand::class);
+
+        $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
+        $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
+        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
+
+        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection->expects(self::once())->method('beginTransaction');
+        $connection->expects(self::once())->method('commit');
+        $connection->expects(self::never())->method('rollBack');
+        $this->entityManager->method('getConnection')->willReturn($connection);
+
+        $organization->method('getUuid')->willReturn($organizationId);
+        $this->queryBus->method('handle')->with(new GetOrganizationByUuidQuery($this->orgId))->willReturn($organization);
+        $this->dateUtils->method('getNow')->willReturnOnConsecutiveCalls($startTime, $endTime);
+        $this->reporter->method('start')->with('test', $startTime, $organization);
+
+        $features1 = [
+            ['type' => 'Feature', 'properties' => ['idemprise' => 'f1', 'arretesrcid' => '1234', 'shorturl' => 'https://dl.sogelink.fr/?abc']],
+        ];
+        $features2 = ['feature2A'];
+        $this->extractor->method('extractFeaturesByRegulation')->willReturn([
+            'identifier1' => $features1,
+            'identifier2' => $features2,
+        ]);
+        $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, $command2);
+
+        $this->commandBus
+            ->expects(self::exactly(3))
+            ->method('handle')
+            ->withConsecutive([$cleanUpCommand], [$command1], [$command2])
+            ->willReturnCallback(
+                static function ($command) use ($command1): void {
+                    if ($command === $command1) {
+                        throw new GeocodingFailureException('geocoding failed');
+                    }
+                },
+            );
+
+        $this->reporter->expects(self::once())->method('addError');
+        $this->reporter->method('acknowledgeNewErrors');
+        $this->reporter->method('end')->with($endTime);
+        $this->reporter->method('getRecords')->willReturn([]);
+        $this->reportFormatter->method('format')->willReturn('report');
+        $this->reporter->method('onReport')->with('report');
+
+        $this->assertSame('report', $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter));
     }
 
     public function testExecuteSuccessCommitsTransaction(): void

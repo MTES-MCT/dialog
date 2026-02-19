@@ -49,38 +49,44 @@ final class IgnReportClient
             ],
         ];
 
-        $response = $this->ignReportClient->request('POST', '/gcms/api/reports', [
-            'json' => $payload,
-            'auth_basic' => $this->credentials,
-        ]);
-
-        $statusCode = $response->getStatusCode();
-        $this->logger->info('Report sent to IGN API', [
-            'json_encoded' => json_encode($payload),
-            'geometry' => $geometry,
-            'comment' => $comment,
-            'statusCode' => $statusCode,
-        ]);
-
-        if ($statusCode < 200 || $statusCode >= 300) {
-            return null;
-        }
-
         try {
+            $response = $this->ignReportClient->request('POST', '/gcms/api/reports', [
+                'json' => $payload,
+                'auth_basic' => $this->credentials,
+            ]);
+
+            $statusCode = $response->getStatusCode();
+            $this->logger->info('Report sent to IGN API', [
+                'json_encoded' => json_encode($payload),
+                'geometry' => $geometry,
+                'comment' => $comment,
+                'statusCode' => $statusCode,
+            ]);
+
+            if ($statusCode < 200 || $statusCode >= 300) {
+                return null;
+            }
+
             $data = $response->toArray(false);
-        } catch (\Throwable) {
+
+            $id = $data['id'] ?? null;
+            if ($id === null) {
+                return null;
+            }
+
+            return new IgnReportSubmissionResult(
+                id: (string) $id,
+                status: (string) ($data['status'] ?? $this->status),
+            );
+        } catch (\Throwable $e) {
+            $this->logger->error('Failed to submit report to IGN API', [
+                'comment' => $comment,
+                'geometry' => $geometry,
+                'error' => $e->getMessage(),
+            ]);
+
             return null;
         }
-
-        $id = $data['id'] ?? null;
-        if ($id === null) {
-            return null;
-        }
-
-        return new IgnReportSubmissionResult(
-            id: (string) $id,
-            status: (string) ($data['status'] ?? $this->status),
-        );
     }
 
     /**

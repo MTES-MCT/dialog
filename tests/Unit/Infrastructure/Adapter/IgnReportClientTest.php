@@ -342,6 +342,31 @@ final class IgnReportClientTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testSubmitReportReturnsNullOnHttpError(): void
+    {
+        $this->ignReportClient
+            ->expects($this->once())
+            ->method('request')
+            ->willThrowException(new \Exception('Connection timed out'));
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with(
+                'Failed to submit report to IGN API',
+                $this->callback(function ($context) {
+                    $this->assertSame('Comment', $context['comment']);
+                    $this->assertSame('POINT(0 0)', $context['geometry']);
+                    $this->assertSame('Connection timed out', $context['error']);
+
+                    return true;
+                }),
+            );
+
+        $result = $this->client->submitReport('Comment', 'POINT(0 0)');
+        $this->assertNull($result);
+    }
+
     public function testGetReportStatusReturnsStatusFromApi(): void
     {
         $mockResponse = $this->createMock(ResponseInterface::class);

@@ -68,7 +68,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
         $this->dateUtils
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getNow')
             ->willReturn($date);
 
@@ -143,7 +143,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
         $this->dateUtils
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getNow')
             ->willReturn($date);
 
@@ -214,7 +214,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
         $this->dateUtils
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getNow')
             ->willReturn($date);
 
@@ -364,7 +364,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
         $handler($command);
     }
 
-    public function testHandleWhenIgnApiCallFails(): void
+    public function testHandleWhenIgnApiReturnsNull(): void
     {
         $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
         $command->content = 'Il y a un problème avec cette adresse.';
@@ -394,7 +394,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
         );
         $expectedReportAddress->setCreatedAt($date);
 
-        // Le ReportAddress doit être sauvegardé même si l'appel IGN échoue
         $this->reportAddressRepository
             ->expects(self::once())
             ->method('add')
@@ -417,7 +416,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->with('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}')
             ->willReturn('{"type":"Point","coordinates":[2.5,46.5]}');
 
-        // L'appel IGN lève une exception
         $this->ignReportClient
             ->expects(self::once())
             ->method('submitReport')
@@ -425,19 +423,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
                 'Il y a un problème avec cette adresse.',
                 'POINT(2.5 46.5)',
             )
-            ->willThrowException(new \Exception('IGN API error: service unavailable'));
-
-        // L'exception doit être catchée et loggée
-        $this->logger
-            ->expects(self::once())
-            ->method('error')
-            ->with(
-                'Failed to send report to IGN API',
-                [
-                    'userId' => 'user-uuid',
-                    'error' => 'IGN API error: service unavailable',
-                ],
-            );
+            ->willReturn(null);
 
         $handler = new SaveReportAddressCommandHandler(
             $this->idFactory,
@@ -905,7 +891,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
         $this->dateUtils
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getNow')
             ->willReturn($date);
 

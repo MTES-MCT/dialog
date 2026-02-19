@@ -80,9 +80,7 @@ final class LitteralisExecutor
                     ]);
                     $reporter->acknowledgeNewErrors();
 
-                    // Erreur de validation : on signale et on passe à l'arrêté suivant (pas de rollback).
-                    // Erreur technique : on relance pour provoquer le rollback et arrêter l'import.
-                    if (!$exc instanceof ValidationFailedException) {
+                    if (!$this->isRecoverableException($exc)) {
                         throw $exc;
                     }
                 }
@@ -106,5 +104,11 @@ final class LitteralisExecutor
         $reporter->onReport($report);
 
         return $report;
+    }
+
+    private function isRecoverableException(\Throwable $e): bool
+    {
+        return $e instanceof ValidationFailedException
+            || str_starts_with($e::class, 'App\\');
     }
 }

@@ -94,18 +94,12 @@ final readonly class SaveReportAddressCommandHandler
             return;
         }
 
-        try {
-            $result = $this->ignReportClient->submitReport($comment, $geometry);
-            if ($result) {
-                $reportAddress->setIgnReportId($result->id);
-                $reportAddress->setIgnReportStatus($result->status);
-                $reportAddress->setIgnStatusUpdatedAt($this->dateUtils->getNow());
-            }
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to send report to IGN API', [
-                'userId' => $userId,
-                'error' => $e->getMessage(),
-            ]);
+        $result = $this->ignReportClient->submitReport($comment, $geometry);
+
+        if ($result) {
+            $reportAddress->setIgnReportId($result->id);
+            $reportAddress->setIgnReportStatus($result->status);
+            $reportAddress->setIgnStatusUpdatedAt($this->dateUtils->getNow());
         }
     }
 
