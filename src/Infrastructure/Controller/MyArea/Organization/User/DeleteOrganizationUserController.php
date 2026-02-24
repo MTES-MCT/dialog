@@ -8,7 +8,6 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Command\DeleteOrganizationUserCommand;
 use App\Application\User\Query\GetOrganizationUserQuery;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Exception\OrganizationUserNotFoundException;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -49,7 +48,7 @@ final class DeleteOrganizationUserController
         $organization = $organizationUser->getOrganization();
 
         if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)
-            || $organizationUser->getRole() === OrganizationRolesEnum::ROLE_ORGA_ADMIN->value) {
+            || $organizationUser->isOwner()) {
             throw new AccessDeniedHttpException();
         }
 

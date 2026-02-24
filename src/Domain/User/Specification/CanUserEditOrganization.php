@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Specification;
 
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 
@@ -12,14 +11,6 @@ class CanUserEditOrganization
 {
     public function isSatisfiedBy(Organization $organization, AbstractAuthenticatedUser $user): bool
     {
-        foreach ($user->getUserOrganizations() as $userOrganization) {
-            if ($userOrganization->uuid !== $organization->getUuid()) {
-                continue;
-            }
-
-            return \in_array(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value, $userOrganization->roles);
-        }
-
-        return false;
+        return \in_array($organization->getUuid(), $user->getUserOrganizationUuids());
     }
 }

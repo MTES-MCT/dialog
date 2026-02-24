@@ -40,7 +40,6 @@ final readonly class CreateInvitationCommandHandler
             new Invitation(
                 uuid: $this->idFactory->make(),
                 email: $email,
-                role: $command->role,
                 fullName: $command->fullName,
                 createdAt: $this->dateUtils->getNow(),
                 owner: $command->owner,
