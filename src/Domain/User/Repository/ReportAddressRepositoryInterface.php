@@ -11,4 +11,7 @@ interface ReportAddressRepositoryInterface
     public function add(ReportAddress $reportAddress): ReportAddress;
 
     public function findOneByIgnReportId(string $ignReportId): ?ReportAddress;
+
+    /** @return ReportAddress[] */
+    public function findAllPendingIgnReports(): array;
 }

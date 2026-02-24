@@ -32,4 +32,16 @@ final class ReportAddressRepository extends ServiceEntityRepository implements R
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    private const TERMINAL_STATUSES = ['valid', 'reject0'];
+
+    public function findAllPendingIgnReports(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->where('r.ignReportId IS NOT NULL')
+            ->andWhere('r.ignReportStatus NOT IN (:terminalStatuses) OR r.ignReportStatus IS NULL')
+            ->setParameter('terminalStatuses', self::TERMINAL_STATUSES)
+            ->getQuery()
+            ->getResult();
+    }
 }

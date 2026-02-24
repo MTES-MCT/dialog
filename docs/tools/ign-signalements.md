@@ -1,6 +1,6 @@
 # Signalements adresse vers l'IGN (Espace collaboratif / GCMS)
 
-Les signalements d'adresses non reconnues par les utilisateurs de DiaLog sont envoyés à l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) (API GCMS). DiaLog enregistre l'identifiant et le statut renvoyés par l'API, peut recevoir les mises à jour de statut via un webhook et notifier l'équipe support par email.
+Les signalements d'adresses non reconnues par les utilisateurs de DiaLog sont envoyés à l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) (API GCMS). DiaLog enregistre l'identifiant et le statut renvoyés par l'API, synchronise quotidiennement les statuts via un cron et notifie l'équipe support par email en cas de changement.
 
 ## Contexte
 
@@ -21,7 +21,6 @@ Variables d'environnement :
 | `API_IGN_REPORT_BASE_URL` | URL de base de l'API (ex. `https://espacecollaboratif.ign.fr`) |
 | `API_IGN_REPORT_AUTH` | Identifiants au format `user:password` |
 | `IGN_REPORT_STATUS` | Statut initial du signalement envoyé à l'IGN (ex. `submit`, `test`) |
-| `IGN_WEBHOOK_SECRET` | Secret partagé avec l'IGN pour authentifier les appels du webhook. Laisser vide désactive l'acceptation des mises à jour. |
 
 ## Envoi vers l'IGN (POST)
 
@@ -29,45 +28,22 @@ Variables d'environnement :
 - Le commentaire est préfixé par `[DiaLog]`. La géométrie est envoyée en WKT (point).
 - Si la réponse est 2xx et contient un body avec `id` (et optionnellement `status`), DiaLog enregistre ces valeurs sur le signalement (`ign_report_id`, `ign_report_status`, `ign_status_updated_at`).
 
-## Récupération du statut (GET)
+## Synchronisation des statuts (cron)
 
-- **Endpoint côté IGN** : `GET {API_IGN_REPORT_BASE_URL}/gcms/api/reports/{id}`
-- Le client `IgnReportClient::getReportStatus(ignReportId)` permet d'interroger l'API pour rafraîchir le statut côté DiaLog (non utilisé automatiquement ; utile pour un script ou une action manuelle).
+La commande `app:ign:sync-report-statuses` interroge l'API IGN pour chaque signalement ayant un `ign_report_id` et met à jour le statut si celui-ci a changé. Un email est envoyé à l'équipe support (`EMAIL_SUPPORT`) pour chaque changement de statut.
 
-## Webhook : mise à jour du statut par l'IGN
-
-L'IGN peut notifier DiaLog lorsqu'un signalement change de statut en appelant l'endpoint suivant.
-
-### Endpoint DiaLog
-
-- **Méthode** : POST  
-- **URL** : `/api/webhooks/ign-report-status`  
-- **Authentification** : en-tête `X-IGN-Webhook-Secret` doit contenir la valeur de `IGN_WEBHOOK_SECRET`.
-
-### Corps de la requête (JSON)
-
-| Champ | Description |
-|-------|-------------|
-| `reportId` ou `id` | Identifiant du signalement côté IGN (string) |
-| `status` | Nouveau statut (string) |
-
-Exemple :
-
-```json
-{
-  "reportId": "1109223",
-  "status": "treated"
-}
+```bash
+php bin/console app:ign:sync-report-statuses
 ```
 
-### Comportement
+Cette commande est prévue pour être exécutée quotidiennement via un cron ou un scheduler.
 
-- En cas de succès (200) : le signalement DiaLog correspondant (trouvé par `ign_report_id`) est mis à jour avec le statut et la date de dernière mise à jour ; un email est envoyé à l'équipe support (`EMAIL_SUPPORT`) pour notifier le changement.
-- Réponses d'erreur : 400 (JSON invalide ou champs manquants), 401 (secret absent ou incorrect), 404 (signalement non trouvé).
+### Détail du fonctionnement
 
-### Documentation API publique
-
-Cet endpoint est également décrit dans la [documentation API DiaLog](../public/api.md#webhook-ign-mise-à-jour-du-statut-des-signalements).
+1. Récupère tous les signalements ayant un `ign_report_id` en base.
+2. Pour chacun, interroge `GET {API_IGN_REPORT_BASE_URL}/gcms/api/reports/{id}`.
+3. Si le statut a changé : met à jour `ign_report_status` et `ign_status_updated_at`, envoie un email de notification.
+4. Si l'API retourne `null` (erreur réseau, 404…) ou le même statut : aucune action.
 
 ## Backoffice
 
@@ -79,4 +55,4 @@ Dans l'admin (« Signalements adresse »), les champs suivants sont affichés :
 
 ## Voir aussi
 
-- [Services externes](./services.md) – vue d’ensemble des APIs utilisées par DiaLog.
+- [Services externes](./services.md) – vue d'ensemble des APIs utilisées par DiaLog.
