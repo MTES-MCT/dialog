@@ -12,7 +12,6 @@ use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\RoadGeocoderInterface;
 use App\Domain\Condition\Period\Enum\PeriodRecurrenceTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
@@ -32,7 +31,6 @@ use Psr\Log\LoggerInterface;
 
 final class LitteralisTransformerTest extends TestCase
 {
-    private $roadGeocoder;
     private $transformer;
     private $organization;
     private $logger;
@@ -43,8 +41,7 @@ final class LitteralisTransformerTest extends TestCase
     protected function setUp(): void
     {
         $tz = new \DateTimeZone('Etc/GMT-1'); // Independant of daylight saving time (DST)
-        $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
-        $this->transformer = new LitteralisTransformer($this->roadGeocoder, new LitteralisPeriodParser($tz));
+        $this->transformer = new LitteralisTransformer(new LitteralisPeriodParser($tz));
         $this->organization = $this->createMock(Organization::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->reporter = new Reporter($this->logger);
@@ -61,11 +58,9 @@ final class LitteralisTransformerTest extends TestCase
     {
         $identifier = '173214#24/0194';
 
-        $this->roadGeocoder
-            ->expects(self::exactly(3))
-            ->method('convertPolygonRoadToLines')
-            ->withConsecutive([self::anything()], [self::anything()], [self::anything()])
-            ->willReturnOnConsecutiveCalls('geometry1', 'geometry2', 'geometry3');
+        $geometry1 = json_encode($this->realWorldFeatures[0]['geometry']);
+        $geometry2 = json_encode($this->realWorldFeatures[1]['geometry']);
+        $geometry3 = json_encode($this->realWorldFeatures[2]['geometry']);
 
         $generalInfo = new SaveRegulationGeneralInfoCommand();
 
@@ -86,7 +81,7 @@ final class LitteralisTransformerTest extends TestCase
         $location1->organization = $this->organization;
         $rawGeoJSON1 = new SaveRawGeoJSONCommand();
         $rawGeoJSON1->label = "AVENUE DES CHÂTEAUX, DU 1 JUSQU'À LA PLACE DE LA DISTILLERIE;PLACE DE LA DISTILLERIE, DE LA RUE DE LA DISTILLERIE JUSQU'À LA RUE DU GÉNÉRAL LECLERC";
-        $rawGeoJSON1->geometry = 'geometry1';
+        $rawGeoJSON1->geometry = $geometry1;
         $location1->rawGeoJSON = $rawGeoJSON1;
         $measureCommand1->addLocation($location1);
 
@@ -115,7 +110,7 @@ final class LitteralisTransformerTest extends TestCase
         $location2->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $rawGeoJSON2 = new SaveRawGeoJSONCommand();
         $rawGeoJSON2->label = "PLACE DE LA DISTILLERIE, DE LA RUE DE LA DISTILLERIE JUSQU'À LA RUE DU GÉNÉRAL LECLERC";
-        $rawGeoJSON2->geometry = 'geometry2';
+        $rawGeoJSON2->geometry = $geometry2;
         $location2->rawGeoJSON = $rawGeoJSON2;
         $measureCommand2->addLocation($location2);
 
@@ -147,7 +142,7 @@ final class LitteralisTransformerTest extends TestCase
         $location3->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $rawGeoJSON3 = new SaveRawGeoJSONCommand();
         $rawGeoJSON3->label = "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY";
-        $rawGeoJSON3->geometry = 'geometry3';
+        $rawGeoJSON3->geometry = $geometry3;
         $location3->rawGeoJSON = $rawGeoJSON3;
         $measureCommand3->addLocation($location3);
 
@@ -176,7 +171,7 @@ final class LitteralisTransformerTest extends TestCase
         $location4->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $rawGeoJSON4 = new SaveRawGeoJSONCommand();
         $rawGeoJSON4->label = "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY";
-        $rawGeoJSON4->geometry = 'geometry3';
+        $rawGeoJSON4->geometry = $geometry3;
         $location4->rawGeoJSON = $rawGeoJSON4;
         $measureCommand4->addLocation($location4);
 
@@ -204,7 +199,7 @@ final class LitteralisTransformerTest extends TestCase
         $location5->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $rawGeoJSON5 = new SaveRawGeoJSONCommand();
         $rawGeoJSON5->label = "RUE DE THOMASSY, DU 81 JUSQU'À L'IMPASSE DE LA LIRONDE;IMPASSE DE LA LIRONDE, DE LA RUE DE THOMASSY JUSQU'AU 117;DU 5 AU 63 IMPASSE DE LA LIRONDE;DU 549 AU 499 RUE DE THOMASSY";
-        $rawGeoJSON5->geometry = 'geometry3';
+        $rawGeoJSON5->geometry = $geometry3;
         $location5->rawGeoJSON = $rawGeoJSON5;
         $measureCommand5->addLocation($location5);
 
@@ -575,11 +570,6 @@ final class LitteralisTransformerTest extends TestCase
         $feature['properties']['parametresmesures'] = '2021 - Circulation interdite | dérogations : véhicules de l\'entreprise exécutant les travaux ; 2021 - Limitation de vitesse | limite de vitesse : 30 km/h';
         $identifier = $feature['properties']['arretesrcid'];
 
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('convertPolygonRoadToLines')
-            ->willReturn('geometry1');
-
         $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
 
         $this->assertNotNull($command);
@@ -599,11 +589,6 @@ final class LitteralisTransformerTest extends TestCase
         $feature['properties']['mesures'] = 'AP - Limitation de vitesse';
         $feature['properties']['parametresmesures'] = 'AP - Limitation de vitesse | limite de vitesse : 50 km/h';
         $identifier = $feature['properties']['arretesrcid'];
-
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('convertPolygonRoadToLines')
-            ->willReturn('geometry1');
 
         $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
 
@@ -640,10 +625,6 @@ final class LitteralisTransformerTest extends TestCase
 
             $identifier = $feature['properties']['arretesrcid'] . '_' . $testCase['year'];
 
-            $this->roadGeocoder
-                ->method('convertPolygonRoadToLines')
-                ->willReturn('geometry1');
-
             $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
 
             $this->assertNotNull($command, "Failed for year {$testCase['year']} with measure {$testCase['measure']}");
@@ -659,11 +640,6 @@ final class LitteralisTransformerTest extends TestCase
         $feature['properties']['mesures'] = '2021 - Circulation interdite RD;2021 - Limitation de vitesse RD';
         $feature['properties']['parametresmesures'] = '2021 - Circulation interdite RD | dérogations : véhicules de l\'entreprise ; 2021 - Limitation de vitesse RD | limite de vitesse : 70 km/h';
         $identifier = $feature['properties']['arretesrcid'];
-
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('convertPolygonRoadToLines')
-            ->willReturn('geometry1');
 
         $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
 
@@ -684,11 +660,6 @@ final class LitteralisTransformerTest extends TestCase
         $feature['properties']['parametresmesures'] = '3 - Limitation de vitesse 1 | vitesse : 50 ; 3 - Circulation alternée 2 | type d\'alternat : par feux tricolores';
         $identifier = $feature['properties']['arretesrcid'];
 
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('convertPolygonRoadToLines')
-            ->willReturn('geometry1');
-
         $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
 
         $this->assertNotNull($command);
@@ -706,11 +677,6 @@ final class LitteralisTransformerTest extends TestCase
         $feature['properties']['mesures'] = '3 - Limitation de vitesse';
         $feature['properties']['parametresmesures'] = '3 - Limitation de vitesse | vitesse : 30';
         $identifier = $feature['properties']['arretesrcid'];
-
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('convertPolygonRoadToLines')
-            ->willReturn('geometry1');
 
         $command = $this->transformer->transform($this->reporter, $identifier, [$feature], $this->organization);
 
@@ -787,17 +753,13 @@ final class LitteralisTransformerTest extends TestCase
         ];
         $polygonFeature['properties']['idemprise'] = 111;
 
-        $lineStringFeature = json_decode(self::feature, true);
-        $lineStringFeature['geometry'] = [
+        $lineStringGeometry = [
             'type' => 'LineString',
             'coordinates' => [[2.866303738, 50.6088816513], [2.866193844, 50.6090613967]],
         ];
+        $lineStringFeature = json_decode(self::feature, true);
+        $lineStringFeature['geometry'] = $lineStringGeometry;
         $lineStringFeature['properties']['idemprise'] = 222;
-
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('convertPolygonRoadToLines')
-            ->willReturn('geometryLineString');
 
         $command = $this->transformer->transform(
             $this->reporter,
@@ -810,7 +772,7 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertFalse($this->reporter->hasNewErrors());
         $this->assertCount(1, $command->measureCommands);
         $this->assertCount(1, $command->measureCommands[0]->locations);
-        $this->assertSame('geometryLineString', $command->measureCommands[0]->locations[0]->rawGeoJSON->geometry);
+        $this->assertSame(json_encode($lineStringGeometry), $command->measureCommands[0]->locations[0]->rawGeoJSON->geometry);
 
         $records = $this->reporter->getRecords();
         $this->assertCount(1, $records);
