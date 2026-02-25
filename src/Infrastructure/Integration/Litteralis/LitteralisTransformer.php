@@ -10,7 +10,6 @@ use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
-use App\Application\RoadGeocoderInterface;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
@@ -41,7 +40,6 @@ final readonly class LitteralisTransformer
     ];
 
     public function __construct(
-        private RoadGeocoderInterface $roadGeocoder,
         private LitteralisPeriodParser $periodParser,
     ) {
     }
@@ -214,18 +212,11 @@ final readonly class LitteralisTransformer
         $properties = $feature['properties'];
         $label = trim($properties['localisations'] ?? 'Localisation sans description');
 
-        // Selon la collectivité, la géométrie peut être de plusieurs sortes :
-        // * (Cas par défaut) Un linéaire, sous forme de LINESTRING ou MULTILINESTRING => on importe tel quel.
-        // * Un POLYGON ou un MULTIPOLYGON dessiné(s) par un agent dans Litteralis => exclus (voir ci-dessus).
-        $geometry = json_encode($feature['geometry']);
-
-        $sectionsGeometry = $this->roadGeocoder->convertPolygonRoadToLines($geometry);
-
         $locationCommand = new SaveLocationCommand();
         $locationCommand->organization = $organization;
         $locationCommand->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $locationCommand->rawGeoJSON = new SaveRawGeoJSONCommand();
-        $locationCommand->rawGeoJSON->geometry = $sectionsGeometry;
+        $locationCommand->rawGeoJSON->geometry = json_encode($feature['geometry']);
         $locationCommand->rawGeoJSON->label = $label;
 
         return $locationCommand;
