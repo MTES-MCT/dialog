@@ -35,6 +35,4 @@ interface RoadGeocoderInterface
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array;
 
     public function findSectionsInArea(string $areaGeometry, array $excludeTypes = [], ?bool $clipToArea = false): string;
-
-    public function convertPolygonRoadToLines(string $geometry): string;
 }
