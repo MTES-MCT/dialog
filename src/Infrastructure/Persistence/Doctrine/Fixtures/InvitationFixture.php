@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Invitation;
 use App\Domain\User\Organization;
 use App\Domain\User\User;
@@ -24,7 +23,6 @@ final class InvitationFixture extends Fixture implements DependentFixtureInterfa
             uuid: self::UUID,
             fullName: 'Mathieu MARCHOIS',
             email: 'mathieu.marchois@beta.gouv.fr',
-            role: OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             createdAt: new \DateTimeImmutable('2025-02-12'),
             owner: $this->getReference('otherOrgUser', User::class),
             organization: $this->getReference('regionIdfOrg', Organization::class),
@@ -34,18 +32,15 @@ final class InvitationFixture extends Fixture implements DependentFixtureInterfa
             uuid: self::INVITATION_ALREADY_JOINED_UUID,
             fullName: 'Mathieu MARCHOIS',
             email: 'mathieu.marchois@beta.gouv.fr',
-            role: OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             createdAt: new \DateTimeImmutable('2025-02-12'),
             owner: $this->getReference('department93Admin', User::class),
             organization: $this->getReference('seineSaintDenisOrg', Organization::class),
         );
 
-        // Invitation for a user who doesn't have an account yet
         $invitationForNewUser = new Invitation(
             uuid: self::INVITATION_FOR_NEW_USER_UUID,
             fullName: 'Nouveau Utilisateur',
             email: 'nouveau.utilisateur@example.com',
-            role: OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             createdAt: new \DateTimeImmutable('2025-02-12'),
             owner: $this->getReference('department93Admin', User::class),
             organization: $this->getReference('dialogOrg', Organization::class),

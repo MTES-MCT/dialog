@@ -501,7 +501,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringStartsWith('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_nationalRoad_storageArea_error')->text());
     }
 
-    public function testEditAsUserRawGeoJSONHidden(): void
+    public function testEditAsUserRawGeoJSONShown(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
@@ -510,8 +510,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
         $this->assertSame('Données brutes GeoJSON', $rawGeoJSONOption->innerText());
-        $this->assertSame('', $rawGeoJSONOption->attr('hidden'));
-        $this->assertSame('disabled', $rawGeoJSONOption->attr('disabled'));
+        $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
+        $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
     }
 
     public function testEditAsAdminRawGeoJSONShown(): void

@@ -16,8 +16,5 @@
                 <option name="max">255</option>
             </constraint>
         </property>
-        <property name="role">
-            <constraint name="NotBlank"/>
-        </property>
     </class>
 </constraint-mapping>

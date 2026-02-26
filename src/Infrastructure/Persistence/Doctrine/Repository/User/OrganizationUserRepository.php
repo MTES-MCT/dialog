@@ -42,7 +42,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
                         THEN true
                         ELSE false
                     END,
-                    ou.roles
+                    ou.isOwner
                 )',
                 UserOrganizationView::class,
             ))
@@ -61,7 +61,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
                     u.uuid,
                     u.fullName,
                     u.email,
-                    ou.roles
+                    ou.isOwner
                 )',
                 OrganizationUserView::class,
             ))
@@ -104,6 +104,17 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function countOwnersByOrganizationUuid(string $organizationUuid): int
+    {
+        return (int) $this->createQueryBuilder('ou')
+            ->select('COUNT(ou)')
+            ->where('ou.organization = :organizationUuid')
+            ->andWhere('ou.isOwner = true')
+            ->setParameter('organizationUuid', $organizationUuid)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function findAllUsersWithOrganizations(): array

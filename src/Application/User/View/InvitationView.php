@@ -10,7 +10,6 @@ final readonly class InvitationView
         public string $uuid,
         public string $fullName,
         public string $email,
-        public string $role,
     ) {
     }
 }

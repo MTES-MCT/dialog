@@ -18,5 +18,4 @@ final class CreateInvitationCommand implements CommandInterface
 
     public ?string $fullName = null;
     public ?string $email = null;
-    public ?string $role = null;
 }

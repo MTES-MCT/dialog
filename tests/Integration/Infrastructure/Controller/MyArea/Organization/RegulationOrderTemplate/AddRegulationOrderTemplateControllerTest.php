@@ -66,16 +66,9 @@ final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_name_error')->text());
     }
 
-    public function testNotAdministrator(): void
-    {
-        $client = $this->login(UserFixture::DEPARTMENT_93_USER_EMAIL);
-        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/regulation_order_templates/add');
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testOrganizationNotOwned(): void
     {
-        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $client = $this->login();
         $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::REGION_IDF_ID . '/regulation_order_templates/add');
         $this->assertResponseStatusCodeSame(403);
     }

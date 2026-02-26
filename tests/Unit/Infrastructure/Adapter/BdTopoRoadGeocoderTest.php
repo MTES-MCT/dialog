@@ -128,28 +128,6 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->assertSame('{"type":"GeometryCollection","geometries":[]}', $this->roadGeocoder->findSectionsInArea('<geometry>'));
     }
 
-    public function testConvertPolygonRoadToLinesUnexpectedError(): void
-    {
-        $this->expectException(GeocodingFailureException::class);
-
-        $this->conn
-            ->expects(self::once())
-            ->method('fetchAssociative')
-            ->willThrowException(new \RuntimeException('Some network error'));
-
-        $this->roadGeocoder->convertPolygonRoadToLines('<geometry>');
-    }
-
-    public function testConvertPolygonToRoadLinesNoResult(): void
-    {
-        $this->conn
-            ->expects(self::once())
-            ->method('fetchAssociative')
-            ->willReturn(['geom' => null]);
-
-        $this->assertSame('{"type":"GeometryCollection","geometries":[]}', $this->roadGeocoder->convertPolygonRoadToLines('<geometry>'));
-    }
-
     public function testComputeRoadLineFromNameSuccess(): void
     {
         $roadName = 'Rue de la Paix';

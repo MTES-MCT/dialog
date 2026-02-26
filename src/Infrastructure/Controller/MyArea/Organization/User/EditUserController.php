@@ -8,8 +8,8 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\User\Command\SaveOrganizationUserCommand;
 use App\Application\User\Query\GetOrganizationUserQuery;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
 use App\Domain\User\Exception\OrganizationUserNotFoundException;
 use App\Infrastructure\Form\User\UserFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
@@ -56,13 +56,16 @@ final class EditUserController
         $organization = $organizationUser->getOrganization();
         $user = $organizationUser->getUser();
 
-        if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)
-            || $organizationUser->getRole() === OrganizationRolesEnum::ROLE_ORGA_ADMIN->value) {
+        if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)) {
             throw new AccessDeniedHttpException();
         }
 
+        $isCurrentUserOwner = $this->security->isGranted(OrganizationVoter::OWNER, $organization);
+
         $command = new SaveOrganizationUserCommand($organization, $organizationUser);
-        $form = $this->formFactory->create(UserFormType::class, $command);
+        $form = $this->formFactory->create(UserFormType::class, $command, [
+            'is_owner_visible' => $isCurrentUserOwner,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -76,6 +79,10 @@ final class EditUserController
             } catch (EmailAlreadyExistsException) {
                 $form->get('email')->addError(
                     new FormError($this->translator->trans('email.already.exists', [], 'validators')),
+                );
+            } catch (OrganizationMustHaveAtLeastOneOwnerException) {
+                $form->get('isOwner')->addError(
+                    new FormError($this->translator->trans('user.form.is_owner.last_owner_error')),
                 );
             }
         }
