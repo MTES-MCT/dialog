@@ -13,6 +13,7 @@ final class SaveOrganizationUserCommand implements CommandInterface
     public ?string $fullName = null;
     public ?string $email = null;
     public ?string $password = null;
+    public bool $isOwner = false;
 
     public function __construct(
         public readonly Organization $organization,
@@ -20,5 +21,6 @@ final class SaveOrganizationUserCommand implements CommandInterface
     ) {
         $this->fullName = $organizationUser?->getUser()?->getFullName();
         $this->email = $organizationUser?->getUser()?->getEmail();
+        $this->isOwner = $organizationUser?->isOwner() ?? false;
     }
 }

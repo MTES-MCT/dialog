@@ -73,6 +73,43 @@ final class EditUserControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#user_form_email_error')->text());
     }
 
+    public function testOwnerCheckboxVisibleForOwner(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(1, $crawler->filter('#user_form_isOwner')->count());
+    }
+
+    public function testOwnerCheckboxHiddenForNonOwner(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33/edit');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(0, $crawler->filter('#user_form_isOwner')->count());
+    }
+
+    public function testTransferOwnership(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['user_form']['fullName'] = 'Mathieu MARCHOIS';
+        $values['user_form']['email'] = 'mathieu.marchois@beta.gouv.fr';
+        $values['user_form']['isOwner'] = '1';
+        $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_users_list');
+    }
+
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();

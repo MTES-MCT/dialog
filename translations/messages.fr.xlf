@@ -2450,6 +2450,18 @@
                 <source>user.delete_modal.title</source>
                 <target>Supprimer cet utilisateur ?</target>
             </trans-unit>
+            <trans-unit id="user.form.is_owner">
+                <source>user.form.is_owner</source>
+                <target>Propriétaire de l'organisation</target>
+            </trans-unit>
+            <trans-unit id="user.form.is_owner.help">
+                <source>user.form.is_owner.help</source>
+                <target>Les propriétaires peuvent gérer les utilisateurs.</target>
+            </trans-unit>
+            <trans-unit id="user.form.is_owner.last_owner_error">
+                <source>user.form.is_owner.last_owner_error</source>
+                <target>Impossible de retirer le statut de propriétaire : l'organisation doit avoir au moins un propriétaire.</target>
+            </trans-unit>
             <trans-unit id="user.list.fullName">
                 <source>user.list.fullName</source>
                 <target>Prénom / Nom</target>

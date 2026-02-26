@@ -47,7 +47,7 @@ final class DeleteOrganizationUserController
 
         $organization = $organizationUser->getOrganization();
 
-        if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)
+        if (!$this->security->isGranted(OrganizationVoter::OWNER, $organization)
             || $organizationUser->isOwner()) {
             throw new AccessDeniedHttpException();
         }
