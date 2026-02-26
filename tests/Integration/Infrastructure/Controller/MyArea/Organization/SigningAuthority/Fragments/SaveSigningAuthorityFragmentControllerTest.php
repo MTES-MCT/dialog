@@ -62,13 +62,6 @@ final class SaveSigningAuthorityFragmentControllerTest extends AbstractWebTestCa
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_signatoryName_error')->text());
     }
 
-    public function testNotAdministrator(): void
-    {
-        $client = $this->login();
-        $client->request('GET', '/mon-espace/_fragment/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/signing_authority/save');
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();

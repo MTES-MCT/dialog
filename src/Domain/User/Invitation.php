@@ -10,7 +10,6 @@ class Invitation
         private string $uuid,
         private string $email,
         private string $fullName,
-        private string $role,
         private \DateTimeInterface $createdAt,
         private User $owner,
         private Organization $organization,
@@ -30,11 +29,6 @@ class Invitation
     public function getFullName(): string
     {
         return $this->fullName;
-    }
-
-    public function getRole(): string
-    {
-        return $this->role;
     }
 
     public function getOwner(): User

@@ -37,16 +37,6 @@ final class DuplicateRegulationOrderTemplateControllerTest extends AbstractWebTe
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testOrganizationNotOwned(): void
-    {
-        $client = $this->login();
-        $client->request('POST', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/regulation_order_templates/65c12316-e210-445d-9169-0298b13b3b30/duplicate', [
-            '_token' => $this->generateCsrfToken($client, 'duplicate-regulation-order-template'),
-        ]);
-
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testBadAccessToken(): void
     {
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);

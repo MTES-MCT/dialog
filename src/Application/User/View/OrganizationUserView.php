@@ -10,12 +10,7 @@ final readonly class OrganizationUserView
         public string $uuid,
         public string $fullName,
         public string $email,
-        public array $roles = [],
+        public bool $isOwner = false,
     ) {
-    }
-
-    public function getRole(): string
-    {
-        return $this->roles[0];
     }
 }

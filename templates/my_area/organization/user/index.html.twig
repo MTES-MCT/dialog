@@ -36,7 +36,6 @@
                             <tr>
                                 <th scope="col">{{ 'user.list.fullName'|trans }}</th>
                                 <th scope="col">{{ 'user.list.email'|trans }}</th>
-                                <th scope="col">{{ 'user.list.roles'|trans }}</th>
                                 <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
                             </tr>
                         </thead>
@@ -49,9 +48,6 @@
                                     </td>
                                     <td>
                                         {{ invitation.email }}
-                                    </td>
-                                    <td>
-                                        {{ ('roles.' ~ invitation.role)|trans }}
                                     </td>
                                     <td>
                                         {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
@@ -85,15 +81,15 @@
                                 <tr>
                                     <td>
                                         {{ user.fullName }}
+                                        {% if user.isOwner %}
+                                            <p class="fr-tag fr-tag--sm">{{ 'user.list.owner'|trans }}</p>
+                                        {% endif %}
                                     </td>
                                     <td>
                                         {{ user.email }}
                                     </td>
                                     <td>
-                                        {{ ('roles.' ~ user.role)|trans }}
-                                    </td>
-                                    <td>
-                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and user.role != 'ROLE_ORGA_ADMIN' %}
+                                        {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and not user.isOwner %}
                                             <div class="fr-btns-group fr-btns-group--inline-sm">
                                                 <a title="{{ 'common.update'|trans }}" href="{{ path('app_users_edit', { uuid: user.uuid, organizationUuid: organization.uuid }) }}" class="fr-btn fr-icon-edit-line fr-btn--tertiary-no-outline">
                                                     {{ 'common.update'|trans }}

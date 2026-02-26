@@ -10,7 +10,7 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class ListUsersControllerTest extends AbstractWebTestCase
 {
-    public function testIndexAsAdmin(): void
+    public function testIndexAsOwner(): void
     {
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
         $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users');
@@ -26,23 +26,19 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $tr2 = $users->filter('tr')->eq(2)->filter('td');
         $this->assertCount(3, $users->filter('tr'));
 
-        // Invitation qui va permettre de valider le fait qu'un compte existe déjà
         $this->assertSame('Mathieu MARCHOIS En attente d\'activation', $tr0->eq(0)->text());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr0->eq(1)->text());
-        $this->assertSame('Contributeur', $tr0->eq(2)->text());
 
-        $this->assertSame('Mathieu FERNANDEZ', $tr1->eq(0)->text());
+        $this->assertSame('Mathieu FERNANDEZ Propriétaire', $tr1->eq(0)->text());
         $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr1->eq(1)->text());
-        $this->assertSame('Administrateur', $tr1->eq(2)->text());
 
         $this->assertSame('Mathieu MARCHOIS', $tr2->eq(0)->text());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr2->eq(1)->text());
-        $this->assertSame('Contributeur', $tr2->eq(2)->text());
-        $this->assertSame('Modifier', $tr2->eq(3)->filter('a')->text());
-        $this->assertSame('http://localhost/mon-espace/organizations/8f9164ed-dc0f-4c98-ac18-2f590a1cfd22/users/0b507871-8b5e-4575-b297-a630310fc06e/edit', $tr2->eq(3)->filter('a')->link()->getUri());
+        $this->assertSame('Modifier', $tr2->eq(2)->filter('a')->text());
+        $this->assertSame('http://localhost/mon-espace/organizations/8f9164ed-dc0f-4c98-ac18-2f590a1cfd22/users/0b507871-8b5e-4575-b297-a630310fc06e/edit', $tr2->eq(2)->filter('a')->link()->getUri());
     }
 
-    public function testIndexAsContributor(): void
+    public function testIndexAsMember(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users');
@@ -54,13 +50,15 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $this->assertCount(3, $users->filter('tr'));
 
         $this->assertSame('Mathieu MARCHOIS En attente d\'activation', $tr0->eq(0)->text());
-        $this->assertEmpty($tr0->eq(3)->text());
+        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr0->eq(1)->text());
 
-        $this->assertSame('Mathieu FERNANDEZ', $tr1->eq(0)->text());
-        $this->assertEmpty($tr1->eq(3)->text());
+        $this->assertSame('Mathieu FERNANDEZ Propriétaire', $tr1->eq(0)->text());
+        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr1->eq(1)->text());
+        $this->assertEmpty($tr1->eq(2)->text());
 
         $this->assertSame('Mathieu MARCHOIS', $tr2->eq(0)->text());
-        $this->assertEmpty($tr2->eq(3)->text());
+        $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr2->eq(1)->text());
+        $this->assertSame('Modifier', $tr2->eq(2)->filter('a')->text());
     }
 
     public function testOrganizationNotOwned(): void

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\User;
 
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Invitation;
 use App\Domain\User\Organization;
 use App\Domain\User\User;
@@ -21,7 +20,6 @@ final class InvitationTest extends TestCase
             '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
             'mathieu@fairness.coop',
             'Mathieu MARCHOIS',
-            OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value,
             $createdAt,
             $owner,
             $organization,
@@ -30,7 +28,6 @@ final class InvitationTest extends TestCase
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $invitation->getUuid());
         $this->assertSame('mathieu@fairness.coop', $invitation->getEmail());
         $this->assertSame('Mathieu MARCHOIS', $invitation->getFullName());
-        $this->assertSame(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value, $invitation->getRole());
         $this->assertSame($owner, $invitation->getOwner());
         $this->assertSame($organization, $invitation->getOrganization());
         $this->assertSame($createdAt, $invitation->getCreatedAt());

@@ -52,7 +52,7 @@ final readonly class CreateAccountFromInvitationCommandHandler
             ->setEmail($email)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($now)
-            ->setIsVerified(); // No need for email confirmation, invitation was sent to this email
+            ->setIsVerified();
 
         $passwordUser = new PasswordUser(
             uuid: $this->idFactory->make(),
@@ -64,8 +64,7 @@ final readonly class CreateAccountFromInvitationCommandHandler
 
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
-            ->setOrganization($invitation->getOrganization())
-            ->setRoles($invitation->getRole());
+            ->setOrganization($invitation->getOrganization());
 
         $this->userRepository->add($user);
         $this->passwordUserRepository->add($passwordUser);

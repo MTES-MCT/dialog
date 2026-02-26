@@ -81,13 +81,6 @@ final class SaveOrganizationDetailFragmentControllerTest extends AbstractWebTest
         $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#organization_form_city_error')->text());
     }
 
-    public function testNotAdministrator(): void
-    {
-        $client = $this->login();
-        $client->request('GET', '/mon-espace/_fragment/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/save');
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testOrganizationNotOwned(): void
     {
         $client = $this->login();

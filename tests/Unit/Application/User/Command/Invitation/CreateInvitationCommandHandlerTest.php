@@ -9,7 +9,6 @@ use App\Application\IdFactoryInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\Invitation\CreateInvitationCommand;
 use App\Application\User\Command\Invitation\CreateInvitationCommandHandler;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Exception\InvitationAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationUserAlreadyExistException;
 use App\Domain\User\Invitation;
@@ -61,7 +60,6 @@ final class CreateInvitationCommandHandlerTest extends TestCase
             owner: $owner,
         );
         $command->email = ' Mathieu@fairness.cooP ';
-        $command->role = OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
         $command->fullName = 'Mathieu MARCHOIS';
 
         $this->stringUtils
@@ -95,7 +93,6 @@ final class CreateInvitationCommandHandlerTest extends TestCase
         $expectedInvitation = new Invitation(
             uuid: '80ab24ce-5297-46ed-b649-739bf47812fc',
             email: 'mathieu@fairness.coop',
-            role: OrganizationRolesEnum::ROLE_ORGA_ADMIN->value,
             fullName: 'Mathieu MARCHOIS',
             createdAt: $now,
             owner: $owner,
@@ -124,7 +121,6 @@ final class CreateInvitationCommandHandlerTest extends TestCase
             owner: $owner,
         );
         $command->email = ' Mathieu@fairness.cooP ';
-        $command->role = OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
         $command->fullName = 'Mathieu MARCHOIS';
 
         $this->stringUtils
@@ -175,7 +171,6 @@ final class CreateInvitationCommandHandlerTest extends TestCase
             owner: $owner,
         );
         $command->email = ' Mathieu@fairness.cooP ';
-        $command->role = OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
         $command->fullName = 'Mathieu MARCHOIS';
 
         $this->stringUtils

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\User\Specification;
 
-use App\Application\User\View\UserOrganizationView;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Specification\CanUserEditOrganization;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
@@ -24,10 +22,8 @@ final class CanUserEditOrganizationTest extends TestCase
         $abstractSymfonyUser = $this->createMock(AbstractAuthenticatedUser::class);
         $abstractSymfonyUser
             ->expects(self::once())
-            ->method('getUserOrganizations')
-            ->willReturn([
-                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'DiaLog', true, [OrganizationRolesEnum::ROLE_ORGA_ADMIN->value]),
-            ]);
+            ->method('getUserOrganizationUuids')
+            ->willReturn(['c1790745-b915-4fb5-96e7-79b104092a55']);
 
         $pattern = new CanUserEditOrganization();
         $this->assertTrue($pattern->isSatisfiedBy($organization, $abstractSymfonyUser));
@@ -44,10 +40,8 @@ final class CanUserEditOrganizationTest extends TestCase
         $abstractSymfonyUser = $this->createMock(AbstractAuthenticatedUser::class);
         $abstractSymfonyUser
             ->expects(self::once())
-            ->method('getUserOrganizations')
-            ->willReturn([
-                new UserOrganizationView('c1790745-b915-4fb5-96e7-79b104092a55', 'DiaLog', true, [OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value]),
-            ]);
+            ->method('getUserOrganizationUuids')
+            ->willReturn(['other-uuid']);
 
         $pattern = new CanUserEditOrganization();
         $this->assertFalse($pattern->isSatisfiedBy($organization, $abstractSymfonyUser));

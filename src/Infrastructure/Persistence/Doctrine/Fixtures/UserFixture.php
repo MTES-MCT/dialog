@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
@@ -52,27 +51,25 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
         $organizationUser1->setUser($department93User);
         $organizationUser1->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
-        $organizationUser1->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $organizationUser2 = new OrganizationUser('cf72ca91-3446-410f-b563-74085516180d');
         $organizationUser2->setUser($department93Admin);
         $organizationUser2->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
-        $organizationUser2->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
+        $organizationUser2->setIsOwner(true);
 
         $organizationUser3 = new OrganizationUser('890615e1-bcb0-4623-a2fa-362435109030');
         $organizationUser3->setUser($otherOrgUser);
         $organizationUser3->setOrganization($this->getReference('regionIdfOrg', Organization::class));
-        $organizationUser3->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $organizationUser4 = new OrganizationUser('5d054f87-f55b-49fa-8761-e52e37a44ac0');
         $organizationUser4->setUser($otherOrgUser);
         $organizationUser4->setOrganization($this->getReference('saintOuenOrg', Organization::class));
-        $organizationUser4->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
+        $organizationUser4->setIsOwner(true);
 
         $organizationUser5 = new OrganizationUser('b3eef867-7446-4d5a-9336-ab3305515f1d');
         $organizationUser5->setUser($department93User);
         $organizationUser5->setOrganization($this->getReference('dialogOrg', Organization::class));
-        $organizationUser5->setRoles(OrganizationRolesEnum::ROLE_ORGA_ADMIN->value);
+        $organizationUser5->setIsOwner(true);
 
         $manager->persist($department93User);
         $manager->persist($department93Admin);

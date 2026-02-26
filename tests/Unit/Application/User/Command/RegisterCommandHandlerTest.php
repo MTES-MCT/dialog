@@ -13,7 +13,6 @@ use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\RegisterCommand;
 use App\Application\User\Command\RegisterCommandHandler;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -131,8 +130,7 @@ final class RegisterCommandHandlerTest extends TestCase
 
         $organizationUser = (new OrganizationUser('f40f95eb-a7dd-4232-9f03-2db10f04f37f'))
             ->setOrganization($organization)
-            ->setUser($user)
-            ->setRoles(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
+            ->setUser($user);
 
         $this->organizationUserRepository
             ->expects(self::once())
@@ -145,6 +143,61 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with($this->equalTo($user));
 
         $this->assertEquals(($this->handler)($this->command), $user);
+    }
+
+    public function testRegisterAsOwner(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $this->userRepository
+            ->expects(self::once())
+            ->method('findOneByEmail')
+            ->with('mathieu@fairness.coop')
+            ->willReturn(null);
+
+        $orgView = new GetOrCreateOrganizationView($organization, false);
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->willReturn($orgView);
+
+        $this->idFactory
+            ->expects(self::exactly(3))
+            ->method('make')
+            ->willReturn(
+                '0de5692b-cab1-494c-804d-765dc14df674',
+                '3e4ea113-9f64-4933-a699-0561b8c15622',
+                'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
+            );
+
+        $date = new \DateTimeImmutable('2024-05-07');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($date);
+
+        $this->passwordHasher
+            ->expects(self::once())
+            ->method('hash')
+            ->with('12345')
+            ->willReturn('passwordHashed');
+
+        $this->passwordUserRepository
+            ->expects(self::once())
+            ->method('add');
+
+        $this->organizationUserRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(self::callback(function (OrganizationUser $orgUser) {
+                return $orgUser->isOwner() === true;
+            }));
+
+        $this->userRepository
+            ->expects(self::once())
+            ->method('add');
+
+        ($this->handler)($this->command);
     }
 
     public function testRegisterWithBadSiret(): void

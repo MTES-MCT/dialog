@@ -11,7 +11,6 @@ use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\OrganizationUser;
@@ -47,9 +46,7 @@ final class RegisterCommandHandler
         /** @var GetOrCreateOrganizationView $organizationView */
         $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($command->organizationSiret));
         $organization = $organizationView->organization;
-        $organizationRole = $organizationView->hasOrganizationUsers
-            ? OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value
-            : OrganizationRolesEnum::ROLE_ORGA_ADMIN->value;
+        $isOwner = !$organizationView->hasOrganizationUsers;
 
         $now = $this->dateUtils->getNow();
         $user = (new User($this->idFactory->make()))
@@ -69,7 +66,7 @@ final class RegisterCommandHandler
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
             ->setOrganization($organization)
-            ->setRoles($organizationRole);
+            ->setIsOwner($isOwner);
 
         $this->userRepository->add($user);
         $this->passwordUserRepository->add($passwordUser);

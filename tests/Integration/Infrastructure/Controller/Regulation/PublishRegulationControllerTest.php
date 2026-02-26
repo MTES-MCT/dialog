@@ -26,16 +26,6 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
         $this->assertRouteSame('app_regulation_detail', ['uuid' => RegulationOrderRecordFixture::UUID_TYPICAL]);
     }
 
-    public function testPublishAsContributor(): void
-    {
-        $client = $this->login();
-        $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/publish', [
-            '_token' => $this->generateCsrfToken($client, 'publish-regulation'),
-        ]);
-
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testCannotBePublishedBecauseNoMeasures(): void
     {
         $client = $this->login();

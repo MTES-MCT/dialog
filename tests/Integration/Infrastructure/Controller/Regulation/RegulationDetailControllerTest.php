@@ -90,13 +90,14 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame($deleteStorageForm->get('_method')->getValue(), 'DELETE');
     }
 
-    public function testDraftRegulationDetailAsContributor(): void
+    public function testDraftRegulationDetailAsMember(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL);
 
-        $this->assertEmpty($crawler->filter('[data-testid="history"]')); // No history fixture
-        $this->assertSame(0, $crawler->selectButton('Publier')->count());
+        $this->assertEmpty($crawler->filter('[data-testid="history"]'));
+        $publishBtn = $crawler->selectButton('Publier');
+        $this->assertSame(2, $publishBtn->count());
     }
 
     public function testPermanentRegulationDetail(): void

@@ -30,9 +30,9 @@
                                     <a class="fr-x-block" href="{{ path('app_config_organization_detail', { uuid: organization.uuid }) }}">{{ organization.name }}</a>
                                 </h3>
                                 <p class="fr-tile__detail">
-                                    {% for role in organization.roles %}
-                                        {{ ('roles.' ~ role)|trans }}{% if not loop.last %}, {% endif %}
-                                    {% endfor %}
+                                {% if organization.isOwner %}
+                                    {{ 'user.list.owner'|trans }}
+                                {% endif %}
                                 </p>
                             </div>
                         </div>

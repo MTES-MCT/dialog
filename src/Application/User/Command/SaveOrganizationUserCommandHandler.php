@@ -40,8 +40,6 @@ final class SaveOrganizationUserCommandHandler
         $email = $this->stringUtils->normalizeEmail($command->email);
         $organizationUser = $command->organizationUser;
 
-        // Update user
-
         if ($organizationUser) {
             $user = $organizationUser->getUser();
 
@@ -51,19 +49,14 @@ final class SaveOrganizationUserCommandHandler
 
             $user->setEmail($email);
             $user->setFullName($command->fullName);
-            $organizationUser->setRoles($command->role);
 
             return;
         }
 
-        // Create user
-
-        // Check if the user's email address already exists in the organization
         if (true === $this->isUserAlreadyRegisteredInOrganization->isSatisfiedBy($email, $command->organization)) {
             throw new UserAlreadyRegisteredException();
         }
 
-        // Create a new user or add one to the organization if an account already exists
         $user = $this->userRepository->findOneByEmail($email);
         if (!$user instanceof User) {
             $user = (new User($this->idFactory->make()))
@@ -86,8 +79,7 @@ final class SaveOrganizationUserCommandHandler
         $this->organizationUserRepository->add(
             (new OrganizationUser($this->idFactory->make()))
                 ->setUser($user)
-                ->setOrganization($command->organization)
-                ->setRoles($command->role),
+                ->setOrganization($command->organization),
         );
     }
 }
