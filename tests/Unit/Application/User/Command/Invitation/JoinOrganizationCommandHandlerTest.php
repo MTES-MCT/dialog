@@ -49,7 +49,6 @@ class JoinOrganizationCommandHandlerTest extends TestCase
 
         $invitation = $this->createMock(Invitation::class);
         $invitation->method('getOrganization')->willReturn($organization);
-        $invitation->method('getRole')->willReturn('ROLE_USER');
         $invitation->method('getEmail')->willReturn('mathieu.marchois@beta.gouv.fr');
 
         $this->invitationRepository
@@ -75,8 +74,7 @@ class JoinOrganizationCommandHandlerTest extends TestCase
             ->with(
                 (new OrganizationUser('7ceda9a3-b248-4bcc-908a-107badbc6353'))
                     ->setOrganization($organization)
-                    ->setUser($user)
-                    ->setRoles('ROLE_USER'),
+                    ->setUser($user),
             );
 
         $this->invitationRepository
@@ -100,7 +98,6 @@ class JoinOrganizationCommandHandlerTest extends TestCase
 
         $invitation = $this->createMock(Invitation::class);
         $invitation->method('getOrganization')->willReturn($organization);
-        $invitation->method('getRole')->willReturn('ROLE_USER');
         $invitation->method('getEmail')->willReturn('mathieu.marchois@gmail.com');
 
         $this->invitationRepository
@@ -145,7 +142,6 @@ class JoinOrganizationCommandHandlerTest extends TestCase
 
         $invitation = $this->createMock(Invitation::class);
         $invitation->method('getOrganization')->willReturn($organization);
-        $invitation->method('getRole')->willReturn('ROLE_USER');
         $invitation->method('getEmail')->willReturn('mathieu.marchois@beta.gouv.fr');
 
         $this->invitationRepository

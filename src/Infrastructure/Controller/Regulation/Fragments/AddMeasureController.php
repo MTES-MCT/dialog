@@ -61,7 +61,7 @@ final class AddMeasureController extends AbstractRegulationController
         $command = SaveMeasureCommand::create($regulationOrder);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
         $storageAreas = $this->queryBus->handle(new GetStorageAreasByRoadNumbersQuery()); // Show all because no road selected yet
-        $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy($this->security->getUser()?->getRoles());
+        $canUseRawGeoJSON = $this->canUseRawGeoJSON->isSatisfiedBy();
 
         if ($canUseRawGeoJSON) {
             $command->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;

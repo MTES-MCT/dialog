@@ -46,16 +46,6 @@ final class DeleteRegulationOrderTemplateControllerTest extends AbstractWebTestC
         $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testOrganizationNotOwned(): void
-    {
-        $client = $this->login();
-        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/regulation_order_templates/54eacea0-e1e0-4823-828d-3eae72b76da8', [
-            '_token' => $this->generateCsrfToken($client, 'delete-regulation-order-template'),
-        ]);
-
-        $this->assertResponseStatusCodeSame(403);
-    }
-
     public function testBadAccessToken(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');

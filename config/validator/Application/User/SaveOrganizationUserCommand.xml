@@ -10,9 +10,6 @@
             <constraint name="NotBlank"/>
             <constraint name="Email"/>
         </property>
-        <property name="role">
-            <constraint name="NotBlank"/>
-        </property>
         <property name="password">
             <constraint name="When">
                 <option name="expression">!this.organizationUser</option>

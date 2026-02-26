@@ -9,7 +9,6 @@ use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
 use App\Application\User\Command\Invitation\CreateAccountFromInvitationCommand;
 use App\Application\User\Command\Invitation\CreateAccountFromInvitationCommandHandler;
-use App\Domain\User\Enum\OrganizationRolesEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\InvitationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -50,7 +49,6 @@ final class CreateAccountFromInvitationCommandHandlerTest extends TestCase
     {
         $now = new \DateTimeImmutable('2025-02-12');
         $organization = $this->createMock(Organization::class);
-        $owner = $this->createMock(User::class);
 
         $invitation = $this->createMock(Invitation::class);
         $invitation
@@ -65,10 +63,6 @@ final class CreateAccountFromInvitationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getOrganization')
             ->willReturn($organization);
-        $invitation
-            ->expects(self::once())
-            ->method('getRole')
-            ->willReturn(OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value);
 
         $command = new CreateAccountFromInvitationCommand('invitation-uuid');
         $command->password = 'securePassword123';
@@ -125,8 +119,7 @@ final class CreateAccountFromInvitationCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('add')
             ->with(self::callback(function (OrganizationUser $orgUser) use ($organization) {
-                return $orgUser->getOrganization() === $organization
-                    && $orgUser->getRoles() === OrganizationRolesEnum::ROLE_ORGA_CONTRIBUTOR->value;
+                return $orgUser->getOrganization() === $organization;
             }));
 
         $this->invitationRepository

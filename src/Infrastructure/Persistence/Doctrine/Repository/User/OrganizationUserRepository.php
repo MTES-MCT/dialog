@@ -42,7 +42,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
                         THEN true
                         ELSE false
                     END,
-                    ou.roles
+                    ou.isOwner
                 )',
                 UserOrganizationView::class,
             ))
@@ -61,7 +61,7 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
                     u.uuid,
                     u.fullName,
                     u.email,
-                    ou.roles
+                    ou.isOwner
                 )',
                 OrganizationUserView::class,
             ))

@@ -8,7 +8,7 @@ class OrganizationUser
 {
     private Organization $organization;
     private User $user;
-    private array $roles = [];
+    private bool $isOwner = false;
 
     public function __construct(
         private string $uuid,
@@ -44,19 +44,14 @@ class OrganizationUser
         return $this;
     }
 
-    public function getRoles(): string
+    public function isOwner(): bool
     {
-        return $this->getRole();
+        return $this->isOwner;
     }
 
-    public function getRole(): ?string
+    public function setIsOwner(bool $isOwner): self
     {
-        return \count($this->roles) > 0 ? current($this->roles) : null;
-    }
-
-    public function setRoles(string $role): self
-    {
-        $this->roles = [$role];
+        $this->isOwner = $isOwner;
 
         return $this;
     }

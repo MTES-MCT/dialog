@@ -9,8 +9,5 @@
                 <value>user</value>
             </option>
         </constraint>
-        <property name="roles">
-            <constraint name="NotBlank"/>
-        </property>
     </class>
 </constraint-mapping>

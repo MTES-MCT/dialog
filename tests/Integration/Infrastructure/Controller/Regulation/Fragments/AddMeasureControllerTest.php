@@ -532,7 +532,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringStartsWith('La géolocalisation de la route entre ces points de repère a échoué', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
     }
 
-    public function testAddRawGeoJSONAsUserHidden(): void
+    public function testAddRawGeoJSONAsUserShown(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
@@ -541,8 +541,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $roadTypeOptions = $crawler->filter('#measure_form_locations_0_roadType')->filter('option');
         $this->assertSame('Données brutes GeoJSON', $roadTypeOptions->eq(4)->innerText());
-        $this->assertSame('', $roadTypeOptions->eq(4)->attr('hidden'));
-        $this->assertSame('disabled', $roadTypeOptions->eq(4)->attr('disabled'));
+        $this->assertSame(null, $roadTypeOptions->eq(4)->attr('hidden'));
+        $this->assertSame(null, $roadTypeOptions->eq(4)->attr('disabled'));
     }
 
     public function testAddRawGeoJSONAsAdmin(): void

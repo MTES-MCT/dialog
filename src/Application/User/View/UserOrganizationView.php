@@ -10,7 +10,7 @@ final readonly class UserOrganizationView
         public string $uuid,
         public string $name,
         public bool $completed = false,
-        public array $roles = [],
+        public bool $isOwner = false,
     ) {
     }
 }
