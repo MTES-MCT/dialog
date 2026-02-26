@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\Ign\IgnReportSubmissionResult;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class IgnReportClient
 {
@@ -22,10 +22,11 @@ final class IgnReportClient
     ) {
     }
 
-    public function submitReport(
-        string $comment,
-        string $geometry,
-    ): ResponseInterface {
+    /**
+     * Envoie un signalement à l'API IGN. Retourne le résultat si l'API renvoie un body avec id (et optionnellement status).
+     */
+    public function submitReport(string $comment, string $geometry): ?IgnReportSubmissionResult
+    {
         if (empty(trim($comment))) {
             throw new \InvalidArgumentException('Comment is required');
         }
@@ -48,18 +49,72 @@ final class IgnReportClient
             ],
         ];
 
-        $response = $this->ignReportClient->request('POST', '/gcms/api/reports', [
-            'json' => $payload,
-            'auth_basic' => $this->credentials,
-        ]);
+        try {
+            $response = $this->ignReportClient->request('POST', '/gcms/api/reports', [
+                'json' => $payload,
+                'auth_basic' => $this->credentials,
+            ]);
 
-        $this->logger->info('Report sent to IGN API', [
-            'json_encoded' => json_encode($payload),
-            'geometry' => $geometry,
-            'comment' => $comment,
-            'statusCode' => $response->getStatusCode(),
-        ]);
+            $statusCode = $response->getStatusCode();
+            $this->logger->info('Report sent to IGN API', [
+                'json_encoded' => json_encode($payload),
+                'geometry' => $geometry,
+                'comment' => $comment,
+                'statusCode' => $statusCode,
+            ]);
 
-        return $response;
+            if ($statusCode < 200 || $statusCode >= 300) {
+                return null;
+            }
+
+            $data = $response->toArray(false);
+
+            $id = $data['id'] ?? null;
+            if ($id === null) {
+                return null;
+            }
+
+            return new IgnReportSubmissionResult(
+                id: (string) $id,
+                status: (string) ($data['status'] ?? $this->status),
+            );
+        } catch (\Throwable $e) {
+            $this->logger->error('Failed to submit report to IGN API', [
+                'comment' => $comment,
+                'geometry' => $geometry,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Récupère le statut d'un signalement auprès de l'IGN (GET /gcms/api/reports/{id}).
+     * Retourne null si l'API ne renvoie pas de statut ou en cas d'erreur.
+     */
+    public function getReportStatus(string $ignReportId): ?string
+    {
+        try {
+            $response = $this->ignReportClient->request('GET', '/gcms/api/reports/' . $ignReportId, [
+                'auth_basic' => $this->credentials,
+            ]);
+
+            if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+                return null;
+            }
+
+            $data = $response->toArray(false);
+            $status = $data['status'] ?? null;
+
+            return $status !== null ? (string) $status : null;
+        } catch (\Throwable $e) {
+            $this->logger->warning('Failed to get IGN report status', [
+                'ignReportId' => $ignReportId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }
