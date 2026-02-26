@@ -24,5 +24,7 @@ interface OrganizationUserRepositoryInterface
 
     public function findByEmailAndOrganization(string $email, string $organizationUuid): ?OrganizationUser;
 
+    public function countOwnersByOrganizationUuid(string $organizationUuid): int;
+
     public function findAllUsersWithOrganizations(): array;
 }
