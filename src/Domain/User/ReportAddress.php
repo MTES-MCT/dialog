@@ -14,6 +14,9 @@ class ReportAddress
         private string $location,
         private User $user,
         private bool $hasBeenContacted = false,
+        private ?string $ignReportId = null,
+        private ?string $ignReportStatus = null,
+        private ?\DateTimeInterface $ignStatusUpdatedAt = null,
     ) {
     }
 
@@ -57,6 +60,42 @@ class ReportAddress
     public function setHasBeenContacted(bool $hasBeenContacted): self
     {
         $this->hasBeenContacted = $hasBeenContacted;
+
+        return $this;
+    }
+
+    public function getIgnReportId(): ?string
+    {
+        return $this->ignReportId;
+    }
+
+    public function setIgnReportId(?string $ignReportId): self
+    {
+        $this->ignReportId = $ignReportId;
+
+        return $this;
+    }
+
+    public function getIgnReportStatus(): ?string
+    {
+        return $this->ignReportStatus;
+    }
+
+    public function setIgnReportStatus(?string $ignReportStatus): self
+    {
+        $this->ignReportStatus = $ignReportStatus;
+
+        return $this;
+    }
+
+    public function getIgnStatusUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->ignStatusUpdatedAt;
+    }
+
+    public function setIgnStatusUpdatedAt(?\DateTimeInterface $ignStatusUpdatedAt): self
+    {
+        $this->ignStatusUpdatedAt = $ignStatusUpdatedAt;
 
         return $this;
     }

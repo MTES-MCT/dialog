@@ -31,6 +31,20 @@ final class ReportAddressCrudController extends AbstractCrudController
             EmailField::new('user.email', 'Email'),
             TextField::new('location', 'Localisation'),
             TextField::new('content', 'Signalement adresse'),
+            TextField::new('ignReportId', 'ID signalement IGN')
+                ->hideOnForm()
+                ->formatValue(static function (?string $id): string {
+                    if ($id === null || $id === '') {
+                        return '—';
+                    }
+                    $url = 'https://espacecollaboratif.ign.fr/georem/' . rawurlencode($id);
+                    $escaped = htmlspecialchars($id, \ENT_QUOTES, 'UTF-8');
+
+                    return \sprintf('<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>', $url, $escaped);
+                })
+                ->renderAsHtml(),
+            TextField::new('ignReportStatus', 'Statut IGN')->hideOnForm(),
+            DateTimeField::new('ignStatusUpdatedAt', 'Dernière MAJ statut IGN')->hideOnForm(),
             BooleanField::new('hasBeenContacted', 'A été contacté'),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
         ];
