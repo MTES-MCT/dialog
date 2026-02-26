@@ -41,6 +41,7 @@ customElements.define('d-modal-trigger', class extends HTMLElement {
             if (this.#submitButton) {
                 this.#submitButton.value = this.#submitValue;
             }
+
             this.#modal.showModal();
         });
 

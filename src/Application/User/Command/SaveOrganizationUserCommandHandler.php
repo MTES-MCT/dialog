@@ -10,6 +10,7 @@ use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\PasswordUser;
@@ -49,6 +50,18 @@ final class SaveOrganizationUserCommandHandler
 
             $user->setEmail($email);
             $user->setFullName($command->fullName);
+
+            if ($organizationUser->isOwner() && !$command->isOwner) {
+                $ownerCount = $this->organizationUserRepository->countOwnersByOrganizationUuid(
+                    $command->organization->getUuid(),
+                );
+
+                if ($ownerCount <= 1) {
+                    throw new OrganizationMustHaveAtLeastOneOwnerException();
+                }
+            }
+
+            $organizationUser->setIsOwner($command->isOwner);
 
             return;
         }

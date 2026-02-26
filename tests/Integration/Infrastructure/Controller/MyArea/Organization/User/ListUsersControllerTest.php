@@ -58,7 +58,7 @@ final class ListUsersControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Mathieu MARCHOIS', $tr2->eq(0)->text());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr2->eq(1)->text());
-        $this->assertSame('Modifier', $tr2->eq(2)->filter('a')->text());
+        $this->assertEmpty($tr2->eq(2)->text());
     }
 
     public function testOrganizationNotOwned(): void

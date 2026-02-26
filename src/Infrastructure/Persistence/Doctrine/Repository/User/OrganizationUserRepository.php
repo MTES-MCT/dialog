@@ -106,6 +106,17 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->getOneOrNullResult();
     }
 
+    public function countOwnersByOrganizationUuid(string $organizationUuid): int
+    {
+        return (int) $this->createQueryBuilder('ou')
+            ->select('COUNT(ou)')
+            ->where('ou.organization = :organizationUuid')
+            ->andWhere('ou.isOwner = true')
+            ->setParameter('organizationUuid', $organizationUuid)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     public function findAllUsersWithOrganizations(): array
     {
         return $this->createQueryBuilder('ou')

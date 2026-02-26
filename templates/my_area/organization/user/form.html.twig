@@ -19,6 +19,11 @@
                 {{ form_start(form) }}
                 {{ form_row(form.fullName, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
                 {{ form_row(form.email, { group_class: 'fr-input-group', widget_class: 'fr-input' }) }}
+                {% if form.isOwner is defined %}
+                    <div class="fr-mb-3w">
+                        {{ form_row(form.isOwner, { group_class: 'fr-checkbox-group' }) }}
+                    </div>
+                {% endif %}
                 <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                     {{ "common.cancel"|trans }}
                 </a>

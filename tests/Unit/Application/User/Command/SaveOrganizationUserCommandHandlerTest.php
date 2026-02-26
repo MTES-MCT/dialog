@@ -12,6 +12,7 @@ use App\Application\User\Command\SaveOrganizationUserCommand;
 use App\Application\User\Command\SaveOrganizationUserCommandHandler;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
@@ -413,6 +414,188 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
         $command->fullName = 'Mathieu MARCHOIS';
         $command->email = 'mathieu.marchois@beta.gouv.fr';
         $command->password = 'password';
+
+        $handler($command);
+    }
+
+    public function testUpdateSetOwner(): void
+    {
+        $user = $this->createMock(User::class);
+        $user
+            ->expects(self::exactly(2))
+            ->method('getEmail')
+            ->willReturn('mathieu.marchois@beta.gouv.fr');
+
+        $user
+            ->expects(self::once())
+            ->method('setEmail')
+            ->with('mathieu.marchois@beta.gouv.fr');
+        $user
+            ->expects(self::once())
+            ->method('setFullName')
+            ->with('Mathieu MARCHOIS');
+
+        $organizationUser = $this->createMock(OrganizationUser::class);
+        $organizationUser
+            ->expects(self::exactly(3))
+            ->method('getUser')
+            ->willReturn($user);
+        $organizationUser
+            ->method('isOwner')
+            ->willReturn(false);
+        $organizationUser
+            ->expects(self::once())
+            ->method('setIsOwner')
+            ->with(true);
+
+        $this->isEmailAlreadyExists
+            ->expects(self::never())
+            ->method('isSatisfiedBy');
+
+        $handler = new SaveOrganizationUserCommandHandler(
+            $this->idFactory,
+            $this->organizationUserRepository,
+            $this->userRepository,
+            $this->passwordUserRepository,
+            $this->stringUtils,
+            $this->dateUtils,
+            $this->passwordHasher,
+            $this->isUserAlreadyRegistered,
+            $this->isEmailAlreadyExists,
+        );
+        $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
+        $command->fullName = 'Mathieu MARCHOIS';
+        $command->email = 'mathieu.marchois@beta.gouv.fr';
+        $command->isOwner = true;
+
+        $handler($command);
+    }
+
+    public function testUpdateRemoveOwnerWithMultipleOwners(): void
+    {
+        $user = $this->createMock(User::class);
+        $user
+            ->expects(self::exactly(2))
+            ->method('getEmail')
+            ->willReturn('mathieu.marchois@beta.gouv.fr');
+
+        $user
+            ->expects(self::once())
+            ->method('setEmail')
+            ->with('mathieu.marchois@beta.gouv.fr');
+        $user
+            ->expects(self::once())
+            ->method('setFullName')
+            ->with('Mathieu MARCHOIS');
+
+        $organizationUser = $this->createMock(OrganizationUser::class);
+        $organizationUser
+            ->expects(self::exactly(3))
+            ->method('getUser')
+            ->willReturn($user);
+        $organizationUser
+            ->method('isOwner')
+            ->willReturn(true);
+        $organizationUser
+            ->expects(self::once())
+            ->method('setIsOwner')
+            ->with(false);
+
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('org-uuid');
+
+        $this->organizationUserRepository
+            ->expects(self::once())
+            ->method('countOwnersByOrganizationUuid')
+            ->with('org-uuid')
+            ->willReturn(2);
+
+        $this->isEmailAlreadyExists
+            ->expects(self::never())
+            ->method('isSatisfiedBy');
+
+        $handler = new SaveOrganizationUserCommandHandler(
+            $this->idFactory,
+            $this->organizationUserRepository,
+            $this->userRepository,
+            $this->passwordUserRepository,
+            $this->stringUtils,
+            $this->dateUtils,
+            $this->passwordHasher,
+            $this->isUserAlreadyRegistered,
+            $this->isEmailAlreadyExists,
+        );
+        $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
+        $command->fullName = 'Mathieu MARCHOIS';
+        $command->email = 'mathieu.marchois@beta.gouv.fr';
+        $command->isOwner = false;
+
+        $handler($command);
+    }
+
+    public function testUpdateCannotRemoveLastOwner(): void
+    {
+        $this->expectException(OrganizationMustHaveAtLeastOneOwnerException::class);
+
+        $user = $this->createMock(User::class);
+        $user
+            ->expects(self::exactly(2))
+            ->method('getEmail')
+            ->willReturn('mathieu.marchois@beta.gouv.fr');
+
+        $user
+            ->expects(self::once())
+            ->method('setEmail')
+            ->with('mathieu.marchois@beta.gouv.fr');
+        $user
+            ->expects(self::once())
+            ->method('setFullName')
+            ->with('Mathieu MARCHOIS');
+
+        $organizationUser = $this->createMock(OrganizationUser::class);
+        $organizationUser
+            ->expects(self::exactly(3))
+            ->method('getUser')
+            ->willReturn($user);
+        $organizationUser
+            ->method('isOwner')
+            ->willReturn(true);
+        $organizationUser
+            ->expects(self::never())
+            ->method('setIsOwner');
+
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('org-uuid');
+
+        $this->organizationUserRepository
+            ->expects(self::once())
+            ->method('countOwnersByOrganizationUuid')
+            ->with('org-uuid')
+            ->willReturn(1);
+
+        $this->isEmailAlreadyExists
+            ->expects(self::never())
+            ->method('isSatisfiedBy');
+
+        $handler = new SaveOrganizationUserCommandHandler(
+            $this->idFactory,
+            $this->organizationUserRepository,
+            $this->userRepository,
+            $this->passwordUserRepository,
+            $this->stringUtils,
+            $this->dateUtils,
+            $this->passwordHasher,
+            $this->isUserAlreadyRegistered,
+            $this->isEmailAlreadyExists,
+        );
+        $command = new SaveOrganizationUserCommand($this->organization, $organizationUser);
+        $command->fullName = 'Mathieu MARCHOIS';
+        $command->email = 'mathieu.marchois@beta.gouv.fr';
+        $command->isOwner = false;
 
         $handler($command);
     }

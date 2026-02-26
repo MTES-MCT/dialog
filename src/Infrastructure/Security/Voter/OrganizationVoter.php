@@ -15,6 +15,7 @@ final class OrganizationVoter extends Voter
 {
     public const VIEW = 'view';
     public const EDIT = 'edit';
+    public const OWNER = 'owner';
 
     public function __construct(
         private readonly CanUserEditOrganization $canUserEditOrganization,
@@ -24,7 +25,7 @@ final class OrganizationVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!\in_array($attribute, [self::VIEW, self::EDIT])) {
+        if (!\in_array($attribute, [self::VIEW, self::EDIT, self::OWNER])) {
             return false;
         }
 
@@ -49,6 +50,7 @@ final class OrganizationVoter extends Voter
         return match ($attribute) {
             self::VIEW => $this->canUserViewOrganization->isSatisfiedBy($organization, $user),
             self::EDIT => $this->canUserEditOrganization->isSatisfiedBy($organization, $user),
+            self::OWNER => $user->isOwnerOfOrganization($organization->getUuid()),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
