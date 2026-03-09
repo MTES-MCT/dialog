@@ -1,0 +1,55 @@
+name: IGN Sync Report Statuses
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6-16 * * 1-5' # Voir https://crontab.guru/ : du lundi au vendredi, toutes les heures de 6h à 16h UTC (≈ 8h-18h heure française)
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Init environment variables
+        run: |
+          echo "DATABASE_URL=${{ secrets.IGN_SYNC_DATABASE_URL }}" >> .env.local
+          echo "API_IGN_REPORT_BASE_URL=${{ secrets.API_IGN_REPORT_BASE_URL }}" >> .env.local
+          echo "API_IGN_REPORT_AUTH=${{ secrets.API_IGN_REPORT_AUTH }}" >> .env.local
+          echo "IGN_REPORT_STATUS=${{ secrets.IGN_REPORT_STATUS }}" >> .env.local
+          echo "EMAIL_SUPPORT=${{ vars.EMAIL_SUPPORT }}" >> .env.local
+          echo "MAILER_DSN=${{ secrets.MAILER_DSN }}" >> .env.local
+
+      - name: Run sync
+        run: make ci_ign_sync_report_statuses BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
