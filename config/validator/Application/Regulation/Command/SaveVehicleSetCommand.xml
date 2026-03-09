@@ -120,6 +120,9 @@
                 </option>
             </constraint>
             <constraint name="PositiveOrZero"></constraint>
+            <constraint name="LessThanOrEqual">
+                <option name="value">100</option>
+            </constraint>
         </property>
         <property name="maxWidth">
             <constraint name="PositiveOrZero"></constraint>
