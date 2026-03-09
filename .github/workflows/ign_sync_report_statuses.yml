@@ -45,7 +45,7 @@ jobs:
       - name: Init environment variables
         run: |
           echo "DATABASE_URL=${{ secrets.IGN_SYNC_DATABASE_URL }}" >> .env.local
-          echo "API_IGN_REPORT_BASE_URL=${{ vars.API_IGN_REPORT_BASE_URL }}" >> .env.local
+          echo "API_IGN_REPORT_BASE_URL=${{ secrets.API_IGN_REPORT_BASE_URL }}" >> .env.local
           echo "API_IGN_REPORT_AUTH=${{ secrets.API_IGN_REPORT_AUTH }}" >> .env.local
           echo "IGN_REPORT_STATUS=${{ secrets.IGN_REPORT_STATUS }}" >> .env.local
           echo "EMAIL_SUPPORT=${{ vars.EMAIL_SUPPORT }}" >> .env.local
