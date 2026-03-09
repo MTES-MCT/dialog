@@ -47,6 +47,7 @@ final class VehicleSetFormType extends AbstractType
                         '3.5' => 3.5,
                         '7.5' => 7.5,
                         '12' => 12,
+                        '15' => 15,
                         '19' => 19,
                         '26' => 26,
                         '32' => 32,
