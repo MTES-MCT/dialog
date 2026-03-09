@@ -341,6 +341,12 @@ ci_grist_sync: ## Run CI steps for Grist Sync workflow
 	make console CMD="app:grist:sync-organizations"
 	make console CMD="app:grist:sync-users"
 
+ci_ign_sync_report_statuses: ## Run CI steps for IGN Sync Report Statuses workflow
+	make composer CMD="install -n --prefer-dist"
+	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
+	./tools/scalingodbtunnel dialog --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
+	make console CMD="app:ign:sync-report-statuses"
+
 ##
 ## ----------------
 ## Supervision
