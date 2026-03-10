@@ -13,6 +13,7 @@ framework:
                     - validation
 
         transports:
+            sync: 'sync://'
             async:
                 dsn: "%env(REDIS_URL)%/messages"
                 retry_strategy:

@@ -7,9 +7,11 @@ namespace App\Infrastructure\Adapter;
 use App\Application\AsyncCommandInterface;
 use App\Application\CommandBusInterface;
 use App\Application\CommandInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\TransportNamesStamp;
 
 final class CommandBus implements CommandBusInterface
 {
@@ -25,7 +27,11 @@ final class CommandBus implements CommandBusInterface
     public function handle(CommandInterface $command): mixed
     {
         try {
-            return $this->doHandle($command);
+            $message = $command instanceof AsyncCommandInterface
+                ? Envelope::wrap($command, [new TransportNamesStamp('sync')])
+                : $command;
+
+            return $this->doHandle($message);
         } catch (HandlerFailedException $exception) {
             $previous = $exception->getPrevious();
 

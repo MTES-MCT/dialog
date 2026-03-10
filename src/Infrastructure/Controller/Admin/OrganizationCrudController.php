@@ -97,12 +97,35 @@ final class OrganizationCrudController extends AbstractCrudController
                 return null !== $organization->getGeometry();
             });
 
+        $syncGeometrieForOrganization = Action::new('syncGeometrieForOrganization', 'Mettre à jour le contour admin.')
+            ->linkToCrudAction('syncGeometrieForOrganization')
+            ->displayIf(static function (Organization $organization): bool {
+                return $organization->getSiret() && $organization->getCodeWithType() !== 'N/A';
+            });
+
         $this->commonAdminConfiguration->configureCommonActions($actions);
 
         return $actions
             ->add(Crud::PAGE_INDEX, $syncAllGeometries)
             ->add(Crud::PAGE_INDEX, $showMap)
+            ->add(Crud::PAGE_INDEX, $syncGeometrieForOrganization)
         ;
+    }
+
+    public function syncGeometrieForOrganization(AdminContext $context): RedirectResponse
+    {
+        $entity = $context->getEntity()->getInstance();
+
+        $this->commandBus->handle(new SyncOrganizationAdministrativeBoundariesCommand($entity->getUuid()));
+        $this->addFlash('success', 'La synchronisation de la géométrie a été effectuée avec succès.');
+
+        $fallbackUrl = $context->getReferrer()
+            ?? $this->urlGenerator->generate('app_admin', [
+                'crudAction' => 'index',
+                'crudControllerFqcn' => self::class,
+            ]);
+
+        return $this->redirect($fallbackUrl);
     }
 
     public function syncAllGeometries(): RedirectResponse
