@@ -14,8 +14,6 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
 {
     private const NATURES_COMMUNE = [
         '7210', // Commune et commune nouvelle
-        '7229', // (Autre) Collectivité territoriale
-        '7179', // (Autre) Service déconcentré de l'État à compétence territoriale
     ];
 
     private const NATURES_DEPARTEMENT = [
@@ -24,6 +22,8 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
         '7172', // Service déconcentré de l'État à compétence (inter) départementale
         '7372', // Service départemental d'incendie et de secours (SDIS)
         '7225', // Collectivité et territoire d'Outre Mer
+        '7179', // (Autre) Service déconcentré de l'État à compétence territoriale
+        '7229', // (Autre) Collectivité territoriale
     ];
 
     private const NATURES_REGION = [
