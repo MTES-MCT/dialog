@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Statistics;
 
 use App\Application\Cifs\CifsExportClientInterface;
+use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Statistics\Repository\ApiUsageDailyRepositoryInterface;
 use App\Domain\Statistics\Repository\StatisticsRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final class StatisticsRepository implements StatisticsRepositoryInterface
 {
@@ -23,8 +26,11 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
         private OrganizationRepositoryInterface $organizationRepository,
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private RegulationOrderHistoryRepositoryInterface $regulationOrderHistoryRepository,
+        #[Autowire(service: 'doctrine.dbal.metabase_connection')]
         private Connection $metabaseConnection,
+        private ApiUsageDailyRepositoryInterface $apiUsageDailyRepository,
         private CifsExportClientInterface $cifsExportClient,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -143,5 +149,34 @@ final class StatisticsRepository implements StatisticsRepositoryInterface
             $stmt->bindValue('validityStatus', $validityStatus);
             $stmt->executeStatement();
         }
+    }
+
+    public function addApiUsageStatistics(\DateTimeImmutable $now): void
+    {
+        $yesterday = $this->dateUtils->addDays($now, -1);
+
+        $entities = $this->apiUsageDailyRepository->findNotExportedUntil($yesterday);
+
+        if (0 === \count($entities)) {
+            return;
+        }
+
+        $stmt = $this->metabaseConnection->prepare(
+            'INSERT INTO analytics_api_request(id, uploaded_at, request_date, type, count)
+            VALUES (uuid_generate_v4(), (:uploadedAt)::timestamp(0), (:requestDate)::date, :type, :count)',
+        );
+
+        $uploadedAt = $now->format(\DateTimeInterface::ATOM);
+        foreach ($entities as $entity) {
+            $stmt->bindValue('uploadedAt', $uploadedAt);
+            $stmt->bindValue('requestDate', $entity->getDay()->format('Y-m-d'));
+            $stmt->bindValue('type', $entity->getType());
+            $stmt->bindValue('count', $entity->getCount(), ParameterType::INTEGER);
+            $stmt->executeStatement();
+
+            $entity->setExportedAt($now);
+        }
+
+        $this->apiUsageDailyRepository->flush();
     }
 }

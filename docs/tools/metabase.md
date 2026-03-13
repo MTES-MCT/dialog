@@ -12,7 +12,7 @@ Le Metabase de DiaLog est hébergé sur Scalingo sous l'application `dialog-meta
 
 Cette application dispose de sa propre base de données où nous stockons les données nécessaires au calcul des indicateurs, conformément aux [recommendations Beta](https://doc.incubateur.net/communaute/les-outils-de-la-communaute/autres-services/metabase/metabase#connecter-metabase-a-une-base-de-donnees-anonymisee)
 
-La collecte des données d'indicateurs est réalisée au moyen d'une la commande Symfony `app:metabase:export`. Cette commande rassemble les données sources (requêtes à la base de données, requêtes HTTP, ou autres opérations...) puis les upload vers la base de données PostgreSQL de l'instance Metabase. 
+La collecte des données d'indicateurs est réalisée au moyen d'une la commande Symfony `app:metabase:export`. Cette commande rassemble les données sources (requêtes à la base de données, requêtes HTTP, ou autres opérations...) puis les upload vers la base de données PostgreSQL de l'instance Metabase.
 
 ## Lancer l'export depuis GitHub Actions
 
