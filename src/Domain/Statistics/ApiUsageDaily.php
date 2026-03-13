@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Statistics;
 
-/**
- * Nombre d'appels API par jour et par type (cifs, datex, web).
- * 1 ligne par jour et par type. exportedAt renseigné une fois envoyé à Metabase.
- */
-final class ApiUsageDaily
+class ApiUsageDaily
 {
     public function __construct(
         private string $uuid,
