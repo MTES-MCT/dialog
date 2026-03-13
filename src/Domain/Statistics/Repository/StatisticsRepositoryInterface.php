@@ -13,4 +13,6 @@ interface StatisticsRepositoryInterface
     public function addOrganizationExtractStatistics(\DateTimeImmutable $now): void;
 
     public function addRegulationOrderRecordsExtractStatistics(\DateTimeImmutable $now): void;
+
+    public function addApiUsageStatistics(\DateTimeImmutable $now): void;
 }

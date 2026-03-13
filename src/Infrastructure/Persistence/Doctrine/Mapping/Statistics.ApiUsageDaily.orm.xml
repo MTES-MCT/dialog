@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="App\Domain\Statistics\ApiUsageDaily" table="api_usage_daily">
+    <id name="uuid" type="guid" column="uuid"/>
+    <field name="day" type="date" column="day"/>
+    <field name="type" type="string" column="type" length="20"/>
+    <field name="count" type="integer" column="count" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="exportedAt" type="datetimetz" column="exported_at" nullable="true"/>
+    <unique-constraints>
+      <unique-constraint name="api_usage_daily_day_type_uniq" columns="day,type"/>
+    </unique-constraints>
+    <indexes>
+      <index name="idx_api_usage_daily_day" columns="day"/>
+      <index name="idx_api_usage_daily_exported_at" columns="exported_at"/>
+    </indexes>
+  </entity>
+</doctrine-mapping>
