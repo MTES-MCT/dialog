@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class ApiUsageRecorderSubscriber implements EventSubscriberInterface
 {
+    private const PATH_REGULATIONS = '/api/regulations';
     private const PATH_CIFS = '/api/regulations/cifs';
 
     public function __construct(
@@ -40,17 +41,18 @@ final class ApiUsageRecorderSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $type = $this->resolveType($pathInfo);
+        $type = $this->resolveType($pathInfo, $request->getMethod());
+
         $this->commandBus->handle(new RecordApiUsageCommand($type));
     }
 
-    private function resolveType(string $pathInfo): string
+    private function resolveType(string $pathInfo, string $method): string
     {
-        if (str_starts_with($pathInfo, self::PATH_CIFS)) {
+        if ($method === 'GET' && str_starts_with($pathInfo, self::PATH_CIFS)) {
             return 'cifs';
         }
 
-        if (preg_match('#^/api/regulations(?:\.|$)#', $pathInfo) === 1) {
+        if ($method === 'GET' && str_starts_with($pathInfo, self::PATH_REGULATIONS)) {
             return 'datex';
         }
 

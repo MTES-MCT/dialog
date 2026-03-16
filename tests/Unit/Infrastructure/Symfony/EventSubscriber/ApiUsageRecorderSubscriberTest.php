@@ -74,9 +74,69 @@ final class ApiUsageRecorderSubscriberTest extends TestCase
         $subscriber->onKernelResponse($event);
     }
 
+    public function testDispatchesWebCommandWhenPostRegulationsAndResponse2xx(): void
+    {
+        $request = Request::create('/api/regulations', 'POST');
+        $response = new Response('', 200);
+        $event = new ResponseEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MAIN_REQUEST,
+            $response,
+        );
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(self::equalTo(new RecordApiUsageCommand('web')));
+
+        $subscriber = new ApiUsageRecorderSubscriber($this->commandBus);
+        $subscriber->onKernelResponse($event);
+    }
+
+    public function testDispatchesWebCommandWhenPutRegulationsPublishAndResponse2xx(): void
+    {
+        $request = Request::create('/api/regulations/publish/F2025/001', 'PUT');
+        $response = new Response('', 200);
+        $event = new ResponseEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MAIN_REQUEST,
+            $response,
+        );
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(self::equalTo(new RecordApiUsageCommand('web')));
+
+        $subscriber = new ApiUsageRecorderSubscriber($this->commandBus);
+        $subscriber->onKernelResponse($event);
+    }
+
     public function testDispatchesWebCommandWhenPathIsOtherApiAndResponse2xx(): void
     {
         $request = Request::create('/api/stats');
+        $response = new Response('', 200);
+        $event = new ResponseEvent(
+            $this->createMock(KernelInterface::class),
+            $request,
+            KernelInterface::MAIN_REQUEST,
+            $response,
+        );
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(self::equalTo(new RecordApiUsageCommand('web')));
+
+        $subscriber = new ApiUsageRecorderSubscriber($this->commandBus);
+        $subscriber->onKernelResponse($event);
+    }
+
+    public function testDispatchesWebCommandWhenMethodNotGetAndRegulationsPath(): void
+    {
+        $request = Request::create('/api/regulations.xml', 'DELETE');
         $response = new Response('', 200);
         $event = new ResponseEvent(
             $this->createMock(KernelInterface::class),
