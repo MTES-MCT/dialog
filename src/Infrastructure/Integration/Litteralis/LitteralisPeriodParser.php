@@ -16,10 +16,11 @@ final class LitteralisPeriodParser
     // * 'de 08 h 00 à 18 h 00'
     // * '7 h 30 à 17 h 00'
     // * 'DE 7 H 30 à 17 H 00'
+    // * 'DE 8H00 A 17H00' (Mandelieu : "A" au lieu de "à")
     // * '19h à 7h'
     // * 'de 21h à 6h.'
     // * 'de 8 heures à 15 heures 30'
-    private const HOURS_REGEX = '/^(?:la nuit |de nuit )?(?:de )?(?P<startHour>\d{1,2}) ?(?:h|heures?) ?(?P<startMinute>\d{1,2})? (?:à|À|0) ?(?P<endHour>\d{1,2}) ?(?:h|heures?) ?(?P<endMinute>\d{1,2})?\.?$/i';
+    private const HOURS_REGEX = '/^(?:la nuit |de nuit )?(?:de )?(?P<startHour>\d{1,2}) ?(?:h|heures?) ?(?P<startMinute>\d{1,2})? (?:à|À|0|[aA]) ?(?P<endHour>\d{1,2}) ?(?:h|heures?) ?(?P<endMinute>\d{1,2})?\.?$/i';
     private const ALL_HOURS_VALUES = [
         // <<< Litteralis Corrèze (aka CD19)
         '24/24 7j/7j',
