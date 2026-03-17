@@ -1,0 +1,168 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    height: 100%;
+}
+
+.map-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 80px);
+    padding: 1rem;
+}
+
+.test-map-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    max-width: 78rem;
+    border: 1px solid var(--border-default-grey);
+    border-radius: 4px;
+    overflow: visible;
+    position: relative;
+}
+
+.test-map-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-default-grey);
+    background-color: var(--background-default-grey);
+    flex-shrink: 0;
+}
+
+.test-map-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.test-map-header p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-mention-grey);
+}
+
+#test-map {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+}
+
+.draw-controls {
+    & button {
+        transition: background-color 0.2s, border-left-color 0.2s;
+    }
+    & button:hover:not(.draw-btn-delete) {
+        background-color: #f5f5f5;
+    }
+
+    & .draw-btn-delete:hover {
+        background-color: #d32f2f;
+        color: #f5f5f5;
+    }
+
+    & button.active {
+        background-color: #d4e4ff;
+        border-left: 3px solid #000091;
+    }
+} 
+
+@media (max-width: 768px) {
+    .test-map-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    #test-map {
+        min-height: 400px;
+    }
+}
+
+.mapboxgl-ctrl-group {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.mapboxgl-ctrl-group button {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.draw-btn {
+    background: white;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.draw-btn.active {
+    background: #d4e4ff;
+    border-left: 3px solid #000091;
+}
+
+.mapboxgl-ctrl-group button:hover {
+    background-color: #f0f0f0;
+}
+
+.draw-controls {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+}
+
+.draw-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-left: 3px solid transparent;
+    background: white;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+}
+
+.draw-btn-line,
+.draw-btn-polygon {
+    border-bottom: 1px solid #ddd;
+}
+
+.draw-btn-validate {
+    background-color: #27ba27;
+    color: white;
+    border-left: 3px solid transparent;
+    font-weight: 600;
+}
+
+.draw-btn-validate:hover {
+    background-color: #22a822;
+}
+
+.draw-btn-validate:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.draw-btn-delete:hover {
+    background-color: #d32f2f;
+    color: white;
+}
+
