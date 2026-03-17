@@ -2699,6 +2699,10 @@
                 <source>integration.report.notice.litteralis.polygon_location_excluded</source>
                 <target>Emprise ignorée : localisation de type polygon non importée</target>
             </trans-unit>
+            <trans-unit id="integration.report.notice.litteralis.missing_geometry_excluded">
+                <source>integration.report.notice.litteralis.missing_geometry_excluded</source>
+                <target>Emprise ignorée : géométrie absente ou invalide</target>
+            </trans-unit>
             <trans-unit id="config.menu.organization">
                 <source>config.menu.organization</source>
                 <target>Mon organisation</target>
