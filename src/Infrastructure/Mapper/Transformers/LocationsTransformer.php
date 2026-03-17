@@ -50,6 +50,8 @@ final class LocationsTransformer
                 $nr->roadNumber = $dto->departmentalRoad->roadNumber;
                 $nr->fromDepartmentCode = $dto->departmentalRoad->fromDepartmentCode;
                 $nr->fromPointNumber = $dto->departmentalRoad->fromPointNumber;
+                $nr->fromPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->departmentalRoad->fromDepartmentCode, $dto->departmentalRoad->fromPointNumber);
+                $nr->toPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->departmentalRoad->toDepartmentCode, $dto->departmentalRoad->toPointNumber);
                 $nr->fromAbscissa = $dto->departmentalRoad->fromAbscissa;
                 $nr->fromSide = $dto->departmentalRoad->fromSide;
                 $nr->toDepartmentCode = $dto->departmentalRoad->toDepartmentCode;
@@ -76,6 +78,8 @@ final class LocationsTransformer
                 $nr->toPointNumber = $dto->nationalRoad->toPointNumber;
                 $nr->toAbscissa = $dto->nationalRoad->toAbscissa;
                 $nr->toSide = $dto->nationalRoad->toSide;
+                $nr->fromPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->nationalRoad->fromDepartmentCode, $dto->nationalRoad->fromPointNumber);
+                $nr->toPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->nationalRoad->toDepartmentCode, $dto->nationalRoad->toPointNumber);
                 if ($dto->nationalRoad->direction) {
                     $nr->direction = $dto->nationalRoad->direction->value;
                 }
