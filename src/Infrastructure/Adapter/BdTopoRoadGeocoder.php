@@ -143,6 +143,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
     public function findRoads(string $search, string $roadType, string $administrator): array
     {
+        $administrator = ucfirst($administrator);
+
         // Can search for a departmental road with the prefix "RD"
         if (str_starts_with(strtoupper($search), 'RD')) {
             $search = substr($search, 1);
@@ -188,6 +190,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
     public function computeRoad(string $roadType, string $administrator, string $roadNumber): string
     {
         $numero = strtoupper($roadNumber);
+        $administrator = ucfirst($administrator);
         $typeDeRoute = $roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value ? 'Départementale' : 'Nationale';
 
         try {
@@ -225,6 +228,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
     public function findReferencePoints(string $search, string $administrator, string $roadNumber): array
     {
+        $administrator = ucfirst($administrator);
+
         try {
             $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 'SELECT
@@ -278,6 +283,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         string $side,
         int $abscissa,
     ): Coordinates {
+        $administrator = ucfirst($administrator);
+
         try {
             // Pour trouver un PR+abs, on trouve le PR, puis on remonte sa section de point de repère d'une distance indiquée par :abscissa.
             $row = $this->bdtopo2025Connection->fetchAssociative(
@@ -427,6 +434,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array
     {
+        $administrator = ucfirst($administrator);
+
         try {
             $rows = $this->bdtopo2025Connection->fetchAllAssociative(
                 \sprintf(
