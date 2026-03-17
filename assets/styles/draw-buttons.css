@@ -1,0 +1,12 @@
+/* Draw buttons styling */
+
+.draw-btn {
+    background: white;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.draw-btn.active {
+    background: #d4e4ff;
+    border-left: 3px solid #000091;
+}
