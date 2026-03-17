@@ -33,6 +33,10 @@ final class LitteralisPeriodParserTest extends TestCase
         $timeSlot2->startTime = new \DateTimeImmutable('06:30');
         $timeSlot2->endTime = new \DateTimeImmutable('16:30');
 
+        $timeSlotMandelieu = new SaveTimeSlotCommand();
+        $timeSlotMandelieu->startTime = new \DateTimeImmutable('07:00');
+        $timeSlotMandelieu->endTime = new \DateTimeImmutable('16:00');
+
         return [
             'hours1' => [
                 'value' => 'de 08 h 00 à 18 h 00',
@@ -49,6 +53,10 @@ final class LitteralisPeriodParserTest extends TestCase
             'hours3-typo' => [
                 'value' => 'DE 7 H 30 0 17 H 30',
                 'timeSlots' => [$timeSlot2],
+            ],
+            'hours-mandelieu' => [
+                'value' => 'DE 8H00 A 17H00',
+                'timeSlots' => [$timeSlotMandelieu],
             ],
             'hours4' => [
                 'value' => '8h à 18h',

@@ -195,6 +195,19 @@ final readonly class LitteralisTransformer
 
     private function parseLocation(array $feature, Organization $organization, Reporter $reporter, array $regulationProperties): ?SaveLocationCommand
     {
+        // Géométrie absente ou invalide (ex. flux Mandelieu avec geometry null)
+        if (empty($feature['geometry']) || !\is_array($feature['geometry'])) {
+            $reporter->addNotice(LitteralisRecordEnum::NOTICE_MISSING_GEOMETRY_EXCLUDED->value, [
+                CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationProperties['arretesrcid'],
+                CommonRecordEnum::ATTR_URL->value => $regulationProperties['shorturl'],
+                CommonRecordEnum::ATTR_DETAILS->value => [
+                    'idemprise' => $feature['properties']['idemprise'] ?? null,
+                ],
+            ]);
+
+            return null;
+        }
+
         $geometryType = $feature['geometry']['type'] ?? null;
         if ($geometryType === 'Polygon' || $geometryType === 'MultiPolygon') {
             $reporter->addNotice(LitteralisRecordEnum::NOTICE_POLYGON_LOCATION_EXCLUDED->value, [
