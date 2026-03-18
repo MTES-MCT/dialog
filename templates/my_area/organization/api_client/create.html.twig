@@ -1,0 +1,31 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ 'api_client.create.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
+            { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+            { title: 'api_client.list.title'|trans, url: path('app_config_api_clients_list', {uuid: organization.uuid}), generatedPath: true },
+            { title: 'api_client.create.title'|trans },
+        ]} %}
+
+        <div class="fr-tabs">
+            {% include 'my_area/organization/_tabs.html.twig' %}
+            <div id="tab-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-1" tabindex="0">
+                <h3 class="fr-h5 fr-x-text--default-grey">{{ 'api_client.create.title'|trans }}</h3>
+                <p class="fr-x-text">{{ 'api_client.create.description'|trans }}</p>
+                {{ form_start(form) }}
+                {{ form_row(form.user, { group_class: 'fr-input-group', widget_class: 'fr-select' }) }}
+                <a href="{{ path('app_config_api_clients_list', {uuid: organization.uuid}) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
+                    {{ "common.cancel"|trans }}
+                </a>
+                {{ form_widget(form.submit) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
