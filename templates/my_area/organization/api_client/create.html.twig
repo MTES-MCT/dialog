@@ -19,6 +19,7 @@
                 <h3 class="fr-h5 fr-x-text--default-grey">{{ 'api_client.create.title'|trans }}</h3>
                 <p class="fr-x-text">{{ 'api_client.create.description'|trans }}</p>
                 {{ form_start(form) }}
+                {{ form_errors(form) }}
                 {{ form_row(form.user, { group_class: 'fr-input-group', widget_class: 'fr-select' }) }}
                 <a href="{{ path('app_config_api_clients_list', {uuid: organization.uuid}) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                     {{ "common.cancel"|trans }}

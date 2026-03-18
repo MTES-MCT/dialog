@@ -26,7 +26,7 @@ final class DeleteApiClientCommandHandlerTest extends TestCase
         $apiClientUuid = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
         $apiClient = new ApiClient($apiClientUuid);
 
-        $this->apiClientRepository->method('find')->with($apiClientUuid)->willReturn($apiClient);
+        $this->apiClientRepository->method('findOneByUuid')->with($apiClientUuid)->willReturn($apiClient);
         $this->apiClientRepository->expects(self::once())->method('remove')->with($apiClient);
 
         $handler = new DeleteApiClientCommandHandler(
@@ -38,7 +38,7 @@ final class DeleteApiClientCommandHandlerTest extends TestCase
 
     public function testThrowsWhenApiClientNotFound(): void
     {
-        $this->apiClientRepository->method('find')->willReturn(null);
+        $this->apiClientRepository->method('findOneByUuid')->willReturn(null);
         $this->apiClientRepository->expects(self::never())->method('remove');
 
         $handler = new DeleteApiClientCommandHandler(

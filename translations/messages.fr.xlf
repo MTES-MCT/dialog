@@ -2729,7 +2729,7 @@
             </trans-unit>
             <trans-unit id="config.menu.api_clients">
                 <source>config.menu.api_clients</source>
-                <target>Clé API</target>
+                <target>Clés API</target>
             </trans-unit>
             <trans-unit id="api_client.list.title">
                 <source>api_client.list.title</source>

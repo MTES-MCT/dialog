@@ -8,11 +8,11 @@ let cachedOrganizationsData = null;
 
 // Configuration des territoires d'outre-mer
 const OVERSEAS_TERRITORIES = [
-    { name: 'Guadeloupe', center: [-61.55, 16.25], zoom: 8.5 },
-    { name: 'Martinique', center: [-61.02, 14.64], zoom: 9 },
+    { name: 'Guadeloupe', center: [-61.55, 16.25], zoom: 7.5 },
+    { name: 'Martinique', center: [-61.02, 14.64], zoom: 8 },
     { name: 'Guyane', center: [-53.13, 3.93], zoom: 5 },
-    { name: 'La Réunion', center: [55.536, -21.115], zoom: 8 },
-    { name: 'Mayotte', center: [45.166244, -12.8275], zoom: 10 },
+    { name: 'La Réunion', center: [55.536, -21.115], zoom: 7.5 },
+    { name: 'Mayotte', center: [45.166244, -12.8275], zoom: 8 },
 ];
 
 // Bounding box de la France métropolitaine

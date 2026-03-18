@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Organization\ApiClient\Command;
 
+use App\Application\ApiClientSecretHasherInterface;
 use App\Application\Organization\ApiClient\Command\RegenerateApiClientSecretCommand;
 use App\Application\Organization\ApiClient\Command\RegenerateApiClientSecretCommandHandler;
 use App\Domain\Organization\ApiClient;
@@ -11,18 +12,16 @@ use App\Domain\Organization\Exception\ApiClientNotFoundException;
 use App\Domain\Organization\Repository\ApiClientRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class RegenerateApiClientSecretCommandHandlerTest extends TestCase
 {
     private MockObject $apiClientRepository;
-    private MockObject $passwordHasherFactory;
+    private MockObject $apiClientSecretHasher;
 
     protected function setUp(): void
     {
         $this->apiClientRepository = $this->createMock(ApiClientRepositoryInterface::class);
-        $this->passwordHasherFactory = $this->createMock(PasswordHasherFactoryInterface::class);
+        $this->apiClientSecretHasher = $this->createMock(ApiClientSecretHasherInterface::class);
     }
 
     public function testRegeneratesSecretAndReturnsView(): void
@@ -31,14 +30,12 @@ final class RegenerateApiClientSecretCommandHandlerTest extends TestCase
         $apiClient = new ApiClient($apiClientUuid);
         $apiClient->setClientId('client-123')->setClientSecret('old-hash')->setIsActive(true);
 
-        $this->apiClientRepository->method('find')->with($apiClientUuid)->willReturn($apiClient);
-        $hasher = $this->createMock(PasswordHasherInterface::class);
-        $hasher->method('hash')->willReturn('new-hashed-secret');
-        $this->passwordHasherFactory->method('getPasswordHasher')->willReturn($hasher);
+        $this->apiClientRepository->method('findOneByUuid')->with($apiClientUuid)->willReturn($apiClient);
+        $this->apiClientSecretHasher->method('hash')->willReturn('new-hashed-secret');
 
         $handler = new RegenerateApiClientSecretCommandHandler(
             $this->apiClientRepository,
-            $this->passwordHasherFactory,
+            $this->apiClientSecretHasher,
         );
 
         $result = ($handler)(new RegenerateApiClientSecretCommand($apiClientUuid));
@@ -50,11 +47,11 @@ final class RegenerateApiClientSecretCommandHandlerTest extends TestCase
 
     public function testThrowsWhenApiClientNotFound(): void
     {
-        $this->apiClientRepository->method('find')->willReturn(null);
+        $this->apiClientRepository->method('findOneByUuid')->willReturn(null);
 
         $handler = new RegenerateApiClientSecretCommandHandler(
             $this->apiClientRepository,
-            $this->passwordHasherFactory,
+            $this->apiClientSecretHasher,
         );
 
         $this->expectException(ApiClientNotFoundException::class);

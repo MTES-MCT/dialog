@@ -11,8 +11,10 @@ use App\Application\QueryBusInterface;
 use App\Application\User\Query\GetOrganizationUsersQuery;
 use App\Domain\Organization\Exception\UserAlreadyHasApiClientForOrganizationException;
 use App\Infrastructure\Controller\MyArea\Organization\AbstractOrganizationController;
+use App\Infrastructure\Form\Organization\CreateApiClientFormType;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,7 +54,7 @@ final class CreateApiClientController extends AbstractOrganizationController
         }
 
         $users = $this->queryBus->handle(new GetOrganizationUsersQuery($uuid));
-        $form = $this->formFactory->create(\App\Infrastructure\Form\Organization\CreateApiClientFormType::class, null, [
+        $form = $this->formFactory->create(CreateApiClientFormType::class, null, [
             'users' => $users,
             'organization_uuid' => $uuid,
         ]);
@@ -79,7 +81,7 @@ final class CreateApiClientController extends AbstractOrganizationController
                     status: Response::HTTP_SEE_OTHER,
                 );
             } catch (UserAlreadyHasApiClientForOrganizationException) {
-                $form->addError(new \Symfony\Component\Form\FormError(
+                $form->addError(new FormError(
                     $this->translator->trans('api_client.create.error_already_has_key'),
                 ));
             }

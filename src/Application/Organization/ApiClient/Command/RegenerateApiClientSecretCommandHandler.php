@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Application\Organization\ApiClient\Command;
 
+use App\Application\ApiClientSecretHasherInterface;
 use App\Application\Organization\ApiClient\View\ApiClientCreatedView;
 use App\Domain\Organization\Exception\ApiClientNotFoundException;
 use App\Domain\Organization\Repository\ApiClientRepositoryInterface;
 use App\Domain\User\TokenGenerator;
-use App\Infrastructure\Security\User\ApiClientUser;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 final class RegenerateApiClientSecretCommandHandler
 {
     public function __construct(
         private ApiClientRepositoryInterface $apiClientRepository,
-        private PasswordHasherFactoryInterface $passwordHasherFactory,
+        private ApiClientSecretHasherInterface $apiClientSecretHasher,
     ) {
     }
 
@@ -27,7 +26,7 @@ final class RegenerateApiClientSecretCommandHandler
         }
 
         $plainSecret = (new TokenGenerator())->generate();
-        $hashedSecret = $this->passwordHasherFactory->getPasswordHasher(ApiClientUser::class)->hash($plainSecret);
+        $hashedSecret = $this->apiClientSecretHasher->hash($plainSecret);
         $apiClient->setClientSecret($hashedSecret);
 
         return new ApiClientCreatedView(

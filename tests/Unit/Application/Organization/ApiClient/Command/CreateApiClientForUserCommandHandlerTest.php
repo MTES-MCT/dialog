@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Organization\ApiClient\Command;
 
+use App\Application\ApiClientSecretHasherInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\ApiClient\Command\CreateApiClientForUserCommand;
@@ -19,14 +20,12 @@ use App\Domain\User\OrganizationUser;
 use App\Domain\User\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 
 final class CreateApiClientForUserCommandHandlerTest extends TestCase
 {
     private MockObject $apiClientRepository;
     private MockObject $idFactory;
-    private MockObject $passwordHasherFactory;
+    private MockObject $apiClientSecretHasher;
     private MockObject $dateUtils;
     private MockObject $queryBus;
 
@@ -34,7 +33,7 @@ final class CreateApiClientForUserCommandHandlerTest extends TestCase
     {
         $this->apiClientRepository = $this->createMock(ApiClientRepositoryInterface::class);
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
-        $this->passwordHasherFactory = $this->createMock(PasswordHasherFactoryInterface::class);
+        $this->apiClientSecretHasher = $this->createMock(ApiClientSecretHasherInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
     }
@@ -65,9 +64,7 @@ final class CreateApiClientForUserCommandHandlerTest extends TestCase
 
         $this->idFactory->method('make')
             ->willReturnOnConsecutiveCalls('new-uuid-123', 'new-client-id-456');
-        $hasher = $this->createMock(PasswordHasherInterface::class);
-        $hasher->method('hash')->willReturn('hashed-secret');
-        $this->passwordHasherFactory->method('getPasswordHasher')->willReturn($hasher);
+        $this->apiClientSecretHasher->method('hash')->willReturn('hashed-secret');
         $now = new \DateTimeImmutable('2025-01-01 12:00:00');
         $this->dateUtils->method('getNow')->willReturn($now);
 
@@ -83,7 +80,7 @@ final class CreateApiClientForUserCommandHandlerTest extends TestCase
         $handler = new CreateApiClientForUserCommandHandler(
             $this->apiClientRepository,
             $this->idFactory,
-            $this->passwordHasherFactory,
+            $this->apiClientSecretHasher,
             $this->dateUtils,
             $this->queryBus,
         );
@@ -124,7 +121,7 @@ final class CreateApiClientForUserCommandHandlerTest extends TestCase
         $handler = new CreateApiClientForUserCommandHandler(
             $this->apiClientRepository,
             $this->idFactory,
-            $this->passwordHasherFactory,
+            $this->apiClientSecretHasher,
             $this->dateUtils,
             $this->queryBus,
         );

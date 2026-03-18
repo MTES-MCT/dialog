@@ -17,7 +17,7 @@ final class CreateApiClientControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Créer une clé d\'API', $crawler->filter('h3')->first()->text());
+        $this->assertSame('Créer une clé d' . "\u{2019}" . 'API', $crawler->filter('h3')->first()->text());
 
         $submitButton = $crawler->selectButton('Créer la clé');
         $form = $submitButton->form();

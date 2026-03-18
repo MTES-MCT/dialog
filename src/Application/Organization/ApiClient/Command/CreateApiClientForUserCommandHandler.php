@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Organization\ApiClient\Command;
 
+use App\Application\ApiClientSecretHasherInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\ApiClient\View\ApiClientCreatedView;
@@ -14,15 +15,13 @@ use App\Domain\Organization\ApiClient;
 use App\Domain\Organization\Exception\UserAlreadyHasApiClientForOrganizationException;
 use App\Domain\Organization\Repository\ApiClientRepositoryInterface;
 use App\Domain\User\TokenGenerator;
-use App\Infrastructure\Security\User\ApiClientUser;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
 final class CreateApiClientForUserCommandHandler
 {
     public function __construct(
         private ApiClientRepositoryInterface $apiClientRepository,
         private IdFactoryInterface $idFactory,
-        private PasswordHasherFactoryInterface $passwordHasherFactory,
+        private ApiClientSecretHasherInterface $apiClientSecretHasher,
         private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
     ) {
@@ -43,7 +42,7 @@ final class CreateApiClientForUserCommandHandler
         }
 
         $plainSecret = (new TokenGenerator())->generate();
-        $hashedSecret = $this->passwordHasherFactory->getPasswordHasher(ApiClientUser::class)->hash($plainSecret);
+        $hashedSecret = $this->apiClientSecretHasher->hash($plainSecret);
 
         $apiClient = (new ApiClient($this->idFactory->make()))
             ->setClientId($this->idFactory->make())
