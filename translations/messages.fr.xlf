@@ -677,6 +677,10 @@
                 <source>regulation.location.road.type.rawGeoJSON</source>
                 <target>Données brutes GeoJSON</target>
             </trans-unit>
+            <trans-unit id="regulation.location.road.type.drawMap">
+                <source>regulation.location.road.type.drawMap</source>
+                <target>Tracé sur la carte</target>
+            </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
                 <target>Gestionnaire</target>

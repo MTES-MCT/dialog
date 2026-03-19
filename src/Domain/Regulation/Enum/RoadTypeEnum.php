@@ -10,4 +10,5 @@ enum RoadTypeEnum: string
     case DEPARTMENTAL_ROAD = 'departmentalRoad';
     case NATIONAL_ROAD = 'nationalRoad';
     case RAW_GEOJSON = 'rawGeoJSON';
+    case DRAW_MAP = 'drawMap';
 }

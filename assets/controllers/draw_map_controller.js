@@ -7,7 +7,7 @@ import { OsrmRouter } from '../customElements/osrm-router';
 import '../styles/components/draw-map.css';
 
 export default class extends Controller {
-    static targets = ['container', 'polygonBtn', 'roadLineBtn', 'validateBtn'];
+    static targets = ['container', 'polygonBtn', 'roadLineBtn', 'validateBtn', 'geometryField'];
     static values = {
         centerJson: String,
         zoom: Number,
@@ -18,14 +18,41 @@ export default class extends Controller {
     #draw = null;
     #currentMode = null;
     #router = null;
+    #observer = null;
 
     connect() {
-        this.initializeMap();
+        if (this.#isContainerHidden()) {
+            this.#observeVisibility();
+        } else {
+            this.initializeMap();
+        }
     }
 
     disconnect() {
+        this.#observer?.disconnect();
+        this.#observer = null;
         this.#map?.remove();
         this.#map = null;
+    }
+
+    #isContainerHidden() {
+        return this.containerTarget.offsetParent === null;
+    }
+
+    #observeVisibility() {
+        this.#observer = new MutationObserver(() => {
+            if (!this.#isContainerHidden()) {
+                this.#observer.disconnect();
+                this.#observer = null;
+                this.initializeMap();
+            }
+        });
+
+        // Observe ancestor hidden attribute changes
+        let parent = this.element.closest('[hidden]') || this.element.parentElement;
+        if (parent) {
+            this.#observer.observe(parent, { attributes: true, attributeFilter: ['hidden'] });
+        }
     }
 
     get centerCoords() {
@@ -55,6 +82,7 @@ export default class extends Controller {
                 this.addNavigationControl();
                 this.initializeDrawControl();
                 this.setupDrawing();
+                this.loadGeometryFromField();
             });
 
             this.#map.on('error', (e) => {
@@ -240,6 +268,93 @@ export default class extends Controller {
             this.dispatch('submitError', { detail: { error: error.message } });
         } finally {
             this.hasValidateBtnTarget && (this.validateBtnTarget.disabled = false);
+        }
+    }
+
+    async validateToField() {
+        await this._routingPromise;
+
+        this.#draw.finishDrawing();
+        this.#draw.finishRoutedLine();
+        this.#draw.clearPreview();
+        this.#map.dragPan.enable();
+        this.#map.getCanvas().style.cursor = '';
+
+        this.#currentMode = null;
+        this.updateButtonClasses();
+
+        const geoJsonData = this.getDrawnData();
+
+        if (!geoJsonData.features || geoJsonData.features.length === 0) {
+            return;
+        }
+
+        let geometry;
+
+        if (geoJsonData.features.length === 1) {
+            geometry = geoJsonData.features[0].geometry;
+        } else {
+            geometry = {
+                type: 'GeometryCollection',
+                geometries: geoJsonData.features.map(f => f.geometry),
+            };
+        }
+
+        if (this.hasGeometryFieldTarget) {
+            this.geometryFieldTarget.value = JSON.stringify(geometry);
+            this.dispatch('geometryChanged', { detail: { geometry } });
+        }
+    }
+
+    loadGeometryFromField() {
+        if (!this.hasGeometryFieldTarget || !this.geometryFieldTarget.value) {
+            return;
+        }
+
+        try {
+            const geometry = JSON.parse(this.geometryFieldTarget.value);
+            const feature = { type: 'Feature', geometry, properties: {} };
+            const featureCollection = { type: 'FeatureCollection', features: [feature] };
+            this.setDrawnData(featureCollection);
+            this.#fitBoundsToGeometry(geometry);
+        } catch {
+            // Invalid JSON, ignore
+        }
+    }
+
+    #fitBoundsToGeometry(geometry) {
+        const coords = this.#extractCoordinates(geometry);
+
+        if (coords.length === 0) {
+            return;
+        }
+
+        const bounds = coords.reduce(
+            (b, coord) => b.extend(coord),
+            new maplibregl.LngLatBounds(coords[0], coords[0]),
+        );
+
+        this.#map.fitBounds(bounds, { padding: 40, maxZoom: 16 });
+    }
+
+    #extractCoordinates(geometry) {
+        switch (geometry.type) {
+            case 'Point':
+                return [geometry.coordinates];
+            case 'LineString':
+                return geometry.coordinates;
+            case 'Polygon':
+                return geometry.coordinates.flat();
+            case 'MultiPoint':
+                return geometry.coordinates;
+            case 'MultiLineString':
+                return geometry.coordinates.flat();
+            case 'MultiPolygon':
+                return geometry.coordinates.flat(2);
+            case 'GeometryCollection':
+                return geometry.geometries.flatMap(g => this.#extractCoordinates(g));
+            default:
+                return [];
         }
     }
 }

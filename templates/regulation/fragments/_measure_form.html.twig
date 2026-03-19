@@ -620,6 +620,83 @@
                         },
                     }) }}
                 </div>
+
+                {% set isDrawMap = form.roadType.vars.value == 'drawMap' %}
+                <div
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="drawMap"
+                    {% if not isDrawMap %}hidden{% endif %}
+                >
+                    {{ form_row(form.drawMap.roadType, {
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'drawMap',
+                            'disabled': not isDrawMap,
+                        }
+                    }) }}
+
+                    {{ form_row(form.drawMap.label, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'drawMap',
+                            'disabled': not isDrawMap,
+                        },
+                    }) }}
+
+                    <div
+                        data-controller="draw-map"
+                        data-draw-map-center-json-value='[2.725, 47.16]'
+                        data-draw-map-zoom-value="5"
+                        class="fr-mb-3w draw-map-wrapper"
+                    >
+                        <div data-draw-map-target="container" class="draw-map-container"></div>
+                        <div class="draw-controls fr-mt-1w">
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-road-map-line"
+                                data-draw-map-target="roadLineBtn"
+                                data-action="click->draw-map#toggleRoadLine"
+                                aria-label="{{ 'common.draw_map.road_line'|trans({}, 'messages')|default('Tracer une ligne suivant les routes') }}"
+                            >
+                            </button>
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-shapes-line"
+                                data-draw-map-target="polygonBtn"
+                                data-action="click->draw-map#togglePolygon"
+                                aria-label="{{ 'common.draw_map.polygon'|trans({}, 'messages')|default('Dessiner un polygone') }}"
+                            >
+                            </button>
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                                data-action="click->draw-map#clearAll"
+                                aria-label="{{ 'common.delete'|trans }}"
+                            >
+                            </button>
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-check-line"
+                                data-draw-map-target="validateBtn"
+                                data-action="click->draw-map#validateToField"
+                                aria-label="{{ 'common.validate'|trans({}, 'messages')|default('Valider le tracé') }}"
+                            >
+                            </button>
+                        </div>
+                        {{ form_widget(form.drawMap.geometry, {
+                            attr: {
+                                'data-draw-map-target': 'geometryField',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'drawMap',
+                                'disabled': not isDrawMap,
+                                'hidden': true,
+                            }
+                        }) }}
+                    </div>
+                </div>
             </div>
         </div>
     </li>
