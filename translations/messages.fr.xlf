@@ -2318,10 +2318,6 @@
                 <source>register.meta.subtitle</source>
                 <target>Vous pouvez créer votre compte pour votre commune ou collectivité.</target>
             </trans-unit>
-            <trans-unit id="api.cifs.incident.description">
-                <source>api.cifs.incident.description</source>
-                <target>%street% : circulation interdite tous les jours pour tous les véhicules</target>
-            </trans-unit>
             <trans-unit id="map.meta.title">
                 <source>map.meta.title</source>
                 <target>Carte</target>
