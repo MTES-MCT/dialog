@@ -29,11 +29,13 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
         $hasDepartmentalRoad = $command->departmentalRoad?->roadNumber !== null;
         $hasNationalRoad = $command->nationalRoad?->roadNumber !== null;
         $hasRawGeoJSON = $command->rawGeoJSON?->label !== null;
+        $hasDrawMap = $command->drawMap?->label !== null;
 
         $filledCount = ($hasNamedStreet ? 1 : 0)
             + ($hasDepartmentalRoad ? 1 : 0)
             + ($hasNationalRoad ? 1 : 0)
-            + ($hasRawGeoJSON ? 1 : 0);
+            + ($hasRawGeoJSON ? 1 : 0)
+            + ($hasDrawMap ? 1 : 0);
 
         if ($filledCount !== 1) {
             $this->context->buildViolation($this->translator->trans('regulation.location.type.error.exclusive', [], 'messages'))
@@ -46,6 +48,7 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
             'departmentalRoad' => 'departmentalRoad',
             'nationalRoad' => 'nationalRoad',
             'rawGeoJSON' => 'rawGeoJSON',
+            'drawMap' => 'drawMap',
         ];
 
         $roadType = $command->roadType;
@@ -102,6 +105,33 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
             if (NumberedRoad::isPointNumberEmpty($command->$roadType->toPointNumberWithDepartmentCode)) {
                 $this->context->buildViolation('regulation.location.pointNumber.error.blank')
                     ->atPath("$roadType.toPointNumber")
+                    ->addViolation();
+            }
+        }
+
+        // Même logique pour rawGeoJSON et drawMap : les deux partagent le même SaveRawGeoJSONCommand
+        foreach (['rawGeoJSON', 'drawMap'] as $geoType) {
+            if ($command->roadType !== $geoType) {
+                continue;
+            }
+
+            if ($command->$geoType === null) {
+                $this->context->buildViolation('common.error.not_blank')
+                    ->atPath($geoType)
+                    ->addViolation();
+
+                return;
+            }
+
+            if (!$command->$geoType->label) {
+                $this->context->buildViolation('common.error.not_blank')
+                    ->atPath("$geoType.label")
+                    ->addViolation();
+            }
+
+            if (!$command->$geoType->geometry) {
+                $this->context->buildViolation('common.error.not_blank')
+                    ->atPath("$geoType.geometry")
                     ->addViolation();
             }
         }
