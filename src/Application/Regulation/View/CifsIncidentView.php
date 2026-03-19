@@ -10,6 +10,7 @@ final readonly class CifsIncidentView
         public string $id,
         public \DateTimeInterface $creationTime,
         public string $type,
+        public string $description,
         public string $street,
         public string $direction,
         public string $polyline,
