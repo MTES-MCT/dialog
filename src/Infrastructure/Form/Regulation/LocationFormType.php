@@ -42,6 +42,9 @@ final class LocationFormType extends AbstractType
             ->add('rawGeoJSON', RawGeoJSONFormType::class, [
                 'label' => false,
             ])
+            ->add('drawMap', RawGeoJSONFormType::class, [
+                'label' => false,
+            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {

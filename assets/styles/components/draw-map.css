@@ -1,13 +1,3 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-main {
-    height: 100%;
-}
-
 .map-container {
     display: flex;
     align-items: center;
@@ -164,5 +154,14 @@ main {
 .draw-btn-delete:hover {
     background-color: #d32f2f;
     color: white;
+}
+
+.draw-map-wrapper {
+    position: relative;
+}
+
+.draw-map-container {
+    height: 400px;
+    width: 100%;
 }
 
