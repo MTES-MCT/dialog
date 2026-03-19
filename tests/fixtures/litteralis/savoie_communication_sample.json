@@ -1,0 +1,725 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "LIcommunication.6656",
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              5.9646451461,
+              45.7343047533
+            ],
+            [
+              5.964768024,
+              45.7344018851
+            ],
+            [
+              5.9650438061,
+              45.7346253175
+            ],
+            [
+              5.9653126046,
+              45.73486245
+            ],
+            [
+              5.9656326688,
+              45.7351676193
+            ],
+            [
+              5.9656995455,
+              45.7352388505
+            ],
+            [
+              5.9657370897,
+              45.7352910289
+            ],
+            [
+              5.9657570597,
+              45.7353274494
+            ]
+          ],
+          [
+            [
+              5.9657570597,
+              45.7353274494
+            ],
+            [
+              5.9657598712,
+              45.7353318811
+            ],
+            [
+              5.9657718896,
+              45.7353640052
+            ],
+            [
+              5.9658690143,
+              45.7355912358
+            ],
+            [
+              5.9659327799,
+              45.7357003959
+            ],
+            [
+              5.965974373,
+              45.7357560721
+            ],
+            [
+              5.9660231933,
+              45.7358025469
+            ],
+            [
+              5.9660767675,
+              45.7358416876
+            ],
+            [
+              5.9661299555,
+              45.7358736294
+            ],
+            [
+              5.9661977135,
+              45.7359132979
+            ],
+            [
+              5.966268409,
+              45.7359357677
+            ],
+            [
+              5.9663303026,
+              45.7359620735
+            ],
+            [
+              5.9663887275,
+              45.7359956797
+            ],
+            [
+              5.9664376743,
+              45.736020524
+            ],
+            [
+              5.9665083408,
+              45.7360664236
+            ],
+            [
+              5.9665902538,
+              45.7361300496
+            ],
+            [
+              5.9667747566,
+              45.7362828898
+            ],
+            [
+              5.9670299279,
+              45.7364816289
+            ],
+            [
+              5.9672699994,
+              45.7366627426
+            ],
+            [
+              5.9674919655,
+              45.7368181999
+            ],
+            [
+              5.9675585372,
+              45.7368597011
+            ],
+            [
+              5.9676205969,
+              45.7369130357
+            ],
+            [
+              5.9676726663,
+              45.73697204
+            ],
+            [
+              5.967711547,
+              45.7370250837
+            ],
+            [
+              5.9677437608,
+              45.7370737973
+            ],
+            [
+              5.967762419,
+              45.7371336813
+            ],
+            [
+              5.9677745553,
+              45.7371919348
+            ],
+            [
+              5.967770469,
+              45.7372596267
+            ],
+            [
+              5.9677461705,
+              45.7374062485
+            ],
+            [
+              5.9677072333,
+              45.7375199142
+            ],
+            [
+              5.9677063056,
+              45.7375255349
+            ]
+          ]
+        ]
+      },
+      "geometry_name": "geometry",
+      "properties": {
+        "idmesure": 6656,
+        "idemprise": 977825,
+        "idarrete": 850929631,
+        "shorturl": "https://dl.sogelink.fr/?MNBvUHFA",
+        "arretesrcid": "26-AT-0366",
+        "collectivitelibelle": "DEPARTEMENT DE SAVOIE (CD 73)",
+        "collectiviteid": null,
+        "collectiviteagencelibelle": "Maison Technique du Département Les 2 Lacs",
+        "collectiviteagenceid": 173483,
+        "documenttype": "ARRETE TEMPORAIRE",
+        "arretedebut": "2026-03-09T01:00:00Z",
+        "arretefin": "2026-03-20T01:00:00Z",
+        "empriseno": 1,
+        "emprisetype": "CIRCULATION",
+        "emprisedebut": "2026-03-09T01:00:00Z",
+        "emprisefin": "2026-03-20T01:00:00Z",
+        "localisations": "D911 du PR 4+0800  au PR 5+0200    (ENTRELACS) situés hors agglomération",
+        "idagence": 173483,
+        "fournisseur": "LIEX",
+        "publicationinternet": true,
+        "emetteurlibelle": "MATHIEZ Guy",
+        "emetteurid": null,
+        "categoriesmodele": "Travaux",
+        "nommodele": "AC - Alternat",
+        "parametresarrete": "Date d'envoi de la demande : 03/03/2026 00:00:00 ; Date de réception de la demande : 04/03/2026 00:00:00 ; Date de début de l'arrêté : 09/03/2026 00:00:00 ; Date de fin de l'arrêté : 20/03/2026 00:00:00 ; Description des travaux : création d'une cunette en béton ; ajout annexe : N ; chargé de MEP de la signalisation : Le demandeur de l'acte ; Information usager : Aucune 'pas ou peu d'impact) ; TitreActe : Arrêté temporaire de réglementation de la circulation – Du 09/03/2026 au 20/03/2026 – Interdiction de dépasser et Rétrécissement temporaire de largeur de voie – D911 / Réalisation de travaux création d'une cunette en béton",
+        "parametresemprise": "Dates de l'emprise : Du 09/03/2026 00:00:00 au 20/03/2026 00:00:00 ; jours et horaires : pour 5 jours dans la période",
+        "datecreation": "2026-03-04T16:02:22.684Z",
+        "datemodification": "2026-03-04T16:02:22.913Z",
+        "parametresmesure": "",
+        "mesure": "Interdiction de dépasser",
+        "gene": "AUCUNE",
+        "titre": "Arrêté temporaire de réglementation de la circulation – Du 09/03/2026 au 20/03/2026 – Interdiction de dépasser et Rétrécissement temporaire de largeur de voie – D911 / Réalisation de travaux création d'une cunette en béton",
+        "publie": true
+      },
+      "bbox": [
+        5.9646451461,
+        45.7343047533,
+        5.9677745553,
+        45.7375255349
+      ]
+    },
+    {
+      "type": "Feature",
+      "id": "LIcommunication.6717",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            5.9331580345,
+            45.6937372885
+          ],
+          [
+            5.9331672039,
+            45.6938192135
+          ],
+          [
+            5.9331980731,
+            45.6940862943
+          ]
+        ]
+      },
+      "geometry_name": "geometry",
+      "properties": {
+        "idmesure": 6717,
+        "idemprise": 978299,
+        "idarrete": 850930069,
+        "shorturl": "https://dl.sogelink.fr/?TLLogLmD",
+        "arretesrcid": "AL-2LACS-2026-0205",
+        "collectivitelibelle": "DEPARTEMENT DE SAVOIE (CD 73)",
+        "collectiviteid": null,
+        "collectiviteagencelibelle": "Maison Technique du Département Les 2 Lacs",
+        "collectiviteagenceid": 173483,
+        "documenttype": "AUTORISATION VOIRIE",
+        "arretedebut": "2026-02-27T01:00:00Z",
+        "arretefin": "2027-02-27T01:00:00Z",
+        "empriseno": 1,
+        "emprisetype": "AUTRE",
+        "emprisedebut": null,
+        "emprisefin": null,
+        "localisations": "D49 du PR 1+0218  au PR 1+0257    (AIX LES BAINS) situés hors agglomération parcelle 83; 84 et 85 section AM Lieu-dit: Les Garins",
+        "idagence": 173483,
+        "fournisseur": "LIEX",
+        "publicationinternet": false,
+        "emetteurlibelle": "CAMUS Mathieu et GRAS Anaïs",
+        "emetteurid": null,
+        "categoriesmodele": "Evenements;Occupation du Domaine Public",
+        "nommodele": "DEP7301 - Alignement",
+        "parametresarrete": "TitreActe : Alignement Dossier Isagéo 2025-308-RD49-Aix les Bains-Camus-Gras ; Date d'envoi de la demande : 24/02/2026 00:00:00 ; Date de réception de la demande : 27/02/2026 00:00:00 ; Numéro de dossier demandeur : 2025-308",
+        "parametresemprise": "",
+        "datecreation": "2026-03-05T11:08:40.120Z",
+        "datemodification": "2026-03-05T11:08:40.386Z",
+        "parametresmesure": "PlanAlignement : O",
+        "mesure": "Alignement (01/10/2014)",
+        "gene": "AUCUNE",
+        "titre": null,
+        "publie": false
+      },
+      "bbox": [
+        5.9331580345,
+        45.6937372885,
+        5.9331980731,
+        45.6940862943
+      ]
+    },
+    {
+      "type": "Feature",
+      "id": "LIcommunication.6836",
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              5.960785808,
+              45.7517720958
+            ],
+            [
+              5.9607922933,
+              45.7518025156
+            ],
+            [
+              5.9608168621,
+              45.7518766635
+            ],
+            [
+              5.9608398079,
+              45.7519445461
+            ],
+            [
+              5.9608610028,
+              45.7520277938
+            ],
+            [
+              5.9608870982,
+              45.7521064071
+            ],
+            [
+              5.9609324599,
+              45.752232274
+            ],
+            [
+              5.9610072916,
+              45.7524276543
+            ],
+            [
+              5.9610147314,
+              45.7524463824
+            ]
+          ],
+          [
+            [
+              5.9610147314,
+              45.7524463824
+            ],
+            [
+              5.96104478,
+              45.7525266942
+            ],
+            [
+              5.961093483,
+              45.7525948014
+            ],
+            [
+              5.9611297237,
+              45.7526361115
+            ]
+          ]
+        ]
+      },
+      "geometry_name": "geometry",
+      "properties": {
+        "idmesure": 6836,
+        "idemprise": 979035,
+        "idarrete": 850930744,
+        "shorturl": "https://dl.sogelink.fr/?w1XhdQVB",
+        "arretesrcid": "26-AT-0378",
+        "collectivitelibelle": "DEPARTEMENT DE SAVOIE (CD 73)",
+        "collectiviteid": null,
+        "collectiviteagencelibelle": "Maison Technique du Département Les 2 Lacs",
+        "collectiviteagenceid": 173483,
+        "documenttype": "ARRETE TEMPORAIRE",
+        "arretedebut": "2026-04-07T02:00:00Z",
+        "arretefin": "2026-04-24T02:00:00Z",
+        "empriseno": 1,
+        "emprisetype": "CIRCULATION",
+        "emprisedebut": "2026-04-07T02:00:00Z",
+        "emprisefin": "2026-04-24T02:00:00Z",
+        "localisations": "D53 du PR 3+0100  au PR 3+0200    (ENTRELACS) situés hors agglomération",
+        "idagence": 173483,
+        "fournisseur": "LIEX",
+        "publicationinternet": true,
+        "emetteurlibelle": "MATHIEZ Guy",
+        "emetteurid": null,
+        "categoriesmodele": "Travaux",
+        "nommodele": "AC - Fermeture",
+        "parametresarrete": "TitreActe : Arrêté temporaire de réglementation de la circulation – Du 07/04/2026 au 24/04/2026 – Circulation interdite – D53 / Réalisation de travaux  de remplacement de la traversée d'eau pluviale et confortement de l'accotement ; Date d'envoi de la demande : 04/03/2026 00:00:00 ; Date de réception de la demande : 05/03/2026 00:00:00 ; Date de début de l'arrêté : 07/04/2026 00:00:00 ; Date de fin de l'arrêté : 24/04/2026 00:00:00 ; Description des travaux :  de remplacement de la traversée d'eau pluviale et confortement de l'accotement ; ajout annexe : N ; chargé de MEP de la signalisation : Le demandeur de l'acte ; Information usager : Aucune (pas ou peu d'impact)",
+        "parametresemprise": "Dates de l'emprise : Du 07/04/2026 00:00:00 au 24/04/2026 00:00:00",
+        "datecreation": "2026-03-05T17:07:12.647Z",
+        "datemodification": "2026-03-05T17:07:12.835Z",
+        "parametresmesure": "",
+        "mesure": "Circulation interdite",
+        "gene": "IMPORTANTE",
+        "titre": "Arrêté temporaire de réglementation de la circulation – Du 07/04/2026 au 24/04/2026 – Circulation interdite – D53 / Réalisation de travaux  de remplacement de la traversée d'eau pluviale et confortement de l'accotement",
+        "publie": true
+      },
+      "bbox": [
+        5.960785808,
+        45.7517720958,
+        5.9611297237,
+        45.7526361115
+      ]
+    },
+    {
+      "type": "Feature",
+      "id": "LIcommunication.6837",
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [
+              6.0093993554,
+              45.7426890556
+            ],
+            [
+              6.0095615358,
+              45.7428010004
+            ],
+            [
+              6.0096476088,
+              45.7428689914
+            ],
+            [
+              6.0097152486,
+              45.7429293642
+            ],
+            [
+              6.0097816524,
+              45.7429906711
+            ],
+            [
+              6.0098349106,
+              45.7430469222
+            ],
+            [
+              6.0098882179,
+              45.743104073
+            ],
+            [
+              6.0099375227,
+              45.7431586273
+            ],
+            [
+              6.0099844534,
+              45.7432168495
+            ],
+            [
+              6.0100588414,
+              45.7433302094
+            ]
+          ],
+          [
+            [
+              6.0100588414,
+              45.7433302094
+            ],
+            [
+              6.0101429229,
+              45.7434324966
+            ],
+            [
+              6.0101844682,
+              45.7434863569
+            ]
+          ],
+          [
+            [
+              6.0101844682,
+              45.7434863569
+            ],
+            [
+              6.0102314975,
+              45.7435463787
+            ],
+            [
+              6.0103069862,
+              45.7436326747
+            ],
+            [
+              6.0103700752,
+              45.7437039824
+            ],
+            [
+              6.0104149756,
+              45.7437721713
+            ],
+            [
+              6.0104521651,
+              45.743840566
+            ],
+            [
+              6.0104868717,
+              45.7439342591
+            ],
+            [
+              6.0105304661,
+              45.7440493422
+            ],
+            [
+              6.0106357147,
+              45.7443511175
+            ],
+            [
+              6.0107139961,
+              45.7446067536
+            ],
+            [
+              6.0107641051,
+              45.7447468946
+            ],
+            [
+              6.0108089264,
+              45.7448844735
+            ],
+            [
+              6.0108338919,
+              45.7449883392
+            ],
+            [
+              6.0108806081,
+              45.7450898217
+            ],
+            [
+              6.0109263929,
+              45.7451742074
+            ],
+            [
+              6.0109767303,
+              45.7452476577
+            ],
+            [
+              6.0110451099,
+              45.7453215272
+            ],
+            [
+              6.0111198668,
+              45.7453943252
+            ],
+            [
+              6.0113771133,
+              45.7456037278
+            ],
+            [
+              6.0115628115,
+              45.7457519612
+            ],
+            [
+              6.0117250823,
+              45.7458954135
+            ],
+            [
+              6.0118311669,
+              45.7459998152
+            ],
+            [
+              6.0119203477,
+              45.7461010639
+            ],
+            [
+              6.0119889258,
+              45.7461785322
+            ],
+            [
+              6.0120561109,
+              45.7462776651
+            ],
+            [
+              6.0121235415,
+              45.7463812972
+            ],
+            [
+              6.012188549,
+              45.7464876974
+            ],
+            [
+              6.0122542826,
+              45.746631025
+            ],
+            [
+              6.0123181819,
+              45.7467879188
+            ],
+            [
+              6.0123860355,
+              45.7469465091
+            ],
+            [
+              6.0124322951,
+              45.7470867525
+            ],
+            [
+              6.0124698229,
+              45.7471848755
+            ]
+          ],
+          [
+            [
+              6.0124698229,
+              45.7471848755
+            ],
+            [
+              6.0124863646,
+              45.7472285895
+            ],
+            [
+              6.0125310451,
+              45.7473634681
+            ],
+            [
+              6.0125464881,
+              45.7474342458
+            ],
+            [
+              6.0125617841,
+              45.747502324
+            ],
+            [
+              6.0125691231,
+              45.747566109
+            ],
+            [
+              6.0125628244,
+              45.7476158403
+            ],
+            [
+              6.0125439183,
+              45.7476704141
+            ],
+            [
+              6.012529025,
+              45.7477041544
+            ]
+          ],
+          [
+            [
+              6.012529025,
+              45.7477041544
+            ],
+            [
+              6.0124881515,
+              45.7478043725
+            ],
+            [
+              6.0124355436,
+              45.7479490601
+            ]
+          ],
+          [
+            [
+              6.0124355436,
+              45.7479490601
+            ],
+            [
+              6.0123599965,
+              45.7480979653
+            ],
+            [
+              6.012291474,
+              45.7482340667
+            ],
+            [
+              6.0122628541,
+              45.7483465732
+            ],
+            [
+              6.0122486175,
+              45.7484632012
+            ],
+            [
+              6.0122400716,
+              45.7485661599
+            ],
+            [
+              6.012237795,
+              45.7486896774
+            ],
+            [
+              6.0122332422,
+              45.7488186626
+            ],
+            [
+              6.0122256282,
+              45.7489387181
+            ],
+            [
+              6.0122176217,
+              45.749051575
+            ],
+            [
+              6.0122249997,
+              45.7491396899
+            ],
+            [
+              6.0122308669,
+              45.74917648
+            ]
+          ]
+        ]
+      },
+      "geometry_name": "geometry",
+      "properties": {
+        "idmesure": 6837,
+        "idemprise": 979036,
+        "idarrete": 850930745,
+        "shorturl": "https://dl.sogelink.fr/?dPAhgWxb",
+        "arretesrcid": "26-AT-0379",
+        "collectivitelibelle": "DEPARTEMENT DE SAVOIE (CD 73)",
+        "collectiviteid": null,
+        "collectiviteagencelibelle": "Maison Technique du Département Les 2 Lacs",
+        "collectiviteagenceid": 173483,
+        "documenttype": "ARRETE TEMPORAIRE",
+        "arretedebut": "2026-03-12T01:00:00Z",
+        "arretefin": "2026-03-24T01:00:00Z",
+        "empriseno": 1,
+        "emprisetype": "CIRCULATION",
+        "emprisedebut": "2026-03-12T01:00:00Z",
+        "emprisefin": "2026-03-24T01:00:00Z",
+        "localisations": "D211B du PR 1+0000  au PR 1+0788    (SAINT OFFENGE) situés hors agglomération",
+        "idagence": 173483,
+        "fournisseur": "LIEX",
+        "publicationinternet": true,
+        "emetteurlibelle": "EIFFAGE Route Voglans",
+        "emetteurid": null,
+        "categoriesmodele": "Travaux",
+        "nommodele": "AC - Fermeture",
+        "parametresarrete": "TitreActe : Arrêté temporaire de réglementation de la circulation – Du 12/03/2026 au 24/03/2026 – Circulation interdite – D211B / Réalisation de travaux d'enrobé ; Date d'envoi de la demande : 04/03/2026 00:00:00 ; Date de réception de la demande : 05/03/2026 00:00:00 ; Date de début de l'arrêté : 12/03/2026 00:00:00 ; Date de fin de l'arrêté : 24/03/2026 00:00:00 ; Description des travaux : d'enrobé ; ajout annexe : N ; chargé de MEP de la signalisation : Le demandeur de l'acte ; Information usager : Aucune (pas ou peu d'impact)",
+        "parametresemprise": "Dates de l'emprise : Du 12/03/2026 00:00:00 au 24/03/2026 00:00:00",
+        "datecreation": "2026-03-05T17:07:56.693Z",
+        "datemodification": "2026-03-05T17:07:56.867Z",
+        "parametresmesure": "",
+        "mesure": "Circulation interdite",
+        "gene": "IMPORTANTE",
+        "titre": "Arrêté temporaire de réglementation de la circulation – Du 12/03/2026 au 24/03/2026 – Circulation interdite – D211B / Réalisation de travaux d'enrobé",
+        "publie": true
+      },
+      "bbox": [
+        6.0093993554,
+        45.7426890556,
+        6.0125691231,
+        45.74917648
+      ]
+    }
+  ]
+}

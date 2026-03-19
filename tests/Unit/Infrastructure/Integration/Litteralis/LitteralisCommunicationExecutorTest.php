@@ -20,6 +20,8 @@ use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExtractor;
 use App\Infrastructure\Integration\Litteralis\LitteralisTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 final class LitteralisCommunicationExecutorTest extends TestCase
 {
@@ -133,5 +135,135 @@ final class LitteralisCommunicationExecutorTest extends TestCase
         $result = $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
 
         $this->assertSame('Communication report', $result);
+    }
+
+    public function testExecuteWhenTransformReturnsNullSkipsRegulationAndContinues(): void
+    {
+        $laterThan = new \DateTimeImmutable('2024-08-01');
+        $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
+        $organization = $this->createMock(Organization::class);
+        $command = $this->createMock(ImportLitteralisRegulationCommand::class);
+        $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
+        $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
+        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
+
+        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection->expects(self::once())->method('beginTransaction');
+        $connection->expects(self::once())->method('commit');
+        $this->entityManager->method('getConnection')->willReturn($connection);
+
+        $organization->method('getUuid')->willReturn($organizationId);
+        $this->queryBus->method('handle')->with(new GetOrganizationByUuidQuery($this->orgId))->willReturn($organization);
+        $this->dateUtils->method('getNow')->willReturnOnConsecutiveCalls($startTime, $endTime);
+        $this->reporter->method('start')->with('test', $startTime, $organization);
+
+        $featuresA = [['properties' => ['arretesrcid' => 'A', 'shorturl' => 'https://a']]];
+        $featuresB = [['properties' => ['arretesrcid' => 'B', 'shorturl' => 'https://b']]];
+        $this->extractor->method('extractFeaturesByRegulation')->willReturn([
+            'idA' => $featuresA,
+            'idB' => $featuresB,
+        ]);
+        $this->transformer->method('transform')->willReturnOnConsecutiveCalls(null, $command);
+
+        $this->commandBus
+            ->expects(self::exactly(2))
+            ->method('handle')
+            ->withConsecutive([$cleanUpCommand], [$command]);
+
+        $this->reporter->method('acknowledgeNewErrors');
+        $this->reporter->method('end')->with($endTime);
+        $this->reporter->method('getRecords')->willReturn([]);
+        $this->reportFormatter->method('format')->with([])->willReturn('Report');
+        $this->reporter->method('onReport')->with('Report');
+
+        $result = $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
+
+        $this->assertSame('Report', $result);
+    }
+
+    public function testExecuteWhenCommandBusThrowsValidationFailedExceptionRecoversAndContinues(): void
+    {
+        $laterThan = new \DateTimeImmutable('2024-08-01');
+        $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
+        $organization = $this->createMock(Organization::class);
+        $command = $this->createMock(ImportLitteralisRegulationCommand::class);
+        $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
+        $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
+        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
+
+        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection->expects(self::once())->method('beginTransaction');
+        $connection->expects(self::once())->method('commit');
+        $this->entityManager->method('getConnection')->willReturn($connection);
+
+        $organization->method('getUuid')->willReturn($organizationId);
+        $this->queryBus->method('handle')->with(new GetOrganizationByUuidQuery($this->orgId))->willReturn($organization);
+        $this->dateUtils->method('getNow')->willReturnOnConsecutiveCalls($startTime, $endTime);
+        $this->reporter->method('start')->with('test', $startTime, $organization);
+
+        $features = [['properties' => ['arretesrcid' => '26-AT-001', 'shorturl' => 'https://dl.example/?x']]];
+        $this->extractor->method('extractFeaturesByRegulation')->willReturn(['id1' => $features]);
+        $this->transformer->method('transform')->willReturn($command);
+
+        $violations = new ConstraintViolationList([]);
+        $validationException = new ValidationFailedException($command, $violations);
+
+        $this->commandBus
+            ->expects(self::exactly(2))
+            ->method('handle')
+            ->withConsecutive([$cleanUpCommand], [$command])
+            ->willReturnOnConsecutiveCalls(null, self::throwException($validationException));
+
+        $this->reporter->expects(self::atLeastOnce())->method('acknowledgeNewErrors');
+        $this->reporter->expects(self::once())->method('addError');
+        $this->reporter->method('end')->with($endTime);
+        $this->reporter->method('getRecords')->willReturn([]);
+        $this->reportFormatter->method('format')->with([])->willReturn('Report');
+        $this->reporter->method('onReport')->with('Report');
+
+        $result = $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
+
+        $this->assertSame('Report', $result);
+    }
+
+    public function testExecuteWhenCommandBusThrowsNonRecoverableExceptionRollsBackAndRethrows(): void
+    {
+        $laterThan = new \DateTimeImmutable('2024-08-01');
+        $organizationId = '066bcaff-23b8-7745-8000-d296434f2a8a';
+        $organization = $this->createMock(Organization::class);
+        $command = $this->createMock(ImportLitteralisRegulationCommand::class);
+        $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
+        $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
+
+        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection->expects(self::once())->method('beginTransaction');
+        $connection->expects(self::once())->method('isTransactionActive')->willReturn(true);
+        $connection->expects(self::once())->method('rollBack');
+        $connection->expects(self::never())->method('commit');
+        $this->entityManager->method('getConnection')->willReturn($connection);
+        $this->entityManager->expects(self::once())->method('clear');
+
+        $organization->method('getUuid')->willReturn($organizationId);
+        $this->queryBus->method('handle')->with(new GetOrganizationByUuidQuery($this->orgId))->willReturn($organization);
+        $this->dateUtils->method('getNow')->willReturn($startTime);
+        $this->reporter->method('start')->with('test', $startTime, $organization);
+
+        $features = [['properties' => ['arretesrcid' => '26-AT-001', 'shorturl' => 'https://dl.example/?x']]];
+        $this->extractor->method('extractFeaturesByRegulation')->willReturn(['id1' => $features]);
+        $this->transformer->method('transform')->willReturn($command);
+
+        $this->commandBus
+            ->expects(self::exactly(2))
+            ->method('handle')
+            ->withConsecutive([$cleanUpCommand], [$command])
+            ->willReturnOnConsecutiveCalls(null, self::throwException(new \RuntimeException('DB constraint')));
+
+        $this->reporter->expects(self::atLeastOnce())->method('acknowledgeNewErrors');
+        $this->reporter->expects(self::once())->method('addError');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('DB constraint');
+
+        $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
     }
 }

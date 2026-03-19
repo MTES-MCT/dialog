@@ -38,6 +38,9 @@ final class LitteralisCommunicationClientFactoryTest extends TestCase
         $client->fetchAllPaginated("mesure ILIKE '%test%'");
 
         $this->assertNotNull($capturedUrl);
-        $this->assertStringContainsString('TYPENAME=litteralis%3ALIcommunication', (string) $capturedUrl);
+        $query = parse_url((string) $capturedUrl, PHP_URL_QUERY);
+        self::assertNotFalse($query);
+        parse_str($query, $params);
+        self::assertSame('litteralis:LIcommunication', $params['TYPENAME'] ?? null);
     }
 }

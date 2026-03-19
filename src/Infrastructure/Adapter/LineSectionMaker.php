@@ -26,7 +26,6 @@ final class LineSectionMaker implements LineSectionMakerInterface
         int|float $tolerance = 1, // Meters
     ): string {
         $includeCrs = str_contains($lineGeometry, '"crs"');
-
         $pointA = $fromCoords->asGeoJSON($includeCrs);
         $pointB = $toCoords->asGeoJSON($includeCrs);
 
