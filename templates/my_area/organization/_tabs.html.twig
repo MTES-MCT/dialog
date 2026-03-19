@@ -21,4 +21,9 @@
             {{ 'config.menu.regulation_order_templates'|trans }}
         </a>
     </li>
+    <li role="presentation">
+        <a class="fr-tabs__tab" role="tab" href="{{ path('app_config_api_clients_list', { uuid: organization.uuid }) }}" {% if 'app_config_api_clients' in routeName %} aria-selected="true" {% endif%} aria-controls="tab-1-panel">
+            {{ 'config.menu.api_clients'|trans }}
+        </a>
+    </li>
 </ul>

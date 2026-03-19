@@ -1,0 +1,108 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ 'api_client.list.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% set deleteCsrfToken = csrf_token('delete-api-client') %}
+{% set regenerateCsrfToken = csrf_token('regenerate-api-client') %}
+
+{% block body %}
+    <section class="fr-container fr-py-5w" aria-labelledby="api-client-list">
+        {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
+            { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
+            { title: 'api_client.list.title'|trans },
+        ]} %}
+
+        <div class="fr-tabs">
+            {% include 'my_area/organization/_tabs.html.twig' %}
+            <div id="tab-1-panel" class="fr-tabs__panel fr-tabs__panel--selected" role="tabpanel" aria-labelledby="tab-1" tabindex="0">
+                <div class="fr-grid-row fr-mb-2w">
+                    <div class="fr-col-12 fr-col-md-8">
+                        <h3 class="fr-h5 fr-x-text--default-grey" id="api-client-list">{{ 'api_client.list.title'|trans }}</h3>
+                        <p class="fr-x-text">{{ 'api_client.list.description'|trans }}</p>
+                    </div>
+                    {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) %}
+                        <a href="{{ path('app_config_api_clients_create', { uuid: organization.uuid }) }}" class="fr-ml-auto fr-btn fr-btn--secondary fr-x-btn-sm--icon-left fr-icon-add-line" title="{{ 'api_client.create.title'|trans }}">
+                            {{ 'api_client.create.title'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
+                    <table>
+                        <caption>{{ 'api_client.list.title'|trans }}</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">{{ 'api_client.list.user'|trans }}</th>
+                                <th scope="col">{{ 'api_client.list.client_id'|trans }}</th>
+                                <th scope="col">{{ 'api_client.list.last_used_at'|trans }}</th>
+                                <th scope="col" class="app-table__actions">{{ 'common.actions'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody data-testid="api-client-list">
+                            {% for apiClient in apiClients %}
+                                <tr>
+                                    <td>
+                                        {% if apiClient.userFullName %}
+                                            {{ apiClient.userFullName }}
+                                            {% if apiClient.isOwner %}
+                                                <p class="fr-tag fr-tag--sm">{{ 'user.list.owner'|trans }}</p>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="fr-text--sm fr-x-text--default-grey">{{ 'api_client.list.no_user'|trans }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <code>{{ apiClient.clientId }}</code>
+                                    </td>
+                                    <td>
+                                        {% if apiClient.lastUsedAt %}
+                                            {{ apiClient.lastUsedAt|date('d/m/Y H:i') }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% set canManage = is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::EDIT'), organization) and (not apiClient.isOwner or is_granted(constant('App\\Infrastructure\\Security\\Voter\\OrganizationVoter::OWNER'), organization)) %}
+                                        {% if canManage %}
+                                            <div class="fr-btns-group fr-btns-group--inline-sm">
+                                                <form method="POST" action="{{ path('app_config_api_clients_regenerate', { uuid: organization.uuid, apiClientUuid: apiClient.uuid }) }}" class="fr-display-inline">
+                                                    <input type="hidden" name="_token" value="{{ regenerateCsrfToken }}">
+                                                    <button type="submit" class="fr-btn fr-btn--tertiary-no-outline fr-icon-refresh-line" title="{{ 'api_client.regenerate'|trans }}" aria-label="{{ 'api_client.regenerate'|trans }}"></button>
+                                                </form>
+                                                <form method="POST" action="{{ path('app_config_api_clients_delete', { uuid: organization.uuid, apiClientUuid: apiClient.uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <input type="hidden" name="_token" value="{{ deleteCsrfToken }}">
+                                                    <d-modal-trigger modal="api-client-delete-modal" submitValue="api-client-delete-{{ apiClient.uuid }}">
+                                                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-icon-delete-bin-line" aria-controls="api-client-delete-modal" aria-label="{{ 'api_client.delete'|trans }}" title="{{ 'api_client.delete'|trans }}"></button>
+                                                    </d-modal-trigger>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="fr-x-text--default-grey">{{ 'api_client.list.empty'|trans }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block body_end %}
+    {{ parent() }}
+    {% include 'common/confirmation_modal.html.twig' with {
+        id: 'api-client-delete-modal',
+        title: 'api_client.delete_modal.title'|trans,
+        buttons: [
+            { label: 'common.delete'|trans, attr: {type: 'submit', class: 'fr-btn'} },
+            { label: 'common.do_not_delete'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+        ]
+    } only %}
+{% endblock %}

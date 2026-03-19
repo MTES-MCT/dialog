@@ -53,6 +53,7 @@ final class ApiClientCrudController extends AbstractCrudController
     {
         $fields = [
             AssociationField::new('organization')->setLabel('Organisation')->setSortProperty('name'),
+            AssociationField::new('user')->setLabel('Utilisateur')->setRequired(false),
             TextField::new('clientId')->setLabel('Client ID')->setDisabled(true),
             BooleanField::new('isActive')->setLabel('Actif'),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
