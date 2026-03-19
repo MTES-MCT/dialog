@@ -18,6 +18,7 @@ use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetCifsIncidentsQueryHandler
 {
@@ -25,6 +26,7 @@ final class GetCifsIncidentsQueryHandler
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
         private DateUtilsInterface $dateUtils,
+        private TranslatorInterface $translator,
         private CifsFilterSet $cifsFilterSet = new CifsFilterSet(),
     ) {
     }
@@ -171,6 +173,7 @@ final class GetCifsIncidentsQueryHandler
                             creationTime: $incidentCreationTime,
                             type: $measureType->getCifsKey(),
                             subType: $this->getSubType($regulationSubject, $measureType),
+                            description: $this->translator->trans('regulation.measure.type.' . $measureType->value),
                             street: $street,
                             direction: $direction,
                             polyline: $polyline,
