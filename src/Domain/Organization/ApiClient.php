@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Organization;
 
 use App\Domain\User\Organization;
+use App\Domain\User\User;
 
 class ApiClient
 {
@@ -12,6 +13,7 @@ class ApiClient
     private string $clientSecret;
     private bool $isActive;
     private Organization $organization;
+    private ?User $user = null;
     private \DateTimeInterface $createdAt;
     private ?\DateTimeInterface $lastUsedAt = null;
 
@@ -38,6 +40,18 @@ class ApiClient
     public function getOrganization(): Organization
     {
         return $this->organization;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     public function getCreatedAt(): \DateTimeInterface

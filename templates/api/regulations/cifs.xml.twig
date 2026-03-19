@@ -4,7 +4,7 @@
         <incident id="{{ incident.id }}">
             <creationtime>{{ incident.creationTime|date('Y-m-d\\TH:i:sP') }}</creationtime>
             <type>{{ incident.type }}</type>
-            <description>{{ 'api.cifs.incident.description'|trans({'%street%': incident.street}) }}</description>
+            <description>{{ incident.description}}</description>
             <street>{{ incident.street }}</street>
             <direction>{{ incident.direction }}</direction>
             <polyline>{{ incident.polyline }}</polyline>
