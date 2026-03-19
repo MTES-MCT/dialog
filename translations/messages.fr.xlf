@@ -2723,6 +2723,86 @@
                 <source>config.menu.users</source>
                 <target>Utilisateurs</target>
             </trans-unit>
+            <trans-unit id="config.menu.api_clients">
+                <source>config.menu.api_clients</source>
+                <target>Clés API</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.title">
+                <source>api_client.list.title</source>
+                <target>Clés API</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.description">
+                <source>api_client.list.description</source>
+                <target>Gérez les clés d’accès API pour cette organisation. Une clé par utilisateur.</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.user">
+                <source>api_client.list.user</source>
+                <target>Utilisateur</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.client_id">
+                <source>api_client.list.client_id</source>
+                <target>Client ID</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.last_used_at">
+                <source>api_client.list.last_used_at</source>
+                <target>Dernière utilisation</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.no_user">
+                <source>api_client.list.no_user</source>
+                <target>Non rattaché</target>
+            </trans-unit>
+            <trans-unit id="api_client.list.empty">
+                <source>api_client.list.empty</source>
+                <target>Aucune clé API.</target>
+            </trans-unit>
+            <trans-unit id="api_client.create.title">
+                <source>api_client.create.title</source>
+                <target>Créer une clé d’API</target>
+            </trans-unit>
+            <trans-unit id="api_client.create.description">
+                <source>api_client.create.description</source>
+                <target>Choisissez l’utilisateur auquel rattacher la clé. Chaque utilisateur ne peut avoir qu’une clé par organisation.</target>
+            </trans-unit>
+            <trans-unit id="api_client.create.submit">
+                <source>api_client.create.submit</source>
+                <target>Créer la clé</target>
+            </trans-unit>
+            <trans-unit id="api_client.create.flash_success">
+                <source>api_client.create.flash_success</source>
+                <target>Clé API créée. Copiez-les maintenant, le secret ne sera plus affiché.<![CDATA[<br/>]]>Client ID : <![CDATA[<strong>%client_id%</strong>]]><![CDATA[<br/>]]>Client secret : <![CDATA[<strong>%client_secret%</strong>]]></target>
+            </trans-unit>
+            <trans-unit id="api_client.create.error_already_has_key">
+                <source>api_client.create.error_already_has_key</source>
+                <target>Cet utilisateur possède déjà une clé API pour cette organisation.</target>
+            </trans-unit>
+            <trans-unit id="api_client.regenerate.flash_success">
+                <source>api_client.regenerate.flash_success</source>
+                <target>Secret régénéré. Copiez-le maintenant, il ne sera plus affiché.<![CDATA[<br/>]]>Client ID : <![CDATA[<strong>%client_id%</strong>]]><![CDATA[<br/>]]>Nouveau client secret : <![CDATA[<strong>%client_secret%</strong>]]></target>
+            </trans-unit>
+            <trans-unit id="api_client.delete.flash_success">
+                <source>api_client.delete.flash_success</source>
+                <target>Clé API supprimée.</target>
+            </trans-unit>
+            <trans-unit id="api_client.form.user">
+                <source>api_client.form.user</source>
+                <target>Utilisateur</target>
+            </trans-unit>
+            <trans-unit id="api_client.form.user_placeholder">
+                <source>api_client.form.user_placeholder</source>
+                <target>Sélectionnez un utilisateur</target>
+            </trans-unit>
+            <trans-unit id="api_client.regenerate">
+                <source>api_client.regenerate</source>
+                <target>Régénérer le secret</target>
+            </trans-unit>
+            <trans-unit id="api_client.delete">
+                <source>api_client.delete</source>
+                <target>Supprimer la clé</target>
+            </trans-unit>
+            <trans-unit id="api_client.delete_modal.title">
+                <source>api_client.delete_modal.title</source>
+                <target>Supprimer cette clé API ?</target>
+            </trans-unit>
             <trans-unit id="config.menu.authority">
                 <source>config.menu.authority</source>
                 <target>Autorité signataire</target>
