@@ -358,6 +358,17 @@
                 {% do form[roadType].storageArea.setRendered %}
             {% endif %}
         </fieldset>
+
+        <div
+            data-controller="location-preview-map"
+            data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+            data-location-preview-map-road-type-value="{{ roadType }}"
+            data-location-preview-map-administrator-field-value="{{ form[roadType].administrator.vars.id }}"
+            data-location-preview-map-road-number-field-value="{{ form[roadType].roadNumber.vars.id }}"
+            class="fr-mt-2w"
+        >
+            <div data-location-preview-map-target="container" hidden class="location-preview-map-container"></div>
+        </div>
     </div>
 {% endmacro %}
 
@@ -583,6 +594,23 @@
                             </fieldset>
                         </div>
                     </fieldset>
+
+                    <div
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="lane"
+                        data-location-preview-map-road-ban-id-field-value="{{ form.namedStreet.roadBanId.vars.id }}"
+                        data-location-preview-map-road-name-field-value="{{ form.namedStreet.roadName.vars.id }}"
+                        data-location-preview-map-city-code-field-value="{{ form.namedStreet.cityCode.vars.id }}"
+                        data-location-preview-map-from-house-number-field-value="{{ form.namedStreet.fromHouseNumber.vars.id }}"
+                        data-location-preview-map-from-road-ban-id-field-value="{{ form.namedStreet.fromRoadBanId.vars.id }}"
+                        data-location-preview-map-to-house-number-field-value="{{ form.namedStreet.toHouseNumber.vars.id }}"
+                        data-location-preview-map-to-road-ban-id-field-value="{{ form.namedStreet.toRoadBanId.vars.id }}"
+                        data-location-preview-map-direction-field-value="{{ form.namedStreet.direction.vars.id }}"
+                        class="fr-mt-2w"
+                    >
+                        <div data-location-preview-map-target="container" hidden class="location-preview-map-container"></div>
+                    </div>
                 </div>
 
                 {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
@@ -619,6 +647,16 @@
                             'disabled': not isRawGeoJSON,
                         },
                     }) }}
+
+                    <div
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="rawGeoJSON"
+                        data-location-preview-map-geometry-field-value="{{ form.rawGeoJSON.geometry.vars.id }}"
+                        class="fr-mt-2w"
+                    >
+                        <div data-location-preview-map-target="container" hidden class="location-preview-map-container"></div>
+                    </div>
                 </div>
 
                 {% set isDrawMap = form.roadType.vars.value == 'drawMap' %}
@@ -660,6 +698,14 @@
                                 data-draw-map-target="roadLineBtn"
                                 data-action="click->draw-map#toggleRoadLine"
                                 aria-label="{{ 'common.draw_map.road_line'|trans({}, 'messages')|default('Tracer une ligne suivant les routes') }}"
+                            >
+                            </button>
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-edit-line"
+                                data-draw-map-target="lineBtn"
+                                data-action="click->draw-map#toggleLine"
+                                aria-label="{{ 'common.draw_map.line'|trans({}, 'messages')|default('Tracer une ligne point par point') }}"
                             >
                             </button>
                             <button
