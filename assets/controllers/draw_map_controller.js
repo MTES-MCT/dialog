@@ -7,7 +7,7 @@ import { OsrmRouter } from '../customElements/osrm-router';
 import '../styles/components/draw-map.css';
 
 export default class extends Controller {
-    static targets = ['container', 'polygonBtn', 'roadLineBtn', 'validateBtn', 'geometryField'];
+    static targets = ['container', 'polygonBtn', 'lineBtn', 'roadLineBtn', 'validateBtn', 'geometryField'];
     static values = {
         centerJson: String,
         zoom: Number,
@@ -104,11 +104,17 @@ export default class extends Controller {
 
     updateButtonClasses() {
         this.polygonBtnTarget?.classList.toggle('active', this.#currentMode === 'polygon');
+        this.lineBtnTarget?.classList.toggle('active', this.#currentMode === 'line');
         this.roadLineBtnTarget?.classList.toggle('active', this.#currentMode === 'road-line');
     }
 
     togglePolygon() {
         this.#currentMode = this.#currentMode === 'polygon' ? null : 'polygon';
+        this.updateButtonClasses();
+    }
+
+    toggleLine() {
+        this.#currentMode = this.#currentMode === 'line' ? null : 'line';
         this.updateButtonClasses();
     }
 
@@ -118,8 +124,9 @@ export default class extends Controller {
     }
 
     setupDrawing() {
-        let isDrawingPolygon = false;
-        let isDrawingRoadLine = false;
+        this._isDrawingPolygon = false;
+        this._isDrawingLine = false;
+        this._isDrawingRoadLine = false;
         this._isRoutingInProgress = false;
         this._routingPromise = Promise.resolve();
 
@@ -129,9 +136,18 @@ export default class extends Controller {
             }
 
             if (this.#currentMode === 'polygon') {
-                if (!isDrawingPolygon) {
+                if (!this._isDrawingPolygon) {
                     this.#draw.setMode('polygon');
-                    isDrawingPolygon = true;
+                    this._isDrawingPolygon = true;
+                    this.#map.dragPan.disable();
+                }
+                this.#draw.addCoordinate(e.lngLat);
+                this.#draw.updatePreview();
+                this.#map.getCanvas().style.cursor = 'crosshair';
+            } else if (this.#currentMode === 'line') {
+                if (!this._isDrawingLine) {
+                    this.#draw.setMode('line');
+                    this._isDrawingLine = true;
                     this.#map.dragPan.disable();
                 }
                 this.#draw.addCoordinate(e.lngLat);
@@ -140,9 +156,9 @@ export default class extends Controller {
             } else if (this.#currentMode === 'road-line') {
                 if (this._isRoutingInProgress) return;
 
-                if (!isDrawingRoadLine) {
+                if (!this._isDrawingRoadLine) {
                     this.#draw.setMode('road-line');
-                    isDrawingRoadLine = true;
+                    this._isDrawingRoadLine = true;
                 }
 
                 const newPoint = [e.lngLat.lng, e.lngLat.lat];
@@ -179,12 +195,16 @@ export default class extends Controller {
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (isDrawingPolygon) {
-                    isDrawingPolygon = false;
+                if (this._isDrawingPolygon) {
+                    this._isDrawingPolygon = false;
                     this.clearPolygonPreview();
                 }
-                if (isDrawingRoadLine) {
-                    isDrawingRoadLine = false;
+                if (this._isDrawingLine) {
+                    this._isDrawingLine = false;
+                    this.clearPolygonPreview();
+                }
+                if (this._isDrawingRoadLine) {
+                    this._isDrawingRoadLine = false;
                     this.#draw.waypoints = [];
                     this.#draw.routedSegments = [];
                     this.#draw.clearPreview();
@@ -215,6 +235,9 @@ export default class extends Controller {
         if (this.#draw) {
             this.#draw.deleteAll();
             this.clearPolygonPreview();
+            this._isDrawingPolygon = false;
+            this._isDrawingLine = false;
+            this._isDrawingRoadLine = false;
             this.#currentMode = null;
             this.updateButtonClasses();
         }

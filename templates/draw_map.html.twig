@@ -4,12 +4,13 @@
 
 {% block body %}
 {# <div data-controller='draw-map' data-draw-map-center-json-value='[2.725, 47.16]' data-draw-map-zoom-value='5' class='map-container'> #}
-    <div data-controller='draw-map' data-draw-map-center-json-value='[9.156, 42.303]' data-draw-map-zoom-value='15.5' data-draw-map-submit-url-value='/draw-map' class='map-container'>
+    <div data-controller='draw-map' data-draw-map-center-json-value='[2.514189, 49.126014]' data-draw-map-zoom-value='15.8' data-draw-map-submit-url-value='/draw-map' class='map-container'>
         <div class="test-map-section">
             <div class="test-map-header">
                 <h2>🗺️ Tracé sur la carte</h2>
                 <p>
                     <strong>Lignes routières:</strong> Cliquez pour placer des points, le tracé suit les routes<br>
+                    <strong>Lignes libres:</strong> Cliquez pour placer des points, segments droits<br>
                     <strong>Polygones:</strong> Cliquez sur plusieurs points (Échap pour annuler)
                 </p>
             </div>
@@ -21,6 +22,13 @@
                     data-draw-map-target="roadLineBtn"
                     data-action="click->draw-map#toggleRoadLine"
                     title="Cliquez pour tracer une ligne suivant les routes (Échap pour annuler)">
+                </button>
+                <button 
+                    type="button" 
+                    class="draw-btn draw-btn-line fr-btn fr-icon-edit-line"
+                    data-draw-map-target="lineBtn"
+                    data-action="click->draw-map#toggleLine"
+                    title="Cliquez pour tracer une ligne point par point (Échap pour annuler)">
                 </button>
                 <button 
                     type="button" 

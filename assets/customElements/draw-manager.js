@@ -136,7 +136,26 @@ export class DrawManager {
                     properties: { index },
                 });
             });
-        } else if (this.currentMode === 'polygon' && this.currentCoordinates.length > 0) {
+        } else if (this.currentMode === 'line' && this.currentCoordinates.length >= 2) {
+            features.push({
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: this.currentCoordinates,
+                },
+                properties: {},
+            });
+            this.currentCoordinates.forEach((coord, index) => {
+                features.push({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: coord,
+                    },
+                    properties: { index },
+                });
+            });
+        } else if ((this.currentMode === 'polygon' || this.currentMode === 'line') && this.currentCoordinates.length > 0) {
             this.currentCoordinates.forEach((coord, index) => {
                 features.push({
                     type: 'Feature',
@@ -257,6 +276,15 @@ export class DrawManager {
                 geometry: {
                     type: 'Polygon',
                     coordinates: [this.currentCoordinates.concat([this.currentCoordinates[0]])],
+                },
+                properties: {},
+            };
+        } else if (this.currentMode === 'line' && this.currentCoordinates.length >= 2) {
+            feature = {
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: this.currentCoordinates,
                 },
                 properties: {},
             };
