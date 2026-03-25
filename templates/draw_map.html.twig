@@ -4,7 +4,7 @@
 
 {% block body %}
 {# <div data-controller='draw-map' data-draw-map-center-json-value='[2.725, 47.16]' data-draw-map-zoom-value='5' class='map-container'> #}
-    <div data-controller='draw-map' data-draw-map-center-json-value='[2.514189, 49.126014]' data-draw-map-zoom-value='15.8' data-draw-map-submit-url-value='/draw-map' class='map-container'>
+    <div data-controller='draw-map' data-draw-map-center-json-value='[2.514189, 49.126014]' data-draw-map-zoom-value='15.8' data-draw-map-submit-url-value='/draw-map' data-draw-map-nearby-streets-url-value='/draw-map/nearby-streets' class='map-container'>
         <div class="test-map-section">
             <div class="test-map-header">
                 <h2>🗺️ Tracé sur la carte</h2>
@@ -51,6 +51,7 @@
                     title="Valider et envoyer">
                 </button>
             </div>
+            <ul data-draw-map-target="nearbyStreetsList" class="nearby-streets-list"></ul>
         </div>
     </div>
 {% endblock %}

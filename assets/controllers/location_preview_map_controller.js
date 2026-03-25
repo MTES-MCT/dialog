@@ -4,10 +4,11 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 
 export default class extends Controller {
-    static targets = ['container'];
+    static targets = ['container', 'nearbyStreetsList'];
     static values = {
         url: String,
         roadType: String,
+        nearbyStreetsUrl: String,
         roadBanIdField: String,
         roadNameField: String,
         cityCodeField: String,
@@ -143,11 +144,34 @@ export default class extends Controller {
         }
 
         try {
-            const geojson = JSON.parse(raw);
+            const geojson = this.#toGeometry(JSON.parse(raw));
+
+            if (!geojson) {
+                this.#hideMap();
+                return;
+            }
+
             this.#displayGeometry(geojson);
+            this.#fetchNearbyStreets(geojson);
         } catch {
             this.#hideMap();
         }
+    }
+
+    #toGeometry(parsed) {
+        if (!parsed || !parsed.type) {
+            return null;
+        }
+
+        if (parsed.type === 'FeatureCollection') {
+            return parsed.features?.[0]?.geometry || null;
+        }
+
+        if (parsed.type === 'Feature') {
+            return parsed.geometry || null;
+        }
+
+        return parsed;
     }
 
     async #fetchAndDisplay(params) {
@@ -174,7 +198,16 @@ export default class extends Controller {
     }
 
     #displayGeometry(geojson) {
-        if (!geojson || !geojson.coordinates || geojson.coordinates.length === 0) {
+        if (!geojson || !geojson.type) {
+            this.#hideMap();
+            return;
+        }
+
+        const hasData = geojson.type === 'GeometryCollection'
+            ? geojson.geometries?.length > 0
+            : geojson.coordinates?.length > 0;
+
+        if (!hasData) {
             this.#hideMap();
             return;
         }
@@ -212,8 +245,7 @@ export default class extends Controller {
             data: geojson,
         });
 
-        const geometryType = geojson.type;
-        const isPolygon = geometryType === 'Polygon' || geometryType === 'MultiPolygon';
+        const isPolygon = this.#containsPolygon(geojson);
 
         if (isPolygon) {
             this.#map.addLayer({
@@ -250,9 +282,21 @@ export default class extends Controller {
         this.#fitBounds(geojson);
     }
 
+    #containsPolygon(geojson) {
+        if (geojson.type === 'Polygon' || geojson.type === 'MultiPolygon') {
+            return true;
+        }
+
+        if (geojson.type === 'GeometryCollection') {
+            return geojson.geometries.some(g => g.type === 'Polygon' || g.type === 'MultiPolygon');
+        }
+
+        return false;
+    }
+
     #fitBounds(geojson) {
         const bounds = new maplibregl.LngLatBounds();
-        this.#processCoordinates(geojson.coordinates, bounds);
+        this.#extractBounds(geojson, bounds);
 
         if (!bounds.isEmpty()) {
             this.#map.fitBounds(bounds, {
@@ -261,6 +305,16 @@ export default class extends Controller {
                 animate: false,
             });
         }
+    }
+
+    #extractBounds(geojson, bounds) {
+        if (geojson.type === 'GeometryCollection') {
+            geojson.geometries.forEach(g => this.#extractBounds(g, bounds));
+
+            return;
+        }
+
+        this.#processCoordinates(geojson.coordinates, bounds);
     }
 
     #processCoordinates(coordinates, bounds) {
@@ -282,5 +336,95 @@ export default class extends Controller {
 
     #hideMap() {
         this.containerTarget.hidden = true;
+    }
+
+    async #fetchNearbyStreets(geojson) {
+        if (!this.hasNearbyStreetsUrlValue || !geojson) {
+            return;
+        }
+
+        this.#abortController?.abort();
+        this.#abortController = new AbortController();
+
+        try {
+            const response = await fetch(this.nearbyStreetsUrlValue, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ geometry: geojson, radius: 100 }),
+                signal: this.#abortController.signal,
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const streets = await response.json();
+            this.#displayNearbyStreets(streets);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                console.error('Erreur lors de la récupération des rues proches:', error);
+            }
+        }
+    }
+
+    #displayNearbyStreets(streets) {
+        this.#displayNearbyStreetsOnMap(streets);
+
+        if (!this.hasNearbyStreetsListTarget) {
+            return;
+        }
+
+        this.nearbyStreetsListTarget.innerHTML = '';
+
+        if (streets.length === 0) {
+            this.nearbyStreetsListTarget.innerHTML = '<li>Aucune rue trouvée à proximité</li>';
+
+            return;
+        }
+
+        streets.forEach(street => {
+            const li = document.createElement('li');
+            li.textContent = `${street.roadName} (${street.distance} m)`;
+            this.nearbyStreetsListTarget.appendChild(li);
+        });
+    }
+
+    #displayNearbyStreetsOnMap(streets) {
+        if (!this.#map) {
+            return;
+        }
+
+        const features = streets
+            .filter(s => s.geometry)
+            .map(street => ({
+                type: 'Feature',
+                geometry: street.geometry,
+                properties: {
+                    roadName: street.roadName,
+                    distance: street.distance,
+                },
+            }));
+
+        const data = { type: 'FeatureCollection', features };
+
+        if (this.#map.getSource('nearby-streets-source')) {
+            this.#map.getSource('nearby-streets-source').setData(data);
+        } else {
+            this.#map.addSource('nearby-streets-source', { type: 'geojson', data });
+            this.#map.addLayer({
+                id: 'nearby-streets-layer',
+                type: 'line',
+                source: 'nearby-streets-source',
+                paint: {
+                    'line-color': '#e63946',
+                    'line-width': 3,
+                    'line-opacity': 0.7,
+                    'line-dasharray': [2, 2],
+                },
+            });
+        }
     }
 }
