@@ -653,9 +653,11 @@
                         data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
                         data-location-preview-map-road-type-value="rawGeoJSON"
                         data-location-preview-map-geometry-field-value="{{ form.rawGeoJSON.geometry.vars.id }}"
-                        class="fr-mt-2w"
+                        data-location-preview-map-nearby-streets-url-value="{{ path('app_draw_map_nearby_streets') }}"
+                        class="raw-geojson-map-container fr-mt-2w"
                     >
                         <div data-location-preview-map-target="container" hidden class="location-preview-map-container"></div>
+                        <ul data-location-preview-map-target="nearbyStreetsList" class="nearby-streets-list"></ul>
                     </div>
                 </div>
 
@@ -688,6 +690,7 @@
                         data-controller="draw-map"
                         data-draw-map-center-json-value='[2.725, 47.16]'
                         data-draw-map-zoom-value="5"
+                        data-draw-map-nearby-streets-url-value="{{ path('app_draw_map_nearby_streets') }}"
                         class="fr-mb-3w draw-map-wrapper"
                     >
                         <div data-draw-map-target="container" class="draw-map-container"></div>
@@ -732,6 +735,7 @@
                             >
                             </button>
                         </div>
+                        <ul data-draw-map-target='nearbyStreetsList' class='nearby-streets-list'></ul>
                         {{ form_widget(form.drawMap.geometry, {
                             attr: {
                                 'data-draw-map-target': 'geometryField',

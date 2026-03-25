@@ -6,12 +6,17 @@ import { DrawManager } from '../customElements/draw-manager';
 import { OsrmRouter } from '../customElements/osrm-router';
 import '../styles/components/draw-map.css';
 
+const EMPTY_FEATURE_COLLECTION = { type: 'FeatureCollection', features: [] };
+const NEARBY_STREETS_SOURCE = 'nearby-streets-source';
+const NEARBY_STREETS_LAYER = 'nearby-streets-layer';
+
 export default class extends Controller {
-    static targets = ['container', 'polygonBtn', 'lineBtn', 'roadLineBtn', 'validateBtn', 'geometryField'];
+    static targets = ['container', 'polygonBtn', 'lineBtn', 'roadLineBtn', 'validateBtn', 'geometryField', 'nearbyStreetsList'];
     static values = {
         centerJson: String,
         zoom: Number,
         submitUrl: String,
+        nearbyStreetsUrl: String,
     };
 
     #map = null;
@@ -19,6 +24,9 @@ export default class extends Controller {
     #currentMode = null;
     #router = null;
     #observer = null;
+    #isDrawing = false;
+    #isRoutingInProgress = false;
+    #routingPromise = Promise.resolve();
 
     connect() {
         if (this.#isContainerHidden()) {
@@ -35,29 +43,7 @@ export default class extends Controller {
         this.#map = null;
     }
 
-    #isContainerHidden() {
-        return this.containerTarget.offsetParent === null;
-    }
-
-    #observeVisibility() {
-        this.#observer = new MutationObserver(() => {
-            if (!this.#isContainerHidden()) {
-                this.#observer.disconnect();
-                this.#observer = null;
-                this.initializeMap();
-            }
-        });
-
-        // Observe ancestor hidden attribute changes
-        let parent = this.element.closest('[hidden]') || this.element.parentElement;
-        if (parent) {
-            this.#observer.observe(parent, { attributes: true, attributeFilter: ['hidden'] });
-        }
-    }
-
-    get centerCoords() {
-        return JSON.parse(this.centerJsonValue || '[2.725, 47.16]');
-    }
+    // --- Map initialization ---
 
     initializeMap() {
         if (!this.hasContainerTarget) {
@@ -65,23 +51,22 @@ export default class extends Controller {
         }
 
         try {
-            const centerCoords = this.centerCoords;
-            const zoomLevel = this.zoomValue || 5;
-
             this.#map = new maplibregl.Map({
                 container: this.containerTarget,
                 style: mapStyles.desaturated,
-                center: centerCoords,
-                zoom: zoomLevel,
+                center: this.#centerCoords,
+                zoom: this.zoomValue || 5,
                 minZoom: 4.33,
                 maxZoom: 18,
                 hash: 'mapZoomAndPosition',
             });
 
             this.#map.on('load', () => {
-                this.addNavigationControl();
-                this.initializeDrawControl();
-                this.setupDrawing();
+                this.#map.addControl(new maplibregl.NavigationControl(), 'top-left');
+                this.#draw = new DrawManager(this.#map);
+                this.#router = new OsrmRouter();
+                this.#setupNearbyStreetsLayer();
+                this.#bindDrawingEvents();
                 this.loadGeometryFromField();
             });
 
@@ -93,171 +78,36 @@ export default class extends Controller {
         }
     }
 
-    addNavigationControl() {
-        this.#map.addControl(new maplibregl.NavigationControl(), 'top-left');
-    }
-
-    initializeDrawControl() {
-        this.#draw = new DrawManager(this.#map);
-        this.#router = new OsrmRouter();
-    }
-
-    updateButtonClasses() {
-        this.polygonBtnTarget?.classList.toggle('active', this.#currentMode === 'polygon');
-        this.lineBtnTarget?.classList.toggle('active', this.#currentMode === 'line');
-        this.roadLineBtnTarget?.classList.toggle('active', this.#currentMode === 'road-line');
-    }
+    // --- Mode toggling ---
 
     togglePolygon() {
-        this.#currentMode = this.#currentMode === 'polygon' ? null : 'polygon';
-        this.updateButtonClasses();
+        this.#toggleMode('polygon');
     }
 
     toggleLine() {
-        this.#currentMode = this.#currentMode === 'line' ? null : 'line';
-        this.updateButtonClasses();
+        this.#toggleMode('line');
     }
 
     toggleRoadLine() {
-        this.#currentMode = this.#currentMode === 'road-line' ? null : 'road-line';
-        this.updateButtonClasses();
+        this.#toggleMode('road-line');
     }
 
-    setupDrawing() {
-        this._isDrawingPolygon = false;
-        this._isDrawingLine = false;
-        this._isDrawingRoadLine = false;
-        this._isRoutingInProgress = false;
-        this._routingPromise = Promise.resolve();
-
-        this.#map.on('mousedown', (e) => {
-            if (!this.#currentMode) {
-                return;
-            }
-
-            if (this.#currentMode === 'polygon') {
-                if (!this._isDrawingPolygon) {
-                    this.#draw.setMode('polygon');
-                    this._isDrawingPolygon = true;
-                    this.#map.dragPan.disable();
-                }
-                this.#draw.addCoordinate(e.lngLat);
-                this.#draw.updatePreview();
-                this.#map.getCanvas().style.cursor = 'crosshair';
-            } else if (this.#currentMode === 'line') {
-                if (!this._isDrawingLine) {
-                    this.#draw.setMode('line');
-                    this._isDrawingLine = true;
-                    this.#map.dragPan.disable();
-                }
-                this.#draw.addCoordinate(e.lngLat);
-                this.#draw.updatePreview();
-                this.#map.getCanvas().style.cursor = 'crosshair';
-            } else if (this.#currentMode === 'road-line') {
-                if (this._isRoutingInProgress) return;
-
-                if (!this._isDrawingRoadLine) {
-                    this.#draw.setMode('road-line');
-                    this._isDrawingRoadLine = true;
-                }
-
-                const newPoint = [e.lngLat.lng, e.lngLat.lat];
-                const previousWaypoints = this.#draw.waypoints;
-
-                if (previousWaypoints.length === 0) {
-                    this.#draw.addWaypoint(e.lngLat);
-                    this.#draw.updateRoutedPreview();
-                    this.#map.getCanvas().style.cursor = 'crosshair';
-                } else {
-                    const lastWaypoint = previousWaypoints[previousWaypoints.length - 1];
-                    this._isRoutingInProgress = true;
-                    this.#map.getCanvas().style.cursor = 'wait';
-
-                    this._routingPromise = this.#router.getSegment(lastWaypoint, newPoint)
-                        .then((segmentCoords) => {
-                            this.#draw.addWaypoint(e.lngLat);
-                            this.#draw.addRoutedSegment(segmentCoords);
-                            this.#draw.updateRoutedPreview();
-                        })
-                        .catch((err) => {
-                            console.error('Routing error:', err);
-                            this.#draw.addWaypoint(e.lngLat);
-                            this.#draw.addRoutedSegment([lastWaypoint, newPoint]);
-                            this.#draw.updateRoutedPreview();
-                        })
-                        .finally(() => {
-                            this._isRoutingInProgress = false;
-                            this.#map.getCanvas().style.cursor = 'crosshair';
-                        });
-                }
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (this._isDrawingPolygon) {
-                    this._isDrawingPolygon = false;
-                    this.clearPolygonPreview();
-                }
-                if (this._isDrawingLine) {
-                    this._isDrawingLine = false;
-                    this.clearPolygonPreview();
-                }
-                if (this._isDrawingRoadLine) {
-                    this._isDrawingRoadLine = false;
-                    this.#draw.waypoints = [];
-                    this.#draw.routedSegments = [];
-                    this.#draw.clearPreview();
-                    this.#map.getCanvas().style.cursor = '';
-                }
-            }
-        });
-    }
-
-    getDrawnData() {
-        return this.#draw?.getAll() || { type: 'FeatureCollection', features: [] };
-    }
-
-    setDrawnData(data) {
-        if (this.#draw && data && data.features) {
-            this.#draw.setData(data);
-        }
-    }
-
-    clearPolygonPreview() {
-        this.#map.dragPan.enable();
-        this.#draw.currentCoordinates = [];
-        this.#draw.clearPreview();
-        this.#map.getCanvas().style.cursor = '';
-    }
+    // --- Drawing actions ---
 
     clearAll() {
-        if (this.#draw) {
-            this.#draw.deleteAll();
-            this.clearPolygonPreview();
-            this._isDrawingPolygon = false;
-            this._isDrawingLine = false;
-            this._isDrawingRoadLine = false;
-            this.#currentMode = null;
-            this.updateButtonClasses();
+        if (!this.#draw) {
+            return;
         }
+
+        this.#draw.deleteAll();
+        this.#resetDrawingState();
+        this.clearNearbyStreets();
     }
 
     async submitGeoJSON() {
-        await this._routingPromise;
+        const geoJsonData = await this.#finalizeDrawing();
 
-        this.#draw.finishDrawing();
-        this.#draw.finishRoutedLine();
-        this.#draw.clearPreview();
-        this.#map.dragPan.enable();
-        this.#map.getCanvas().style.cursor = '';
-
-        this.#currentMode = null;
-        this.updateButtonClasses();
-
-        const geoJsonData = this.getDrawnData();
-
-        if (!geoJsonData.features || geoJsonData.features.length === 0) {
+        if (!geoJsonData) {
             alert('Veuillez tracer un polygone ou une ligne avant de valider.');
 
             return;
@@ -284,7 +134,7 @@ export default class extends Controller {
             alert(JSON.stringify(result));
             this.dispatch('submitSuccess', { detail: result });
 
-            this.clearAll();
+            await this.#fetchNearbyStreets(geoJsonData);
         } catch (error) {
             console.error('Erreur lors de l\'envoi du GeoJSON:', error);
             alert(`Erreur: ${error.message}`);
@@ -295,38 +145,19 @@ export default class extends Controller {
     }
 
     async validateToField() {
-        await this._routingPromise;
+        const geoJsonData = await this.#finalizeDrawing();
 
-        this.#draw.finishDrawing();
-        this.#draw.finishRoutedLine();
-        this.#draw.clearPreview();
-        this.#map.dragPan.enable();
-        this.#map.getCanvas().style.cursor = '';
-
-        this.#currentMode = null;
-        this.updateButtonClasses();
-
-        const geoJsonData = this.getDrawnData();
-
-        if (!geoJsonData.features || geoJsonData.features.length === 0) {
+        if (!geoJsonData) {
             return;
         }
 
-        let geometry;
-
-        if (geoJsonData.features.length === 1) {
-            geometry = geoJsonData.features[0].geometry;
-        } else {
-            geometry = {
-                type: 'GeometryCollection',
-                geometries: geoJsonData.features.map(f => f.geometry),
-            };
-        }
-
         if (this.hasGeometryFieldTarget) {
+            const geometry = this.#buildGeometry(geoJsonData);
             this.geometryFieldTarget.value = JSON.stringify(geometry);
             this.dispatch('geometryChanged', { detail: { geometry } });
         }
+
+        await this.#fetchNearbyStreets(geoJsonData);
     }
 
     loadGeometryFromField() {
@@ -336,13 +167,190 @@ export default class extends Controller {
 
         try {
             const geometry = JSON.parse(this.geometryFieldTarget.value);
-            const feature = { type: 'Feature', geometry, properties: {} };
-            const featureCollection = { type: 'FeatureCollection', features: [feature] };
-            this.setDrawnData(featureCollection);
+            this.#draw.setData({
+                type: 'FeatureCollection',
+                features: [{ type: 'Feature', geometry, properties: {} }],
+            });
             this.#fitBoundsToGeometry(geometry);
         } catch {
             // Invalid JSON, ignore
         }
+    }
+
+    clearNearbyStreets() {
+        this.#map.getSource(NEARBY_STREETS_SOURCE)
+            ?.setData(EMPTY_FEATURE_COLLECTION);
+
+        if (this.hasNearbyStreetsListTarget) {
+            this.nearbyStreetsListTarget.innerHTML = '';
+        }
+    }
+
+    // --- Private: visibility ---
+
+    #isContainerHidden() {
+        return this.containerTarget.offsetParent === null;
+    }
+
+    #observeVisibility() {
+        this.#observer = new MutationObserver(() => {
+            if (this.#isContainerHidden()) {
+                return;
+            }
+
+            this.#observer.disconnect();
+            this.#observer = null;
+            this.initializeMap();
+        });
+
+        const parent = this.element.closest('[hidden]') || this.element.parentElement;
+
+        if (parent) {
+            this.#observer.observe(parent, { attributes: true, attributeFilter: ['hidden'] });
+        }
+    }
+
+    // --- Private: mode management ---
+
+    #toggleMode(mode) {
+        this.#currentMode = this.#currentMode === mode ? null : mode;
+        this.#updateButtonClasses();
+    }
+
+    #updateButtonClasses() {
+        this.polygonBtnTarget?.classList.toggle('active', this.#currentMode === 'polygon');
+        this.lineBtnTarget?.classList.toggle('active', this.#currentMode === 'line');
+        this.roadLineBtnTarget?.classList.toggle('active', this.#currentMode === 'road-line');
+    }
+
+    // --- Private: drawing event handlers ---
+
+    #bindDrawingEvents() {
+        this.#map.on('mousedown', (e) => this.#handleMapClick(e));
+        document.addEventListener('keydown', (e) => this.#handleKeydown(e));
+    }
+
+    #handleMapClick(e) {
+        if (!this.#currentMode) {
+            return;
+        }
+
+        const handlers = {
+            'polygon': () => this.#handleSimpleDrawClick(e, 'polygon'),
+            'line': () => this.#handleSimpleDrawClick(e, 'line'),
+            'road-line': () => this.#handleRoadLineClick(e),
+        };
+
+        handlers[this.#currentMode]?.();
+    }
+
+    #handleSimpleDrawClick(e, mode) {
+        if (!this.#isDrawing) {
+            this.#draw.setMode(mode);
+            this.#isDrawing = true;
+            this.#map.dragPan.disable();
+        }
+
+        this.#draw.addCoordinate(e.lngLat);
+        this.#draw.updatePreview();
+        this.#setCursor('crosshair');
+    }
+
+    #handleRoadLineClick(e) {
+        if (this.#isRoutingInProgress) {
+            return;
+        }
+
+        if (!this.#isDrawing) {
+            this.#draw.setMode('road-line');
+            this.#isDrawing = true;
+        }
+
+        const newPoint = [e.lngLat.lng, e.lngLat.lat];
+        const previousWaypoints = this.#draw.waypoints;
+
+        if (previousWaypoints.length === 0) {
+            this.#draw.addWaypoint(e.lngLat);
+            this.#draw.updateRoutedPreview();
+            this.#setCursor('crosshair');
+
+            return;
+        }
+
+        const lastWaypoint = previousWaypoints[previousWaypoints.length - 1];
+        this.#isRoutingInProgress = true;
+        this.#setCursor('wait');
+
+        this.#routingPromise = this.#router.getSegment(lastWaypoint, newPoint)
+            .then((segmentCoords) => {
+                this.#addRoutedWaypoint(e.lngLat, segmentCoords);
+            })
+            .catch((err) => {
+                console.error('Routing error:', err);
+                this.#addRoutedWaypoint(e.lngLat, [lastWaypoint, newPoint]);
+            })
+            .finally(() => {
+                this.#isRoutingInProgress = false;
+                this.#setCursor('crosshair');
+            });
+    }
+
+    #addRoutedWaypoint(lngLat, segmentCoords) {
+        this.#draw.addWaypoint(lngLat);
+        this.#draw.addRoutedSegment(segmentCoords);
+        this.#draw.updateRoutedPreview();
+    }
+
+    #handleKeydown(e) {
+        if (e.key !== 'Escape' || !this.#isDrawing) {
+            return;
+        }
+
+        if (this.#currentMode === 'road-line') {
+            this.#draw.waypoints = [];
+            this.#draw.routedSegments = [];
+        }
+
+        this.#isDrawing = false;
+        this.#draw.currentCoordinates = [];
+        this.#draw.clearPreview();
+        this.#map.dragPan.enable();
+        this.#setCursor('');
+    }
+
+    // --- Private: finalize & geometry ---
+
+    async #finalizeDrawing() {
+        await this.#routingPromise;
+
+        this.#draw.finishDrawing();
+        this.#draw.finishRoutedLine();
+        this.#draw.clearPreview();
+        this.#map.dragPan.enable();
+        this.#setCursor('');
+
+        this.#currentMode = null;
+        this.#isDrawing = false;
+        this.#updateButtonClasses();
+
+        const geoJsonData = this.#draw?.getAll() || EMPTY_FEATURE_COLLECTION;
+
+        if (!geoJsonData.features?.length) {
+            return null;
+        }
+
+        return geoJsonData;
+    }
+
+    #buildGeometry(geoJsonData) {
+        if (geoJsonData.features.length === 1) {
+            return geoJsonData.features[0].geometry;
+        }
+
+        return {
+            type: 'GeometryCollection',
+            geometries: geoJsonData.features.map(f => f.geometry),
+        };
     }
 
     #fitBoundsToGeometry(geometry) {
@@ -365,11 +373,9 @@ export default class extends Controller {
             case 'Point':
                 return [geometry.coordinates];
             case 'LineString':
-                return geometry.coordinates;
-            case 'Polygon':
-                return geometry.coordinates.flat();
             case 'MultiPoint':
                 return geometry.coordinates;
+            case 'Polygon':
             case 'MultiLineString':
                 return geometry.coordinates.flat();
             case 'MultiPolygon':
@@ -379,5 +385,117 @@ export default class extends Controller {
             default:
                 return [];
         }
+    }
+
+    // --- Private: nearby streets ---
+
+    #setupNearbyStreetsLayer() {
+        if (!this.#map.getSource(NEARBY_STREETS_SOURCE)) {
+            this.#map.addSource(NEARBY_STREETS_SOURCE, {
+                type: 'geojson',
+                data: EMPTY_FEATURE_COLLECTION,
+            });
+        }
+
+        if (!this.#map.getLayer(NEARBY_STREETS_LAYER)) {
+            this.#map.addLayer({
+                id: NEARBY_STREETS_LAYER,
+                type: 'line',
+                source: NEARBY_STREETS_SOURCE,
+                paint: {
+                    'line-color': '#e63946',
+                    'line-width': 3,
+                    'line-opacity': 0.7,
+                    'line-dasharray': [2, 2],
+                },
+            });
+        }
+    }
+
+    async #fetchNearbyStreets(geoJsonData) {
+        if (!this.hasNearbyStreetsUrlValue) {
+            return;
+        }
+
+        const geometry = this.#buildGeometry(geoJsonData);
+
+        try {
+            const response = await fetch(this.nearbyStreetsUrlValue, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ geometry, radius: 100 }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur serveur: ${response.statusText}`);
+            }
+
+            const streets = await response.json();
+
+            this.#displayNearbyStreetsOnMap(streets);
+            this.#displayNearbyStreetsList(streets);
+            this.dispatch('nearbyStreetsFound', { detail: { streets } });
+        } catch (error) {
+            console.error('Erreur lors de la récupération des rues proches:', error);
+        }
+    }
+
+    #displayNearbyStreetsOnMap(streets) {
+        const features = streets
+            .filter(s => s.geometry)
+            .map(street => ({
+                type: 'Feature',
+                geometry: street.geometry,
+                properties: {
+                    roadName: street.roadName,
+                    distance: street.distance,
+                },
+            }));
+
+        this.#map.getSource(NEARBY_STREETS_SOURCE)
+            ?.setData({ type: 'FeatureCollection', features });
+    }
+
+    #displayNearbyStreetsList(streets) {
+        if (!this.hasNearbyStreetsListTarget) {
+            return;
+        }
+
+        this.nearbyStreetsListTarget.innerHTML = '';
+
+        if (streets.length === 0) {
+            this.nearbyStreetsListTarget.innerHTML = '<li>Aucune rue trouvée à proximité</li>';
+
+            return;
+        }
+
+        for (const street of streets) {
+            const li = document.createElement('li');
+            li.textContent = `${street.roadName} (${street.distance} m)`;
+            this.nearbyStreetsListTarget.appendChild(li);
+        }
+    }
+
+    // --- Private: helpers ---
+
+    get #centerCoords() {
+        return JSON.parse(this.centerJsonValue || '[2.725, 47.16]');
+    }
+
+    #setCursor(cursor) {
+        this.#map.getCanvas().style.cursor = cursor;
+    }
+
+    #resetDrawingState() {
+        this.#draw.currentCoordinates = [];
+        this.#draw.clearPreview();
+        this.#map.dragPan.enable();
+        this.#setCursor('');
+        this.#isDrawing = false;
+        this.#currentMode = null;
+        this.#updateButtonClasses();
     }
 }

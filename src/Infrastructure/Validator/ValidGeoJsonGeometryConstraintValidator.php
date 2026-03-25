@@ -22,7 +22,7 @@ final class ValidGeoJsonGeometryConstraintValidator extends ConstraintValidator
             throw new UnexpectedValueException($constraint, ValidGeoJsonGeometryConstraint::class);
         }
 
-        if (null === $value || '' === $value) {
+        if (empty($value)) {
             return;
         }
 
