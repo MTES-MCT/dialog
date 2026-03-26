@@ -213,8 +213,25 @@ export default class extends Controller {
     // --- Private: mode management ---
 
     #toggleMode(mode) {
+        if (this.#isDrawing) {
+            this.#cancelCurrentDrawing();
+        }
+
         this.#currentMode = this.#currentMode === mode ? null : mode;
         this.#updateButtonClasses();
+    }
+
+    #cancelCurrentDrawing() {
+        if (this.#currentMode === 'road-line') {
+            this.#draw.waypoints = [];
+            this.#draw.routedSegments = [];
+        }
+
+        this.#isDrawing = false;
+        this.#draw.currentCoordinates = [];
+        this.#draw.clearPreview();
+        this.#map.dragPan.enable();
+        this.#setCursor('');
     }
 
     #updateButtonClasses() {
@@ -306,16 +323,7 @@ export default class extends Controller {
             return;
         }
 
-        if (this.#currentMode === 'road-line') {
-            this.#draw.waypoints = [];
-            this.#draw.routedSegments = [];
-        }
-
-        this.#isDrawing = false;
-        this.#draw.currentCoordinates = [];
-        this.#draw.clearPreview();
-        this.#map.dragPan.enable();
-        this.#setCursor('');
+        this.#cancelCurrentDrawing();
     }
 
     // --- Private: finalize & geometry ---
