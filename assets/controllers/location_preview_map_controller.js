@@ -212,10 +212,14 @@ export default class extends Controller {
             return;
         }
 
+        const wasHidden = this.containerTarget.hidden;
         this.containerTarget.hidden = false;
 
         if (this.#map) {
             this.#updateMapData(geojson);
+        } else if (wasHidden) {
+            // Wait for browser reflow so the container has actual dimensions
+            requestAnimationFrame(() => this.#initializeMap(geojson));
         } else {
             this.#initializeMap(geojson);
         }
