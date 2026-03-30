@@ -24,6 +24,10 @@ final class DiaLogMockHttpClient extends MockHttpClient
         $request = Request::create($url, $method);
         $response = $this->httpKernel->handle($request);
 
-        return new MockResponse($response->getContent());
+        ob_start();
+        $response->sendContent();
+        $content = ob_get_clean();
+
+        return new MockResponse($content);
     }
 }
