@@ -24,6 +24,7 @@ services:
             $featureMap: '%features%'
             $cifsFilterSet: '%env(cifs_filterset:default::APP_CIFS_FILTERS)%'
             $litteralisEnabledOrgs: "%env(json:default::APP_LITTERALIS_ENABLED_ORGS)%"
+            $litteralisCommunicationEnabledOrgs: "%env(json:APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS)%"
             $litteralisCredentials: "%env(litteralis_credentials:APP_LITTERALIS_ORG_)%"
             $metabaseSiteUrl: '%env(APP_METABASE_SITE_URL)%'
             $metabaseSecretKey: '%env(APP_METABASE_SECRET_KEY)%'
@@ -135,6 +136,11 @@ services:
     # --------------
 
     App\Infrastructure\Symfony\Command\LitteralisImportCommand:
+        arguments: ['@logger']
+        tags:
+            - { name: monolog.logger, channel: litteralis_import }
+
+    App\Infrastructure\Symfony\Command\LitteralisImportCommunicationCommand:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: litteralis_import }
