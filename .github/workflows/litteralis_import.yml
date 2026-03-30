@@ -8,6 +8,11 @@ on:
         required: false
         default: null
         type: string
+      communication_enabled_orgs:
+        description: "Organisations à intégrer via le flux Communication (format : array JSON)"
+        required: false
+        default: null
+        type: string
 
   schedule:
     - cron: '15 16 * * 1-5' # Voir https://crontab.guru/ : du lundi au vendredi à 16h15 GMT
@@ -58,12 +63,19 @@ jobs:
           echo "MAILER_DSN=${{ secrets.MAILER_DSN }}" >> .env.local
           # Deal with JSON quotes
           printf "APP_LITTERALIS_ENABLED_ORGS='%s'\n" '${{ vars.APP_LITTERALIS_ENABLED_ORGS }}' >> .env.local
+          printf "APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS='%s'\n" '${{ vars.APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS }}' >> .env.local
 
       - name: Override enabled orgs if defined by input
         if: ${{ inputs.enabled_orgs }}
         run: |
           # Deal with JSON quotes
           printf "APP_LITTERALIS_ENABLED_ORGS='%s'\n" '${{ inputs.enabled_orgs }}' >> .env.local
+
+      - name: Override communication enabled orgs if defined by input
+        if: ${{ inputs.communication_enabled_orgs }}
+        run: |
+          # Deal with JSON quotes
+          printf "APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS='%s'\n" '${{ inputs.communication_enabled_orgs }}' >> .env.local
 
       - name: Init organization environment variables
         run: |
