@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -44,11 +45,13 @@ final class GetRegulationsController
             ),
         );
 
-        return new Response(
-            $this->twig->render('api/regulations.xml.twig', [
-                'publicationTime' => $this->dateUtils->getNow(),
-                'regulationOrders' => $regulationOrders,
-            ]),
+        return new StreamedResponse(
+            function () use ($regulationOrders): void {
+                $this->twig->display('api/regulations.xml.twig', [
+                    'publicationTime' => $this->dateUtils->getNow(),
+                    'regulationOrders' => $regulationOrders,
+                ]);
+            },
             Response::HTTP_OK,
             ['Content-Type' => 'text/xml; charset=UTF-8'],
         );
