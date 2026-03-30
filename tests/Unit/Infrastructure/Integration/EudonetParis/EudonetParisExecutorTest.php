@@ -9,6 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Integration\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Integration\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
@@ -31,6 +32,7 @@ final class EudonetParisExecutorTest extends TestCase
     private $regulationOrderRecordRepository;
     private $orgId = '064f5eba-5eb2-7ffd-8000-77e8f8b7bb9b';
     private $dateUtils;
+    private $datexGenerator;
 
     protected function setUp(): void
     {
@@ -41,6 +43,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
+        $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);
     }
 
     public function testExecute(): void
@@ -57,6 +60,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->dateUtils,
+            $this->datexGenerator,
         );
 
         $this->queryBus
@@ -154,6 +158,10 @@ final class EudonetParisExecutorTest extends TestCase
                 ),
             });
 
+        $this->datexGenerator
+            ->expects(self::once())
+            ->method('generate');
+
         $executor->execute($now);
     }
 
@@ -189,6 +197,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->dateUtils,
+            $this->datexGenerator,
         );
 
         $timeMatcher = self::exactly(2);
@@ -233,6 +242,10 @@ final class EudonetParisExecutorTest extends TestCase
                     ])
                 ),
             });
+
+        $this->datexGenerator
+            ->expects(self::once())
+            ->method('generate');
 
         $executor->execute($now);
     }
@@ -279,6 +292,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->dateUtils,
+            $this->datexGenerator,
         );
 
         $executor->execute($now);
@@ -305,6 +319,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             $this->orgId,
             $this->dateUtils,
+            $this->datexGenerator,
         );
 
         $record1 = ['fields' => [1101 => '20210104']];
@@ -376,6 +391,10 @@ final class EudonetParisExecutorTest extends TestCase
             ->method('error')
             ->with('failed', self::anything());
 
+        $this->datexGenerator
+            ->expects(self::once())
+            ->method('generate');
+
         $executor->execute($now);
     }
 
@@ -415,6 +434,7 @@ final class EudonetParisExecutorTest extends TestCase
             $this->regulationOrderRecordRepository,
             '',
             $this->dateUtils,
+            $this->datexGenerator,
         );
 
         $executor->execute($now);

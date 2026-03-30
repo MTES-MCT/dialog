@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -25,6 +26,7 @@ final class DeleteRegulationController
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly Security $security,
+        private readonly DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -102,6 +104,8 @@ final class DeleteRegulationController
                 'detail' => 'L\'arrêté ne peut pas être supprimé.',
             ], Response::HTTP_FORBIDDEN);
         }
+
+        $this->datexGenerator->generate();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

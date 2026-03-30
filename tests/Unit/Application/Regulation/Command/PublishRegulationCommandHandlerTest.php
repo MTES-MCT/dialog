@@ -8,7 +8,6 @@ use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Application\Regulation\Command\PublishRegulationCommandHandler;
-use App\Application\Regulation\DatexGeneratorInterface;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\RegulationOrder;
@@ -22,13 +21,11 @@ final class PublishRegulationCommandHandlerTest extends TestCase
 {
     private $canRegulationOrderRecordBePublished;
     private $commandBus;
-    private $datexGenerator;
 
     protected function setUp(): void
     {
         $this->canRegulationOrderRecordBePublished = $this->createMock(CanRegulationOrderRecordBePublished::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);
     }
 
     public function testPublish(): void
@@ -61,12 +58,8 @@ final class PublishRegulationCommandHandlerTest extends TestCase
                 ->method('handle')
                 ->with($this->equalTo($regulationOrderHistoryCommand));
 
-        $this->datexGenerator
-            ->expects(self::once())
-            ->method('generate');
-
         $handler = new PublishRegulationCommandHandler(
-            $this->canRegulationOrderRecordBePublished, $this->commandBus, $this->datexGenerator,
+            $this->canRegulationOrderRecordBePublished, $this->commandBus,
         );
 
         $command = new PublishRegulationCommand($regulationOrderRecord);
@@ -89,7 +82,7 @@ final class PublishRegulationCommandHandlerTest extends TestCase
             ->willReturn(false);
 
         $handler = new PublishRegulationCommandHandler(
-            $this->canRegulationOrderRecordBePublished, $this->commandBus, $this->datexGenerator,
+            $this->canRegulationOrderRecordBePublished, $this->commandBus,
         );
 
         $command = new PublishRegulationCommand($regulationOrderRecord);

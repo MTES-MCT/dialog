@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Command;
 
 use App\Application\CommandBusInterface;
-use App\Application\Regulation\DatexGeneratorInterface;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
@@ -16,7 +15,6 @@ final class PublishRegulationCommandHandler
     public function __construct(
         private CanRegulationOrderRecordBePublished $canRegulationOrderRecordBePublished,
         private CommandBusInterface $commandBus,
-        private DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -31,7 +29,5 @@ final class PublishRegulationCommandHandler
         $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::PUBLISH->value));
 
         $command->regulationOrderRecord->updateStatus(RegulationOrderRecordStatusEnum::PUBLISHED->value);
-
-        $this->datexGenerator->generate();
     }
 }

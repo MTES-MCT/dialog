@@ -11,9 +11,11 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 
 final class ImportEudonetParisRegulationCommand implements CommandInterface
 {
+    /**
+     * @param SaveMeasureCommand[] $measureCommands
+     */
     public function __construct(
         public readonly SaveRegulationGeneralInfoCommand $generalInfoCommand,
-        /** @var SaveMeasureCommand[] */
         public readonly array $measureCommands,
     ) {
         $generalInfoCommand->source = RegulationOrderRecordSourceEnum::EUDONET_PARIS->value;

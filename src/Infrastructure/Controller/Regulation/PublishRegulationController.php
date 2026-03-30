@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\PublishRegulationCommand;
+use App\Application\Regulation\DatexGeneratorInterface;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
@@ -25,6 +26,7 @@ final class PublishRegulationController extends AbstractRegulationController
     public function __construct(
         private RouterInterface $router,
         private CommandBusInterface $commandBus,
+        private DatexGeneratorInterface $datexGenerator,
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
@@ -52,6 +54,8 @@ final class PublishRegulationController extends AbstractRegulationController
         } catch (RegulationOrderRecordCannotBePublishedException) {
             throw new AccessDeniedHttpException();
         }
+
+        $this->datexGenerator->generate();
 
         return new RedirectResponse(
             url: $this->router->generate('app_regulation_detail', [

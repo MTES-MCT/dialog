@@ -7,6 +7,7 @@ namespace App\Infrastructure\Integration\JOP;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -24,6 +25,7 @@ final class JOPExecutor
         private JOPExtractor $jopExtractor,
         private JOPTransformer $jopTransformer,
         private string $jopOrgId,
+        private DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -61,6 +63,8 @@ final class JOPExecutor
             $this->logger->error('import:error', $context);
             throw $exc;
         }
+
+        $this->datexGenerator->generate();
 
         $this->logger->info('done');
     }
