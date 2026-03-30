@@ -8,6 +8,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class GetCifsIncidentsController
@@ -29,10 +30,12 @@ final class GetCifsIncidentsController
     {
         $incidents = $this->queryBus->handle(new GetCifsIncidentsQuery());
 
-        return new Response(
-            $this->twig->render('api/regulations/cifs.xml.twig', [
-                'incidents' => $incidents,
-            ]),
+        return new StreamedResponse(
+            function () use ($incidents): void {
+                $this->twig->display('api/regulations/cifs.xml.twig', [
+                    'incidents' => $incidents,
+                ]);
+            },
             Response::HTTP_OK,
             ['Content-Type' => 'text/xml; charset=UTF-8'],
         );

@@ -10,6 +10,7 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class GetRegulationsControllerTest extends AbstractWebTestCase
 {
@@ -44,6 +45,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $client->request('GET', '/api/regulations.xml');
         $response = $client->getResponse();
 
+        $this->assertInstanceOf(StreamedResponse::class, $response);
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -69,6 +71,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $client->request('GET', '/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=true');
         $response = $client->getResponse();
 
+        $this->assertInstanceOf(StreamedResponse::class, $response);
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
