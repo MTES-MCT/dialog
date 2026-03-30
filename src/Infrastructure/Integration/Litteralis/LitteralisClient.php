@@ -8,12 +8,20 @@ use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
+/**
+ * Client WFS Litteralis (couche configurable).
+ * Utilisé pour le flux standard (litteralis:litteralis) et le flux Communication (litteralis:LIcommunication).
+ */
 final class LitteralisClient
 {
+    public const TYPENAME_STANDARD = 'litteralis:litteralis';
+    public const TYPENAME_COMMUNICATION = 'litteralis:LIcommunication';
+
     private string $credentials;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+        private readonly string $typename,
     ) {
     }
 
@@ -61,7 +69,7 @@ final class LitteralisClient
                     'SERVICE' => 'wfs',
                     'VERSION' => '2',
                     'REQUEST' => 'GetFeature',
-                    'TYPENAME' => 'litteralis:litteralis',
+                    'TYPENAME' => $this->typename,
                     'cql_filter' => $cqlFilter,
                     'count' => $numPerPage,
                     'startIndex' => $numPerPage * ($pageNumber - 1),
@@ -72,11 +80,13 @@ final class LitteralisClient
             $geoJSON = json_decode($response->getContent(), true);
 
             if ($totalPages === INF) {
-                // Calcul du nombre total de pages
-                $totalPages = intdiv($geoJSON['totalFeatures'], $numPerPage) + 1;
+                $totalPages = (int) ceil(($geoJSON['totalFeatures'] ?? 0) / $numPerPage);
+                if ($totalPages < 1) {
+                    $totalPages = 1;
+                }
             }
 
-            foreach ($geoJSON['features'] as $feature) {
+            foreach ($geoJSON['features'] ?? [] as $feature) {
                 $features[] = $feature;
             }
         }
@@ -94,7 +104,7 @@ final class LitteralisClient
                 'SERVICE' => 'wfs',
                 'VERSION' => '2',
                 'REQUEST' => 'GetFeature',
-                'TYPENAME' => 'litteralis:litteralis',
+                'TYPENAME' => $this->typename,
                 'count' => 1,
                 'startIndex' => 0,
             ],
@@ -107,7 +117,7 @@ final class LitteralisClient
         $response = $this->makeRequest($method, $path, $options, $reporter);
         $geoJSON = json_decode($response->getContent(), true);
 
-        return $geoJSON['numberMatched'];
+        return (int) ($geoJSON['numberMatched'] ?? 0);
     }
 
     public function fetchAllByRegulationId(string $id): array

@@ -6,7 +6,8 @@ namespace App\Infrastructure\Integration\Litteralis;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class LitteralisClientFactory
+/** Crée un LitteralisClient configuré pour la couche WFS Communication (LIcommunication). */
+final class LitteralisCommunicationClientFactory
 {
     public function __construct(
         private readonly HttpClientInterface $litteralisWfsHttpClient,
@@ -15,7 +16,7 @@ final class LitteralisClientFactory
 
     public function create(string $credentials): LitteralisClient
     {
-        $client = new LitteralisClient($this->litteralisWfsHttpClient, LitteralisClient::TYPENAME_STANDARD);
+        $client = new LitteralisClient($this->litteralisWfsHttpClient, LitteralisClient::TYPENAME_COMMUNICATION);
         $client->setCredentials($credentials);
 
         return $client;

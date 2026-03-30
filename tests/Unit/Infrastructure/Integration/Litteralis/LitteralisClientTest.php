@@ -26,7 +26,7 @@ final class LitteralisClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Credentials not set');
 
-        $extractor = new LitteralisClient($this->httpClient);
+        $extractor = new LitteralisClient($this->httpClient, LitteralisClient::TYPENAME_STANDARD);
         $extractor->count(null, $this->reporter);
     }
 
@@ -35,7 +35,7 @@ final class LitteralisClientTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Credentials are empty');
 
-        $extractor = new LitteralisClient($this->httpClient);
+        $extractor = new LitteralisClient($this->httpClient, LitteralisClient::TYPENAME_STANDARD);
         $extractor->setCredentials('');
     }
 
@@ -84,7 +84,7 @@ final class LitteralisClientTest extends TestCase
             },
         ]);
 
-        $client = new LitteralisClient($this->httpClient);
+        $client = new LitteralisClient($this->httpClient, LitteralisClient::TYPENAME_STANDARD);
         $client->setCredentials('credentials');
 
         $this->assertEquals($features, $client->fetchAllPaginated('test', $this->reporter));

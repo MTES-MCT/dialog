@@ -46,6 +46,16 @@ make console CMD="app:litteralis:import"
 
 Cela lira les variables `APP_LITTERALIS_ENABLED_ORGS` et `APP_LITTERALIS_ORG_*` dans votre `.env.local`.
 
+## Flux WFS "Communication" (coexistence migration)
+
+Un second flux Litteralis est disponible : le **WFS Communication** (couche `litteralis:LIcommunication`, une feature = une mesure). Il permet de faire coexister l’ancien et le nouveau flux le temps de la migration.
+
+* **Commande** : `app:litteralis:import-communication`
+* **Variable d’environnement** : `APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS` (liste JSON des noms d’organisations, ex. `["mel"]`). Les identifiants restent ceux du flux standard (`APP_LITTERALIS_ORG_<NAME>_ID`, `_CREDENTIALS`).
+* **Exécution** : `make console CMD="app:litteralis:import-communication"` (ou via un workflow dédié si besoin).
+
+Par organisation, n’utiliser qu’un seul des deux flux (standard ou Communication) pour éviter les doublons.
+
 ## Références
 
 * [ADR-010 - Litteralis](../adr/010_litteralis.md)

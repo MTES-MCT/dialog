@@ -1,0 +1,119 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Integration\Litteralis;
+
+use App\Application\CommandBusInterface;
+use App\Application\DateUtilsInterface;
+use App\Application\Integration\Litteralis\Command\CleanUpLitteralisRegulationsBeforeImportCommand;
+use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
+use App\Application\QueryBusInterface;
+use App\Application\User\Query\GetOrganizationByUuidQuery;
+use App\Domain\User\Exception\OrganizationNotFoundException;
+use App\Domain\User\Organization;
+use App\Infrastructure\Integration\IntegrationReport\CommonRecordEnum;
+use App\Infrastructure\Integration\IntegrationReport\Reporter;
+use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
+
+/**
+ * Exécuteur d'import Litteralis utilisant le flux WFS "Communication" (couche LIcommunication).
+ * Réutilise le même transformer et le même nettoyage que le flux standard.
+ * Permet la coexistence des deux flux pendant la migration.
+ */
+final class LitteralisCommunicationExecutor
+{
+    public function __construct(
+        array $litteralisCommunicationEnabledOrgs,
+        LitteralisCredentials $litteralisCredentials,
+        private CommandBusInterface $commandBus,
+        private QueryBusInterface $queryBus,
+        private EntityManagerInterface $entityManager,
+        private LitteralisCommunicationExtractor $extractor,
+        private LitteralisTransformer $transformer,
+        private ReportFormatter $reportFormatter,
+        private DateUtilsInterface $dateUtils,
+    ) {
+        $this->extractor->configure($litteralisCommunicationEnabledOrgs, $litteralisCredentials);
+    }
+
+    public function execute(string $name, string $orgId, \DateTimeInterface $laterThan, Reporter $reporter): string
+    {
+        try {
+            /** @var Organization */
+            $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($orgId));
+        } catch (OrganizationNotFoundException $exc) {
+            throw new \RuntimeException(\sprintf('Organization %s not found with orgId="%s"', $name, $orgId));
+        }
+
+        $startTime = $this->dateUtils->getNow();
+        $reporter->start($name, $startTime, $organization);
+
+        $featuresByRegulation = $this->extractor->extractFeaturesByRegulation($name, $laterThan, $reporter);
+        $numImportedRegulations = 0;
+        $numImportedFeatures = 0;
+
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+
+        try {
+            $this->commandBus->handle(new CleanUpLitteralisRegulationsBeforeImportCommand($organization->getUuid(), $laterThan));
+
+            foreach ($featuresByRegulation as $identifier => $regulationFeatures) {
+                $command = $this->transformer->transform($reporter, $identifier, $regulationFeatures, $organization);
+
+                if ($command === null) {
+                    $reporter->acknowledgeNewErrors();
+                    continue;
+                }
+
+                try {
+                    $this->commandBus->handle($command);
+                    ++$numImportedRegulations;
+                    $numImportedFeatures += \count($regulationFeatures);
+                } catch (\Exception $exc) {
+                    $reporter->addError(LitteralisRecordEnum::ERROR_IMPORT_COMMAND_FAILED->value, [
+                        CommonRecordEnum::ATTR_REGULATION_ID->value => $regulationFeatures[0]['properties']['arretesrcid'],
+                        CommonRecordEnum::ATTR_URL->value => $regulationFeatures[0]['properties']['shorturl'],
+                        CommonRecordEnum::ATTR_DETAILS->value => [
+                            'message' => $exc->getMessage(),
+                        ],
+                        'violations' => $exc instanceof ValidationFailedException ? iterator_to_array($exc->getViolations()) : null,
+                        'command' => $command,
+                    ]);
+                    $reporter->acknowledgeNewErrors();
+
+                    if (!$this->isRecoverableException($exc)) {
+                        throw $exc;
+                    }
+                }
+
+                $reporter->acknowledgeNewErrors();
+            }
+
+            $connection->commit();
+        } catch (\Throwable $e) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            $this->entityManager->clear();
+            throw $e;
+        }
+
+        $reporter->addCount(LitteralisRecordEnum::COUNT_IMPORTED_FEATURES->value, $numImportedFeatures, ['regulationsCount' => $numImportedRegulations]);
+
+        $reporter->end(endTime: $this->dateUtils->getNow());
+        $report = $this->reportFormatter->format($reporter->getRecords());
+        $reporter->onReport($report);
+
+        return $report;
+    }
+
+    private function isRecoverableException(\Throwable $e): bool
+    {
+        return $e instanceof ValidationFailedException
+            || str_starts_with($e::class, 'App\\');
+    }
+}
