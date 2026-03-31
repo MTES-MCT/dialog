@@ -46,18 +46,6 @@ final class DatexGeneratorTest extends TestCase
         @rmdir($this->tmpDir);
     }
 
-    public function testGetDatexFilePath(): void
-    {
-        $generator = new DatexGenerator(
-            $this->twig,
-            $this->dateUtils,
-            $this->queryBus,
-            $this->tmpDir,
-        );
-
-        $this->assertSame($this->tmpDir . '/var/datex/regulations.xml', $generator->getDatexFilePath());
-    }
-
     public function testGenerateCreatesDirectoryAndFile(): void
     {
         $now = new \DateTimeImmutable('2025-01-01');
@@ -76,12 +64,14 @@ final class DatexGeneratorTest extends TestCase
 
         $this->twig
             ->expects(self::once())
-            ->method('render')
+            ->method('display')
             ->with('api/regulations.xml.twig', [
                 'publicationTime' => $now,
                 'regulationOrders' => $regulationOrders,
             ])
-            ->willReturn('<xml>generated content</xml>');
+            ->willReturnCallback(function () {
+                echo '<xml>generated content</xml>';
+            });
 
         $generator = new DatexGenerator(
             $this->twig,
@@ -90,7 +80,7 @@ final class DatexGeneratorTest extends TestCase
             $this->tmpDir,
         );
 
-        $filePath = $generator->getDatexFilePath();
+        $filePath = $this->tmpDir . '/var/datex/regulations.xml';
 
         $this->assertDirectoryDoesNotExist(\dirname($filePath));
 
@@ -121,8 +111,10 @@ final class DatexGeneratorTest extends TestCase
 
         $this->twig
             ->expects(self::once())
-            ->method('render')
-            ->willReturn('<xml>new content</xml>');
+            ->method('display')
+            ->willReturnCallback(function () {
+                echo '<xml>new content</xml>';
+            });
 
         $generator = new DatexGenerator(
             $this->twig,
@@ -133,8 +125,9 @@ final class DatexGeneratorTest extends TestCase
 
         $generator->generate();
 
-        $this->assertSame('<xml>new content</xml>', file_get_contents($generator->getDatexFilePath()));
+        $filePath = $this->tmpDir . '/var/datex/regulations.xml';
+        $this->assertSame('<xml>new content</xml>', file_get_contents($filePath));
         // Ensure tmp file is cleaned up (renamed, not left behind)
-        $this->assertFileDoesNotExist($generator->getDatexFilePath() . '.tmp');
+        $this->assertFileDoesNotExist($filePath . '.tmp');
     }
 }

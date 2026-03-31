@@ -6,8 +6,8 @@ namespace App\Tests\Unit\Infrastructure\Controller\Api\Regulations;
 
 use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
-use App\Infrastructure\Adapter\DatexGenerator;
 use App\Infrastructure\Controller\Api\Regulations\GetRegulationsController;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ final class GetRegulationsControllerTest extends TestCase
     private \Twig\Environment&MockObject $twig;
     private DateUtilsInterface&MockObject $dateUtils;
     private QueryBusInterface&MockObject $queryBus;
-    private DatexGenerator&MockObject $datexGenerator;
+    private DatexGeneratorInterface&MockObject $datexGenerator;
     private GetRegulationsController $controller;
 
     protected function setUp(): void
@@ -27,7 +27,7 @@ final class GetRegulationsControllerTest extends TestCase
         $this->twig = $this->createMock(\Twig\Environment::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
-        $this->datexGenerator = $this->createMock(DatexGenerator::class);
+        $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);
 
         $this->controller = new GetRegulationsController(
             $this->twig,
@@ -39,19 +39,10 @@ final class GetRegulationsControllerTest extends TestCase
 
     public function testDefaultParamsWithExistingFile(): void
     {
-        $tmpDir = sys_get_temp_dir() . '/datex_test_' . uniqid();
-        mkdir($tmpDir, 0o755, true);
-        $filePath = $tmpDir . '/regulations.xml';
-        file_put_contents($filePath, '<xml>cached</xml>');
-
         $this->datexGenerator
             ->expects(self::once())
-            ->method('getDatexFilePath')
-            ->willReturn($filePath);
-
-        $this->datexGenerator
-            ->expects(self::never())
-            ->method('generate');
+            ->method('getCachedDatex')
+            ->willReturn('<xml>cached</xml>');
 
         $this->queryBus
             ->expects(self::never())
@@ -64,28 +55,14 @@ final class GetRegulationsControllerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('Content-Type'));
         $this->assertSame('<xml>cached</xml>', $response->getContent());
-
-        unlink($filePath);
-        rmdir($tmpDir);
     }
 
     public function testDefaultParamsWithMissingFileTriggersGenerate(): void
     {
-        $tmpDir = sys_get_temp_dir() . '/datex_test_' . uniqid();
-        $filePath = $tmpDir . '/regulations.xml';
-
         $this->datexGenerator
             ->expects(self::once())
-            ->method('getDatexFilePath')
-            ->willReturn($filePath);
-
-        $this->datexGenerator
-            ->expects(self::once())
-            ->method('generate')
-            ->willReturnCallback(function () use ($tmpDir, $filePath): void {
-                mkdir($tmpDir, 0o755, true);
-                file_put_contents($filePath, '<xml>generated</xml>');
-            });
+            ->method('getCachedDatex')
+            ->willReturn('<xml>generated</xml>');
 
         $this->queryBus
             ->expects(self::never())
@@ -96,9 +73,6 @@ final class GetRegulationsControllerTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('<xml>generated</xml>', $response->getContent());
-
-        unlink($filePath);
-        rmdir($tmpDir);
     }
 
     public function testCustomFiltersReturnStreamedResponse(): void
@@ -107,9 +81,8 @@ final class GetRegulationsControllerTest extends TestCase
         $regulationOrders = ['order1', 'order2'];
 
         $this->datexGenerator
-            ->expects(self::once())
-            ->method('getDatexFilePath')
-            ->willReturn('/tmp/nonexistent');
+            ->expects(self::never())
+            ->method('getCachedDatex');
 
         $this->queryBus
             ->expects(self::once())

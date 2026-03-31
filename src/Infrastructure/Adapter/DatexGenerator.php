@@ -28,11 +28,6 @@ final class DatexGenerator implements DatexGeneratorInterface
             new GetRegulationOrdersToDatexFormatQuery(),
         );
 
-        $content = $this->twig->render('api/regulations.xml.twig', [
-            'publicationTime' => $this->dateUtils->getNow(),
-            'regulationOrders' => $regulationOrders,
-        ]);
-
         $dir = \dirname($this->datexFilePath);
 
         if (!is_dir($dir)) {
@@ -40,12 +35,30 @@ final class DatexGenerator implements DatexGeneratorInterface
         }
 
         $tmpFile = $this->datexFilePath . '.tmp';
-        file_put_contents($tmpFile, $content);
+        $handle = fopen($tmpFile, 'w');
+
+        ob_start(function (string $buffer) use ($handle): string {
+            fwrite($handle, $buffer);
+
+            return '';
+        }, 262144);
+
+        $this->twig->display('api/regulations.xml.twig', [
+            'publicationTime' => $this->dateUtils->getNow(),
+            'regulationOrders' => $regulationOrders,
+        ]);
+
+        ob_end_flush();
+        fclose($handle);
         rename($tmpFile, $this->datexFilePath);
     }
 
-    public function getDatexFilePath(): string
+    public function getCachedDatex(): string
     {
-        return $this->datexFilePath;
+        if (!file_exists($this->datexFilePath)) {
+            $this->generate();
+        }
+
+        return file_get_contents($this->datexFilePath);
     }
 }
