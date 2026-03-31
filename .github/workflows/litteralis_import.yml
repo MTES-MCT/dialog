@@ -86,6 +86,10 @@ jobs:
       - name: Run import
         run: make ci_litteralis_import BIN_PHP="php" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
+      - name: Run communication import
+        if: ${{ vars.APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS != '' && vars.APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS != '[]' }}
+        run: make ci_litteralis_import_communication BIN_PHP="php" BIN_CONSOLE="php bin/console"
+
       - name: Get log file path
         id: logfile
         if: ${{ !cancelled() }}

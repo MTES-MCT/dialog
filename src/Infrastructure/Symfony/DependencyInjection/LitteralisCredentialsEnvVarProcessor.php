@@ -12,6 +12,7 @@ class LitteralisCredentialsEnvVarProcessor implements EnvVarProcessorInterface
     public function __construct(
         private readonly string $dialogOrgId,
         private readonly ?array $litteralisEnabledOrgs,
+        private readonly ?array $litteralisCommunicationEnabledOrgs,
     ) {
     }
 
@@ -21,7 +22,12 @@ class LitteralisCredentialsEnvVarProcessor implements EnvVarProcessorInterface
 
         $orgEnvPrefix = $name;
 
-        foreach (($this->litteralisEnabledOrgs ?? []) as $orgName) {
+        $allOrgNames = array_unique(array_merge(
+            $this->litteralisEnabledOrgs ?? [],
+            $this->litteralisCommunicationEnabledOrgs ?? [],
+        ));
+
+        foreach ($allOrgNames as $orgName) {
             $orgEnvName = \sprintf('%s%s_ID', $orgEnvPrefix, strtoupper($orgName));
             $orgIdEnv = $getEnv($orgEnvName);
 

@@ -39,6 +39,15 @@ final class LitteralisCommunicationExtractor
 
         foreach ($enabledOrgs as $name) {
             $orgCredentials = $credentials->getCredentials($name);
+
+            if (empty($orgCredentials)) {
+                throw new \RuntimeException(\sprintf(
+                    'Organization "%s": missing credentials (check APP_LITTERALIS_ORG_%s_CREDENTIALS)',
+                    $name,
+                    strtoupper($name),
+                ));
+            }
+
             $client = $this->clientFactory->create($orgCredentials);
             $this->clients[$name] = $client;
         }

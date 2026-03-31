@@ -17,16 +17,18 @@ final class LitteralisCredentialsEnvVarProcessorTest extends TestCase
         $processor = new LitteralisCredentialsEnvVarProcessor(
             $this->dialogOrgId,
             litteralisEnabledOrgs: [],
+            litteralisCommunicationEnabledOrgs: [],
         );
 
         $this->assertEquals(['litteralis_credentials' => 'string'], $processor->getProvidedTypes());
     }
 
-    private function doTest(array $enabledOrgs, array $getEnvReturnValues, ?LitteralisCredentials $expectedCredentials = null): void
+    private function doTest(array $enabledOrgs, array $getEnvReturnValues, ?LitteralisCredentials $expectedCredentials = null, array $communicationEnabledOrgs = []): void
     {
         $processor = new LitteralisCredentialsEnvVarProcessor(
             $this->dialogOrgId,
             litteralisEnabledOrgs: $enabledOrgs,
+            litteralisCommunicationEnabledOrgs: $communicationEnabledOrgs,
         );
 
         $value = $processor->getEnv(
@@ -65,6 +67,23 @@ final class LitteralisCredentialsEnvVarProcessorTest extends TestCase
             (new LitteralisCredentials())
                 ->add('test', '1442d806-559c-41a9-aa4b-cdd18195a38f', 'testuser:testpass')
                 ->add('other', $this->dialogOrgId, 'otheruser:otherpass'),
+        );
+    }
+
+    public function testEnvValidWithCommunicationOrgs(): void
+    {
+        $this->doTest(
+            ['test'],
+            [
+                ['APP_LITTERALIS_ORG_TEST_ID', '1442d806-559c-41a9-aa4b-cdd18195a38f'],
+                ['APP_LITTERALIS_ORG_TEST_CREDENTIALS', 'testuser:testpass'],
+                ['APP_LITTERALIS_ORG_SAVOIE_ID', 'b556d806-559c-41a9-aa4b-cdd18195a38f'],
+                ['APP_LITTERALIS_ORG_SAVOIE_CREDENTIALS', 'savoieuser:savoiepass'],
+            ],
+            (new LitteralisCredentials())
+                ->add('test', '1442d806-559c-41a9-aa4b-cdd18195a38f', 'testuser:testpass')
+                ->add('savoie', 'b556d806-559c-41a9-aa4b-cdd18195a38f', 'savoieuser:savoiepass'),
+            communicationEnabledOrgs: ['savoie'],
         );
     }
 

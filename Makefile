@@ -289,6 +289,8 @@ ci_litteralis_import: ## Run CI steps for Litteralis Import workflow
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
 	./tools/scalingodbtunnel dialog --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
 	make console CMD="app:litteralis:import"
+
+ci_litteralis_import_communication: ## Run CI steps for Litteralis Communication Import workflow
 	make console CMD="app:litteralis:import-communication"
 
 ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
