@@ -2,6 +2,15 @@ name: BD TOPO Migrate
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Base BDTOPO cible'
+        required: false
+        default: '2025'
+        type: choice
+        options:
+          - '2025'
+          - '2025_2'
   push:
     branches:
       - main
@@ -11,6 +20,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      BDTOPO_MIGRATE_TARGET: ${{ github.event.inputs.target || '2025' }}
 
     steps:
       - uses: actions/checkout@v1
@@ -36,7 +47,11 @@ jobs:
         run: |
           echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
           echo "BDTOPO_2025_2_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env
-          echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
+          if [ "${BDTOPO_MIGRATE_TARGET}" = "2025_2" ]; then
+            echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env
+          else
+            echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
+          fi
 
       - name: CI
         run: make ci_bdtopo_migrate BIN_COMPOSER="composer" BIN_CONSOLE="php bin/console"

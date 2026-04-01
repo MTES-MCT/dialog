@@ -63,8 +63,6 @@ jobs:
           echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
           echo "BDTOPO_2025_2_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
           echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
-          echo "EMAIL_SUPPORT=${{ vars.EMAIL_SUPPORT }}" >> .env.local
-          echo "MAILER_DSN=${{ secrets.MAILER_DSN }}" >> .env.local
           # Deal with JSON quotes
           printf "APP_LITTERALIS_ENABLED_ORGS='%s'\n" '${{ vars.APP_LITTERALIS_ENABLED_ORGS }}' >> .env.local
           printf "APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS='%s'\n" '${{ vars.APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS }}' >> .env.local
