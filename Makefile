@@ -307,11 +307,11 @@ ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow
 	sleep 3; \
 	# Récupérer les credentials depuis l'URL du secret et construire l'URL du tunnel
 	# Compatible macOS et Linux (sed fonctionne de la même manière pour ces patterns)
-	if [ -n "$$BDTOPO_2025_DATABASE_URL" ]; then \
+	if [ -n "$$BDTOPO_2025_2_DATABASE_URL" ]; then \
 		# Construire la nouvelle URL avec localhost:10002
 		# Utiliser une substitution compatible macOS et Linux
-		BDTOPO_TUNNEL_URL=$$(echo "$$BDTOPO_2025_DATABASE_URL" | sed 's|@[^/]*|@127.0.0.1:10002|'); \
-		export BDTOPO_2025_DATABASE_URL="$$BDTOPO_TUNNEL_URL"; \
+		BDTOPO_TUNNEL_URL=$$(echo "$$BDTOPO_2025_2_DATABASE_URL" | sed 's|@[^/]*|@127.0.0.1:10002|'); \
+		export BDTOPO_2025_2_DATABASE_URL="$$BDTOPO_TUNNEL_URL"; \
 	fi; \
 	./tools/wait-for-it.sh 127.0.0.1:10002; \
 	./tools/bdtopo_download_and_update \

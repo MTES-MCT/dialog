@@ -4,7 +4,7 @@ DiaLog héberge une partie de la [BD TOPO](https://geoservices.ign.fr/bdtopo) po
 
 ## Démarrage rapide
 
-Pour le développement local, demandez la `BDTOPO_2025_DATABASE_URL` à un membre de l'équipe et ajoutez-les à votre `.env.local` (créer ce fichier à la racine du projet si nécessaire).
+Pour le développement local, demandez la `BDTOPO_DATABASE_URL` à un membre de l'équipe et ajoutez-la à votre `.env.local` (créer ce fichier à la racine du projet si nécessaire).
 
 Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voir [Mettre à jour les données](#mettre-à-jour-les-données).
 
@@ -12,7 +12,9 @@ Si vous cherchez à mettre en ligne une nouvelle version des tables BD TOPO, voi
 
 Les requêtes à la BD TOPO se font par une connexion dédiée, configurée dans la configuration doctrine (`config/packages/doctrine.yaml`).
 
-L'URL de connexion est configurée par la variable d'environnement `BDTOPO_2025_DATABASE_URL`.
+L'URL de connexion utilisée par l'application est configurée par la variable d'environnement `BDTOPO_DATABASE_URL`.
+
+Les variables `BDTOPO_2025_DATABASE_URL` et `BDTOPO_2025_2_DATABASE_URL` représentent quant à elles deux bases physiques entre lesquelles on peut basculer lors des mises à jour de données.
 
 Cette connexion dispose de ses propres migrations, séparées des migrations applicatives de DiaLog. Cela permet de configurer des indexes, fonctions et autres objets PostgreSQL spécifiquement dédiés à l'optimisation des requêtes adressées aux tables BD TOPO.
 
@@ -122,12 +124,12 @@ Cette section explique comment mettre à jour une base BDTOPO locale pour tester
 
    ```bash
    # Pour l'application qui tourne dans Docker, utilisez le nom du service
-   BDTOPO_2025_DATABASE_URL=postgresql://dialog:dialog@database:5432/dialog_bdtopo
+   BDTOPO_DATABASE_URL=postgresql://dialog:dialog@database:5432/dialog_bdtopo
    ```
 
 #### 🚀 Mise à jour en production
 
-:warning: **Attention** : La mise à jour en production prend typiquement une heure voire plus. Pendant ce temps, le géocodage sera indisponible et les utilisateurs peuvent rencontrer des plantages. **Faites-le à une heure de faible trafic**.
+:information_source: La mise à jour charge la base physique choisie via `--prod=2025` ou `--prod=2025_2`, puis l'application peut être basculée en changeant `BDTOPO_DATABASE_URL` vers la base fraîchement chargée.
 
 **Méthode recommandée : GitHub Actions**
 
@@ -159,7 +161,7 @@ Le workflow GitHub Actions `bdtopo_update` automatise tout le processus et est l
    - Les logs et artefacts sont disponibles dans l'onglet "Actions" de GitHub
 
 **Prérequis GitHub Actions** :
-- Le secret `BDTOPO_2025_DATABASE_URL` doit être configuré dans les secrets GitHub Actions
+- Les secrets `BDTOPO_DATABASE_URL`, `BDTOPO_2025_DATABASE_URL` et `BDTOPO_2025_2_DATABASE_URL` doivent être configurés dans les secrets GitHub Actions
 - Le secret `GH_SCALINGO_SSH_PRIVATE_KEY` doit être configuré (déjà fait pour les autres workflows)
 
 **Méthode alternative : Script en local**
@@ -200,7 +202,7 @@ Les indexes sont gérés via des migrations dédiées à la BDTOPO (dossier `BdT
 
 Pour créer une migration vide, utiliser `make bdtopo_migration`.
 
-Pour tester une migration sur une BD TOPO locale, configurer  `BDTOPO_2025_DATABASE_URL` dans votre `.env.local` pour pointer sur la BD TOPO locale, puis utiliser `make bdtopo_migrate`.
+Pour tester une migration sur une BD TOPO locale, configurer `BDTOPO_DATABASE_URL` dans votre `.env.local` pour pointer sur la BD TOPO locale, puis utiliser `make bdtopo_migrate`.
 
 Pour exécuter une migration en prod, faire une PR avec la migration et la merger. Un job GitHub Actions lancera la migration.
 
