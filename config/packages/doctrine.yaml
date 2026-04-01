@@ -8,7 +8,7 @@ doctrine:
                 schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
                 use_savepoints: true
             bdtopo2025:
-                url: '%env(BDTOPO_2025_DATABASE_URL)%'
+                url: '%env(resolve:BDTOPO_DATABASE_URL)%'
                 use_savepoints: true
             metabase:
                 url: '%env(METABASE_DATABASE_URL)%'
