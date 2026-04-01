@@ -11,9 +11,9 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 
 final class ImportLitteralisRegulationCommand implements CommandInterface
 {
+    /** @param SaveMeasureCommand[] $measureCommands */
     public function __construct(
         public SaveRegulationGeneralInfoCommand $generalInfoCommand,
-        /** @var SaveMeasureCommand[] */
         public readonly array $measureCommands,
         public readonly ?string $downloadUrl = null,
     ) {

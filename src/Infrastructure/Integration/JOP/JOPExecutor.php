@@ -7,6 +7,7 @@ namespace App\Infrastructure\Integration\JOP;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -61,6 +62,8 @@ final class JOPExecutor
             $this->logger->error('import:error', $context);
             throw $exc;
         }
+
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         $this->logger->info('done');
     }

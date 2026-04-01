@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Integration\JOP\Command\ImportJOPRegulationCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -157,6 +158,11 @@ final class JOPExecutorTest extends TestCase
                 [new DeleteRegulationCommand([$this->orgId], $existingRegulationOrderRecord)],
                 [$command],
             );
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor = new JOPExecutor(
             $this->logger,

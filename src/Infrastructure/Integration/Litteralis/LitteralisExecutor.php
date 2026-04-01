@@ -9,6 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\Command\CleanUpLitteralisRegulationsBeforeImportCommand;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
@@ -96,6 +97,8 @@ final class LitteralisExecutor
             $this->entityManager->clear();
             throw $e;
         }
+
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         $reporter->addCount(LitteralisRecordEnum::COUNT_IMPORTED_FEATURES->value, $numImportedFeatures, ['regulationsCount' => $numImportedRegulations]);
 
