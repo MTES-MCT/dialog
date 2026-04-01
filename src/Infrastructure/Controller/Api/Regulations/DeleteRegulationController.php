@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -102,6 +103,8 @@ final class DeleteRegulationController
                 'detail' => 'L\'arrêté ne peut pas être supprimé.',
             ], Response::HTTP_FORBIDDEN);
         }
+
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

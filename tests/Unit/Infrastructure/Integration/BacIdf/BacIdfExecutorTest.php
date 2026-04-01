@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\Integration\BacIdf\Exception\ImportBacIdfRegulationFailedException;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\User\Command\SaveOrganizationCommand;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -142,6 +143,11 @@ final class BacIdfExecutorTest extends TestCase
                 ),
             });
 
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
+
         $executor->execute();
     }
 
@@ -198,6 +204,11 @@ final class BacIdfExecutorTest extends TestCase
                     ], $context)
                 ),
             });
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute();
     }
@@ -272,6 +283,11 @@ final class BacIdfExecutorTest extends TestCase
             ->expects(self::once())
             ->method('error')
             ->with('failed', self::anything());
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute();
     }

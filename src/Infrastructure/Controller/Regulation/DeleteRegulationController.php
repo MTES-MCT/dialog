@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -61,6 +62,8 @@ final class DeleteRegulationController
         } catch (RegulationOrderRecordCannotBeDeletedException) {
             throw new AccessDeniedHttpException();
         }
+
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         $redirectQueryParams = $request->query->get('_redirectQueryParams')
             ? json_decode($request->query->get('_redirectQueryParams'), true)

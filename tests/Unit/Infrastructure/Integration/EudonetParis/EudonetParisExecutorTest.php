@@ -9,6 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Integration\EudonetParis\Command\ImportEudonetParisRegulationCommand;
 use App\Application\Integration\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Exception\OrganizationNotFoundException;
@@ -154,6 +155,11 @@ final class EudonetParisExecutorTest extends TestCase
                 ),
             });
 
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
+
         $executor->execute($now);
     }
 
@@ -233,6 +239,11 @@ final class EudonetParisExecutorTest extends TestCase
                     ])
                 ),
             });
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute($now);
     }
@@ -375,6 +386,11 @@ final class EudonetParisExecutorTest extends TestCase
             ->expects(self::once())
             ->method('error')
             ->with('failed', self::anything());
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute($now);
     }

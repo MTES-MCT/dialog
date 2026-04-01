@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Api\Regulations;
 
 use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,7 @@ final class GetRegulationsController
         private \Twig\Environment $twig,
         private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
+        private DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -37,6 +39,18 @@ final class GetRegulationsController
         #[MapQueryParameter]
         bool $includeExpired = false,
     ): Response {
+        $isDefaultParams = $includePermanent && $includeTemporary && !$includeExpired;
+
+        if ($isDefaultParams) {
+            $regulationOrders = $this->datexGenerator->getCachedDatex();
+
+            return new Response(
+                $regulationOrders,
+                Response::HTTP_OK,
+                ['Content-Type' => 'text/xml; charset=UTF-8'],
+            );
+        }
+
         $regulationOrders = $this->queryBus->handle(
             new GetRegulationOrdersToDatexFormatQuery(
                 includePermanent: $includePermanent,
