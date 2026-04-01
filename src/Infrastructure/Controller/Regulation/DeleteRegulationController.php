@@ -7,7 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
-use App\Application\Regulation\DatexGeneratorInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -30,7 +30,6 @@ final class DeleteRegulationController
         private CommandBusInterface $commandBus,
         private QueryBusInterface $queryBus,
         private Security $security,
-        private DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -64,7 +63,7 @@ final class DeleteRegulationController
             throw new AccessDeniedHttpException();
         }
 
-        $this->datexGenerator->generate();
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         $redirectQueryParams = $request->query->get('_redirectQueryParams')
             ? json_decode($request->query->get('_redirectQueryParams'), true)

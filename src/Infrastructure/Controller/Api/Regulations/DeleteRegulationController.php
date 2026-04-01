@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
-use App\Application\Regulation\DatexGeneratorInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBeDeletedException;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
@@ -26,7 +26,6 @@ final class DeleteRegulationController
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly Security $security,
-        private readonly DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -105,7 +104,7 @@ final class DeleteRegulationController
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $this->datexGenerator->generate();
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }

@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\EudonetParis\Exception\ImportEudonetParisRegulationFailedException;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\DatexGeneratorInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -27,7 +27,6 @@ final class EudonetParisExecutor
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private string $eudonetParisOrgId,
         private DateUtilsInterface $dateUtils,
-        private DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -89,7 +88,7 @@ final class EudonetParisExecutor
             $numberOfRegulationsInsideEudonet = $this->eudonetParisExtractor->getNumberOfRegulations();
             $numberOfMeasuresInsideEudonet = $this->eudonetParisExtractor->getNumberOfMeasures();
 
-            $this->datexGenerator->generate();
+            $this->commandBus->dispatchAsync(new GenerateDatexCommand());
         } catch (\Exception $exc) {
             $this->logger->error($exc);
 

@@ -8,8 +8,8 @@ use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\BacIdf\Command\ImportBacIdfRegulationCommand;
 use App\Application\Integration\BacIdf\Exception\ImportBacIdfRegulationFailedException;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
-use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\User\Command\SaveOrganizationCommand;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
@@ -28,7 +28,6 @@ final class BacIdfExecutorTest extends TestCase
     private $commandBus;
     private $regulationOrderRecordRepository;
     private $dateUtils;
-    private $datexGenerator;
 
     protected function setUp(): void
     {
@@ -38,7 +37,6 @@ final class BacIdfExecutorTest extends TestCase
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);
     }
 
     public function testExecute(): void
@@ -56,7 +54,6 @@ final class BacIdfExecutorTest extends TestCase
             $this->commandBus,
             $this->regulationOrderRecordRepository,
             $this->dateUtils,
-            $this->datexGenerator,
         );
 
         $this->regulationOrderRecordRepository
@@ -146,9 +143,10 @@ final class BacIdfExecutorTest extends TestCase
                 ),
             });
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::once())
-            ->method('generate');
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute();
     }
@@ -174,7 +172,6 @@ final class BacIdfExecutorTest extends TestCase
             $this->commandBus,
             $this->regulationOrderRecordRepository,
             $this->dateUtils,
-            $this->datexGenerator,
         );
 
         $timeMatcher = self::exactly(2);
@@ -208,9 +205,10 @@ final class BacIdfExecutorTest extends TestCase
                 ),
             });
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::once())
-            ->method('generate');
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute();
     }
@@ -226,7 +224,6 @@ final class BacIdfExecutorTest extends TestCase
             $this->commandBus,
             $this->regulationOrderRecordRepository,
             $this->dateUtils,
-            $this->datexGenerator,
         );
 
         $record1 = ['ARR_REF' => 'arr_1'];
@@ -287,9 +284,10 @@ final class BacIdfExecutorTest extends TestCase
             ->method('error')
             ->with('failed', self::anything());
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::once())
-            ->method('generate');
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor->execute();
     }
@@ -336,7 +334,6 @@ final class BacIdfExecutorTest extends TestCase
             $this->commandBus,
             $this->regulationOrderRecordRepository,
             $this->dateUtils,
-            $this->datexGenerator,
         );
 
         $executor->execute();

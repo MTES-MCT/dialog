@@ -11,7 +11,7 @@ use App\Application\Integration\Litteralis\Command\CleanUpLitteralisRegulationsB
 use App\Application\Integration\Litteralis\Command\ImportLitteralisRegulationCommand;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\DatexGeneratorInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
@@ -35,7 +35,6 @@ final class LitteralisExecutorTest extends TestCase
     private $reporter;
     private $reportFormatter;
     private $dateUtils;
-    private $datexGenerator;
     private $orgId = '066b4d97-016e-77f9-8000-1e8dfaaba586';
 
     protected function setUp(): void
@@ -51,7 +50,6 @@ final class LitteralisExecutorTest extends TestCase
         $this->reporter = $this->createMock(Reporter::class);
         $this->reportFormatter = $this->createMock(ReportFormatter::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);
     }
 
     private function createExecutor(): LitteralisExecutor
@@ -66,7 +64,6 @@ final class LitteralisExecutorTest extends TestCase
             $this->transformer,
             $this->reportFormatter,
             $this->dateUtils,
-            $this->datexGenerator,
         );
     }
 
@@ -146,9 +143,9 @@ final class LitteralisExecutorTest extends TestCase
         $this->reporter->method('acknowledgeNewErrors');
         $this->reporter->expects(self::never())->method('end');
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::never())
-            ->method('generate');
+            ->method('dispatchAsync');
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('oops');
@@ -208,9 +205,10 @@ final class LitteralisExecutorTest extends TestCase
         $this->reportFormatter->method('format')->willReturn('report');
         $this->reporter->method('onReport')->with('report');
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::once())
-            ->method('generate');
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $this->assertSame('report', $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter));
     }
@@ -257,9 +255,10 @@ final class LitteralisExecutorTest extends TestCase
         $this->reportFormatter->method('format')->with(['record1', 'record2'])->willReturn('report');
         $this->reporter->method('onReport')->with('report');
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::once())
-            ->method('generate');
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $this->assertSame('report', $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter));
     }

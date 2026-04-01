@@ -8,7 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Integration\JOP\Command\ImportJOPRegulationCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
-use App\Application\Regulation\DatexGeneratorInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -29,7 +29,6 @@ final class JOPExecutorTest extends TestCase
     private $regulationOrderRecordRepository;
     private $extractor;
     private $transformer;
-    private $datexGenerator;
     private $orgId = '0667d658-d3aa-7d14-8000-b45149ab9f2d';
 
     protected function setUp(): void
@@ -40,7 +39,6 @@ final class JOPExecutorTest extends TestCase
         $this->regulationOrderRecordRepository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
         $this->extractor = $this->createMock(JOPExtractor::class);
         $this->transformer = $this->createMock(JOPTransformer::class);
-        $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);
     }
 
     public function testExecuteOrgIdMissing(): void
@@ -72,7 +70,6 @@ final class JOPExecutorTest extends TestCase
             $this->extractor,
             $this->transformer,
             jopOrgId: '',
-            datexGenerator: $this->datexGenerator,
         );
 
         $executor->execute();
@@ -113,7 +110,6 @@ final class JOPExecutorTest extends TestCase
             $this->extractor,
             $this->transformer,
             jopOrgId: $this->orgId,
-            datexGenerator: $this->datexGenerator,
         );
 
         $executor->execute();
@@ -163,9 +159,10 @@ final class JOPExecutorTest extends TestCase
                 [$command],
             );
 
-        $this->datexGenerator
+        $this->commandBus
             ->expects(self::once())
-            ->method('generate');
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $executor = new JOPExecutor(
             $this->logger,
@@ -175,7 +172,6 @@ final class JOPExecutorTest extends TestCase
             $this->extractor,
             $this->transformer,
             jopOrgId: $this->orgId,
-            datexGenerator: $this->datexGenerator,
         );
 
         $executor->execute();
@@ -232,7 +228,6 @@ final class JOPExecutorTest extends TestCase
             $this->extractor,
             $this->transformer,
             jopOrgId: $this->orgId,
-            datexGenerator: $this->datexGenerator,
         );
 
         $executor->execute();

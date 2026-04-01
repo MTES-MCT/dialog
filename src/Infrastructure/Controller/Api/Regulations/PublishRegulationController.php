@@ -7,8 +7,8 @@ namespace App\Infrastructure\Controller\Api\Regulations;
 use App\Application\CommandBusInterface;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\PublishRegulationCommand;
-use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
@@ -27,7 +27,6 @@ final class PublishRegulationController
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly Security $security,
-        private readonly DatexGeneratorInterface $datexGenerator,
     ) {
     }
 
@@ -108,7 +107,7 @@ final class PublishRegulationController
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $this->datexGenerator->generate();
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         return new JsonResponse([
             'identifier' => $regulationOrderRecord->getRegulationOrder()->getIdentifier(),
