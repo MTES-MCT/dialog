@@ -8,6 +8,8 @@ use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 final class DatexGenerator implements DatexGeneratorInterface
 {
@@ -17,9 +19,10 @@ final class DatexGenerator implements DatexGeneratorInterface
         private \Twig\Environment $twig,
         private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
+        private Filesystem $filesystem,
         string $projectDir,
     ) {
-        $this->datexFilePath = $projectDir . '/var/datex/regulations.xml';
+        $this->datexFilePath = Path::join($projectDir, '/var/datex/regulations.xml');
     }
 
     public function generate(): void
@@ -28,10 +31,10 @@ final class DatexGenerator implements DatexGeneratorInterface
             new GetRegulationOrdersToDatexFormatQuery(),
         );
 
-        $dir = \dirname($this->datexFilePath);
+        $dir = Path::getDirectory($this->datexFilePath);
 
-        if (!is_dir($dir)) {
-            mkdir($dir, 0o755, true);
+        if (!$this->filesystem->exists($dir)) {
+            $this->filesystem->mkdir($dir, 0o755);
         }
 
         $tmpFile = $this->datexFilePath . '.tmp';
@@ -50,15 +53,15 @@ final class DatexGenerator implements DatexGeneratorInterface
 
         ob_end_flush();
         fclose($handle);
-        rename($tmpFile, $this->datexFilePath);
+        $this->filesystem->rename($tmpFile, $this->datexFilePath, overwrite: true);
     }
 
     public function getCachedDatex(): string
     {
-        if (!file_exists($this->datexFilePath)) {
+        if (!$this->filesystem->exists($this->datexFilePath)) {
             $this->generate();
         }
 
-        return file_get_contents($this->datexFilePath);
+        return $this->filesystem->readFile($this->datexFilePath);
     }
 }

@@ -10,6 +10,7 @@ use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Infrastructure\Adapter\DatexGenerator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class DatexGeneratorTest extends TestCase
 {
@@ -77,6 +78,7 @@ final class DatexGeneratorTest extends TestCase
             $this->twig,
             $this->dateUtils,
             $this->queryBus,
+            new Filesystem(),
             $this->tmpDir,
         );
 
@@ -120,6 +122,7 @@ final class DatexGeneratorTest extends TestCase
             $this->twig,
             $this->dateUtils,
             $this->queryBus,
+            new Filesystem(),
             $this->tmpDir,
         );
 
