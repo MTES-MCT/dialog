@@ -38,6 +38,7 @@ import os
 import platform
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -91,6 +92,99 @@ def _get_7z_installation_instructions() -> str:
         return "sudo apt-get install p7zip-full  # ou sudo yum install p7zip-plugins selon la distribution"
     else:
         return "Installez p7zip depuis https://www.7-zip.org/download.html"
+
+
+def _load_dotenv_file(path: Path, loaded_env: dict[str, str]) -> None:
+    """Charge un fichier .env simple en mémoire, sans écraser l'environnement exporté."""
+    if not path.exists():
+        return
+
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+
+        if not key:
+            continue
+
+        if (value.startswith('"') and value.endswith('"')) or (
+            value.startswith("'") and value.endswith("'")
+        ):
+            value = value[1:-1]
+
+        def _replace_env_var(match: re.Match[str]) -> str:
+            variable_name = match.group(1)
+            return os.environ.get(variable_name, loaded_env.get(variable_name, ""))
+
+        value = re.sub(r"\$\{([A-Z0-9_]+)\}", _replace_env_var, value)
+
+        if key not in os.environ:
+            loaded_env[key] = value
+
+
+def _load_project_env() -> None:
+    """
+    Charge `.env` puis `.env.local`, avec surcharge par `.env.local`,
+    sans écraser les variables déjà exportées dans le shell.
+    """
+    project_root = Path(__file__).parent.parent
+    loaded_env: dict[str, str] = {}
+
+    for env_file in (project_root / ".env", project_root / ".env.local"):
+        _load_dotenv_file(env_file, loaded_env)
+
+    for key, value in loaded_env.items():
+        os.environ.setdefault(key, value)
+
+
+def _get_prod_target_config(target: str) -> tuple[str, str]:
+    if target == "2025":
+        return "BDTOPO_2025_DATABASE_URL", "dialog-bdtopo-2025"
+
+    if target == "2025_2":
+        return "BDTOPO_2025_2_DATABASE_URL", "dialog-bdtopo-2025-2"
+
+    raise ValueError(f"Cible de production inconnue: {target}")
+
+
+def _open_prod_tunnel(target: str, port: int = 10002) -> tuple[subprocess.Popen[str], str]:
+    env_var_name, app_name = _get_prod_target_config(target)
+    database_url = os.environ.get(env_var_name)
+
+    if not database_url:
+        print(
+            f"ERROR: {env_var_name} est absente de l'environnement",
+            file=sys.stderr,
+        )
+        return None, ""
+
+    print(f"Ouverture d'un tunnel vers {app_name}...")
+
+    tunnel_proc = subprocess.Popen(
+        ["./tools/scalingodbtunnel", app_name, "--host-url", "--port", str(port)],
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+
+    tunnel_url = tunnel_proc.stdout.readline().strip() if tunnel_proc.stdout else ""
+
+    if not tunnel_url:
+        tunnel_proc.send_signal(signal.SIGINT)
+        tunnel_proc.wait()
+        print(
+            f"ERROR: impossible d'ouvrir le tunnel vers {app_name}",
+            file=sys.stderr,
+        )
+        return None, ""
+
+    print(f"Tunnel ouvert vers {app_name} sur 127.0.0.1:{port}")
+
+    return tunnel_proc, tunnel_url
 
 
 def _download_file(url: str, dest_path: Path, chunk_size: int = 8192) -> None:
@@ -276,31 +370,17 @@ def _resolve_target_database_url(args: argparse.Namespace) -> tuple[str | None, 
         return args.url, "--url"
 
     if args.prod == "2025":
-        database_url = os.environ.get("BDTOPO_2025_DATABASE_URL")
-        if not database_url:
-            print(
-                "ERROR: BDTOPO_2025_DATABASE_URL est absente de l'environnement",
-                file=sys.stderr,
-            )
-            return None, None
-        print("Utilisation de BDTOPO_2025_DATABASE_URL pour charger la base cible")
-        return database_url, "BDTOPO_2025_DATABASE_URL"
+        return os.environ.get("BDTOPO_2025_DATABASE_URL"), "BDTOPO_2025_DATABASE_URL"
 
     if args.prod == "2025_2":
-        database_url = os.environ.get("BDTOPO_2025_2_DATABASE_URL")
-        if not database_url:
-            print(
-                "ERROR: BDTOPO_2025_2_DATABASE_URL est absente de l'environnement",
-                file=sys.stderr,
-            )
-            return None, None
-        print("Utilisation de BDTOPO_2025_2_DATABASE_URL pour charger la base cible")
-        return database_url, "BDTOPO_2025_2_DATABASE_URL"
+        return os.environ.get("BDTOPO_2025_2_DATABASE_URL"), "BDTOPO_2025_2_DATABASE_URL"
 
     return None, None
 
 
 def main() -> int:
+    _load_project_env()
+
     parser = argparse.ArgumentParser(
         description="Télécharge, dézippe et importe les données BDTOPO EXPRESS",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -514,10 +594,15 @@ def main() -> int:
 
         database_url_from_env, database_url_source = _resolve_target_database_url(args)
         database_url_for_migrations = None  # Sera utilisé pour les migrations
+        tunnel_proc = None
 
-        if database_url_from_env:
-            cmd.extend(["--url", database_url_from_env])
-            database_url_for_migrations = database_url_from_env
+        if args.prod:
+            tunnel_proc, tunnel_url = _open_prod_tunnel(args.prod)
+            if tunnel_proc is None:
+                return 1
+
+            cmd.extend(["--url", tunnel_url])
+            database_url_for_migrations = tunnel_url
             print(f"Base cible sélectionnée via {database_url_source}")
         elif args.url:
             cmd.extend(["--url", args.url])
@@ -535,7 +620,13 @@ def main() -> int:
             cmd.append("-y")
 
         print(f"Exécution de: {' '.join(cmd)}")
-        result = subprocess.run(cmd)
+        try:
+            result = subprocess.run(cmd)
+        finally:
+            if tunnel_proc is not None:
+                print("Fermeture du tunnel...")
+                tunnel_proc.send_signal(signal.SIGINT)
+                tunnel_proc.wait()
 
         if result.returncode != 0:
             print("ERROR: L'import a échoué", file=sys.stderr)

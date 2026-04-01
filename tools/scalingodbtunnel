@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import argparse
+import platform
 import shlex
+import socket
 import subprocess
 import sys
+import threading
 from contextlib import contextmanager
 from urllib.parse import urlparse, urlunparse
 
@@ -36,6 +39,86 @@ def _popen_terminate_on_exit(*args, **kwargs):
             yield proc
         finally:
             proc.terminate()
+
+
+@contextmanager
+def _tcp_proxy_on_exit(listen_host: str, listen_port: int, target_host: str, target_port: int):
+    stop_event = threading.Event()
+    client_threads = []
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind((listen_host, listen_port))
+    server_socket.listen()
+    server_socket.settimeout(0.5)
+
+    def _pipe(source: socket.socket, destination: socket.socket):
+        try:
+            while not stop_event.is_set():
+                data = source.recv(65536)
+                if not data:
+                    break
+                destination.sendall(data)
+        except OSError:
+            pass
+        finally:
+            try:
+                destination.shutdown(socket.SHUT_WR)
+            except OSError:
+                pass
+
+    def _handle_client(client_socket: socket.socket):
+        upstream_socket = None
+        try:
+            upstream_socket = socket.create_connection((target_host, target_port))
+            upstream_thread = threading.Thread(
+                target=_pipe,
+                args=(client_socket, upstream_socket),
+                daemon=True,
+            )
+            downstream_thread = threading.Thread(
+                target=_pipe,
+                args=(upstream_socket, client_socket),
+                daemon=True,
+            )
+            upstream_thread.start()
+            downstream_thread.start()
+            upstream_thread.join()
+            downstream_thread.join()
+        except OSError:
+            pass
+        finally:
+            client_socket.close()
+            if upstream_socket is not None:
+                upstream_socket.close()
+
+    def _serve():
+        try:
+            while not stop_event.is_set():
+                try:
+                    client_socket, _ = server_socket.accept()
+                except socket.timeout:
+                    continue
+                except OSError:
+                    break
+
+                thread = threading.Thread(target=_handle_client, args=(client_socket,), daemon=True)
+                client_threads.append(thread)
+                thread.start()
+        finally:
+            server_socket.close()
+
+    server_thread = threading.Thread(target=_serve, daemon=True)
+    server_thread.start()
+
+    try:
+        yield
+    finally:
+        stop_event.set()
+        server_socket.close()
+        server_thread.join(timeout=1)
+        for thread in client_threads:
+            thread.join(timeout=1)
 
 
 def main(
@@ -74,30 +157,42 @@ def main(
         # 2) Forward host -> Docker.
         # This allows PHP/Doctrine container to access the Scalingo database.
 
-        username = _get_output(["whoami"])
+        displayed_port = port
 
-        # https://stackoverflow.com/a/55224655
-        docker_bridge_ip = _get_output(
-            [
-                "docker",
-                "network",
-                "inspect",
-                "bridge",
-                "--format={{(index .IPAM.Config 0).Gateway}}",
+        if platform.system().lower() == "darwin":
+            # Docker Desktop n'expose pas l'IP du bridge Linux sur l'hôte macOS.
+            # On republie donc le tunnel sur un second port accessible via
+            # `host.docker.internal`, pour éviter une boucle de forwarding sur
+            # le port déjà utilisé par `scalingo db-tunnel`.
+            docker_bind_port = port + 1
+            docker_tunnel_origin = f"0.0.0.0:{docker_bind_port}"
+            displayed_port = docker_bind_port
+            docker_tunnel_context = _tcp_proxy_on_exit("0.0.0.0", docker_bind_port, "127.0.0.1", port)
+        else:
+            username = _get_output(["whoami"])
+            # https://stackoverflow.com/a/55224655
+            docker_bridge_ip = _get_output(
+                [
+                    "docker",
+                    "network",
+                    "inspect",
+                    "bridge",
+                    "--format={{(index .IPAM.Config 0).Gateway}}",
+                ]
+            )
+            docker_tunnel_origin = f"{docker_bridge_ip}:{port}"
+            displayed_port = port
+            # https://stackoverflow.com/a/52120176
+            docker_tunnel_command = [
+                "ssh",
+                "-N",
+                "-L",
+                f"{docker_tunnel_origin}:127.0.0.1:{port}",
+                f"{username}@localhost",
             ]
-        )
-        docker_tunnel_origin = f"{docker_bridge_ip}:{port}"
+            docker_tunnel_context = _popen_terminate_on_exit(docker_tunnel_command)
 
-        # https://stackoverflow.com/a/52120176
-        docker_tunnel_command = [
-            "ssh",
-            "-N",
-            "-L",
-            f"{docker_tunnel_origin}:127.0.0.1:{port}",
-            f"{username}@localhost",
-        ]
-
-        with _popen_terminate_on_exit(docker_tunnel_command):
+        with docker_tunnel_context:
             # The tunnel database URL uses the same credentials, so we grab them
             # from the configured DATABASE_URL.
             database_url = urlparse(
@@ -105,7 +200,7 @@ def main(
             )
 
             # DB tunnel is always available on localhost, so we can show either.
-            displayed_origin = f"127.0.0.1:{port}" if host_url else docker_tunnel_origin
+            displayed_origin = f"127.0.0.1:{displayed_port}" if host_url else docker_tunnel_origin
 
             db_tunnel_database_url = database_url._replace(
                 netloc=f"{database_url.username}:{database_url.password}@{displayed_origin}"
