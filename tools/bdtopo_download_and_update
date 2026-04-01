@@ -5,7 +5,7 @@ Script d'automatisation pour télécharger, dézipper et importer les données B
 Compatible avec macOS, Linux et la CI GitHub Actions.
 
 Usage:
-    ./tools/bdtopo_download_and_update [--download-dir DIR] [--keep-archives] [--skip-download] [--skip-import] [--prod] [--overwrite] [-y]
+    ./tools/bdtopo_download_and_update [--download-dir DIR] [--keep-archives] [--skip-download] [--skip-import] [--prod [2025|2025_2]] [--overwrite] [-y]
 
 Options:
     --download-dir DIR     Répertoire où télécharger et dézipper les données
@@ -13,7 +13,8 @@ Options:
     --keep-archives         Conserver les archives .7z après dézippage
     --skip-download         Ignorer le téléchargement (utiliser les fichiers déjà présents)
     --skip-import           Ignorer l'import (seulement télécharger et dézipper)
-    --prod                  Déployer vers l'environnement de production
+    --prod [TARGET]         Déployer vers une base de production
+                           (`2025` par défaut, ou `2025_2`)
     --overwrite             Réécrire les tables au lieu d'ajouter
     --skip-migrate          Ignorer l'exécution des migrations d'index après l'import
     -y, --yes               Accepter toutes les confirmations
@@ -261,6 +262,44 @@ def _merge_7z_parts(parts: list[Path], output_path: Path) -> None:
     print(f"✓ Fusion terminée")
 
 
+def _resolve_target_database_url(args: argparse.Namespace) -> tuple[str | None, str | None]:
+    """
+    Détermine la base BDTOPO cible pour l'import et les migrations.
+
+    Priorité:
+    1. `--url`
+    2. `--prod=2025` -> `BDTOPO_2025_DATABASE_URL`
+    3. `--prod=2025_2` -> `BDTOPO_2025_2_DATABASE_URL`
+    """
+    if args.url:
+        print("Utilisation de l'URL fournie via --url")
+        return args.url, "--url"
+
+    if args.prod == "2025":
+        database_url = os.environ.get("BDTOPO_2025_DATABASE_URL")
+        if not database_url:
+            print(
+                "ERROR: BDTOPO_2025_DATABASE_URL est absente de l'environnement",
+                file=sys.stderr,
+            )
+            return None, None
+        print("Utilisation de BDTOPO_2025_DATABASE_URL pour charger la base cible")
+        return database_url, "BDTOPO_2025_DATABASE_URL"
+
+    if args.prod == "2025_2":
+        database_url = os.environ.get("BDTOPO_2025_2_DATABASE_URL")
+        if not database_url:
+            print(
+                "ERROR: BDTOPO_2025_2_DATABASE_URL est absente de l'environnement",
+                file=sys.stderr,
+            )
+            return None, None
+        print("Utilisation de BDTOPO_2025_2_DATABASE_URL pour charger la base cible")
+        return database_url, "BDTOPO_2025_2_DATABASE_URL"
+
+    return None, None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Télécharge, dézippe et importe les données BDTOPO EXPRESS",
@@ -299,8 +338,11 @@ def main() -> int:
     )
     parser.add_argument(
         "--prod",
-        action="store_true",
-        help="Déployer vers l'environnement de production",
+        nargs="?",
+        const="2025",
+        default=None,
+        choices=["2025", "2025_2"],
+        help="Déployer vers une base de production (`2025` par défaut, ou `2025_2`)",
     )
     parser.add_argument(
         "--overwrite",
@@ -470,22 +512,22 @@ def main() -> int:
             str(extracted_dir),
         ]
 
-        # Utiliser la variable d'environnement BDTOPO_2025_DATABASE_URL si disponible
-        # Sinon, utiliser --prod ou --url selon les arguments
-        database_url_from_env = os.environ.get("BDTOPO_2025_DATABASE_URL")
+        database_url_from_env, database_url_source = _resolve_target_database_url(args)
         database_url_for_migrations = None  # Sera utilisé pour les migrations
 
         if database_url_from_env:
             cmd.extend(["--url", database_url_from_env])
             database_url_for_migrations = database_url_from_env
-            print(f"Utilisation de BDTOPO_2025_DATABASE_URL depuis l'environnement")
-        elif args.prod:
-            cmd.append("--prod")
-            # Pour --prod, on récupérera l'URL depuis l'environnement après l'import
-            database_url_for_migrations = os.environ.get("BDTOPO_2025_DATABASE_URL")
+            print(f"Base cible sélectionnée via {database_url_source}")
         elif args.url:
             cmd.extend(["--url", args.url])
             database_url_for_migrations = args.url
+        else:
+            print(
+                "ERROR: veuillez fournir --url ou --prod [2025|2025_2]",
+                file=sys.stderr,
+            )
+            return 1
 
         if args.overwrite:
             cmd.append("--overwrite")
@@ -544,7 +586,7 @@ def main() -> int:
                     # Utiliser la même URL de base de données que pour l'import
                     env = os.environ.copy()
                     if database_url_for_migrations:
-                        env["BDTOPO_2025_DATABASE_URL"] = database_url_for_migrations
+                        env["BDTOPO_DATABASE_URL"] = database_url_for_migrations
 
                     if is_ci:
                         # Dans la CI, utiliser directement php bin/console si disponible
