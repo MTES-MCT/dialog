@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Api\Regulations;
 use App\Application\CommandBusInterface;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -105,6 +106,8 @@ final class PublishRegulationController
                 'detail' => 'L\'arrêté ne peut pas être publié.',
             ], Response::HTTP_BAD_REQUEST);
         }
+
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         return new JsonResponse([
             'identifier' => $regulationOrderRecord->getRegulationOrder()->getIdentifier(),

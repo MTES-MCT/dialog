@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -52,6 +53,8 @@ final class PublishRegulationController extends AbstractRegulationController
         } catch (RegulationOrderRecordCannotBePublishedException) {
             throw new AccessDeniedHttpException();
         }
+
+        $this->commandBus->dispatchAsync(new GenerateDatexCommand());
 
         return new RedirectResponse(
             url: $this->router->generate('app_regulation_detail', [

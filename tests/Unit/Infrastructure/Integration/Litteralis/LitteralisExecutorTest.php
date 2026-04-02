@@ -11,6 +11,7 @@ use App\Application\Integration\Litteralis\Command\CleanUpLitteralisRegulationsB
 use App\Application\Integration\Litteralis\Command\ImportLitteralisRegulationCommand;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
@@ -142,6 +143,10 @@ final class LitteralisExecutorTest extends TestCase
         $this->reporter->method('acknowledgeNewErrors');
         $this->reporter->expects(self::never())->method('end');
 
+        $this->commandBus
+            ->expects(self::never())
+            ->method('dispatchAsync');
+
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('oops');
         $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter);
@@ -200,6 +205,11 @@ final class LitteralisExecutorTest extends TestCase
         $this->reportFormatter->method('format')->willReturn('report');
         $this->reporter->method('onReport')->with('report');
 
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
+
         $this->assertSame('report', $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter));
     }
 
@@ -244,6 +254,11 @@ final class LitteralisExecutorTest extends TestCase
         $this->reporter->method('getRecords')->willReturn(['record1', 'record2']);
         $this->reportFormatter->method('format')->with(['record1', 'record2'])->willReturn('report');
         $this->reporter->method('onReport')->with('report');
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(new GenerateDatexCommand());
 
         $this->assertSame('report', $this->createExecutor()->execute('test', $this->orgId, $laterThan, $this->reporter));
     }

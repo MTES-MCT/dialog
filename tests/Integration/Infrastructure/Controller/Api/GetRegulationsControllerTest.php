@@ -45,7 +45,6 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $client->request('GET', '/api/regulations.xml');
         $response = $client->getResponse();
 
-        $this->assertInstanceOf(StreamedResponse::class, $response);
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();

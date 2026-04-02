@@ -7,6 +7,7 @@ namespace App\Infrastructure\Integration\BacIdf;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\BacIdf\Exception\ImportBacIdfRegulationFailedException;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Infrastructure\Integration\BacIdf\Exception\BacIdfException;
@@ -74,6 +75,8 @@ final class BacIdfExecutor
                     }
                 }
             }
+
+            $this->commandBus->dispatchAsync(new GenerateDatexCommand());
         } catch (\Exception $exc) {
             $this->logger->error('exception', ['exc' => $exc]);
 
