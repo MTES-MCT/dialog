@@ -7,14 +7,12 @@ namespace App\Infrastructure\Persistence\Doctrine\PostGIS\Event;
 use App\Infrastructure\Persistence\Doctrine\DBAL\Types\GeoJSONGeometryType;
 use Doctrine\DBAL\Event\SchemaColumnDefinitionEventArgs;
 use Doctrine\DBAL\Types\Type;
-use Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber as BaseORMSchemaEventSubscriber;
+use Jsor\Doctrine\PostGIS\Event\ORMSchemaEventListener as BaseORMSchemaEventListener;
 
-// Credit: https://github.com/coopcycle/coopcycle-web/blob/c9ea24efcbeb11d54d106ef6ae641706d90c3c74/src/Doctrine/PostGIS/ORMSchemaEventSubscriber.php
-class ORMSchemaEventSubscriber extends BaseORMSchemaEventSubscriber
+class ORMSchemaEventListener extends BaseORMSchemaEventListener
 {
     public function onSchemaColumnDefinition(SchemaColumnDefinitionEventArgs $args): void
     {
-        parent::onSchemaColumnDefinition($args);
         $this->handleGeoJsonGeometryTypeComments($args);
     }
 

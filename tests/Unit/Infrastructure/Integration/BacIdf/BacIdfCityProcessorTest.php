@@ -29,7 +29,7 @@ final class BacIdfCityProcessorTest extends TestCase
         $fp = fopen($this->citiesFile, 'w');
 
         foreach ($rows as $row) {
-            fputcsv($fp, $row, separator: ';');
+            fputcsv($fp, $row, separator: ';', escape: '\\');
         }
 
         fclose($fp);

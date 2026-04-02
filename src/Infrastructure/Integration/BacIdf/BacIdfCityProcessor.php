@@ -29,7 +29,7 @@ final class BacIdfCityProcessor implements BacIdfCityProcessorInterface
         $header = [];
 
         foreach (file($filename) as $index => $line) {
-            $row = str_getcsv($line, separator: ';');
+            $row = str_getcsv($line, separator: ';', escape: '\\');
 
             if ($index === 0) {
                 $header = $row;
