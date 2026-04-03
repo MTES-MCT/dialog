@@ -15,6 +15,7 @@ export default class extends Controller {
         this.selectTarget.addEventListener('change', () => {
             const selectedOption = this.selectTarget.options[this.selectTarget.selectedIndex];
             this.hiddenTarget.value = selectedOption.dataset['value'];
+            this.hiddenTarget.dispatchEvent(new Event('change', { bubbles: true }));
         });
     }
 }
