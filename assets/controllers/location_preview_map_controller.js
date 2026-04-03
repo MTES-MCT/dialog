@@ -229,17 +229,49 @@ export default class extends Controller {
         this.#map = new maplibregl.Map({
             container: this.containerTarget,
             style: mapStyles.desaturated,
-            interactive: false,
+            interactive: true,
             attributionControl: false,
+            dragPan: true,
+            dragRotate: false,
+            keyboard: false,
+            touchPitch: false,
+            boxZoom: false,
         });
 
         this.#map.on('load', () => {
+            this.#addHouseNumbersLayer();
             this.#addSourceAndLayers(geojson);
             this.#fitBounds(geojson);
         });
 
         this.#map.on('error', () => {
             this.#hideMap();
+        });
+    }
+
+    #addHouseNumbersLayer() {
+        this.#map.addLayer({
+            id: 'house-numbers',
+            type: 'symbol',
+            source: 'plan_ign',
+            'source-layer': 'toponyme_parcellaire_adresse_ponc',
+            minzoom: 15,
+            filter: ['==', 'txt_typo', 'ADRESSE'],
+            layout: {
+                'symbol-placement': 'point',
+                'text-field': ['concat', ['get', 'numero'], ['get', 'indice_de_repetition']],
+                'text-size': {
+                    stops: [[15, 9], [17, 11], [18, 13]],
+                },
+                'text-anchor': 'center',
+                'text-font': ['Noto Sans Regular'],
+                'text-allow-overlap': false,
+            },
+            paint: {
+                'text-color': '#695744',
+                'text-halo-width': 1,
+                'text-halo-color': '#FFFFFF',
+            },
         });
     }
 
@@ -305,7 +337,7 @@ export default class extends Controller {
         if (!bounds.isEmpty()) {
             this.#map.fitBounds(bounds, {
                 padding: 40,
-                maxZoom: 15,
+                maxZoom: 18,
                 animate: false,
             });
         }
