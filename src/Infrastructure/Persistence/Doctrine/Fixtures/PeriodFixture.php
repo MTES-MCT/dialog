@@ -148,6 +148,14 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
         );
 
+        $publishedSpeedLimitationPeriod = new Period(
+            uuid: 'f1a2b3c6-d5e6-4789-a012-3456789abcde',
+            measure: $this->getReference('publishedSpeedLimitationMeasure', Measure::class),
+            startDateTime: new \DateTimeImmutable('2023-07-03 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2023-11-10 23:59:00', $tz),
+            recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
+        );
+
         $winterMaintenancePeriod = new Period(
             uuid: '10258e5a-0f5b-4e74-ac9e-cbda7f64165d',
             measure: $this->getReference('winterMaintenanceMeasure', Measure::class),
@@ -182,6 +190,7 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($outDatedCifsDailyRange);
         $manager->persist($rawGeoJSONPeriod);
         $manager->persist($litteralisPeriod);
+        $manager->persist($publishedSpeedLimitationPeriod);
         $manager->persist($winterMaintenancePeriod);
         $manager->persist($parkingProhibitedPeriod);
 

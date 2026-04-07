@@ -10,6 +10,7 @@ use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class LocationRepository extends ServiceEntityRepository implements LocationRepositoryInterface
@@ -70,6 +71,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
+        ?int $speedLimit = null,
     ): string {
         $parameters = [
             'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
@@ -142,6 +144,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             }
         }
 
+        $speedLimitWhereClause = '';
+        if (null !== $speedLimit) {
+            $speedLimitWhereClause = ' AND (m.type <> \'speedLimitation\' OR m.max_speed = :speedLimit)';
+            $parameters['speedLimit'] = $speedLimit;
+            $types['speedLimit'] = ParameterType::INTEGER;
+        }
+
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
             \sprintf(
                 'SELECT
@@ -164,6 +173,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 AND m.type IN (:measureTypes)
                 %s
                 %s
+                %s
                 ORDER BY CASE m.type
                     WHEN \'alternateRoad\' THEN 1
                     WHEN \'parkingProhibited\' THEN 2
@@ -174,6 +184,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 ',
                 $regulationTypeWhereClause,
                 $measureDatesCondition,
+                $speedLimitWhereClause,
             ),
             $parameters,
             $types,

@@ -28,6 +28,11 @@ final class MapFilterFormType extends AbstractType
                 options: $this->getMeasureTypesOptions(),
             )
             ->add(
+                'speedLimit',
+                ChoiceType::class,
+                options: $this->getSpeedLimitOptions(),
+            )
+            ->add(
                 'displayPermanentRegulations',
                 CheckboxType::class,
                 options: [
@@ -91,6 +96,17 @@ final class MapFilterFormType extends AbstractType
             'multiple' => true,
             'expanded' => true,
             'required' => false,
+        ];
+    }
+
+    private function getSpeedLimitOptions(): array
+    {
+        return [
+            'choices' => MapFilterSpeedLimitChoice::choicesForForm(),
+            'label' => 'map.filters.title.speed_limit',
+            'placeholder' => 'map.filter.speed_limit.placeholder',
+            'required' => false,
+            'empty_data' => null,
         ];
     }
 }

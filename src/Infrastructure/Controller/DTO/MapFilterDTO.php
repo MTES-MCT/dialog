@@ -15,6 +15,9 @@ final class MapFilterDTO
         MeasureTypeEnum::NO_ENTRY->value,
         MeasureTypeEnum::SPEED_LIMITATION->value,
     ];
+
+    public ?int $speedLimit = null;
+
     public ?\DateTimeInterface $endDate = null;
 
     public function __construct(

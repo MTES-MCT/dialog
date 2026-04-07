@@ -23,13 +23,31 @@ final class MapDataControllerTest extends AbstractWebTestCase
         $jsonData = $client->getResponse()->getContent();
         $dataArray = json_decode($jsonData, true);
 
-        $this->assertCount(3, $dataArray['features']);
+        $this->assertCount(4, $dataArray['features']);
         $locationUuids = array_map(fn ($f) => $f['properties']['location_uuid'], $dataArray['features']);
         // Toutes les localisations des arrêtés de test publiés avec des mesures actives à la date 'now' définie par DateUtilsMock
         // L'ordre peut varier donc on teste par présence et non en comparant la liste exacte
         $this->assertContains(LocationFixture::UUID_CIFS_NAMED_STREET, $locationUuids);
         $this->assertContains(LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD, $locationUuids);
         $this->assertContains(LocationFixture::UUID_LITTERALIS, $locationUuids);
+        $this->assertContains(LocationFixture::UUID_PUBLISHED_SPEED_LIMITATION, $locationUuids);
+    }
+
+    public function testSpeedLimitFilterRestrictsSpeedLimitationMeasures(): void
+    {
+        $client = static::createClient();
+
+        $baseQuery = 'map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayTemporaryRegulations]=yes';
+
+        $client->request('GET', '/carte/data.geojson?' . $baseQuery . '&map_filter_form[speedLimit]=50');
+        $withMatchingSpeed = json_decode($client->getResponse()->getContent(), true);
+        $uuids50 = array_map(fn ($f) => $f['properties']['location_uuid'], $withMatchingSpeed['features']);
+        $this->assertContains(LocationFixture::UUID_PUBLISHED_SPEED_LIMITATION, $uuids50);
+
+        $client->request('GET', '/carte/data.geojson?' . $baseQuery . '&map_filter_form[speedLimit]=30');
+        $withOtherSpeed = json_decode($client->getResponse()->getContent(), true);
+        $uuids30 = array_map(fn ($f) => $f['properties']['location_uuid'], $withOtherSpeed['features']);
+        $this->assertNotContains(LocationFixture::UUID_PUBLISHED_SPEED_LIMITATION, $uuids30);
     }
 
     public function testMeasureTypesFilter(): void

@@ -2378,6 +2378,14 @@
                 <source>map.filter.type.parkingProhibited</source>
                 <target>Stationnement interdit</target>
             </trans-unit>
+            <trans-unit id="map.filters.title.speed_limit">
+                <source>map.filters.title.speed_limit</source>
+                <target>Limitation de vitesse (km/h)</target>
+            </trans-unit>
+            <trans-unit id="map.filter.speed_limit.placeholder">
+                <source>map.filter.speed_limit.placeholder</source>
+                <target>Toutes les vitesses</target>
+            </trans-unit>
             <trans-unit id="map.filters.title.application.period">
                 <source>map.filters.title.application.period</source>
                 <target>Période d'application</target>

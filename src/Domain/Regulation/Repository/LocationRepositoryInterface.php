@@ -20,6 +20,7 @@ interface LocationRepositoryInterface
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
+        ?int $speedLimit = null,
     ): string;
 
     /** @return Location[] */

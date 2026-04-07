@@ -34,6 +34,7 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
     public const UUID_CIFS_DEPARTMENTAL_ROAD = '065f94ef-ea0a-7ab5-8000-bd5686102151';
     public const UUID_OUTDATED_CIFS = 'ad7b675a-92d8-4556-a0e6-09cc66eb259a';
     public const UUID_LITTERALIS = '066e984f-4746-78f8-8000-dce555b28604';
+    public const UUID_PUBLISHED_SPEED_LIMITATION = 'f1a2b3c5-d5e6-4789-a012-3456789abcde';
 
     public function load(ObjectManager $manager): void
     {
@@ -287,6 +288,19 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             label: 'Zone Olympique',
         );
 
+        $publishedSpeedLimitationLocation = new Location(
+            self::UUID_PUBLISHED_SPEED_LIMITATION,
+            $this->getReference('publishedSpeedLimitationMeasure', Measure::class),
+            roadType: RoadTypeEnum::RAW_GEOJSON->value,
+            geometry: '{"type":"LineString","coordinates":[[3.023890325,50.570177599],[3.023850386,50.570151247]]}',
+        );
+
+        $publishedSpeedLimitationLocationRawGeoJSON = new RawGeoJSON(
+            uuid: 'f1a2b3c7-d5e6-4789-a012-3456789abcde',
+            location: $publishedSpeedLimitationLocation,
+            label: 'Route test limitation 50 km/h',
+        );
+
         $litteralisLocation1 = new Location(
             self::UUID_LITTERALIS,
             $this->getReference('litteralisMeasure', Measure::class),
@@ -356,6 +370,8 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($cifsLocationDepartmentalRoad);
         $manager->persist($rawGeoJSONLocation);
         $manager->persist($rawGeoJSON);
+        $manager->persist($publishedSpeedLimitationLocation);
+        $manager->persist($publishedSpeedLimitationLocationRawGeoJSON);
         $manager->persist($litteralisLocation1);
         $manager->persist($litteralisLocation1RawGeoJSON);
         $manager->persist($winterMaintenanceLocation);

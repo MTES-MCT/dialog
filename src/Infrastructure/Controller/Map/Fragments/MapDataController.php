@@ -51,6 +51,7 @@ final class MapDataController
             $dto->measureTypes,
             $dto->startDate,
             $dto->endDate,
+            $dto->speedLimit,
         );
 
         return new Response(

@@ -17,6 +17,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
     public const UUID_TYPICAL = 'e48cbfff-bb04-428e-9cb0-22456fd7aab6';
     public const UUID_DOES_NOT_EXIST = '3f45e08a-c6b6-4026-86f1-cb8766756ad5';
     public const UUID_PUBLISHED = '59143d8d-d201-4950-be76-f367e39be522';
+    public const UUID_PUBLISHED_SPEED_LIMITATION = 'f1a2b3c4-d5e6-4789-a012-3456789abcde';
     public const UUID_COMPLEX_VEHICLES = self::UUID_PUBLISHED;
     public const UUID_FULL_CITY = '0658c562-641f-75b5-8000-0acab688b2d7';
     public const UUID_PERMANENT_ONLY_ONE = 'fa8f07e7-2db6-444d-bb41-3815b46198be';
@@ -47,6 +48,14 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             $this->getReference('publishedRegulationOrder', RegulationOrder::class),
             MeasureTypeEnum::NO_ENTRY->value,
             new \DateTime('2023-06-01'),
+        );
+
+        $publishedSpeedLimitationMeasure = new Measure(
+            self::UUID_PUBLISHED_SPEED_LIMITATION,
+            $this->getReference('litteralisRegulationOrder', RegulationOrder::class),
+            MeasureTypeEnum::SPEED_LIMITATION->value,
+            new \DateTime('2023-06-01'),
+            maxSpeed: 50,
         );
 
         $permanentMeasure = new Measure(
@@ -108,6 +117,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
+        $manager->persist($publishedSpeedLimitationMeasure);
         $manager->persist($permanentMeasure);
         $manager->persist($fullCityMeasure);
         $manager->persist($cifsMeasure);
@@ -120,6 +130,7 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
         $this->addReference('publishedMeasure', $publishedMeasure);
+        $this->addReference('publishedSpeedLimitationMeasure', $publishedSpeedLimitationMeasure);
         $this->addReference('permanentMeasure', $permanentMeasure);
         $this->addReference('fullCityMeasure', $fullCityMeasure);
         $this->addReference('cifsMeasure', $cifsMeasure);
