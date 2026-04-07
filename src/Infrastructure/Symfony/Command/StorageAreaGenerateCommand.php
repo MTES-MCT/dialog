@@ -26,7 +26,7 @@ class StorageAreaGenerateCommand extends Command
         parent::__construct();
     }
 
-    public function configure()
+    public function configure(): void
     {
         $this->addArgument('path', InputArgument::REQUIRED);
     }
