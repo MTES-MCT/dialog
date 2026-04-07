@@ -86,7 +86,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         RegulationListFiltersDTO $dto,
     ): array {
         $query = $this->createQueryBuilder('roc')
-            ->select('roc.uuid, ro.identifier, ro.category, roc.status, o.name as organizationName, o.uuid as organizationUuid')
+            ->select('roc.uuid, ro.identifier, ro.category, roc.status, roc.source, o.name as organizationName, o.uuid as organizationUuid')
             ->addSelect(\sprintf('(%s) AS overallStartDate', str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
             ->addSelect(\sprintf('(%s) AS overallEndDate', str_replace('%%n', '11', self::OVERALL_END_DATE_QUERY_TEMPLATE)))
             ->addSelect(\sprintf('(%s) as nbLocations', self::COUNT_LOCATIONS_QUERY))
@@ -232,6 +232,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                     org.departmentName as organizationDepartment,
                     est.addressComplement as organizationAddressComplement,
                     roc.status,
+                    roc.source,
                     ro.uuid as regulationOrderUuid,
                     rot.uuid as regulationOrderTemplateUuid,
                     ro.category,

@@ -913,6 +913,10 @@
                 <source>regulation.publish_modal.title</source>
                 <target>Publier cet arrêté ?</target>
             </trans-unit>
+            <trans-unit id="regulation.edit_published.saved">
+                <source>regulation.edit_published.saved</source>
+                <target>Vos modifications sur cet arrêté publié ont bien été enregistrées.</target>
+            </trans-unit>
             <trans-unit id="regulation.duplicated.success">
                 <source>regulation.duplicated.success</source>
                 <target>

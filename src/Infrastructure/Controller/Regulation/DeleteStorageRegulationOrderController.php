@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationOrderStorageCommand;
 use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,8 +28,9 @@ final class DeleteStorageRegulationOrderController extends AbstractRegulationCon
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -41,6 +43,7 @@ final class DeleteStorageRegulationOrderController extends AbstractRegulationCon
     public function __invoke(string $uuid): RedirectResponse
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $this->assertRegulationOrderRecordContentEditable($regulationOrderRecord);
 
         if (!$this->security->isGranted(RegulationOrderRecordVoter::PUBLISH, $regulationOrderRecord)) {
             throw new AccessDeniedHttpException();

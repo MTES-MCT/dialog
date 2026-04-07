@@ -80,6 +80,10 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->expects(self::never())
             ->method('handle');
 
+        $this->commandBus
+            ->expects(self::never())
+            ->method('dispatchAsync');
+
         $this->regulationOrderRecordRepository
             ->expects(self::once())
             ->method('add')
@@ -165,6 +169,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder);
         $regulationOrderRecord
+            ->method('getStatus')
+            ->willReturn(RegulationOrderRecordStatusEnum::DRAFT->value);
+        $regulationOrderRecord
             ->expects(self::once())
             ->method('updateOrganization')
             ->with($organization);
@@ -175,6 +182,9 @@ final class SaveRegulationGeneralInfoCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('handle')
             ->with($this->equalTo($regulationOrderHistoryCommand));
+        $this->commandBus
+            ->expects(self::never())
+            ->method('dispatchAsync');
         $handler = new SaveRegulationGeneralInfoCommandHandler(
             $this->idFactory,
             $this->regulationOrderRepository,

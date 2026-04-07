@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationOrderStorageCommand;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Form\Regulation\StorageRegulationOrderFormType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -28,8 +29,9 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -41,6 +43,7 @@ final class AddStorageRegulationOrderController extends AbstractRegulationContro
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $this->assertRegulationOrderRecordContentEditable($regulationOrderRecord);
 
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $command = new SaveRegulationOrderStorageCommand($regulationOrder, null);

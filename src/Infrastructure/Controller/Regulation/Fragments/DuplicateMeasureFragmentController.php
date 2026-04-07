@@ -11,6 +11,7 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class DuplicateMeasureFragmentController extends AbstractRegulationController
@@ -29,10 +31,12 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
         private CanDeleteMeasures $canDeleteMeasures,
         private CommandBusInterface $commandBus,
+        private TranslatorInterface $translator,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -47,7 +51,6 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         /* On récupère le regulationOrderRecord pour vérifier que l'utilisateur a bien accès à l'organisation */
 
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
-
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
 
         $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));

@@ -24,10 +24,8 @@ final class DeleteMeasureCommandHandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
-
         $regulationOrder = $this->createMock(RegulationOrder::class);
         $regulationOrder
-            ->expects(self::once())
             ->method('getRegulationOrderRecord')
             ->willReturn($this->regulationOrderRecord);
 

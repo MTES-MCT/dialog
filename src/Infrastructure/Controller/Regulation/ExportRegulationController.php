@@ -11,6 +11,7 @@ use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\RegulationOrderTemplateTransformer;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -25,11 +26,12 @@ final class ExportRegulationController extends AbstractRegulationController
         QueryBusInterface $queryBus,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
         private readonly RegulationOrderTemplateTransformer $regulationOrderTemplateTransformer,
         private readonly \Twig\Environment $twig,
         private readonly string $projectDir,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(

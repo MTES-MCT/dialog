@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\Organization\MailingList\Command\SendRegulationOrderToMailingListCommand;
 use App\Application\Organization\MailingList\Query\GetMailingListQuery;
 use App\Application\QueryBusInterface;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Form\Organization\SendToMailingListFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
@@ -34,8 +35,9 @@ final class SendRegulationOrderToMailingListController extends AbstractRegulatio
         Security $security,
         QueryBusInterface $queryBus,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(

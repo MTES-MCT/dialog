@@ -40,6 +40,7 @@ final class GetGeneralInfoQueryHandler
                 addressComplement: $row['organizationAddressComplement'],
             ) : null,
             status: $row['status'],
+            source: $row['source'],
             regulationOrderUuid: $row['regulationOrderUuid'],
             regulationOrderTemplateUuid: $row['regulationOrderTemplateUuid'],
             category: $row['category'],

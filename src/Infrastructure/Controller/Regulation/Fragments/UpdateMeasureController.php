@@ -16,6 +16,7 @@ use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -26,6 +27,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -43,8 +45,9 @@ final class UpdateMeasureController extends AbstractRegulationController
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -55,6 +58,7 @@ final class UpdateMeasureController extends AbstractRegulationController
     public function __invoke(Request $request, string $regulationOrderRecordUuid, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+        $this->assertRegulationOrderRecordContentEditable($regulationOrderRecord);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $organization = $regulationOrderRecord->getOrganization();
 
@@ -93,6 +97,15 @@ final class UpdateMeasureController extends AbstractRegulationController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $this->commandBus->handle($command);
+
+                if (!$regulationOrderRecord->isDraft()) {
+                    /** @var FlashBagAwareSessionInterface */
+                    $session = $request->getSession();
+                    $session->getFlashBag()->add(
+                        'success',
+                        $this->translator->trans('regulation.edit_published.saved'),
+                    );
+                }
 
                 return new RedirectResponse(
                     url: $this->router->generate('fragment_regulations_measure', [

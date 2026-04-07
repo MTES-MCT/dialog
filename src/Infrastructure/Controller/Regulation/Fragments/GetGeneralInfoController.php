@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -21,8 +22,9 @@ final class GetGeneralInfoController extends AbstractRegulationController
         protected QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -43,7 +45,7 @@ final class GetGeneralInfoController extends AbstractRegulationController
                 name: 'regulation/fragments/_general_info.html.twig',
                 context: [
                     'generalInfo' => $generalInfo,
-                    'canEdit' => $generalInfo->isDraft(),
+                    'canEdit' => $generalInfo->allowsEditingContentInApplication(),
                 ],
             ),
         );

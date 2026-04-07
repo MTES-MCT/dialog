@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Query\GetRegulationOrderTemplatesQuery;
 use App\Domain\Regulation\DTO\RegulationOrderTemplateDTO;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
@@ -18,8 +19,10 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class SaveGeneralInfoController extends AbstractRegulationController
 {
@@ -28,11 +31,13 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
         private RouterInterface $router,
+        private TranslatorInterface $translator,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -45,6 +50,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         /** @var AbstractAuthenticatedUser */
         $user = $this->security->getUser();
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $this->assertRegulationOrderRecordContentEditable($regulationOrderRecord);
         $organizationUuid = $regulationOrderRecord->getOrganizationUuid();
 
         $dto = new RegulationOrderTemplateDTO();
@@ -72,7 +78,17 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $wasPublished = !$regulationOrderRecord->isDraft();
             $this->commandBus->handle($command);
+
+            if ($wasPublished) {
+                /** @var FlashBagAwareSessionInterface */
+                $session = $request->getSession();
+                $session->getFlashBag()->add(
+                    'success',
+                    $this->translator->trans('regulation.edit_published.saved'),
+                );
+            }
 
             return new RedirectResponse(
                 url: $this->router->generate('fragment_regulations_general_info', [

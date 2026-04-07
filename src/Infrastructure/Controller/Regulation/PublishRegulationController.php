@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\PublishRegulationCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordCannotBePublishedException;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Security\Voter\RegulationOrderRecordVoter;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -29,8 +30,9 @@ final class PublishRegulationController extends AbstractRegulationController
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(

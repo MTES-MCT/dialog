@@ -13,6 +13,7 @@ use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\ArrayRegulationMeasures;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
 use App\Domain\Regulation\Specification\CanViewRegulationDetail;
@@ -34,8 +35,9 @@ final class RegulationDetailController extends AbstractRegulationController
         private StorageInterface $storage,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -72,6 +74,7 @@ final class RegulationDetailController extends AbstractRegulationController
         $context = [
             'uuid' => $uuid,
             'isDraft' => $generalInfo->isDraft(),
+            'canEditContent' => !$isReadOnly,
             'canPublish' => !$isReadOnly && $this->canRegulationOrderRecordBePublished->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
             'canDelete' => !$isReadOnly && $this->canDeleteMeasures->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
             'isReadOnly' => $isReadOnly,

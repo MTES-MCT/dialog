@@ -8,6 +8,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
@@ -23,7 +24,19 @@ abstract class AbstractRegulationController
         protected QueryBusInterface $queryBus,
         protected Security $security,
         protected CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        protected CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
+    }
+
+    protected function assertRegulationOrderRecordContentEditable(RegulationOrderRecord $regulationOrderRecord): void
+    {
+        if ($regulationOrderRecord->isDraft()) {
+            return;
+        }
+
+        if (!$this->canEditRegulationOrderRecord->isSatisfiedBy($regulationOrderRecord->getSource())) {
+            throw new AccessDeniedHttpException();
+        }
     }
 
     protected function getRegulationOrderRecordUsing(callable $func, bool $requireUserSameOrg = true): mixed

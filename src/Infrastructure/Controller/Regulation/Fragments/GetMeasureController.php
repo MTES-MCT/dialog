@@ -10,6 +10,7 @@ use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
@@ -28,8 +29,9 @@ final class GetMeasureController extends AbstractRegulationController
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -62,13 +64,16 @@ final class GetMeasureController extends AbstractRegulationController
             throw new AccessDeniedHttpException();
         }
 
+        $isReadOnly = !$currentUser || !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $currentUser->getUserOrganizationUuids());
+
         return new Response(
             $this->twig->render(
                 name: 'regulation/fragments/_measure.html.twig',
                 context: [
                     'measure' => MeasureView::fromEntity($measure),
                     'generalInfo' => $generalInfo,
-                    'isReadOnly' => !$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $currentUser->getUserOrganizationUuids()),
+                    'isReadOnly' => $isReadOnly,
+                    'canEdit' => !$isReadOnly && $generalInfo->allowsEditingContentInApplication(),
                     'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                 ],
             ),

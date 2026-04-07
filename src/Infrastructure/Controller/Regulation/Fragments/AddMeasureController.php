@@ -17,6 +17,7 @@ use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Location\GetStorageAreasByRoadNumbersQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -26,6 +27,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -44,8 +46,9 @@ final class AddMeasureController extends AbstractRegulationController
         QueryBusInterface $queryBus,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -56,6 +59,7 @@ final class AddMeasureController extends AbstractRegulationController
     public function __invoke(Request $request, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
+        $this->assertRegulationOrderRecordContentEditable($regulationOrderRecord);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $organization = $regulationOrderRecord->getOrganization();
         $command = SaveMeasureCommand::create($regulationOrder);
@@ -84,6 +88,16 @@ final class AddMeasureController extends AbstractRegulationController
 
                 $measure = $this->commandBus->handle($command);
                 $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
+
+                if (!$regulationOrderRecord->isDraft()) {
+                    /** @var FlashBagAwareSessionInterface */
+                    $session = $request->getSession();
+                    $session->getFlashBag()->add(
+                        'success',
+                        $this->translator->trans('regulation.edit_published.saved'),
+                    );
+                }
+
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
                 return new Response(

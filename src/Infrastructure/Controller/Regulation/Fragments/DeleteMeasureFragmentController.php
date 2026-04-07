@@ -10,16 +10,19 @@ use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Domain\Regulation\Exception\MeasureCannotBeDeletedException;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
+use App\Domain\Regulation\Specification\CanEditRegulationOrderRecord;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class DeleteMeasureFragmentController extends AbstractRegulationController
@@ -28,11 +31,13 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
         private \Twig\Environment $twig,
         private CommandBusInterface $commandBus,
         private CanDeleteMeasures $canDeleteMeasures,
+        private TranslatorInterface $translator,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
+        CanEditRegulationOrderRecord $canEditRegulationOrderRecord,
     ) {
-        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation);
+        parent::__construct($queryBus, $security, $canOrganizationAccessToRegulation, $canEditRegulationOrderRecord);
     }
 
     #[Route(
@@ -45,6 +50,7 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
     public function __invoke(Request $request, string $regulationOrderRecordUuid, string $uuid): Response
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+        $this->assertRegulationOrderRecordContentEditable($regulationOrderRecord);
 
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
         if (!$measure) {
@@ -55,6 +61,15 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
             $this->commandBus->handle(new DeleteMeasureCommand($measure));
         } catch (MeasureCannotBeDeletedException) {
             throw new BadRequestHttpException();
+        }
+
+        if (!$regulationOrderRecord->isDraft()) {
+            /** @var FlashBagAwareSessionInterface */
+            $session = $request->getSession();
+            $session->getFlashBag()->add(
+                'success',
+                $this->translator->trans('regulation.edit_published.saved'),
+            );
         }
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
