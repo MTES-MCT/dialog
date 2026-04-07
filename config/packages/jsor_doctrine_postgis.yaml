@@ -1,7 +1,8 @@
 services:
-    App\Infrastructure\Persistence\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
+    App\Infrastructure\Persistence\Doctrine\PostGIS\Event\ORMSchemaEventListener:
         tags:
-            - { name: doctrine.event_subscriber, connection: default }
+            - { name: doctrine.event_listener, event: postGenerateSchemaTable, connection: default }
+            - { name: doctrine.event_listener, event: onSchemaColumnDefinition, connection: default }
 
 doctrine:
     dbal:
