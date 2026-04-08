@@ -297,7 +297,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             s.identifiant_de_section,
                             s.geometrie,
                             ST_Length(s.geometrie::geography) AS section_length,
-                            ST_LineLocatePoint(s.geometrie::geography, p.geometrie::geography) AS pr_position,
+                            ST_LineLocatePoint(s.geometrie, p.geometrie) AS pr_position,
                             CASE WHEN ST_Distance(
                                 ST_StartPoint(s.geometrie),
                                 (
@@ -330,7 +330,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             s2.identifiant_de_section,
                             s2.geometrie AS section_geometrie,
                             ST_Length(s2.geometrie::geography) AS section_length,
-                            ST_LineLocatePoint(s2.geometrie::geography, p2.geometrie::geography) AS pr_position
+                            ST_LineLocatePoint(s2.geometrie, p2.geometrie) AS pr_position
                         FROM pr_section AS ps
                         LEFT JOIN point_de_repere AS p2 ON p2.gestionnaire = :administrator
                             AND p2.route = :roadNumber
@@ -386,9 +386,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     )
                     SELECT ST_AsGeoJSON(
                         ST_LineInterpolatePoint(
-                            pc.target_geometrie::geography,
+                            pc.target_geometrie,
                             pc.final_position
-                        )::geometry
+                        )
                     ) AS geom,
                     pc.pr_position,
                     pc.direction,
