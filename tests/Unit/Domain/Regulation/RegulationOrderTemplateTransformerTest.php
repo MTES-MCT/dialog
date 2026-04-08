@@ -45,6 +45,7 @@ final class RegulationOrderTemplateTransformerTest extends TestCase
             organizationUuid: '33333333-3333-3333-3333-333333333333',
             organizationAddress: null,
             status: 'DRAFT',
+            source: 'dialog',
             regulationOrderUuid: '44444444-4444-4444-4444-444444444444',
             regulationOrderTemplateUuid: '55555555-5555-5555-5555-555555555555',
             category: 'TEMPORARY_REGULATION',

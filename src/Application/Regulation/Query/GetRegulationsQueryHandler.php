@@ -50,6 +50,7 @@ final class GetRegulationsQueryHandler
                 uuid: $row['uuid'],
                 identifier: $row['identifier'],
                 status: $row['status'],
+                source: $row['source'],
                 numLocations: $row['nbLocations'],
                 organizationName: $row['organizationName'],
                 organizationUuid: $row['organizationUuid'],

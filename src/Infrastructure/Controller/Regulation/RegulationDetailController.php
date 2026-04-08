@@ -12,6 +12,7 @@ use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\ArrayRegulationMeasures;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanRegulationOrderRecordBePublished;
@@ -69,11 +70,17 @@ final class RegulationDetailController extends AbstractRegulationController
 
         $latestHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderUuid));
 
+        $isSourceDialog = $generalInfo->isSourceDialog();
+        $isDraft = $generalInfo->isDraft();
+        $hasUnpublishedChanges = !$isDraft && $latestHistory && $latestHistory->action === ActionTypeEnum::UPDATE->value;
+
         $context = [
             'uuid' => $uuid,
-            'isDraft' => $generalInfo->isDraft(),
+            'isDraft' => $isDraft,
+            'isSourceDialog' => $isSourceDialog,
+            'hasUnpublishedChanges' => $hasUnpublishedChanges,
             'canPublish' => !$isReadOnly && $this->canRegulationOrderRecordBePublished->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
-            'canDelete' => !$isReadOnly && $this->canDeleteMeasures->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
+            'canDelete' => !$isReadOnly && $isSourceDialog && $this->canDeleteMeasures->isSatisfiedBy(new ArrayRegulationMeasures($measures)),
             'isReadOnly' => $isReadOnly,
             'generalInfo' => $generalInfo,
             'isPermanent' => $regulationOrderRecord->getRegulationOrder()->isPermanent(),
