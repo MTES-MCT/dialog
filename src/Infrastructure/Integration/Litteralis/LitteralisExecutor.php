@@ -84,6 +84,8 @@ final class LitteralisExecutor
                     if (!$this->isRecoverableException($exc)) {
                         throw $exc;
                     }
+
+                    $this->entityManager->clear();
                 }
 
                 $reporter->acknowledgeNewErrors();
