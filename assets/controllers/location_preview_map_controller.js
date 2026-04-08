@@ -4,11 +4,10 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 
 export default class extends Controller {
-    static targets = ['container', 'nearbyStreetsList'];
+    static targets = ['container', 'loader', 'message'];
     static values = {
         url: String,
         roadType: String,
-        nearbyStreetsUrl: String,
         roadBanIdField: String,
         roadNameField: String,
         cityCodeField: String,
@@ -19,6 +18,13 @@ export default class extends Controller {
         directionField: String,
         administratorField: String,
         roadNumberField: String,
+        fromPointNumberField: String,
+        fromSideField: String,
+        fromAbscissaField: String,
+        toPointNumberField: String,
+        toSideField: String,
+        toAbscissaField: String,
+        isEntireStreetField: String,
         geometryField: String,
         strokeColor: { type: String, default: '#000091' },
         strokeWidth: { type: Number, default: 3 },
@@ -46,23 +52,51 @@ export default class extends Controller {
     }
 
     #observeFieldChanges() {
-        // Listen to events bubbling up from any form field within the parent location card
-        const locationCard = this.element.closest('[data-controller~="form-reveal"]')
-            || this.element.closest('[data-controller~="reset"]')
+        this._watchedElements = [];
+
+        // Listen directly on each known field for input/change events
+        // (programmatic events on hidden inputs don't bubble)
+        const fieldNames = [
+            'roadBanIdField', 'roadNameField', 'cityCodeField',
+            'fromHouseNumberField', 'fromRoadBanIdField',
+            'toHouseNumberField', 'toRoadBanIdField',
+            'administratorField', 'roadNumberField',
+            'fromPointNumberField', 'fromSideField', 'fromAbscissaField',
+            'toPointNumberField', 'toSideField', 'toAbscissaField',
+            'directionField', 'geometryField', 'isEntireStreetField',
+        ];
+
+        for (const name of fieldNames) {
+            const id = this[`${name}Value`];
+            if (!id) continue;
+            const el = document.getElementById(id);
+            if (!el) continue;
+            el.addEventListener('input', this.#boundDebouncedLoad);
+            el.addEventListener('change', this.#boundDebouncedLoad);
+            this._watchedElements.push(el);
+        }
+
+        // Also listen on a parent for autocomplete.change and native bubbling events
+        const locationCard = this.element.closest('[data-controller~="reset"]')
+            || this.element.closest('[data-controller~="form-reveal"]')
             || this.element.parentElement;
 
         if (locationCard) {
-            locationCard.addEventListener('input', this.#boundDebouncedLoad);
-            locationCard.addEventListener('change', this.#boundDebouncedLoad);
             locationCard.addEventListener('autocomplete.change', this.#boundDebouncedLoad);
             this._locationCard = locationCard;
         }
     }
 
     #stopListeningForm() {
+        if (this._watchedElements) {
+            for (const el of this._watchedElements) {
+                el.removeEventListener('input', this.#boundDebouncedLoad);
+                el.removeEventListener('change', this.#boundDebouncedLoad);
+            }
+            this._watchedElements = [];
+        }
+
         if (this._locationCard && this.#boundDebouncedLoad) {
-            this._locationCard.removeEventListener('input', this.#boundDebouncedLoad);
-            this._locationCard.removeEventListener('change', this.#boundDebouncedLoad);
             this._locationCard.removeEventListener('autocomplete.change', this.#boundDebouncedLoad);
             this._locationCard = null;
         }
@@ -74,6 +108,12 @@ export default class extends Controller {
     }
 
     #tryLoadGeometry() {
+        const section = this.element.closest('[data-form-reveal-target="section"]');
+        if (section?.hidden) {
+            this.#hideMap();
+            return;
+        }
+
         const roadType = this.roadTypeValue;
 
         if (roadType === 'lane') {
@@ -106,11 +146,11 @@ export default class extends Controller {
 
         if (roadNameField?.value) params.set('roadName', roadNameField.value);
         if (cityCodeField?.value) params.set('cityCode', cityCodeField.value);
-        if (fromHouseNumberField?.value) params.set('fromHouseNumber', fromHouseNumberField.value);
-        if (fromRoadBanIdField?.value) params.set('fromRoadBanId', fromRoadBanIdField.value);
-        if (toHouseNumberField?.value) params.set('toHouseNumber', toHouseNumberField.value);
-        if (toRoadBanIdField?.value) params.set('toRoadBanId', toRoadBanIdField.value);
-        if (directionField?.value) params.set('direction', directionField.value);
+        if (this.#isFieldActive(fromHouseNumberField)) params.set('fromHouseNumber', fromHouseNumberField.value);
+        if (this.#isFieldActive(fromRoadBanIdField)) params.set('fromRoadBanId', fromRoadBanIdField.value);
+        if (this.#isFieldActive(toHouseNumberField)) params.set('toHouseNumber', toHouseNumberField.value);
+        if (this.#isFieldActive(toRoadBanIdField)) params.set('toRoadBanId', toRoadBanIdField.value);
+        if (this.#isFieldActive(directionField)) params.set('direction', directionField.value);
 
         this.#fetchAndDisplay(params);
     }
@@ -131,6 +171,23 @@ export default class extends Controller {
             administrator,
             roadNumber,
         });
+
+        const fromPointNumberField = document.getElementById(this.fromPointNumberFieldValue);
+        const fromSideField = document.getElementById(this.fromSideFieldValue);
+        const fromAbscissaField = document.getElementById(this.fromAbscissaFieldValue);
+        const toPointNumberField = document.getElementById(this.toPointNumberFieldValue);
+        const toSideField = document.getElementById(this.toSideFieldValue);
+        const toAbscissaField = document.getElementById(this.toAbscissaFieldValue);
+        const directionField = document.getElementById(this.directionFieldValue);
+
+        if (fromPointNumberField?.value) params.set('fromPointNumber', fromPointNumberField.value);
+        if (fromSideField?.value) params.set('fromSide', fromSideField.value);
+        if (fromAbscissaField?.value) params.set('fromAbscissa', fromAbscissaField.value);
+        if (toPointNumberField?.value) params.set('toPointNumber', toPointNumberField.value);
+        if (toSideField?.value) params.set('toSide', toSideField.value);
+        if (toAbscissaField?.value) params.set('toAbscissa', toAbscissaField.value);
+        if (directionField?.value) params.set('direction', directionField.value);
+
         this.#fetchAndDisplay(params);
     }
 
@@ -152,7 +209,6 @@ export default class extends Controller {
             }
 
             this.#displayGeometry(geojson);
-            this.#fetchNearbyStreets(geojson);
         } catch {
             this.#hideMap();
         }
@@ -180,19 +236,37 @@ export default class extends Controller {
 
         const url = `${this.urlValue}?${params.toString()}`;
 
+        this.#hideMessage();
+        this.#showLoader();
+
         try {
             const response = await fetch(url, { signal: this.#abortController.signal });
 
-            if (response.status === 204 || !response.ok) {
-                this.#hideMap();
+            if (response.status === 204) {
+                this.#hideLoader();
+                this.#showMessage('Tracé non trouvé');
+                return;
+            }
+
+            if (response.status === 404) {
+                this.#hideLoader();
+                this.#showMessage('Adresse non trouvée');
+                return;
+            }
+
+            if (!response.ok) {
+                this.#hideLoader();
+                this.#showMessage('Erreur lors du chargement du tracé');
                 return;
             }
 
             const geojson = await response.json();
+            this.#hideLoader();
             this.#displayGeometry(geojson);
         } catch (error) {
             if (error.name !== 'AbortError') {
-                this.#hideMap();
+                this.#hideLoader();
+                this.#showMessage('Erreur lors du chargement du tracé');
             }
         }
     }
@@ -208,7 +282,7 @@ export default class extends Controller {
             : geojson.coordinates?.length > 0;
 
         if (!hasData) {
-            this.#hideMap();
+            this.#showMessage('Tracé non trouvé');
             return;
         }
 
@@ -370,97 +444,41 @@ export default class extends Controller {
         });
     }
 
-    #hideMap() {
-        this.containerTarget.hidden = true;
-    }
-
-    async #fetchNearbyStreets(geojson) {
-        if (!this.hasNearbyStreetsUrlValue || !geojson) {
-            return;
-        }
-
-        this.#abortController?.abort();
-        this.#abortController = new AbortController();
-
-        try {
-            const response = await fetch(this.nearbyStreetsUrlValue, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({ geometry: geojson, radius: 100 }),
-                signal: this.#abortController.signal,
-            });
-
-            if (!response.ok) {
-                return;
-            }
-
-            const streets = await response.json();
-            this.#displayNearbyStreets(streets);
-        } catch (error) {
-            if (error.name !== 'AbortError') {
-                console.error('Erreur lors de la récupération des rues proches:', error);
-            }
+    #showLoader() {
+        if (this.hasLoaderTarget) {
+            this.containerTarget.hidden = false;
+            this.loaderTarget.hidden = false;
         }
     }
 
-    #displayNearbyStreets(streets) {
-        this.#displayNearbyStreetsOnMap(streets);
-
-        if (!this.hasNearbyStreetsListTarget) {
-            return;
-        }
-
-        this.nearbyStreetsListTarget.innerHTML = '';
-
-        if (streets.length === 0) {
-            this.nearbyStreetsListTarget.innerHTML = '<li>Aucune rue trouvée à proximité</li>';
-
-            return;
-        }
-
-        streets.forEach(street => {
-            const li = document.createElement('li');
-            li.textContent = `${street.roadName} (${street.distance} m)`;
-            this.nearbyStreetsListTarget.appendChild(li);
-        });
+    #isFieldActive(field) {
+        return field?.value && !field.closest('[hidden]');
     }
 
-    #displayNearbyStreetsOnMap(streets) {
-        if (!this.#map) {
-            return;
+    #hideLoader() {
+        if (this.hasLoaderTarget) {
+            this.loaderTarget.hidden = true;
         }
+    }
 
-        const features = streets
-            .filter(s => s.geometry)
-            .map(street => ({
-                type: 'Feature',
-                geometry: street.geometry,
-                properties: {
-                    roadName: street.roadName,
-                    distance: street.distance,
-                },
-            }));
-
-        const data = { type: 'FeatureCollection', features };
-
-        if (this.#map.getSource('nearby-streets-source')) {
-            this.#map.getSource('nearby-streets-source').setData(data);
+    #showMessage(text) {
+        if (this.hasMessageTarget) {
+            this.containerTarget.hidden = false;
+            this.messageTarget.textContent = text;
+            this.messageTarget.hidden = false;
         } else {
-            this.#map.addSource('nearby-streets-source', { type: 'geojson', data });
-            this.#map.addLayer({
-                id: 'nearby-streets-layer',
-                type: 'line',
-                source: 'nearby-streets-source',
-                paint: {
-                    'line-color': '#e63946',
-                    'line-width': 3,
-                    'line-opacity': 0.7,
-                    'line-dasharray': [2, 2],
-                },
-            });
+            this.#hideMap();
         }
+    }
+
+    #hideMessage() {
+        if (this.hasMessageTarget) {
+            this.messageTarget.hidden = true;
+        }
+    }
+
+    #hideMap() {
+        this.#hideMessage();
+        this.containerTarget.hidden = true;
     }
 }
