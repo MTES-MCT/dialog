@@ -1,0 +1,57 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}MapLibre Draw - {{ parent() }}{% endblock %}
+
+{% block body %}
+{# <div data-controller='draw-map' data-draw-map-center-json-value='[2.725, 47.16]' data-draw-map-zoom-value='5' class='map-container'> #}
+    <div data-controller='draw-map' data-draw-map-center-json-value='[2.514189, 49.126014]' data-draw-map-zoom-value='15.8' data-draw-map-submit-url-value='/draw-map' data-draw-map-nearby-streets-url-value='/draw-map/nearby-streets' class='map-container'>
+        <div class="test-map-section">
+            <div class="test-map-header">
+                <h2>🗺️ Tracé sur la carte</h2>
+                <p>
+                    <strong>Lignes routières:</strong> Cliquez pour placer des points, le tracé suit les routes<br>
+                    <strong>Lignes libres:</strong> Cliquez pour placer des points, segments droits<br>
+                    <strong>Polygones:</strong> Cliquez sur plusieurs points (Échap pour annuler)
+                </p>
+            </div>
+            <div id="test-map" data-draw-map-target="container"></div>
+            <div class="draw-controls">
+                <button 
+                    type="button" 
+                    class="draw-btn draw-btn-road-line fr-btn fr-icon-road-map-line"
+                    data-draw-map-target="roadLineBtn"
+                    data-action="click->draw-map#toggleRoadLine"
+                    title="Cliquez pour tracer une ligne suivant les routes (Échap pour annuler)">
+                </button>
+                <button 
+                    type="button" 
+                    class="draw-btn draw-btn-line fr-btn fr-icon-edit-line"
+                    data-draw-map-target="lineBtn"
+                    data-action="click->draw-map#toggleLine"
+                    title="Cliquez pour tracer une ligne point par point (Échap pour annuler)">
+                </button>
+                <button 
+                    type="button" 
+                    class="draw-btn draw-btn-polygon fr-btn fr-icon-shapes-line"
+                    data-draw-map-target="polygonBtn"
+                    data-action="click->draw-map#togglePolygon"
+                    title="Glissez pour dessiner un polygone">
+                </button>
+                <button 
+                    type="button" 
+                    class="draw-btn draw-btn-delete fr-btn fr-icon-delete-bin-line"
+                    data-action="click->draw-map#clearAll"
+                    title="Effacer tout">
+                </button>
+                <button 
+                    type="button" 
+                    class="draw-btn draw-btn-validate fr-btn fr-icon-check-line"
+                    data-draw-map-target="validateBtn"
+                    data-action="click->draw-map#submitGeoJSON"
+                    title="Valider et envoyer">
+                </button>
+            </div>
+            <ul data-draw-map-target="nearbyStreetsList" class="nearby-streets-list"></ul>
+        </div>
+    </div>
+{% endblock %}

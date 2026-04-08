@@ -588,4 +588,55 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         return $row['geom'];
     }
+
+    public function findNearbyStreets(string $geometry, int $radiusMeters = 100, int $limit = 10): array
+    {
+        try {
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                'WITH input AS (
+                    SELECT ST_GeomFromGeoJSON(:geometry) AS geom
+                )
+                SELECT DISTINCT ON (v.identifiant_voie_ban)
+                    v.identifiant_voie_ban AS road_ban_id,
+                    v.nom_voie_ban AS road_name,
+                    v.insee_commune AS city_code,
+                    ST_Distance(v.geometrie::geography, input.geom::geography) AS distance,
+                    ST_AsGeoJSON(ST_Force2D(v.geometrie)) AS geometry
+                FROM voie_nommee AS v, input
+                WHERE v.geometrie && ST_Expand(input.geom, :radius_deg)
+                AND ST_DWithin(v.geometrie::geography, input.geom::geography, :radius)
+                AND LENGTH(v.identifiant_voie_ban) > 0
+                ORDER BY v.identifiant_voie_ban, distance
+                LIMIT :limit',
+                [
+                    'geometry' => $geometry,
+                    'radius_deg' => $radiusMeters * 0.00001,
+                    'radius' => $radiusMeters,
+                    'limit' => $limit,
+                ],
+                [
+                    'limit' => \Doctrine\DBAL\ParameterType::INTEGER,
+                    'radius' => \Doctrine\DBAL\ParameterType::INTEGER,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Nearby streets query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $results = [];
+
+        foreach ($rows as $row) {
+            $results[] = [
+                'roadBanId' => $row['road_ban_id'],
+                'roadName' => $row['road_name'],
+                'cityCode' => $row['city_code'],
+                'distance' => round((float) $row['distance'], 1),
+                'geometry' => json_decode($row['geometry'], true),
+            ];
+        }
+
+        usort($results, fn ($a, $b) => $a['distance'] <=> $b['distance']);
+
+        return $results;
+    }
 }
