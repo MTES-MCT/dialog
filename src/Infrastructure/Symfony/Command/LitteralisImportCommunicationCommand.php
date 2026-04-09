@@ -6,8 +6,7 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
-use App\Application\MailerInterface;
-use App\Domain\Mail;
+use App\Application\MattermostInterface;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExecutor;
 use Psr\Log\LoggerInterface;
@@ -40,8 +39,7 @@ class LitteralisImportCommunicationCommand extends Command
         private Reporter $reporter,
         private LitteralisCommunicationExecutor $executor,
         private DateUtilsInterface $dateUtils,
-        private MailerInterface $mailer,
-        private string $emailSupport,
+        private MattermostInterface $mattermost,
     ) {
         parent::__construct();
 
@@ -107,36 +105,30 @@ class LitteralisImportCommunicationCommand extends Command
 
     private function sendSupportReport(array $orgResults): void
     {
-        $orgSummaries = [];
+        $lines = [];
+        $lines[] = '#### Rapport d\'intégration Litteralis (Communication)';
+        $lines[] = 'Rapport généré le ' . $this->dateUtils->getNow()->format('d/m/Y H:i') . '.';
+        $lines[] = '';
 
         foreach ($orgResults as $result) {
             $exception = $result['exception'] ?? null;
-            $orgSummaries[] = [
-                'name' => $result['name'],
-                'success' => $exception === null,
-                'isTimeout' => $exception !== null && $this->isTimeout($exception),
-                'failureMessage' => $exception !== null ? $this->formatExceptionDetail($exception) : null,
-            ];
+
+            if ($exception === null) {
+                $lines[] = '- :white_check_mark: **' . $result['name'] . '** : Importé avec succès';
+            } elseif ($this->isTimeout($exception)) {
+                $lines[] = '- :warning: **' . $result['name'] . '** : Timeout / échec de connexion';
+            } else {
+                $lines[] = '- :x: **' . $result['name'] . '** : ' . $this->formatExceptionDetail($exception);
+            }
         }
 
+        $text = implode("\n", $lines);
+
         try {
-            $this->mailer->send(new Mail(
-                address: $this->emailSupport,
-                subject: 'litteralis.support_report.subject',
-                template: 'email/litteralis/support_report.html.twig',
-                payload: [
-                    'orgSummaries' => $orgSummaries,
-                    'reportDate' => $this->dateUtils->getNow()->format('d/m/Y H:i'),
-                ],
-            ));
-            $this->logger->info('Rapport d\'intégration Litteralis (Communication) envoyé par mail', [
-                'address' => $this->emailSupport,
-            ]);
+            $this->mattermost->post($text);
+            $this->logger->info('Rapport d\'intégration Litteralis (Communication) envoyé sur Mattermost');
         } catch (\Throwable $e) {
-            $this->logger->error('Échec de l\'envoi du rapport Litteralis par mail', [
-                'address' => $this->emailSupport,
-                'exception' => $e->getMessage(),
-            ]);
+            $this->logger->error('Échec de l\'envoi du rapport Litteralis sur Mattermost', ['exception' => $e->getMessage()]);
         }
     }
 

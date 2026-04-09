@@ -16,6 +16,7 @@ use App\Infrastructure\Integration\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
 /**
@@ -88,6 +89,10 @@ final class LitteralisCommunicationExecutor
                     if (!$this->isRecoverableException($exc)) {
                         throw $exc;
                     }
+
+                    $this->entityManager->clear();
+                    // clear() a détaché $organization : on la recharge pour les itérations suivantes.
+                    $organization = $this->queryBus->handle(new GetOrganizationByUuidQuery($orgId));
                 }
 
                 $reporter->acknowledgeNewErrors();
@@ -114,6 +119,7 @@ final class LitteralisCommunicationExecutor
     private function isRecoverableException(\Throwable $e): bool
     {
         return $e instanceof ValidationFailedException
+            || $e instanceof ORMInvalidArgumentException
             || str_starts_with($e::class, 'App\\');
     }
 }

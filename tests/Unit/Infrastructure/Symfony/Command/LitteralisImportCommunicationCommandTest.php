@@ -6,8 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
-use App\Application\MailerInterface;
-use App\Domain\Mail;
+use App\Application\MattermostInterface;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommunicationCommand;
@@ -19,15 +18,13 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 final class LitteralisImportCommunicationCommandTest extends TestCase
 {
-    private const EMAIL_SUPPORT = 'support@dialog.beta.gouv.fr';
-
     private array $enabledOrgs;
     private LitteralisCredentials $credentials;
     private $logger;
     private $reporter;
     private $executor;
     private $dateUtils;
-    private $mailer;
+    private $mattermost;
 
     protected function setUp(): void
     {
@@ -41,7 +38,20 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
         $this->reporter = $this->createMock(Reporter::class);
         $this->executor = $this->createMock(LitteralisCommunicationExecutor::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->mailer = $this->createMock(MailerInterface::class);
+        $this->mattermost = $this->createMock(MattermostInterface::class);
+    }
+
+    private function createCommand(): LitteralisImportCommunicationCommand
+    {
+        return new LitteralisImportCommunicationCommand(
+            $this->logger,
+            $this->enabledOrgs,
+            $this->credentials,
+            $this->reporter,
+            $this->executor,
+            $this->dateUtils,
+            $this->mattermost,
+        );
     }
 
     public function testExecuteCallsExecutorForEachEnabledOrgAndSendsReport(): void
@@ -67,25 +77,16 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             )
             ->willReturn('Rapport Communication');
 
-        $this->mailer
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->with(self::callback(function (Mail $mail): bool {
-                return $mail->address === self::EMAIL_SUPPORT
-                    && $mail->template === 'email/litteralis/support_report.html.twig';
+            ->method('post')
+            ->with(self::callback(function (string $text): bool {
+                return str_contains($text, 'Rapport d\'intégration Litteralis (Communication)')
+                    && str_contains($text, 'mel')
+                    && str_contains($text, 'fougeres');
             }));
 
-        $command = new LitteralisImportCommunicationCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-
+        $command = $this->createCommand();
         $this->assertSame('app:litteralis:import-communication', $command->getName());
 
         $commandTester = new CommandTester($command);
@@ -98,7 +99,6 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
         $this->enabledOrgs = ['mel', 'unknown_org'];
         $this->credentials = (new LitteralisCredentials())
             ->add('mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', 'melpassword');
-        // unknown_org has no ID => getOrgId returns null/empty
 
         $now = new \DateTimeImmutable();
         $this->dateUtils->method('getNow')->willReturn($now);
@@ -109,18 +109,7 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             ->with('mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', $now, $this->reporter)
             ->willReturn('Rapport');
 
-        $command = new LitteralisImportCommunicationCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
 
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
@@ -138,41 +127,27 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             ->expects(self::once())
             ->method('execute')
             ->with('mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', $now, $this->reporter)
-            ->willThrowException(new \RuntimeException('Connection timeout'));
+            ->willThrowException(new \RuntimeException('Something went wrong'));
 
-        $sentMail = null;
-        $this->mailer
+        $sentText = null;
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->willReturnCallback(function (Mail $mail) use (&$sentMail): void {
-                $sentMail = $mail;
+            ->method('post')
+            ->willReturnCallback(function (string $text) use (&$sentText): void {
+                $sentText = $text;
             });
 
-        $command = new LitteralisImportCommunicationCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
 
         $this->assertStringContainsString('import failed', $commandTester->getDisplay());
-        $this->assertStringContainsString('Connection timeout', $commandTester->getDisplay());
-        $this->assertNotNull($sentMail);
-        $summaries = $sentMail->payload['orgSummaries'] ?? [];
-        $this->assertCount(1, $summaries);
-        $this->assertSame('mel', $summaries[0]['name']);
-        $this->assertFalse($summaries[0]['success']);
-        $this->assertStringContainsString('Connection timeout', $summaries[0]['failureMessage'] ?? '');
+        $this->assertStringContainsString('Something went wrong', $commandTester->getDisplay());
+        $this->assertNotNull($sentText);
+        $this->assertStringContainsString(':x: **mel**', $sentText);
+        $this->assertStringContainsString('Something went wrong', $sentText);
     }
 
-    public function testExecuteWhenExecutorThrowsTimeoutSendSupportReportWithIsTimeout(): void
+    public function testExecuteWhenExecutorThrowsTimeoutSendsReportWithWarning(): void
     {
         $now = new \DateTimeImmutable();
         $this->dateUtils->method('getNow')->willReturn($now);
@@ -184,61 +159,37 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             ->willThrowException(new class extends \Exception implements TransportExceptionInterface {
             });
 
-        $this->mailer
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->with(self::callback(function (Mail $mail): bool {
-                $summaries = $mail->payload['orgSummaries'] ?? [];
-
-                return \count($summaries) === 1 && $summaries[0]['isTimeout'] === true;
+            ->method('post')
+            ->with(self::callback(function (string $text): bool {
+                return str_contains($text, ':warning: **mel**');
             }));
 
-        $command = new LitteralisImportCommunicationCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
     }
 
-    public function testExecuteWhenMailerSendThrowsLogsError(): void
+    public function testExecuteWhenMattermostPostThrowsLogsError(): void
     {
         $now = new \DateTimeImmutable();
         $this->dateUtils->method('getNow')->willReturn($now);
         $this->executor->method('execute')->willReturn('Rapport');
 
-        $this->mailer
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->willThrowException(new \RuntimeException('SMTP unreachable'));
+            ->method('post')
+            ->willThrowException(new \RuntimeException('Mattermost unreachable'));
 
         $this->logger
             ->expects(self::once())
             ->method('error')
-            ->with('Échec de l\'envoi du rapport Litteralis par mail', self::callback(function (array $context): bool {
-                return isset($context['address'], $context['exception'])
-                    && $context['exception'] === 'SMTP unreachable';
+            ->with('Échec de l\'envoi du rapport Litteralis sur Mattermost', self::callback(function (array $context): bool {
+                return isset($context['exception'])
+                    && $context['exception'] === 'Mattermost unreachable';
             }));
 
-        $command = new LitteralisImportCommunicationCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
     }
