@@ -47,11 +47,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findRegulationOrdersForDatexFormat')
+            ->method('findUuidsForDatexFormat')
             ->willReturn([]);
 
+        $regulationOrderRecordRepository
+            ->expects(self::never())
+            ->method('getOverallDatesByRegulationUuids');
+
+        $regulationOrderRecordRepository
+            ->expects(self::never())
+            ->method('iterateRegulationOrdersForDatexFormatByUuids');
+
         $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
+        $regulationOrders = iterator_to_array($handler(new GetRegulationOrdersToDatexFormatQuery()));
 
         $this->assertEquals([], $regulationOrders);
     }
@@ -79,7 +87,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->willReturn($regulationOrder1);
         $uuid1 = '066c603a-ca34-75b9-8000-62c82cc0ed11';
         $regulationOrderRecord1
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getUuid')
             ->willReturn($uuid1);
         $regulationOrder1
@@ -337,7 +345,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->willReturn($regulationOrder2);
         $uuid2 = '066c603b-c507-75fd-8000-66acdc0f7ba1';
         $regulationOrderRecord2WinterMaintenance
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getUuid')
             ->willReturn($uuid2);
         $regulationOrder2
@@ -513,7 +521,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->willReturn($regulationOrder3);
         $uuid3 = '066c6040-ab2d-70d6-8000-1de4ad5ed312';
         $regulationOrderRecord3
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getUuid')
             ->willReturn($uuid3);
         $regulationOrder3
@@ -616,8 +624,14 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 
         $regulationOrderRecordRepository
             ->expects(self::once())
-            ->method('findRegulationOrdersForDatexFormat')
-            ->willReturn([$regulationOrderRecord1, $regulationOrderRecord2WinterMaintenance, $regulationOrderRecord3]);
+            ->method('findUuidsForDatexFormat')
+            ->willReturn([$uuid1, $uuid2, $uuid3]);
+
+        $regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('iterateRegulationOrdersForDatexFormatByUuids')
+            ->with([$uuid1, $uuid2, $uuid3])
+            ->willReturnCallback(fn () => yield from [$regulationOrderRecord1, $regulationOrderRecord2WinterMaintenance, $regulationOrderRecord3]);
 
         $regulationOrderRecordRepository
             ->expects(self::once())
@@ -630,7 +644,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ]);
 
         $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
-        $regulationOrders = $handler(new GetRegulationOrdersToDatexFormatQuery());
+        $regulationOrders = iterator_to_array($handler(new GetRegulationOrdersToDatexFormatQuery()));
 
         $this->assertEquals(
             [

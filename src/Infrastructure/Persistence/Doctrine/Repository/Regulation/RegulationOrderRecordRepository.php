@@ -269,25 +269,22 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         return $row ? $row['uuid'] : null;
     }
 
-    public function findRegulationOrdersForDatexFormat(
+    /**
+     * Taille du lot pour l'hydratation des arrêtés au format DATEX.
+     * Permet de limiter la mémoire consommée par Doctrine lorsqu'il y a beaucoup d'arrêtés à traiter.
+     */
+    private const DATEX_HYDRATION_BATCH_SIZE = 50;
+
+    public function findUuidsForDatexFormat(
         bool $includePermanent = true,
         bool $includeTemporary = true,
         bool $includeExpired = false,
     ): array {
         $qb = $this->createQueryBuilder('roc')
-            ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg', 'sa')
+            ->select('DISTINCT roc.uuid')
             ->innerJoin('roc.regulationOrder', 'ro')
-            ->innerJoin('roc.organization', 'o')
             ->innerJoin('ro.measures', 'm')
             ->innerJoin('m.locations', 'loc')
-            ->leftJoin('loc.namedStreet', 'ns')
-            ->leftJoin('loc.numberedRoad', 'nr')
-            ->leftJoin('loc.rawGeoJSON', 'rg')
-            ->leftJoin('loc.storageArea', 'sa')
-            ->leftJoin('m.vehicleSet', 'v')
-            ->leftJoin('m.periods', 'p')
-            ->leftJoin('p.dailyRange', 'd')
-            ->leftJoin('p.timeSlots', 't')
             ->where('roc.status = :status')
             ->andWhere('loc.geometry IS NOT NULL')
             ->orderBy('roc.uuid');
@@ -320,10 +317,47 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             $parameters['now'] = $this->dateUtils->getNow();
         }
 
-        return $qb
+        $rows = $qb
             ->setParameters($parameters)
             ->getQuery()
             ->getResult();
+
+        return array_column($rows, 'uuid');
+    }
+
+    public function iterateRegulationOrdersForDatexFormatByUuids(array $uuids): iterable
+    {
+        if ($uuids === []) {
+            return;
+        }
+
+        foreach (array_chunk($uuids, self::DATEX_HYDRATION_BATCH_SIZE) as $chunk) {
+            $records = $this->createQueryBuilder('roc')
+                ->addSelect('ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg', 'sa')
+                ->innerJoin('roc.regulationOrder', 'ro')
+                ->innerJoin('ro.measures', 'm')
+                ->innerJoin('m.locations', 'loc')
+                ->leftJoin('loc.namedStreet', 'ns')
+                ->leftJoin('loc.numberedRoad', 'nr')
+                ->leftJoin('loc.rawGeoJSON', 'rg')
+                ->leftJoin('loc.storageArea', 'sa')
+                ->leftJoin('m.vehicleSet', 'v')
+                ->leftJoin('m.periods', 'p')
+                ->leftJoin('p.dailyRange', 'd')
+                ->leftJoin('p.timeSlots', 't')
+                ->where('roc.uuid IN (:uuids)')
+                ->andWhere('loc.geometry IS NOT NULL')
+                ->orderBy('roc.uuid')
+                ->setParameter('uuids', $chunk, ArrayParameterType::STRING)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($records as $record) {
+                yield $record;
+            }
+
+            $this->getEntityManager()->clear();
+        }
     }
 
     public function getOverallDatesByRegulationUuids(array $uuids): array

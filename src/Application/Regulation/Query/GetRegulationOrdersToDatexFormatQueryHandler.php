@@ -22,27 +22,22 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
     ) {
     }
 
-    public function __invoke(GetRegulationOrdersToDatexFormatQuery $query): array
+    public function __invoke(GetRegulationOrdersToDatexFormatQuery $query): iterable
     {
-        $regulationOrderRecords = $this->repository->findRegulationOrdersForDatexFormat(
+        $uuids = $this->repository->findUuidsForDatexFormat(
             includePermanent: $query->includePermanent,
             includeTemporary: $query->includeTemporary,
             includeExpired: $query->includeExpired,
         );
 
-        $uuids = [];
-
-        /** @var RegulationOrderRecord $regulationOrderRecord */
-        foreach ($regulationOrderRecords as $regulationOrderRecord) {
-            $uuids[] = $regulationOrderRecord->getUuid();
+        if ($uuids === []) {
+            return;
         }
 
         $overallDates = $this->repository->getOverallDatesByRegulationUuids($uuids);
 
-        $regulationOrderViews = [];
-
         /** @var RegulationOrderRecord $regulationOrderRecord */
-        foreach ($regulationOrderRecords as $regulationOrderRecord) {
+        foreach ($this->repository->iterateRegulationOrdersForDatexFormatByUuids($uuids) as $regulationOrderRecord) {
             $uuid = $regulationOrderRecord->getUuid();
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
 
@@ -179,7 +174,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 }
             }
 
-            $regulationOrderViews[] = new RegulationOrderDatexListItemView(
+            yield new RegulationOrderDatexListItemView(
                 uuid: $regulationOrder->getUuid(),
                 regulationOrderRecordUuid: $uuid,
                 regulationId: $regulationOrder->getIdentifier() . '#' . $regulationOrderRecord->getOrganizationUuid(),
@@ -191,7 +186,5 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 trafficRegulations: $trafficRegulations,
             );
         }
-
-        return $regulationOrderViews;
     }
 }
