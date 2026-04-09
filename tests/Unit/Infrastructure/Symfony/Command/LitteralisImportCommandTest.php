@@ -6,8 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
-use App\Application\MailerInterface;
-use App\Domain\Mail;
+use App\Application\MattermostInterface;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommand;
@@ -18,15 +17,13 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class LitteralisImportCommandTest extends TestCase
 {
-    private const EMAIL_SUPPORT = 'support@dialog.beta.gouv.fr';
-
     private $enabledOrgs;
     private $credentials;
     private $logger;
     private $reporter;
     private $executor;
     private $dateUtils;
-    private $mailer;
+    private $mattermost;
 
     protected function setUp(): void
     {
@@ -41,7 +38,20 @@ class LitteralisImportCommandTest extends TestCase
         $this->reporter = $this->createMock(Reporter::class);
         $this->executor = $this->createMock(LitteralisExecutor::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->mailer = $this->createMock(MailerInterface::class);
+        $this->mattermost = $this->createMock(MattermostInterface::class);
+    }
+
+    private function createCommand(): LitteralisImportCommand
+    {
+        return new LitteralisImportCommand(
+            $this->logger,
+            $this->enabledOrgs,
+            $this->credentials,
+            $this->reporter,
+            $this->executor,
+            $this->dateUtils,
+            $this->mattermost,
+        );
     }
 
     public function testExecute(): void
@@ -68,24 +78,18 @@ class LitteralisImportCommandTest extends TestCase
             )
             ->willReturn('Rapport');
 
-        $this->mailer
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->with(self::callback(function (Mail $mail): bool {
-                return $mail->address === self::EMAIL_SUPPORT
-                    && $mail->template === 'email/litteralis/support_report.html.twig';
+            ->method('post')
+            ->with(self::callback(function (string $text): bool {
+                return str_contains($text, 'Rapport d\'intégration Litteralis')
+                    && str_contains($text, 'mel')
+                    && str_contains($text, 'fougeres')
+                    && str_contains($text, 'lonslesaunier')
+                    && str_contains($text, 'Importé avec succès');
             }));
 
-        $command = new LitteralisImportCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
+        $command = $this->createCommand();
         $this->assertSame('app:litteralis:import', $command->getName());
 
         $commandTester = new CommandTester($command);
@@ -110,27 +114,17 @@ class LitteralisImportCommandTest extends TestCase
                 },
             );
 
-        $this->mailer
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->with(self::callback(function (Mail $mail): bool {
-                return $mail->address === self::EMAIL_SUPPORT;
+            ->method('post')
+            ->with(self::callback(function (string $text): bool {
+                return str_contains($text, ':x: **fougeres**')
+                    && str_contains($text, 'Failed');
             }));
 
-        $command = new LitteralisImportCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
 
-        // Une exception pendant l'import ne fait plus échouer la commande (les erreurs sont dans le rapport).
         $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
         $this->assertSame(['report1', 'Organization "fougeres": import failed: Failed (Exception)', 'report3', 'Sending support report...', ''], explode(PHP_EOL, $commandTester->getDisplay()));
     }
@@ -146,41 +140,15 @@ class LitteralisImportCommandTest extends TestCase
             ->method('execute')
             ->willReturn('Rapport org');
 
-        $this->mailer
+        $this->mattermost
             ->expects(self::once())
-            ->method('send')
-            ->with(self::callback(function (Mail $mail): bool {
-                if ($mail->address !== self::EMAIL_SUPPORT || $mail->template !== 'email/litteralis/support_report.html.twig') {
-                    return false;
-                }
-                $payload = $mail->payload;
-                if (!\is_array($payload) || !isset($payload['orgSummaries'], $payload['reportDate'])) {
-                    return false;
-                }
-                $summaries = $payload['orgSummaries'];
-                if (!\is_array($summaries) || \count($summaries) !== 3) {
-                    return false;
-                }
-                foreach ($summaries as $summary) {
-                    if (!\is_array($summary) || !isset($summary['name'], $summary['success']) || $summary['success'] !== true) {
-                        return false;
-                    }
-                }
-
-                return true;
+            ->method('post')
+            ->with(self::callback(function (string $text): bool {
+                return str_contains($text, 'Rapport d\'intégration Litteralis')
+                    && substr_count($text, ':white_check_mark:') === 3;
             }));
 
-        $command = new LitteralisImportCommand(
-            $this->logger,
-            $this->enabledOrgs,
-            $this->credentials,
-            $this->reporter,
-            $this->executor,
-            $this->dateUtils,
-            $this->mailer,
-            self::EMAIL_SUPPORT,
-        );
-        $commandTester = new CommandTester($command);
+        $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
     }
