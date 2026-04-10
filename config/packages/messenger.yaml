@@ -15,7 +15,7 @@ framework:
         transports:
             sync: 'sync://'
             async:
-                dsn: "%env(REDIS_URL)%/messages"
+                dsn: "%env(MESSENGER_ASYNC_DSN)%"
                 retry_strategy:
                     max_retries: 3
                     delay: 1000
