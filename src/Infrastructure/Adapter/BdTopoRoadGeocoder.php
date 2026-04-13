@@ -292,12 +292,12 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 \sprintf(
                     'WITH pr_section AS (
                         -- Trouver la section qui contient le PR de référence
-                        -- On utilise geography pour que la fraction (pr_position) soit cohérente avec section_length (mètres)
+                        -- On projette en Lambert-93 (EPSG:2154) pour que la fraction (pr_position) soit cohérente avec section_length (mètres)
                         SELECT
                             s.identifiant_de_section,
                             s.geometrie,
                             ST_Length(s.geometrie::geography) AS section_length,
-                            ST_LineLocatePoint(s.geometrie, p.geometrie) AS pr_position,
+                            ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(p.geometrie, 2154)) AS pr_position,
                             CASE WHEN ST_Distance(
                                 ST_StartPoint(s.geometrie),
                                 (
@@ -330,7 +330,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             s2.identifiant_de_section,
                             s2.geometrie AS section_geometrie,
                             ST_Length(s2.geometrie::geography) AS section_length,
-                            ST_LineLocatePoint(s2.geometrie, p2.geometrie) AS pr_position
+                            ST_LineLocatePoint(ST_Transform(s2.geometrie, 2154), ST_Transform(p2.geometrie, 2154)) AS pr_position
                         FROM pr_section AS ps
                         LEFT JOIN point_de_repere AS p2 ON p2.gestionnaire = :administrator
                             AND p2.route = :roadNumber
@@ -385,9 +385,12 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                         LEFT JOIN next_pr AS np ON ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
                     )
                     SELECT ST_AsGeoJSON(
-                        ST_LineInterpolatePoint(
-                            pc.target_geometrie,
-                            pc.final_position
+                        ST_Transform(
+                            ST_LineInterpolatePoint(
+                                ST_Transform(pc.target_geometrie, 2154),
+                                pc.final_position
+                            ),
+                            4326
                         )
                     ) AS geom,
                     pc.pr_position,

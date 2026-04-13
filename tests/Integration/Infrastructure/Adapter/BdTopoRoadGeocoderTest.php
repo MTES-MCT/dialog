@@ -209,7 +209,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '34',
                 'U',
                 500,
-                Coordinates::fromLonLat(3.906089279, 44.596373562),
+                Coordinates::fromLonLat(3.906089295, 44.596373535),
             ],
             'pr-and-line-inverted-order' => [
                 'D978',
@@ -218,7 +218,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '1',
                 'U',
                 100,
-                Coordinates::fromLonLat(2.182063645, 45.221756446),
+                Coordinates::fromLonLat(2.182063659, 45.221756435),
             ],
             // Test pour vérifier qu'on exclut les entrées de type "DS", "FS" ou "CS"
             // Ici c'est un cas où il y a deux entrées au PR51D : un type "PR" et un type "FS".
@@ -231,7 +231,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '51',
                 'D',
                 150,
-                Coordinates::fromLonLat(4.534693102, 46.374895947),
+                Coordinates::fromLonLat(4.534693103, 46.374895947),
             ],
         ];
     }
