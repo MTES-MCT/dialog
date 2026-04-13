@@ -61,6 +61,7 @@ readonly class MeasureView
                         toHouseNumber: $namedStreet->getToHouseNumber(),
                         toRoadName: $namedStreet->getToRoadName(),
                     ),
+                    geometry: $location->getGeometry(),
                 );
             } elseif ($numberedRoad = $location->getNumberedRoad()) {
                 $storageArea = $location->getStorageArea();
@@ -79,6 +80,7 @@ readonly class MeasureView
                         toSide: $numberedRoad->getToSide(),
                     ),
                     storageArea: $storageArea ? new StorageAreaView($storageArea->getDescription()) : null,
+                    geometry: $location->getGeometry(),
                 );
             } elseif ($rawGeoJSON = $location->getRawGeoJSON()) {
                 $locations[] = new LocationView(
@@ -87,6 +89,7 @@ readonly class MeasureView
                     rawGeoJSON: new RawGeoJSONView(
                         label: $rawGeoJSON->getLabel(),
                     ),
+                    geometry: $location->getGeometry(),
                 );
             }
         }
