@@ -2,6 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
+import { getMeasureTypeStyle, DEFAULT_MEASURE_STYLE } from '../measure_type_styles';
 
 export default class extends Controller {
     static targets = ['container', 'loader', 'message'];
@@ -26,9 +27,7 @@ export default class extends Controller {
         toAbscissaField: String,
         isEntireStreetField: String,
         geometryField: String,
-        strokeColor: { type: String, default: '#000091' },
-        strokeWidth: { type: Number, default: 3 },
-        fillColor: { type: String, default: '#000091' },
+        measureType: { type: String, default: '' },
         fillOpacity: { type: Number, default: 0.15 },
     };
 
@@ -126,8 +125,7 @@ export default class extends Controller {
     }
 
     #loadForNamedStreet() {
-        const field = document.getElementById(this.roadBanIdFieldValue);
-        const roadBanId = field?.value;
+        const roadBanId = this.#getFieldValue('roadBanId');
 
         if (!roadBanId) {
             this.#hideMap();
@@ -136,30 +134,15 @@ export default class extends Controller {
 
         const params = new URLSearchParams({ roadType: 'lane', roadBanId });
 
-        const roadNameField = document.getElementById(this.roadNameFieldValue);
-        const cityCodeField = document.getElementById(this.cityCodeFieldValue);
-        const fromHouseNumberField = document.getElementById(this.fromHouseNumberFieldValue);
-        const fromRoadBanIdField = document.getElementById(this.fromRoadBanIdFieldValue);
-        const toHouseNumberField = document.getElementById(this.toHouseNumberFieldValue);
-        const toRoadBanIdField = document.getElementById(this.toRoadBanIdFieldValue);
-        const directionField = document.getElementById(this.directionFieldValue);
-
-        if (roadNameField?.value) params.set('roadName', roadNameField.value);
-        if (cityCodeField?.value) params.set('cityCode', cityCodeField.value);
-        if (this.#isFieldActive(fromHouseNumberField)) params.set('fromHouseNumber', fromHouseNumberField.value);
-        if (this.#isFieldActive(fromRoadBanIdField)) params.set('fromRoadBanId', fromRoadBanIdField.value);
-        if (this.#isFieldActive(toHouseNumberField)) params.set('toHouseNumber', toHouseNumberField.value);
-        if (this.#isFieldActive(toRoadBanIdField)) params.set('toRoadBanId', toRoadBanIdField.value);
-        if (this.#isFieldActive(directionField)) params.set('direction', directionField.value);
+        this.#setParamIfPresent(params, ['roadName', 'cityCode']);
+        this.#setParamIfActive(params, ['fromHouseNumber', 'fromRoadBanId', 'toHouseNumber', 'toRoadBanId', 'direction']);
 
         this.#fetchAndDisplay(params);
     }
 
     #loadForNumberedRoad() {
-        const administratorField = document.getElementById(this.administratorFieldValue);
-        const roadNumberField = document.getElementById(this.roadNumberFieldValue);
-        const administrator = administratorField?.value;
-        const roadNumber = roadNumberField?.value;
+        const administrator = this.#getFieldValue('administrator');
+        const roadNumber = this.#getFieldValue('roadNumber');
 
         if (!administrator || !roadNumber) {
             this.#hideMap();
@@ -172,23 +155,27 @@ export default class extends Controller {
             roadNumber,
         });
 
-        const fromPointNumberField = document.getElementById(this.fromPointNumberFieldValue);
-        const fromSideField = document.getElementById(this.fromSideFieldValue);
-        const fromAbscissaField = document.getElementById(this.fromAbscissaFieldValue);
-        const toPointNumberField = document.getElementById(this.toPointNumberFieldValue);
-        const toSideField = document.getElementById(this.toSideFieldValue);
-        const toAbscissaField = document.getElementById(this.toAbscissaFieldValue);
-        const directionField = document.getElementById(this.directionFieldValue);
-
-        if (fromPointNumberField?.value) params.set('fromPointNumber', fromPointNumberField.value);
-        if (fromSideField?.value) params.set('fromSide', fromSideField.value);
-        if (fromAbscissaField?.value) params.set('fromAbscissa', fromAbscissaField.value);
-        if (toPointNumberField?.value) params.set('toPointNumber', toPointNumberField.value);
-        if (toSideField?.value) params.set('toSide', toSideField.value);
-        if (toAbscissaField?.value) params.set('toAbscissa', toAbscissaField.value);
-        if (directionField?.value) params.set('direction', directionField.value);
+        this.#setParamIfPresent(params, ['fromPointNumber', 'fromSide', 'fromAbscissa', 'toPointNumber', 'toSide', 'toAbscissa', 'direction']);
 
         this.#fetchAndDisplay(params);
+    }
+
+    #getFieldValue(name) {
+        return document.getElementById(this[`${name}FieldValue`])?.value;
+    }
+
+    #setParamIfPresent(params, names) {
+        for (const name of names) {
+            const value = this.#getFieldValue(name);
+            if (value) params.set(name, value);
+        }
+    }
+
+    #setParamIfActive(params, names) {
+        for (const name of names) {
+            const field = document.getElementById(this[`${name}FieldValue`]);
+            if (this.#isFieldActive(field)) params.set(name, field.value);
+        }
     }
 
     #loadForRawGeoJSON() {
@@ -312,6 +299,8 @@ export default class extends Controller {
             boxZoom: false,
         });
 
+        this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
         this.#map.on('load', () => {
             this.#addHouseNumbersLayer();
             this.#addSourceAndLayers(geojson);
@@ -355,6 +344,7 @@ export default class extends Controller {
             data: geojson,
         });
 
+        const style = getMeasureTypeStyle(this.measureTypeValue);
         const isPolygon = this.#containsPolygon(geojson);
 
         if (isPolygon) {
@@ -363,7 +353,7 @@ export default class extends Controller {
                 type: 'fill',
                 source: 'location-preview',
                 paint: {
-                    'fill-color': this.fillColorValue,
+                    'fill-color': style.color,
                     'fill-opacity': this.fillOpacityValue,
                 },
             });
@@ -374,8 +364,9 @@ export default class extends Controller {
             type: 'line',
             source: 'location-preview',
             paint: {
-                'line-color': this.strokeColorValue,
-                'line-width': this.strokeWidthValue,
+                'line-color': style.color,
+                'line-width': style.lineWidth,
+                'line-dasharray': style.dasharray,
             },
         });
     }
