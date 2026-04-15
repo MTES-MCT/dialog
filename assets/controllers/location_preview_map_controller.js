@@ -28,7 +28,7 @@ export default class extends Controller {
         isEntireStreetField: String,
         geometryField: String,
         measureType: { type: String, default: '' },
-        fillOpacity: { type: Number, default: 0.15 },
+        interactive: { type: Boolean, default: true },
     };
 
     #map = null;
@@ -287,19 +287,26 @@ export default class extends Controller {
     }
 
     #initializeMap(geojson) {
+        const interactive = this.interactiveValue;
+
         this.#map = new maplibregl.Map({
             container: this.containerTarget,
             style: mapStyles.desaturated,
-            interactive: true,
+            interactive,
             attributionControl: false,
-            dragPan: true,
+            dragPan: interactive,
             dragRotate: false,
             keyboard: false,
             touchPitch: false,
             boxZoom: false,
+            scrollZoom: interactive,
+            doubleClickZoom: interactive,
+            touchZoomRotate: interactive,
         });
 
-        this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        if (interactive) {
+            this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        }
 
         this.#map.on('load', () => {
             this.#addHouseNumbersLayer();
@@ -345,19 +352,6 @@ export default class extends Controller {
         });
 
         const style = getMeasureTypeStyle(this.measureTypeValue);
-        const isPolygon = this.#containsPolygon(geojson);
-
-        if (isPolygon) {
-            this.#map.addLayer({
-                id: 'location-preview-fill',
-                type: 'fill',
-                source: 'location-preview',
-                paint: {
-                    'fill-color': style.color,
-                    'fill-opacity': this.fillOpacityValue,
-                },
-            });
-        }
 
         this.#map.addLayer({
             id: 'location-preview-line',
@@ -381,18 +375,6 @@ export default class extends Controller {
         }
 
         this.#fitBounds(geojson);
-    }
-
-    #containsPolygon(geojson) {
-        if (geojson.type === 'Polygon' || geojson.type === 'MultiPolygon') {
-            return true;
-        }
-
-        if (geojson.type === 'GeometryCollection') {
-            return geojson.geometries.some(g => g.type === 'Polygon' || g.type === 'MultiPolygon');
-        }
-
-        return false;
     }
 
     #fitBounds(geojson) {
