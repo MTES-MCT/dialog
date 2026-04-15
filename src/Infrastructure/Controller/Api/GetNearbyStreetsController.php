@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class GetNearbyStreetsController
 {
@@ -27,7 +28,8 @@ final class GetNearbyStreetsController
         name: 'api_nearby_streets',
         methods: ['POST'],
     )]
-    #[OA\Tag(name: 'Public')]
+    #[IsGranted('ROLE_API')]
+    #[OA\Tag(name: 'Private')]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
