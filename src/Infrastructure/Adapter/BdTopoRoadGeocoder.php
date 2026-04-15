@@ -298,19 +298,53 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             s.geometrie,
                             ST_Length(s.geometrie::geography) AS section_length,
                             ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(p.geometrie, 2154)) AS pr_position,
-                            CASE WHEN ST_Distance(
-                                ST_StartPoint(s.geometrie),
-                                (
-                                    SELECT pp.geometrie
-                                    FROM point_de_repere AS pp
-                                    WHERE pp.identifiant_de_section = s.identifiant_de_section
-                                    AND pp.ordre >= 0
-                                    ORDER BY pp.ordre ASC
+                            CASE
+                                WHEN (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_first.geometrie, 2154))
+                                    FROM point_de_repere AS pp_first
+                                    WHERE pp_first.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_first.ordre >= 0
+                                    ORDER BY pp_first.ordre ASC
+                                    LIMIT 1
+                                ) < (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_last.geometrie, 2154))
+                                    FROM point_de_repere AS pp_last
+                                    WHERE pp_last.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_last.ordre >= 0
+                                    ORDER BY pp_last.ordre DESC
                                     LIMIT 1
                                 )
-                            ) < ST_Length(s.geometrie) / 4
-                            THEN 1
-                            ELSE -1
+                                THEN 1
+                                WHEN (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_first.geometrie, 2154))
+                                    FROM point_de_repere AS pp_first
+                                    WHERE pp_first.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_first.ordre >= 0
+                                    ORDER BY pp_first.ordre ASC
+                                    LIMIT 1
+                                ) > (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_last.geometrie, 2154))
+                                    FROM point_de_repere AS pp_last
+                                    WHERE pp_last.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_last.ordre >= 0
+                                    ORDER BY pp_last.ordre DESC
+                                    LIMIT 1
+                                )
+                                THEN -1
+                                -- Fallback : un seul PR sur la section, on compare sa proximité au début de la ligne
+                                WHEN ST_Distance(
+                                    ST_StartPoint(s.geometrie),
+                                    (
+                                        SELECT pp.geometrie
+                                        FROM point_de_repere AS pp
+                                        WHERE pp.identifiant_de_section = s.identifiant_de_section
+                                        AND pp.ordre >= 0
+                                        ORDER BY pp.ordre ASC
+                                        LIMIT 1
+                                    )
+                                ) < ST_Length(s.geometrie) / 4
+                                THEN 1
+                                ELSE -1
                             END AS direction
                         FROM point_de_repere AS p
                         LEFT JOIN section_de_points_de_repere AS s
