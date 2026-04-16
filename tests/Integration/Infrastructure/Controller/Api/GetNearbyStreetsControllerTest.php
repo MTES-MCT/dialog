@@ -8,6 +8,12 @@ use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class GetNearbyStreetsControllerTest extends AbstractWebTestCase
 {
+    private const array API_HEADERS = [
+        'CONTENT_TYPE' => 'application/json',
+        'HTTP_X_CLIENT_ID' => 'clientId',
+        'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+    ];
+
     public function testNearbyStreets(): void
     {
         $client = static::createClient();
@@ -17,7 +23,7 @@ final class GetNearbyStreetsControllerTest extends AbstractWebTestCase
             '/api/nearby-streets',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            self::API_HEADERS,
             json_encode([
                 'geometry' => ['type' => 'Point', 'coordinates' => [2.352222, 48.856614]],
                 'radius' => 100,
@@ -47,7 +53,7 @@ final class GetNearbyStreetsControllerTest extends AbstractWebTestCase
             '/api/nearby-streets',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            self::API_HEADERS,
             '{invalid',
         );
 
@@ -67,7 +73,7 @@ final class GetNearbyStreetsControllerTest extends AbstractWebTestCase
             '/api/nearby-streets',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            self::API_HEADERS,
             json_encode(['radius' => 100]),
         );
 
@@ -87,7 +93,7 @@ final class GetNearbyStreetsControllerTest extends AbstractWebTestCase
             '/api/nearby-streets',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            self::API_HEADERS,
             json_encode(['geometry' => 'not-an-object']),
         );
 
@@ -107,10 +113,32 @@ final class GetNearbyStreetsControllerTest extends AbstractWebTestCase
             '/api/nearby-streets',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            self::API_HEADERS,
             '',
         );
 
         $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function testUnauthorizedWithInvalidCredentials(): void
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            '/api/nearby-streets',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'invalid',
+                'HTTP_X_CLIENT_SECRET' => 'invalid',
+            ],
+            json_encode([
+                'geometry' => ['type' => 'Point', 'coordinates' => [2.35, 48.85]],
+            ]),
+        );
+
+        $this->assertResponseStatusCodeSame(401);
     }
 }
