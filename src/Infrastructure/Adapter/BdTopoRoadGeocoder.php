@@ -355,6 +355,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                         AND p.cote = :side
                         AND p.type_de_pr LIKE \'PR%%\'
                         %s
+                        ORDER BY s.identifiant_de_section
+                        LIMIT 1
                     ),
                     next_pr AS (
                         -- Trouver le PR suivant sur la même route
@@ -373,6 +375,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             AND p2.type_de_pr LIKE \'PR%%\'
                         LEFT JOIN section_de_points_de_repere AS s2
                             ON p2.identifiant_de_section = s2.identifiant_de_section
+                        ORDER BY s2.identifiant_de_section
+                        LIMIT 1
                     ),
                     position_calculation AS (
                         -- Calculer la position cible

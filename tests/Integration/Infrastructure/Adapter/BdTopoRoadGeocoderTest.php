@@ -225,13 +225,13 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             'pr-type-excluded-fs' => [
                 'N79',
                 'DIR Centre Est',
-                null,
+                '71',
                 // Ce numéro de PR existe en deux variantes dans point_de_repere :
                 // un type_de_pr = 'PR', et un type_de_pr = 'FS' (qu'on ne veut pas).
                 '51',
                 'D',
                 150,
-                Coordinates::fromLonLat(4.534693103, 46.374895947),
+                Coordinates::fromLonLat(4.538158002, 46.373662399),
             ],
         ];
     }
