@@ -190,4 +190,17 @@ final class BdTopoRoadGeocoderTest extends TestCase
 
         $this->roadGeocoder->computeRoadLineFromName('Rue de la Paix', '75056');
     }
+
+    public function testFindNearbyStreetsUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+        $this->expectExceptionMessage('Nearby streets query has failed');
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willThrowException(new \RuntimeException('Database connection failed'));
+
+        $this->roadGeocoder->findNearbyStreets('{"type":"Point","coordinates":[2.35,48.85]}');
+    }
 }
