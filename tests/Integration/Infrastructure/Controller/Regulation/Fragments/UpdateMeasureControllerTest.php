@@ -94,9 +94,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
-        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
+        $this->assertResponseStatusCodeSame(200);
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Rue Ardoin à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
@@ -123,9 +121,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
-        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_TYPICAL]);
+        $this->assertResponseStatusCodeSame(200);
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertCount(1, $measures->eq(0)->filter('[data-location-uuid]'));
@@ -160,11 +156,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         unset($values['measure_form']['periods'][0]); // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertRouteSame('fragment_regulations_measure', ['uuid' => MeasureFixture::UUID_CIFS]);
         $this->assertSame(
             // 09/06/2023 comes from DateUtilsMock
             'du 02/06/2023 à 00h00 au 06/06/2023 à 23h59, le mardi (13h00-15h00 et 20h00-22h00) du 03/06/2023 à 09h00 au 05/06/2023 à 11h00, le mardi et le jeudi (09h00-11h00)',
@@ -196,8 +189,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
         $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
-        $client->request($form->getMethod(), $form->getUri(), $values);
-        $crawler = $client->followRedirect();
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
+        $this->assertResponseStatusCodeSame(200);
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
         // Remove added daily range
@@ -211,8 +204,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00 (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
     }
 
@@ -242,8 +234,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
         $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
-        $client->request($form->getMethod(), $form->getUri(), $values);
-        $crawler = $client->followRedirect();
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
         // Remove added timeslot
@@ -257,8 +248,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi', $crawler->filter('li')->eq(1)->text());
     }
 
@@ -328,7 +318,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testUpdateAddressFullRoad(): void
@@ -360,7 +350,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testDepartmentalRoadWithUnknownPointNumbers(): void
@@ -424,10 +414,10 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][2]['nationalRoad']['toAbscissa'] = 50;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $initialValues, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testNumberedRoadPointNumberZero(): void
@@ -452,8 +442,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][2]['nationalRoad']['toAbscissa'] = 0;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
-        $crawler = $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
         $this->assertSame('N12 (DIR Ouest) du PR 0+0 (côté U) au PR 1+0 (côté U)', $crawler->filter('[data-location-uuid]')->eq(3)->text());
     }*/
 
@@ -476,12 +465,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
 
         $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testNationalRoadWinterMaintenanceInvalidStorageArea(): void
@@ -540,7 +529,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $form['measure_form[locations][0][rawGeoJSON][geometry]'] = '{"type": "Point", "coordinates": [2.346603289433233, 48.90376697673585]}';
 
         $crawler = $client->submit($form);
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testReplaceRawGeoJSONWithLane(): void
@@ -563,7 +552,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
     }
 
     private function provideTestEditRawGeoJSONWithInvalidJSON(): array

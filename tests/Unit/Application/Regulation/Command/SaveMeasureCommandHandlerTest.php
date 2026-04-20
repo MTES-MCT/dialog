@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Application\Regulation\Command;
 use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
-use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
@@ -17,7 +16,6 @@ use App\Application\Regulation\Command\SaveMeasureCommandHandler;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
-use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
@@ -88,9 +86,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $periodCommand = new SavePeriodCommand();
         $locationCommand = new SaveLocationCommand();
 
-        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value);
-
-        $handleMatcher = self::exactly(3);
+        $handleMatcher = self::exactly(2);
         $this->commandBus
             ->expects($handleMatcher)
             ->method('handle')
@@ -98,7 +94,6 @@ final class SaveMeasureCommandHandlerTest extends TestCase
                 fn ($command) => match ($handleMatcher->getInvocationCount()) {
                     1 => $this->assertEquals($periodCommand, $command) ?: $createdPeriod,
                     2 => $this->assertEquals($locationCommand, $command) ?: $createdLocation,
-                    3 => $this->assertEquals($regulationOrderHistoryCommand, $command),
                 },
             );
 
@@ -157,18 +152,11 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $periodCommand = new SavePeriodCommand();
         $periodCommand->measure = $createdMeasure;
-        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value);
-
-        $handleMatcher = self::exactly(2);
         $this->commandBus
-            ->expects($handleMatcher)
+            ->expects(self::once())
             ->method('handle')
-            ->willReturnCallback(
-                fn ($command) => match ($handleMatcher->getInvocationCount()) {
-                    1 => $this->assertEquals($periodCommand, $command) ?: $createdPeriod,
-                    2 => $this->assertEquals($regulationOrderHistoryCommand, $command),
-                },
-            );
+            ->with($this->equalTo($periodCommand))
+            ->willReturn($createdPeriod);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,
@@ -226,18 +214,11 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->measure = $createdMeasure;
-        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value);
-
-        $handleMatcher = self::exactly(2);
         $this->commandBus
-            ->expects($handleMatcher)
+            ->expects(self::once())
             ->method('handle')
-            ->willReturnCallback(
-                fn ($command) => match ($handleMatcher->getInvocationCount()) {
-                    1 => $this->assertEquals($vehicleSetCommand, $command) ?: $createdVehicleSet,
-                    2 => $this->assertEquals($regulationOrderHistoryCommand, $command),
-                },
-            );
+            ->with($this->equalTo($vehicleSetCommand))
+            ->willReturn($createdVehicleSet);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,
@@ -319,11 +300,6 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $measure
             ->expects(self::once())
-            ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
-
-        $measure
-            ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn(new \DateTimeImmutable('2023-06-01'));
 
@@ -364,19 +340,16 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $periodCommand1 = new SavePeriodCommand($period1);
         $locationCommand2 = new SaveLocationCommand($location2);
 
-        $regulationOrderHistoryCommand = new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value);
-
         $this->commandBus
-            ->expects(self::exactly(5))
+            ->expects(self::exactly(4))
             ->method('handle')
             ->withConsecutive(
                 [$this->equalTo($periodCommand1)],
                 [$this->equalTo(new DeletePeriodCommand($period2))],
                 [$this->equalTo($locationCommand2)],
                 [$this->equalTo(new DeleteLocationCommand($location1))],
-                [$this->equalTo($regulationOrderHistoryCommand)],
             )
-            ->willReturnOnConsecutiveCalls(null, null, $location2, null, null);
+            ->willReturnOnConsecutiveCalls(null, null, $location2, null);
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,

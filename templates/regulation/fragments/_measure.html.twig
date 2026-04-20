@@ -57,7 +57,7 @@
                 </ul>
             </div>
         </div>
-        {% if not isReadOnly and generalInfo.isSourceDialog %}
+        {% if not isReadOnly and (generalInfo.isSourceDialog or generalInfo.isDraft) %}
             <ul class="app-card__actions" id="app-card--with-head-background">
                 <li>
                     <form method="POST" action="{{ path('fragment_regulations_measure_duplicate', { regulationOrderRecordUuid: generalInfo.uuid,uuid: measure.uuid})}}">

@@ -12,11 +12,13 @@ use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Location\GetStorageAreasByRoadNumbersQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -83,6 +85,7 @@ final class AddMeasureController extends AbstractRegulationController
                 $preExistingMeasureUuids = $regulationOrderRecord->getMeasureUuids();
 
                 $measure = $this->commandBus->handle($command);
+                $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value));
                 $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
                 $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

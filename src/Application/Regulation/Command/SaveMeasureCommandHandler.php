@@ -11,7 +11,6 @@ use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
-use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
@@ -90,8 +89,6 @@ final class SaveMeasureCommandHandler
                 }
             }
 
-            $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($command->measure->getRegulationOrder(), ActionTypeEnum::UPDATE->value));
-
             return $command->measure;
         }
 
@@ -131,8 +128,6 @@ final class SaveMeasureCommandHandler
                 throw $e;
             }
         }
-
-        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($command->regulationOrder, ActionTypeEnum::UPDATE->value));
 
         return $measure;
     }
