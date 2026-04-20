@@ -12,6 +12,7 @@ use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -29,6 +30,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'uuid' => '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                 'identifier' => 'F02/2023',
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+                'source' => RegulationOrderRecordSourceEnum::DIALOG->value,
                 'overallStartDate' => $startDate1,
                 'overallEndDate' => null,
                 'nbLocations' => 0,
@@ -42,6 +44,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'uuid' => '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                 'identifier' => 'F01/2023',
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+                'source' => RegulationOrderRecordSourceEnum::DIALOG->value,
                 'overallStartDate' => $startDate2,
                 'overallEndDate' => null,
                 'nbLocations' => 2,
@@ -54,6 +57,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'uuid' => 'ef5b3632-8525-41b5-9e84-3116d9089610',
                 'identifier' => 'F01/2024',
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+                'source' => RegulationOrderRecordSourceEnum::DIALOG->value,
                 'overallStartDate' => $startDate2,
                 'overallEndDate' => null,
                 'nbLocations' => 1,
@@ -92,6 +96,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     '247edaa2-58d1-43de-9d33-9753bf6f4d30',
                     'F02/2023',
                     RegulationOrderRecordStatusEnum::DRAFT->value,
+                    RegulationOrderRecordSourceEnum::DIALOG,
                     0,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
@@ -103,6 +108,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
                     'F01/2023',
                     RegulationOrderRecordStatusEnum::DRAFT->value,
+                    RegulationOrderRecordSourceEnum::DIALOG,
                     2,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',
@@ -118,6 +124,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     'ef5b3632-8525-41b5-9e84-3116d9089610',
                     'F01/2024',
                     RegulationOrderRecordStatusEnum::DRAFT->value,
+                    RegulationOrderRecordSourceEnum::DIALOG,
                     1,
                     'DiaLog',
                     'dcab837f-4460-4355-99d5-bf4891c35f8f',

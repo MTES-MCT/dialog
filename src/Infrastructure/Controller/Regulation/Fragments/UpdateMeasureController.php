@@ -12,24 +12,29 @@ use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
 use App\Application\Regulation\Query\GetAdministratorsQuery;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
+use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class UpdateMeasureController extends AbstractRegulationController
 {
@@ -40,6 +45,8 @@ final class UpdateMeasureController extends AbstractRegulationController
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
         private CanUseRawGeoJSON $canUseRawGeoJSON,
+        private CanDeleteMeasures $canDeleteMeasures,
+        private EntityManagerInterface $entityManager,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
@@ -93,13 +100,24 @@ final class UpdateMeasureController extends AbstractRegulationController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $this->commandBus->handle($command);
+                $this->entityManager->clear();
+                $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrder, ActionTypeEnum::UPDATE->value));
+                $updatedMeasure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
+                $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));
+                $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+                $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
-                return new RedirectResponse(
-                    url: $this->router->generate('fragment_regulations_measure', [
-                        'uuid' => $uuid,
-                        'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
-                    ]),
-                    status: Response::HTTP_SEE_OTHER,
+                return new Response(
+                    $this->twig->render(
+                        name: 'regulation/fragments/_measure.updated.stream.html.twig',
+                        context: [
+                            'measure' => MeasureView::fromEntity($updatedMeasure),
+                            'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
+                            'regulationOrderRecord' => $regulationOrderRecord,
+                            'generalInfo' => $generalInfo,
+                            'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
+                        ],
+                    ),
                 );
             } catch (LaneGeocodingFailureException $exc) {
                 $commandFailed = true;

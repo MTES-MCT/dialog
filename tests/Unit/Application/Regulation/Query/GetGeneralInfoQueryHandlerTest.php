@@ -8,6 +8,7 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetGeneralInfoQueryHandler;
 use App\Application\Regulation\View\AddressView;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
@@ -34,6 +35,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
                 addressComplement: 'Apt 4B',
             ),
             status: RegulationOrderRecordStatusEnum::DRAFT->value,
+            source: RegulationOrderRecordSourceEnum::DIALOG,
             regulationOrderUuid: 'fce8177b-3737-4b4e-933d-fe29d0092c89',
             regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
             category: 'temporaryRegulation',
@@ -55,6 +57,7 @@ final class GetGeneralInfoQueryHandlerTest extends TestCase
                 'organizationUuid' => $generalInfo->organizationUuid,
                 'organizationLogo' => '/path/to/logo.jpg',
                 'status' => $generalInfo->status,
+                'source' => $generalInfo->source->value,
                 'regulationOrderUuid' => 'fce8177b-3737-4b4e-933d-fe29d0092c89',
                 'regulationOrderTemplateUuid' => '92fc487a-b795-4583-88e6-0b83d23910cc',
                 'category' => $generalInfo->category,

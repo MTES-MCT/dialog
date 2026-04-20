@@ -6,12 +6,15 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Exception\MeasureCannotBeDeletedException;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +31,7 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
         private \Twig\Environment $twig,
         private CommandBusInterface $commandBus,
         private CanDeleteMeasures $canDeleteMeasures,
+        private EntityManagerInterface $entityManager,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
@@ -57,6 +61,10 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
             throw new BadRequestHttpException();
         }
 
+        $this->entityManager->clear();
+        $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrderRecord->getRegulationOrder(), ActionTypeEnum::UPDATE->value));
+
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
         return new Response(
@@ -66,6 +74,8 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
                     'uuid' => $uuid,
                     'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                     'measureUuids' => $regulationOrderRecord->getMeasureUuids(),
+                    'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
+                    'regulationOrderRecord' => $regulationOrderRecord,
                 ],
             ),
         );

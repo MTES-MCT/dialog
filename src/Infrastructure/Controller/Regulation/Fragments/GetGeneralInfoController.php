@@ -43,7 +43,7 @@ final class GetGeneralInfoController extends AbstractRegulationController
                 name: 'regulation/fragments/_general_info.html.twig',
                 context: [
                     'generalInfo' => $generalInfo,
-                    'canEdit' => $generalInfo->isDraft(),
+                    'canEdit' => $generalInfo->isSourceDialog(),
                 ],
             ),
         );

@@ -1,16 +1,17 @@
+{% set label = publishLabel|default('common.publish'|trans) %}
 {% if is_granted(constant('App\\Infrastructure\\Security\\Voter\\RegulationOrderRecordVoter::PUBLISH'), regulationOrderRecord) %}
     {% if canPublish %}
         {% set publishCsrfToken = csrf_token('publish-regulation') %}
         <form method="post" action="{{ path('app_regulation_publish', { uuid }) }}" data-controller="form-submit" data-action="modal-trigger:submit->form-submit#submit">
             <d-modal-trigger modal="regulation-publish-modal" submitValue="publish">
                 <button class="fr-btn fr-btn--icon-left fr-icon-alarm-warning-line" aria-controls="regulation-publish-modal">
-                    {{ 'common.publish'|trans }}
+                    {{ label }}
                 </button>
 
                 <input type="hidden" name="_token" value="{{ publishCsrfToken }}"/>
             </d-modal-trigger>
         </form>
     {% else %}
-        <button class="fr-btn" disabled>{{ 'common.publish'|trans }}</button>
+        <button class="fr-btn" disabled>{{ label }}</button>
     {% endif %}
 {% endif %}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\OrganizationRegulationAccessInterface;
 
@@ -17,6 +18,7 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
         public ?string $organizationUuid,
         public ?AddressView $organizationAddress,
         public string $status,
+        public RegulationOrderRecordSourceEnum $source,
         public string $regulationOrderUuid,
         public ?string $regulationOrderTemplateUuid,
         public string $category,
@@ -36,5 +38,10 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
     public function isDraft(): bool
     {
         return $this->status === RegulationOrderRecordStatusEnum::DRAFT->value;
+    }
+
+    public function isSourceDialog(): bool
+    {
+        return $this->source->isDialog();
     }
 }

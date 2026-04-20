@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\View;
 use App\Application\Regulation\View\AddressView;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use PHPUnit\Framework\TestCase;
@@ -31,6 +32,7 @@ final class GeneralInfoViewTest extends TestCase
                 addressComplement: 'Apt 4B',
             ),
             status: RegulationOrderRecordStatusEnum::DRAFT->value,
+            source: RegulationOrderRecordSourceEnum::DIALOG,
             regulationOrderUuid: 'ed97924b-bdc5-421a-b6e8-ac3ee6b16a7e',
             regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
@@ -42,6 +44,7 @@ final class GeneralInfoViewTest extends TestCase
         );
 
         $this->assertTrue($generalInfo->isDraft());
+        $this->assertTrue($generalInfo->isSourceDialog());
 
         $generalInformation2 = new GeneralInfoView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -57,6 +60,7 @@ final class GeneralInfoViewTest extends TestCase
                 addressComplement: 'Apt 4B',
             ),
             status: RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            source: RegulationOrderRecordSourceEnum::LITTERALIS,
             regulationOrderUuid: '8a32e881-a683-4caa-976f-6882296bc29b',
             regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
@@ -68,5 +72,6 @@ final class GeneralInfoViewTest extends TestCase
         );
 
         $this->assertFalse($generalInformation2->isDraft());
+        $this->assertFalse($generalInformation2->isSourceDialog());
     }
 }

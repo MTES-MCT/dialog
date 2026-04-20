@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\AddressView;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
@@ -40,6 +41,7 @@ final class GetGeneralInfoQueryHandler
                 addressComplement: $row['organizationAddressComplement'],
             ) : null,
             status: $row['status'],
+            source: RegulationOrderRecordSourceEnum::from($row['source']),
             regulationOrderUuid: $row['regulationOrderUuid'],
             regulationOrderTemplateUuid: $row['regulationOrderTemplateUuid'],
             category: $row['category'],
