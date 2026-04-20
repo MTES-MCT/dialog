@@ -17,6 +17,7 @@ L’authentification est requise pour les endpoints suivants :
 - PUT `/api/regulations/publish/{identifier}` (publication d'un arrêté existant)
 - DELETE `/api/regulations/{identifier}` (suppression d'un arrêté)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
+- POST `/api/nearby-streets` (recherche de rues à proximité d'une géométrie)
 
 Les exports (lecture) via GET (`/api/regulations.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
 
@@ -382,6 +383,78 @@ Remarques :
 
 Cet endpoint est utile pour vérifier rapidement la disponibilité d’un identifiant avant la création d’un nouvel arrêté. Seuls les arrêtés appartenant à l’organisation associée à vos identifiants API sont renvoyés.
 
+### Rechercher les rues à proximité d'une géométrie
+
+- Méthode: POST
+- URL: `/api/nearby-streets`
+- Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
+- Corps: JSON
+- Réponses: 200, 400, 401, 404, 500
+
+Ce endpoint retourne les rues situées à proximité d'une géométrie GeoJSON donnée. Il est utile pour identifier les voies concernées par un arrêté à partir d'un point ou d'une géométrie.
+
+#### Schéma du corps JSON
+
+- `geometry` (object, **obligatoire**) — Géométrie GeoJSON (ex: `{"type": "Point", "coordinates": [2.35, 48.85]}`)
+- `radius` (integer, optionnel, défaut `100`) — Rayon de recherche en mètres (max 500)
+- `limit` (integer, optionnel, défaut `10`) — Nombre maximum de résultats (max 50)
+
+#### Exemple de requête
+
+```bash
+curl -X POST \
+  'https://dialog.beta.gouv.fr/api/nearby-streets' \
+  -H 'Content-Type: application/json' \
+  -H 'X-Client-Id: VOTRE_CLIENT_ID' \
+  -H 'X-Client-Secret: VOTRE_CLIENT_SECRET' \
+  -d '{
+    "geometry": {"type": "Point", "coordinates": [2.352222, 48.856614]},
+    "radius": 100,
+    "limit": 5
+  }'
+```
+
+#### Réponses
+
+- 200 Liste des rues à proximité
+
+```json
+[
+  {
+    "roadName": "Rue de Rivoli",
+    "distance": 12.3
+  },
+  {
+    "roadName": "Rue Saint-Honoré",
+    "distance": 45.7
+  }
+]
+```
+
+- 400 Requête invalide
+
+```json
+{
+  "error": "GeoJSON geometry required"
+}
+```
+
+Erreurs possibles:
+- `Invalid JSON body`: le corps de la requête n'est pas du JSON valide.
+- `GeoJSON geometry required`: le champ `geometry` est absent.
+- `Invalid GeoJSON geometry`: le champ `geometry` n'est pas un objet GeoJSON valide (doit contenir un champ `type`).
+
+- 401 Non authentifié / identifiants invalides
+
+- 404 Aucune rue trouvée à proximité (tableau vide)
+
+- 500 Erreur interne lors de la recherche
+
+```json
+{
+  "error": "Nearby streets query failed"
+}
+```
 ## Support
 
 Pour obtenir des identifiants d’accès ou signaler un problème, contactez l’équipe DiaLog.
