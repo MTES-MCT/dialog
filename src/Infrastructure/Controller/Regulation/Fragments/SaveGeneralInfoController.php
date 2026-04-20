@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
+use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderTemplatesQuery;
 use App\Domain\Regulation\DTO\RegulationOrderTemplateDTO;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
@@ -15,11 +16,11 @@ use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\UX\Turbo\TurboBundle;
 
 final class SaveGeneralInfoController extends AbstractRegulationController
 {
@@ -74,11 +75,18 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->commandBus->handle($command);
 
-            return new RedirectResponse(
-                url: $this->router->generate('fragment_regulations_general_info', [
-                    'uuid' => $uuid,
-                ]),
-                status: Response::HTTP_SEE_OTHER,
+            $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
+            $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+            return new Response(
+                $this->twig->render(
+                    name: 'regulation/fragments/_general_info.updated.stream.html.twig',
+                    context: [
+                        'generalInfo' => $generalInfo,
+                        'canEdit' => $generalInfo->isSourceDialog(),
+                        'regulationOrderRecord' => $regulationOrderRecord,
+                    ],
+                ),
             );
         }
 

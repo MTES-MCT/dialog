@@ -111,7 +111,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('Publié', $row0->eq(4)->text());
 
         $links = $row0->eq(5)->filter('a');
-        $this->assertSame('Voir le détail', $links->eq(0)->text());
+        $this->assertSame('Modifier', $links->eq(0)->text());
         $this->assertSame('http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED, $links->eq(0)->link()->getUri());
     }
 

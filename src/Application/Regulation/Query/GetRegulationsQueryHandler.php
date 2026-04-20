@@ -10,6 +10,7 @@ use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
 final class GetRegulationsQueryHandler
@@ -50,6 +51,7 @@ final class GetRegulationsQueryHandler
                 uuid: $row['uuid'],
                 identifier: $row['identifier'],
                 status: $row['status'],
+                source: RegulationOrderRecordSourceEnum::from($row['source']),
                 numLocations: $row['nbLocations'],
                 organizationName: $row['organizationName'],
                 organizationUuid: $row['organizationUuid'],

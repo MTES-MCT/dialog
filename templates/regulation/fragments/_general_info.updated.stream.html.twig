@@ -1,0 +1,11 @@
+<turbo-stream action="replace" target="block_general_info">
+    <template>
+        {% include 'regulation/fragments/_general_info.html.twig' with { generalInfo, canEdit } only %}
+    </template>
+</turbo-stream>
+
+<turbo-stream action="update" target="block_publication">
+    <template>
+        {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: generalInfo.uuid, regulationOrderRecord, publishLabel: 'regulation.publish_changes'|trans } only %}
+    </template>
+</turbo-stream>

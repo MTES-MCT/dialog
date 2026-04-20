@@ -9,3 +9,9 @@
 {% endif %}
 
 <turbo-stream action="remove" target="block_measure_{{ uuid }}"></turbo-stream>
+
+<turbo-stream action="update" target="block_publication">
+    <template>
+        {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: regulationOrderRecordUuid, regulationOrderRecord, publishLabel: 'regulation.publish_changes'|trans } only %}
+    </template>
+</turbo-stream>

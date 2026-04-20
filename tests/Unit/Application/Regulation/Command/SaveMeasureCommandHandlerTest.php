@@ -152,7 +152,6 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $periodCommand = new SavePeriodCommand();
         $periodCommand->measure = $createdMeasure;
-
         $this->commandBus
             ->expects(self::once())
             ->method('handle')
@@ -215,7 +214,6 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->measure = $createdMeasure;
-
         $this->commandBus
             ->expects(self::once())
             ->method('handle')

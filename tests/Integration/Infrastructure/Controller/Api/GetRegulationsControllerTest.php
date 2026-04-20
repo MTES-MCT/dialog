@@ -26,7 +26,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
         $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
-        $this->assertResponseStatusCodeSame(303);
+        $this->assertResponseStatusCodeSame(200);
 
         // Publish
         $client->request('POST', '/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/publish', [

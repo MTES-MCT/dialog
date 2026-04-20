@@ -6,10 +6,12 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\CommandBusInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\DuplicateMeasureCommand;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -57,6 +59,7 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         }
 
         $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
+        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrderRecord->getRegulationOrder(), ActionTypeEnum::UPDATE->value));
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
@@ -67,6 +70,8 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
                     'measure' => MeasureView::fromEntity($measure),
                     'generalInfo' => $generalInfo,
                     'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
+                    'regulationOrderRecordUuid' => $regulationOrderRecordUuid,
+                    'regulationOrderRecord' => $regulationOrderRecord,
                 ],
             ),
         );

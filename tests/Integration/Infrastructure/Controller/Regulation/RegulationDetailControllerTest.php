@@ -140,8 +140,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
 
         $this->assertSame('Publié', $crawler->filter('[data-testid="status-badge"]')->text());
-        $this->assertSame(0, $crawler->selectButton('Modifier')->count()); // No edit buttons
-        $this->assertSame(0, $crawler->selectButton('Publier')->count());
+        $this->assertGreaterThan(0, $crawler->selectButton('Modifier')->count()); // Edit buttons visible for published DIALOG regulations
+        $this->assertSame(0, $crawler->selectButton('Publier')->count()); // No publish button when no unpublished changes
 
         $formDelete = $crawler->filter('aside')->selectButton('Supprimer')->form();
         $this->assertSame($formDelete->getUri(), 'http://localhost/regulations/' . RegulationOrderRecordFixture::UUID_PUBLISHED);
