@@ -251,7 +251,7 @@ def main(
 
             if overwrite:
                 print(
-                    "===> NOTE: run 'make bdtopo_migrate_redo' "
+                    "===> NOTE: run 'make bdtopo_setup_indexes' "
                     "to recreate indexes"
                 )
         except KeyboardInterrupt:

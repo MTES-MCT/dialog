@@ -515,12 +515,12 @@ def main() -> int:
             if not makefile_path.exists():
                 print(
                     f"WARNING: Makefile introuvable à {makefile_path}. "
-                    "Les migrations ne seront pas exécutées.",
+                    "La création des indexes ne sera pas exécutée.",
                     file=sys.stderr,
                 )
                 print(
-                    "Vous pouvez les exécuter manuellement avec: "
-                    "make bdtopo_migrate",
+                    "Vous pouvez l'exécuter manuellement avec: "
+                    "make bdtopo_setup_indexes",
                     file=sys.stderr,
                 )
             else:
@@ -528,16 +528,16 @@ def main() -> int:
                 if not _check_command_exists("make"):
                     print(
                         "WARNING: make n'est pas disponible. "
-                        "Les migrations ne seront pas exécutées.",
+                        "La création des indexes ne sera pas exécutée.",
                         file=sys.stderr,
                     )
                     print(
-                        "Vous pouvez les exécuter manuellement avec: "
-                        "make bdtopo_migrate",
+                        "Vous pouvez l'exécuter manuellement avec: "
+                        "make bdtopo_setup_indexes",
                         file=sys.stderr,
                     )
                 else:
-                    # Utiliser le Makefile pour exécuter les migrations
+                    # Utiliser le Makefile pour créer les indexes
                     # Détecter si on est dans un environnement CI (GitHub Actions)
                     is_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
 
@@ -551,47 +551,36 @@ def main() -> int:
                         # Sinon utiliser le Makefile avec BIN_CONSOLE défini
                         console_path = project_root / "bin" / "console"
                         if _check_command_exists("php") and console_path.exists():
-                            migrate_config = str(
-                                project_root
-                                / "config"
-                                / "packages"
-                                / "bdtopo"
-                                / "doctrine_migrations.yaml"
-                            )
-                            migrate_cmd = [
+                            setup_cmd = [
                                 "php",
                                 str(console_path),
-                                "doctrine:migrations:migrate",
-                                "-n",
-                                "--all-or-nothing",
-                                "--configuration",
-                                migrate_config,
+                                "app:bdtopo:setup_indexes",
                             ]
-                            print(f"Exécution de: {' '.join(migrate_cmd)}")
+                            print(f"Exécution de: {' '.join(setup_cmd)}")
                             print("(Environnement CI détecté, utilisation directe de PHP)")
                         else:
                             # Utiliser le Makefile avec BIN_CONSOLE défini pour la CI
                             env["BIN_CONSOLE"] = "php bin/console"
-                            migrate_cmd = ["make", "bdtopo_migrate"]
-                            print(f"Exécution de: {' '.join(migrate_cmd)}")
+                            setup_cmd = ["make", "bdtopo_setup_indexes"]
+                            print(f"Exécution de: {' '.join(setup_cmd)}")
                             print("(Environnement CI détecté, utilisation du Makefile avec BIN_CONSOLE)")
                     else:
                         # En local, utiliser le Makefile qui gère Docker automatiquement
-                        migrate_cmd = ["make", "bdtopo_migrate"]
-                        print(f"Exécution de: {' '.join(migrate_cmd)}")
+                        setup_cmd = ["make", "bdtopo_setup_indexes"]
+                        print(f"Exécution de: {' '.join(setup_cmd)}")
                         print("(Le Makefile utilisera Docker si PHP n'est pas disponible localement)")
 
-                    result = subprocess.run(migrate_cmd, env=env, cwd=project_root)
+                    result = subprocess.run(setup_cmd, env=env, cwd=project_root)
 
                     if result.returncode != 0:
                         print(
-                            "WARNING: Les migrations ont échoué. "
-                            "Vous pouvez les exécuter manuellement avec: "
-                            "make bdtopo_migrate",
+                            "WARNING: La création des indexes a échoué. "
+                            "Vous pouvez l'exécuter manuellement avec: "
+                            "make bdtopo_setup_indexes",
                             file=sys.stderr,
                         )
                     else:
-                        print("\n✓ Migrations d'index exécutées avec succès")
+                        print("\n✓ Indexes et fonctions créés avec succès")
     else:
         print("⏭ Import ignoré (--skip-import)")
 
