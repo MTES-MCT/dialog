@@ -107,11 +107,8 @@ bdtopo_migration: ## Generate new db migration for bdtopo
 bdtopo_migrate: ## Run db migrations for bdtopo
 	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing --configuration ./config/packages/bdtopo/doctrine_migrations.yaml ${ARGS}
 
-bdtopo_migrate_redo: ## Revert db migrations for bdtopo and run them again
-	# Revert to first migration which creates the postgis extension
-	make bdtopo_migrate ARGS="App\\\Infrastructure\\\Persistence\\\Doctrine\\\BdTopoMigrations\\\Version20250507085352"
-	# Re-run migrations from there
-	make bdtopo_migrate
+bdtopo_setup_indexes: ## Create BD TOPO indexes, extensions, and functions
+	${BIN_CONSOLE} app:bdtopo:setup_indexes
 
 metabase_migration: ## Generate new migration for metabase
 	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/metabase/doctrine_migrations.yaml
