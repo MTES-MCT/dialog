@@ -12,7 +12,7 @@ final class RegulationOrderListItemView
         public readonly string $uuid,
         public readonly string $identifier,
         public readonly string $status,
-        public readonly string $source,
+        public readonly RegulationOrderRecordSourceEnum $source,
         public readonly int $numLocations,
         public readonly string $organizationName,
         public readonly string $organizationUuid,
@@ -24,6 +24,6 @@ final class RegulationOrderListItemView
 
     public function isSourceDialog(): bool
     {
-        return $this->source === RegulationOrderRecordSourceEnum::DIALOG->value;
+        return $this->source->isDialog();
     }
 }

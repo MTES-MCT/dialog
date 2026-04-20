@@ -12,4 +12,9 @@ enum RegulationOrderRecordSourceEnum: string
     case JOP = 'jop';
     case LITTERALIS = 'litteralis';
     case API = 'api';
+
+    public function isDialog(): bool
+    {
+        return $this === self::DIALOG;
+    }
 }

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Domain\Regulation;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\StorageInterface;
 use App\Domain\Organization\SigningAuthority\SigningAuthority;
+use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\RegulationOrderTemplate;
 use App\Domain\Regulation\RegulationOrderTemplateTransformer;
 use App\Domain\User\Organization;
@@ -45,7 +46,7 @@ final class RegulationOrderTemplateTransformerTest extends TestCase
             organizationUuid: '33333333-3333-3333-3333-333333333333',
             organizationAddress: null,
             status: 'DRAFT',
-            source: 'dialog',
+            source: RegulationOrderRecordSourceEnum::DIALOG,
             regulationOrderUuid: '44444444-4444-4444-4444-444444444444',
             regulationOrderTemplateUuid: '55555555-5555-5555-5555-555555555555',
             category: 'TEMPORARY_REGULATION',

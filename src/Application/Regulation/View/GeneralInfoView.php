@@ -18,7 +18,7 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
         public ?string $organizationUuid,
         public ?AddressView $organizationAddress,
         public string $status,
-        public string $source,
+        public RegulationOrderRecordSourceEnum $source,
         public string $regulationOrderUuid,
         public ?string $regulationOrderTemplateUuid,
         public string $category,
@@ -42,6 +42,6 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
 
     public function isSourceDialog(): bool
     {
-        return $this->source === RegulationOrderRecordSourceEnum::DIALOG->value;
+        return $this->source->isDialog();
     }
 }

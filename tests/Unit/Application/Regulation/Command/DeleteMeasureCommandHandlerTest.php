@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Command;
 
+use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Command\DeleteMeasureCommandHandler;
 use App\Domain\Regulation\Exception\MeasureCannotBeDeletedException;
@@ -19,14 +20,16 @@ final class DeleteMeasureCommandHandlerTest extends TestCase
     private $measure;
     private $measureRepository;
     private $canDeleteMeasures;
+    private $commandBus;
     private $regulationOrderRecord;
+    private $regulationOrder;
 
     protected function setUp(): void
     {
         $this->regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
 
-        $regulationOrder = $this->createMock(RegulationOrder::class);
-        $regulationOrder
+        $this->regulationOrder = $this->createMock(RegulationOrder::class);
+        $this->regulationOrder
             ->expects(self::once())
             ->method('getRegulationOrderRecord')
             ->willReturn($this->regulationOrderRecord);
@@ -35,10 +38,11 @@ final class DeleteMeasureCommandHandlerTest extends TestCase
         $this->measure
             ->expects(self::once())
             ->method('getRegulationOrder')
-            ->willReturn($regulationOrder);
+            ->willReturn($this->regulationOrder);
 
         $this->measureRepository = $this->createMock(MeasureRepositoryInterface::class);
         $this->canDeleteMeasures = $this->createMock(CanDeleteMeasures::class);
+        $this->commandBus = $this->createMock(CommandBusInterface::class);
     }
 
     public function testDelete(): void
