@@ -1,0 +1,65 @@
+.draw-line-map-wrapper {
+    position: relative;
+}
+
+.draw-line-map-canvas {
+    position: relative;
+}
+
+.draw-line-map-container {
+    height: 400px;
+    width: 100%;
+    border: 1px solid var(--border-default-grey, #ddd);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.draw-line-map-controls {
+    position: absolute;
+    right: 0.5rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: stretch;
+    padding: 0.4rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.draw-line-map-controls--top {
+    top: 0.5rem;
+}
+
+.draw-line-map-controls--bottom {
+    bottom: 1.75rem;
+}
+
+.draw-line-map-controls .fr-btn {
+    justify-content: flex-start;
+    white-space: nowrap;
+}
+
+.draw-line-map-controls .fr-btn.active {
+    background-color: #000091;
+    color: #fff;
+}
+
+.draw-line-map-controls .fr-btn.active::before,
+.draw-line-map-controls .fr-btn.active::after {
+    --icon-color: #fff;
+}
+
+.draw-line-map-warning {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    right: 8rem;
+    z-index: 2;
+    background-color: #fff4e5;
+    border-left: 3px solid #b34000;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
