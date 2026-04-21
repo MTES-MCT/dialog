@@ -8,16 +8,17 @@ use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Infrastructure\Adapter\DatexGenerator;
+use League\Flysystem\Filesystem;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Filesystem\Filesystem;
 
 final class DatexGeneratorTest extends TestCase
 {
     private \Twig\Environment&MockObject $twig;
     private DateUtilsInterface&MockObject $dateUtils;
     private QueryBusInterface&MockObject $queryBus;
-    private string $tmpDir;
+    private Filesystem $storage;
 
     protected function setUp(): void
     {
@@ -25,29 +26,10 @@ final class DatexGeneratorTest extends TestCase
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
 
-        $this->tmpDir = sys_get_temp_dir() . '/datex_generator_test_' . uniqid();
+        $this->storage = new Filesystem(new InMemoryFilesystemAdapter());
     }
 
-    protected function tearDown(): void
-    {
-        $filePath = $this->tmpDir . '/var/datex/regulations.xml';
-        $tmpFile = $filePath . '.tmp';
-
-        if (file_exists($tmpFile)) {
-            unlink($tmpFile);
-        }
-
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
-
-        // Remove directories created during tests
-        @rmdir($this->tmpDir . '/var/datex');
-        @rmdir($this->tmpDir . '/var');
-        @rmdir($this->tmpDir);
-    }
-
-    public function testGenerateCreatesDirectoryAndFile(): void
+    public function testGenerateCreatesFile(): void
     {
         $now = new \DateTimeImmutable('2025-01-01');
         $regulationOrders = ['order1', 'order2'];
@@ -78,26 +60,20 @@ final class DatexGeneratorTest extends TestCase
             $this->twig,
             $this->dateUtils,
             $this->queryBus,
-            new Filesystem(),
-            $this->tmpDir,
+            $this->storage,
         );
 
-        $filePath = $this->tmpDir . '/var/datex/regulations.xml';
-
-        $this->assertDirectoryDoesNotExist(\dirname($filePath));
+        $this->assertFalse($this->storage->fileExists('datex/regulations.xml'));
 
         $generator->generate();
 
-        $this->assertDirectoryExists(\dirname($filePath));
-        $this->assertFileExists($filePath);
-        $this->assertSame('<xml>generated content</xml>', file_get_contents($filePath));
+        $this->assertTrue($this->storage->fileExists('datex/regulations.xml'));
+        $this->assertSame('<xml>generated content</xml>', $this->storage->read('datex/regulations.xml'));
     }
 
     public function testGenerateOverwritesExistingFile(): void
     {
-        $dir = $this->tmpDir . '/var/datex';
-        mkdir($dir, 0o755, true);
-        file_put_contents($dir . '/regulations.xml', '<xml>old content</xml>');
+        $this->storage->write('datex/regulations.xml', '<xml>old content</xml>');
 
         $now = new \DateTimeImmutable('2025-06-15');
 
@@ -122,15 +98,11 @@ final class DatexGeneratorTest extends TestCase
             $this->twig,
             $this->dateUtils,
             $this->queryBus,
-            new Filesystem(),
-            $this->tmpDir,
+            $this->storage,
         );
 
         $generator->generate();
 
-        $filePath = $this->tmpDir . '/var/datex/regulations.xml';
-        $this->assertSame('<xml>new content</xml>', file_get_contents($filePath));
-        // Ensure tmp file is cleaned up (renamed, not left behind)
-        $this->assertFileDoesNotExist($filePath . '.tmp');
+        $this->assertSame('<xml>new content</xml>', $this->storage->read('datex/regulations.xml'));
     }
 }
