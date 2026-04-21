@@ -8,21 +8,18 @@ use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Path;
+use League\Flysystem\FilesystemOperator;
 
 final class DatexGenerator implements DatexGeneratorInterface
 {
-    private string $datexFilePath;
+    private const DATEX_PATH = 'datex/regulations.xml';
 
     public function __construct(
         private \Twig\Environment $twig,
         private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
-        private Filesystem $filesystem,
-        string $projectDir,
+        private FilesystemOperator $storage,
     ) {
-        $this->datexFilePath = Path::join($projectDir, '/var/datex/regulations.xml');
     }
 
     public function generate(): void
@@ -31,13 +28,7 @@ final class DatexGenerator implements DatexGeneratorInterface
             new GetRegulationOrdersToDatexFormatQuery(),
         );
 
-        $dir = Path::getDirectory($this->datexFilePath);
-
-        if (!$this->filesystem->exists($dir)) {
-            $this->filesystem->mkdir($dir, 0o755);
-        }
-
-        $tmpFile = $this->datexFilePath . '.tmp';
+        $tmpFile = tempnam(sys_get_temp_dir(), 'datex');
         $handle = fopen($tmpFile, 'w');
 
         ob_start(function (string $buffer) use ($handle): string {
@@ -53,15 +44,23 @@ final class DatexGenerator implements DatexGeneratorInterface
 
         ob_end_flush();
         fclose($handle);
-        $this->filesystem->rename($tmpFile, $this->datexFilePath, overwrite: true);
+
+        $readStream = fopen($tmpFile, 'r');
+        $this->storage->writeStream(self::DATEX_PATH, $readStream);
+
+        if (\is_resource($readStream)) {
+            fclose($readStream);
+        }
+
+        unlink($tmpFile);
     }
 
     public function getCachedDatex(): string
     {
-        if (!$this->filesystem->exists($this->datexFilePath)) {
+        if (!$this->storage->fileExists(self::DATEX_PATH)) {
             $this->generate();
         }
 
-        return $this->filesystem->readFile($this->datexFilePath);
+        return $this->storage->read(self::DATEX_PATH);
     }
 }
