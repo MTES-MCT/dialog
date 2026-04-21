@@ -12,12 +12,12 @@
         <caption>{{ 'regulation.list.title'|trans }}</caption>
         <thead>
             <tr>
-                <th scope="col" class="fr-x-nowrap">{{ 'regulation'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.organization'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap">{{ 'regulation.locations'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm app-table__actions">{{ 'regulation.status'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap">{{ 'common.actions'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap" style="width: 15%">{{ 'regulation'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap" style="width: 25%">{{ 'regulation.locations'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm" style="width: 25%">{{ 'regulation.period'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm" style="width: 10%">{{ 'regulation.source'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm" style="width: 15%">{{ 'regulation.status'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap" style="width: 15%">{{ 'common.actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -29,9 +29,6 @@
                 <tr>
                     <td>
                         {{ regulation.identifier }}
-                    </td>
-                    <td class="fr-hidden fr-x-revert-sm">
-                        {{ regulation.organizationName }}
                     </td>
                     <td>
                         {% if location %}
@@ -59,6 +56,9 @@
                                 {% endif %}
                             </b>
                         {% endif %}
+                    </td>
+                    <td class="fr-hidden fr-x-revert-sm">
+                        {{ ('regulation.source.' ~ regulation.source.value)|trans }}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
                         {% include 'regulation/_status_badge.html.twig' with { status: regulation.status } only %}
