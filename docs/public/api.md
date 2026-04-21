@@ -252,8 +252,12 @@ Lorsque des erreurs de validation surviennent, la réponse a la structure suivan
 ```
 
 Remarques:
-- Les erreurs métier (code 400) incluent notamment: échec de géocodage de voie, abscisse hors plage, échec de géocodage de route numérotée, impossibilité d'intervention de l'organisation sur la géométrie.
+- Les erreurs métier (code 400) incluent notamment: échec de géocodage de voie, rues non en intersection, abscisse hors plage, échec de géocodage de route numérotée, impossibilité d'intervention de l'organisation sur la géométrie.
 - Les erreurs de validation (code 422) concernent les contraintes de format et de cohérence des données.
+
+Exemples d'erreurs métier (400):
+- Géocodage de voie échoué: `"La géolocalisation de la voie entre ces points a échoué. Veuillez vérifier que ces points existent et appartiennent bien à une même chaussée."`
+- Rues non en intersection: `"Les deux rues spécifiées ne sont pas en intersection. Veuillez vérifier que les rues se croisent bien."` — renvoyée lorsque `fromPointType` ou `toPointType` vaut `intersection` et que les deux rues ne se croisent pas physiquement.
 
 ### Publier un arrêté existant
 

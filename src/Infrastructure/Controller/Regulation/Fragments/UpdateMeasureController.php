@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 use App\Application\CommandBusInterface;
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
@@ -117,6 +118,14 @@ final class UpdateMeasureController extends AbstractRegulationController
                             'generalInfo' => $generalInfo,
                             'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                         ],
+                    ),
+                );
+            } catch (IntersectionGeocodingFailureException $exc) {
+                $commandFailed = true;
+                \Sentry\captureException($exc);
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('fromPointType')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.intersection_not_found', [], 'validators'),
                     ),
                 );
             } catch (LaneGeocodingFailureException $exc) {
