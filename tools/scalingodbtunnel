@@ -46,9 +46,14 @@ def _tcp_proxy_on_exit(listen_host: str, listen_port: int, target_host: str, tar
     stop_event = threading.Event()
     client_threads = []
 
+    # Normalize listen_host to avoid binding to all interfaces by default.
+    safe_listen_host = listen_host
+    if not safe_listen_host or safe_listen_host in ("0.0.0.0", "::"):
+        safe_listen_host = "127.0.0.1"
+
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind((listen_host, listen_port))
+    server_socket.bind((safe_listen_host, listen_port))
     server_socket.listen()
     server_socket.settimeout(0.5)
 
