@@ -654,15 +654,64 @@
                         },
                     }) }}
 
-                    {{ form_row(form.rawGeoJSON.geometry, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'rawGeoJSON',
-                            'disabled': not isRawGeoJSON,
-                        },
-                    }) }}
+                    <div
+                        data-controller="draw-line-map"
+                        data-draw-line-map-center-json-value='[2.725, 47.16]'
+                        data-draw-line-map-zoom-value="5"
+                        class="draw-line-map-wrapper fr-mb-3w"
+                    >
+                        {{ form_row(form.rawGeoJSON.geometry, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'rawGeoJSON',
+                                'disabled': not isRawGeoJSON,
+                                'data-draw-line-map-target': 'geometryField',
+                            },
+                        }) }}
+
+                        <div
+                            data-draw-line-map-target="warning"
+                            class="draw-line-map-warning fr-mb-1w"
+                            hidden
+                        >
+                            La géométrie actuelle n'est pas une simple ligne point par point. Le tracé sur la carte est désactivé. Cliquez sur « Effacer » pour repartir d'un tracé vierge.
+                        </div>
+                        <div class="draw-line-map-canvas">
+                            <div class="draw-line-map-controls draw-line-map-controls--top">
+                                <button
+                                    type="button"
+                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-edit-line fr-btn--icon-left"
+                                    data-draw-line-map-target="drawBtn"
+                                    data-action="click->draw-line-map#toggleDraw"
+                                    aria-pressed="false"
+                                >
+                                    Tracer une ligne
+                                </button>
+                            </div>
+                            <div class="draw-line-map-controls draw-line-map-controls--bottom">
+                                <button
+                                    type="button"
+                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-arrow-go-back-line"
+                                    data-draw-line-map-target="undoBtn"
+                                    data-action="click->draw-line-map#undo"
+                                >
+                                </button>
+                                <button
+                                    type="button"
+                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                                    data-draw-line-map-target="clearBtn"
+                                    data-action="click->draw-line-map#clear"
+                                >
+                                </button>
+                            </div>
+                            <div
+                                data-draw-line-map-target="container"
+                                class="draw-line-map-container"
+                            ></div>
+                        </div>
+                    </div>
 
                     <div
                         data-controller="location-preview-map"
