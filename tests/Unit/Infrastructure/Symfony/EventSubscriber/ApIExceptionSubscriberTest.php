@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\EventSubscriber;
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
@@ -42,6 +43,7 @@ class ApIExceptionSubscriberTest extends TestCase
             ->method('trans')
             ->willReturnCallback(function (string $key, array $parameters = []) {
                 $translations = [
+                    'regulation.location.error.intersection_not_found' => 'Intersection not found',
                     'regulation.location.error.lane_geocoding_failed' => 'Lane geocoding failed',
                     'regulation.location.error.abscissa_out_of_range' => 'Abscissa out of range',
                     'regulation.location.error.numbered_road_geocoding_failed' => 'Road geocoding failed',
@@ -124,6 +126,29 @@ class ApIExceptionSubscriberTest extends TestCase
         $this->assertCount(1, $data['violations']);
         $this->assertEquals('email', $data['violations'][0]['propertyPath']);
         $this->assertEquals('Invalid email', $data['violations'][0]['title']);
+    }
+
+    public function testIntersectionGeocodingFailureExceptionReturns400(): void
+    {
+        $this->setupTranslatorMock();
+
+        $subscriber = new ApIExceptionSubscriber($this->translator, $this->logger);
+
+        $kernel = $this->createMock(KernelInterface::class);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())->method('getPathInfo')->willReturn('/api/test');
+
+        $exception = new IntersectionGeocodingFailureException('Intersection error');
+        $event = new ExceptionEvent($kernel, $request, KernelInterface::MAIN_REQUEST, $exception);
+
+        $subscriber->onKernelException($event);
+
+        $response = $event->getResponse();
+        $this->assertNotNull($response);
+        $this->assertEquals(400, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals(400, $data['status']);
+        $this->assertEquals('Intersection not found', $data['detail']);
     }
 
     public function testLaneGeocodingFailureExceptionReturns400(): void
