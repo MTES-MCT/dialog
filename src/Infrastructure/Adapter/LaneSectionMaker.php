@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\IntersectionGeocoderInterface;
@@ -64,6 +65,8 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
             }
 
             return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
+        } catch (IntersectionGeocodingFailureException $exc) {
+            throw $exc;
         } catch (GeocodingFailureException $exc) {
             throw new LaneGeocodingFailureException(previous: $exc);
         }
