@@ -388,6 +388,14 @@
                 <source>regulation.status</source>
                 <target>Statut</target>
             </trans-unit>
+            <trans-unit id="regulation.details">
+                <source>regulation.details</source>
+                <target>Détails</target>
+            </trans-unit>
+            <trans-unit id="regulation.date">
+                <source>regulation.date</source>
+                <target>Date</target>
+            </trans-unit>
             <trans-unit id="regulation.export">
                 <source>regulation.export</source>
                 <target>Export</target>
@@ -579,6 +587,34 @@
             <trans-unit id="regulation.organization">
                 <source>regulation.organization</source>
                 <target>Organisation</target>
+            </trans-unit>
+            <trans-unit id="regulation.source">
+                <source>regulation.source</source>
+                <target>Source</target>
+            </trans-unit>
+            <trans-unit id="regulation.source.dialog">
+                <source>regulation.source.dialog</source>
+                <target>DiaLog</target>
+            </trans-unit>
+            <trans-unit id="regulation.source.eudonet_paris">
+                <source>regulation.source.eudonet_paris</source>
+                <target>Import Eudonet Paris</target>
+            </trans-unit>
+            <trans-unit id="regulation.source.bacidf">
+                <source>regulation.source.bacidf</source>
+                <target>Import BAC IDF</target>
+            </trans-unit>
+            <trans-unit id="regulation.source.jop">
+                <source>regulation.source.jop</source>
+                <target>Import JOP</target>
+            </trans-unit>
+            <trans-unit id="regulation.source.litteralis">
+                <source>regulation.source.litteralis</source>
+                <target>Import Litteralis</target>
+            </trans-unit>
+            <trans-unit id="regulation.source.api">
+                <source>regulation.source.api</source>
+                <target>Import API</target>
             </trans-unit>
             <trans-unit id="regulation.general_info.organization.help">
                 <source>regulation.general_info.organization.help</source>
