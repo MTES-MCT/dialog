@@ -33,7 +33,7 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
 
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
-        $this->assertSame('Modifié le 09/06/2023', $crawler->filter('[data-testid="history"]')->text());
+        $this->assertSame('Modifié le 09/06/2023 à 01h00', $crawler->filter('[data-testid="history"]')->text());
     }
 
     public function testEditWithAnAlreadyExistingIdentifier(): void
