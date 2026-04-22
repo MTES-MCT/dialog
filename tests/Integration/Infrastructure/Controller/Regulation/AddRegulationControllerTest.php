@@ -56,7 +56,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $crawler = $client->followRedirect();
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_regulation_detail');
-        $this->assertSame('Créé le 09/06/2023', $crawler->filter('[data-testid="history"]')->text());
+        $this->assertSame('Créé le 09/06/2023 à 01h00', $crawler->filter('[data-testid="history"]')->text());
     }
 
     public function testWithDefaultIdentifier(): void
