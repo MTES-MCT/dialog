@@ -35,6 +35,8 @@ export default class extends Controller {
     #abortController = null;
     #debounceTimer = null;
     #boundDebouncedLoad = null;
+    #lastGeoJSON = null;
+    #boundActivateInteractive = null;
 
     connect() {
         this.#boundDebouncedLoad = () => this.#debouncedLoad();
@@ -46,6 +48,10 @@ export default class extends Controller {
         this.#abortController?.abort();
         clearTimeout(this.#debounceTimer);
         this.#stopListeningForm();
+        if (this.#boundActivateInteractive) {
+            this.containerTarget.removeEventListener('click', this.#boundActivateInteractive);
+            this.#boundActivateInteractive = null;
+        }
         this.#map?.remove();
         this.#map = null;
     }
@@ -273,6 +279,8 @@ export default class extends Controller {
             return;
         }
 
+        this.#lastGeoJSON = geojson;
+
         const wasHidden = this.containerTarget.hidden;
         this.containerTarget.hidden = false;
 
@@ -306,6 +314,8 @@ export default class extends Controller {
 
         if (interactive) {
             this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        } else {
+            this.#enableActivateOnClick();
         }
 
         this.#map.on('load', () => {
@@ -317,6 +327,37 @@ export default class extends Controller {
         this.#map.on('error', () => {
             this.#hideMap();
         });
+    }
+
+    #enableActivateOnClick() {
+        this.containerTarget.style.cursor = 'pointer';
+        this.containerTarget.title = 'Cliquer pour activer le zoom';
+        this.#boundActivateInteractive = (event) => this.#activateInteractive(event);
+        this.containerTarget.addEventListener('click', this.#boundActivateInteractive);
+    }
+
+    #activateInteractive(event) {
+        event?.preventDefault();
+        event?.stopPropagation();
+
+        if (this.#boundActivateInteractive) {
+            this.containerTarget.removeEventListener('click', this.#boundActivateInteractive);
+            this.#boundActivateInteractive = null;
+        }
+
+        this.containerTarget.style.cursor = '';
+        this.containerTarget.removeAttribute('title');
+
+        this.interactiveValue = true;
+
+        const geojson = this.#lastGeoJSON;
+
+        this.#map?.remove();
+        this.#map = null;
+
+        if (geojson) {
+            this.#initializeMap(geojson);
+        }
     }
 
     #addHouseNumbersLayer() {
