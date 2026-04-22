@@ -21,6 +21,8 @@ enum VehicleTypeEnum: string
     case CITY_LOGISTICS = 'cityLogistics';
     case HAZARDOUS_MATERIALS = 'hazardousMaterials';
     case ROAD_MAINTENANCE_OR_CONSTRUCTION = 'roadMaintenanceOrConstruction';
+    case PATROL = 'patrol';
+    case DESSERTE_LOCALE = 'desserteLocale';
 
     public static function restrictedCases(): array
     {
@@ -44,6 +46,8 @@ enum VehicleTypeEnum: string
             VehicleTypeEnum::CAR_SHARING,
             VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION,
             VehicleTypeEnum::CITY_LOGISTICS,
+            VehicleTypeEnum::PATROL,
+            VehicleTypeEnum::DESSERTE_LOCALE,
             VehicleTypeEnum::OTHER,
         ];
     }

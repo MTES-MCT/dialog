@@ -746,8 +746,8 @@ final class BacIdfTransformerTest extends TestCase
 
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = true;
-        $vehicleSetCommand->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::OTHER->value];
-        $vehicleSetCommand->otherExemptedTypeText = 'Véhicules de services, transport de déchets, police, pompiers, déménagement';
+        $vehicleSetCommand->exemptedTypes = [VehicleTypeEnum::EMERGENCY_SERVICES->value, VehicleTypeEnum::PATROL->value, VehicleTypeEnum::OTHER->value];
+        $vehicleSetCommand->otherExemptedTypeText = 'Véhicules de services, transport de déchets, pompiers, déménagement';
 
         yield [
             [

@@ -33,7 +33,11 @@ final class DatexVehicleConditionView
                 $this->vehicleUsage = $vehicleType;
                 break;
             case VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value:
+            case VehicleTypeEnum::PATROL->value:
                 $this->vehicleUsage = $vehicleType;
+                break;
+            case VehicleTypeEnum::DESSERTE_LOCALE->value:
+                $this->isOther = true;
                 break;
             case CritairEnum::CRITAIR_0->value:
             case CritairEnum::CRITAIR_1->value:

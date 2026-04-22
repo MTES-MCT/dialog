@@ -88,6 +88,12 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                                 otherTypeText: $vehicleSet->getOtherExemptedTypeText(),
                                 isExempted: true,
                             );
+                        } elseif (VehicleTypeEnum::DESSERTE_LOCALE->value === $exemptedVehicleType) {
+                            $vehicleConditions[] = new DatexVehicleConditionView(
+                                vehicleType: $exemptedVehicleType,
+                                otherTypeText: 'Desserte locale',
+                                isExempted: true,
+                            );
                         } else {
                             $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
                         }
