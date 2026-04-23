@@ -658,19 +658,9 @@
                         data-controller="draw-line-map"
                         data-draw-line-map-center-json-value='[2.725, 47.16]'
                         data-draw-line-map-zoom-value="5"
+                        data-draw-line-map-measure-type-value="{{ measureType }}"
                         class="draw-line-map-wrapper fr-mb-3w"
                     >
-                        {{ form_row(form.rawGeoJSON.geometry, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input',
-                            attr: {
-                                'data-form-reveal-target': 'formControl',
-                                'data-value': 'rawGeoJSON',
-                                'disabled': not isRawGeoJSON,
-                                'data-draw-line-map-target': 'geometryField',
-                            },
-                        }) }}
-
                         <div
                             data-draw-line-map-target="warning"
                             class="draw-line-map-warning fr-mb-1w"
@@ -681,6 +671,7 @@
                         <div class="draw-line-map-canvas">
                             <div class="draw-line-map-search">
                                 <div class="draw-line-map-search__input-wrapper">
+                                    <span class="draw-line-map-search__icon fr-icon-search-line" aria-hidden="true"></span>
                                     <input
                                         type="search"
                                         class="fr-input fr-input--sm draw-line-map-search__input"
@@ -730,17 +721,17 @@
                                 class="draw-line-map-container"
                             ></div>
                         </div>
-                    </div>
 
-                    <div
-                        data-controller="location-preview-map"
-                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
-                        data-location-preview-map-road-type-value="rawGeoJSON"
-                        data-location-preview-map-geometry-field-value="{{ form.rawGeoJSON.geometry.vars.id }}"
-                        data-location-preview-map-measure-type-value="{{ measureType }}"
-                        class="raw-geojson-map-container fr-mt-2w"
-                    >
-                        <div data-location-preview-map-target="container" hidden class="location-preview-map-container"></div>
+                        {{ form_row(form.rawGeoJSON.geometry, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'rawGeoJSON',
+                                'disabled': not isRawGeoJSON,
+                                'data-draw-line-map-target': 'geometryField',
+                            },
+                        }) }}
                     </div>
                 </div>
             </div>
