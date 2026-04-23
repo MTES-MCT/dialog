@@ -6,6 +6,7 @@ namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\IntersectionGeocoderInterface;
 use App\Application\RoadGeocoderInterface;
@@ -529,7 +530,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         if (!$rows) {
             $message = \sprintf('no intersection exists between roadBanId="%s" and otherRoadBanId="%s"', $roadBanId, $otherRoadBanId);
-            throw new GeocodingFailureException($message);
+            throw new IntersectionGeocodingFailureException($message);
         }
 
         $x = $rows[0]['x'];
@@ -537,11 +538,11 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         if (!$x || !$y) {
             $message = \sprintf(
-                'no intersection found: one of roadBanId="%s" or otherRoadBanId="%s" does not exist',
+                'no intersection found between roadBanId="%s" and otherRoadBanId="%s"',
                 $roadBanId,
                 $otherRoadBanId,
             );
-            throw new GeocodingFailureException($message);
+            throw new IntersectionGeocodingFailureException($message);
         }
 
         return Coordinates::fromLonLat((float) $x, (float) $y);
