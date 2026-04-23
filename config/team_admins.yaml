@@ -1,0 +1,56 @@
+# Liste des administrateurs internes de l'équipe DiaLog.
+#
+# Cette liste est la SOURCE DE VÉRITÉ pour les comptes ayant le rôle
+# ROLE_SUPER_ADMIN. La commande `app:team:sync-admins` synchronise cet état
+# avec la base de données à chaque déploiement (voir `make scalingo-postdeploy`).
+#
+# Les utilisateurs sont rattachés à l'organisation interne dont l'UUID est
+# défini par la variable d'environnement DIALOG_ORG_ID.
+#
+# ATTENTION : synchro stricte.
+# Tout utilisateur en base ayant ROLE_SUPER_ADMIN et absent de cette liste
+# sera SUPPRIMÉ au prochain déploiement. Si vous promouvez manuellement un
+# utilisateur en super admin, reportez-le ici.
+#
+# Champs :
+#   - email        : identifiant (unique, normalisé).
+#   - full_name    : nom complet affiché.
+#   - password_hash: (optionnel) hash bcrypt utilisé uniquement à la création
+#                    initiale de l'utilisateur. Jamais réécrit sur un compte
+#                    existant (laissez l'utilisateur gérer son mot de passe
+#                    via l'UI / la réinitialisation par email).
+#                    Pour générer un hash :
+#                      bin/console security:hash-password <password>
+
+admins:
+    - email: mathieu.marchois@beta.gouv.fr
+      full_name: "Mathieu MARCHOIS"
+      password_hash: "$2y$13$X8iaV02QuXVNAt5Pg0a75u1OoBMMef2uM2crA8UfnEYWDeviuXcwm"
+
+    - email: mathieu.fernandez@beta.gouv.fr
+      full_name: "Mathieu FERNANDEZ"
+      password_hash: "$2y$13$M/N2m6aHgQro.vQ6YyWBGOehqgZfgAlG3ZhbIfMjhlC4Nt3lLbniq"
+
+    - email: aurelie.baton@beta.gouv.fr
+      full_name: "Aurélie BATON"
+      password_hash: "$2y$13$K2XPGVl7g3D9aQktAGF4Hec/1EBt2KUHei7ABBFlWee7vnocAniGK"
+
+    - email: stephane.schultz@beta.gouv.fr
+      full_name: "Stéphane SCHULTZ"
+      password_hash: "$2y$13$5YAXUBt0RMmW1sN0rHkIMeEVVwlR1TzXxQ72Wtm/FkGOB54QjYSWm"
+
+    - email: eglantine.schmitt@developpement-durable.gouv.fr
+      full_name: "Eglantine SCHMITT"
+      password_hash: "$2y$13$Twuwt3JpdJhndtonOJyohuFq0ikYwo.iXcqBK9zM/rsTmQKLYtC2y"
+
+    - email: heloise.georgeault@developpement-durable.gouv.fr
+      full_name: "Heloise GEORGEAULT"
+      password_hash: "$2y$13$33BqPzmVm3/Q0GNPtN132e3GIgI7wqEadk5alN87t4jdGPMmE5b2."
+
+    - email: antoine.smagghe.ext@beta.gouv.fr
+      full_name: "Antoine SMAGGHE"
+      password_hash: "$2y$13$YDP63pb4dq51RnaFH7XcXeU1URJosZALl/fErMLafUio7y3ZBkluO"
+
+    - email: julien.zamor.ext@beta.gouv.fr
+      full_name: "Julien ZAMOR"
+      password_hash: "$2y$12$ExzyAkzA1KHtHmFdycsm2uaTWcwHmT45wG38pKUIYowkzs5PVoibG"
