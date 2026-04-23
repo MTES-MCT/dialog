@@ -679,6 +679,25 @@
                             La géométrie actuelle n'est pas une simple ligne point par point. Le tracé sur la carte est désactivé. Cliquez sur « Effacer » pour repartir d'un tracé vierge.
                         </div>
                         <div class="draw-line-map-canvas">
+                            <div class="draw-line-map-search">
+                                <div class="draw-line-map-search__input-wrapper">
+                                    <input
+                                        type="search"
+                                        class="fr-input fr-input--sm draw-line-map-search__input"
+                                        placeholder="Rechercher une commune"
+                                        aria-label="Rechercher une commune sur la carte"
+                                        autocomplete="off"
+                                        data-draw-line-map-target="searchInput"
+                                        data-action="input->draw-line-map#onSearchInput keydown->draw-line-map#onSearchKeydown focus->draw-line-map#onSearchFocus blur->draw-line-map#onSearchBlur"
+                                    >
+                                </div>
+                                <ul
+                                    class="draw-line-map-search__results"
+                                    role="listbox"
+                                    data-draw-line-map-target="searchResults"
+                                    hidden
+                                ></ul>
+                            </div>
                             <div class="draw-line-map-controls draw-line-map-controls--top">
                                 <button
                                     type="button"

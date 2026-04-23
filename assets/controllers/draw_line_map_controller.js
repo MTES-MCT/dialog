@@ -10,8 +10,13 @@ const POINTS_SOURCE = 'draw-points-source';
 const POINTS_LAYER = 'draw-points-layer';
 const EMPTY_FC = { type: 'FeatureCollection', features: [] };
 
+const SEARCH_API_URL = 'https://geo.api.gouv.fr/communes';
+const SEARCH_DEBOUNCE_MS = 250;
+const SEARCH_MIN_LENGTH = 2;
+const SEARCH_LIMIT = 5;
+
 export default class extends Controller {
-    static targets = ['container', 'geometryField', 'drawBtn', 'undoBtn', 'clearBtn', 'warning'];
+    static targets = ['container', 'geometryField', 'drawBtn', 'undoBtn', 'clearBtn', 'warning', 'searchInput', 'searchResults'];
     static values = {
         centerJson: { type: String, default: '[2.725, 47.16]' },
         zoom: { type: Number, default: 15 },
@@ -29,6 +34,11 @@ export default class extends Controller {
     #unsupportedGeometry = false;
     #boundFieldInput = null;
     #boundKeydown = null;
+    #searchAbortController = null;
+    #searchDebounceTimer = null;
+    #searchResults = [];
+    #searchActiveIndex = -1;
+    #searchBlurTimer = null;
 
     connect() {
         if (!this.hasGeometryFieldTarget) {
@@ -62,8 +72,207 @@ export default class extends Controller {
             document.removeEventListener('keydown', this.#boundKeydown);
         }
 
+        this.#searchAbortController?.abort();
+        clearTimeout(this.#searchDebounceTimer);
+        clearTimeout(this.#searchBlurTimer);
+
         this.#map?.remove();
         this.#map = null;
+    }
+
+    onSearchInput() {
+        clearTimeout(this.#searchDebounceTimer);
+        const query = this.searchInputTarget.value.trim();
+
+        if (query.length < SEARCH_MIN_LENGTH) {
+            this.#searchAbortController?.abort();
+            this.#renderSearchResults([]);
+            this.#hideSearchResults();
+
+            return;
+        }
+
+        this.#searchDebounceTimer = setTimeout(() => this.#searchCommunes(query), SEARCH_DEBOUNCE_MS);
+    }
+
+    onSearchFocus() {
+        clearTimeout(this.#searchBlurTimer);
+
+        if (this.#searchResults.length > 0) {
+            this.#showSearchResults();
+        }
+    }
+
+    onSearchBlur() {
+        // Delay so a click on a result is processed before hiding
+        clearTimeout(this.#searchBlurTimer);
+        this.#searchBlurTimer = setTimeout(() => this.#hideSearchResults(), 150);
+    }
+
+    onSearchKeydown(event) {
+        if (this.#searchResults.length === 0) {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            this.#moveSearchActive(1);
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            this.#moveSearchActive(-1);
+        } else if (event.key === 'Enter') {
+            event.preventDefault();
+            const index = this.#searchActiveIndex >= 0 ? this.#searchActiveIndex : 0;
+            this.#selectCommune(this.#searchResults[index]);
+        } else if (event.key === 'Escape') {
+            this.#hideSearchResults();
+        }
+    }
+
+    async #searchCommunes(query) {
+        this.#searchAbortController?.abort();
+        this.#searchAbortController = new AbortController();
+
+        const url = new URL(SEARCH_API_URL);
+        url.searchParams.set('nom', query);
+        url.searchParams.set('fields', 'nom,code,codeDepartement,centre,contour');
+        url.searchParams.set('boost', 'population');
+        url.searchParams.set('limit', String(SEARCH_LIMIT));
+
+        try {
+            const response = await fetch(url.toString(), { signal: this.#searchAbortController.signal });
+
+            if (!response.ok) {
+                this.#renderSearchResults([]);
+                return;
+            }
+
+            const data = await response.json();
+            this.#renderSearchResults(Array.isArray(data) ? data : []);
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                this.#renderSearchResults([]);
+            }
+        }
+    }
+
+    #renderSearchResults(results) {
+        if (!this.hasSearchResultsTarget) {
+            return;
+        }
+
+        this.#searchResults = results;
+        this.#searchActiveIndex = -1;
+        this.searchResultsTarget.innerHTML = '';
+
+        if (results.length === 0) {
+            const empty = document.createElement('li');
+            empty.className = 'draw-line-map-search__empty';
+            empty.textContent = 'Aucune commune trouvée';
+            this.searchResultsTarget.appendChild(empty);
+            this.#showSearchResults();
+
+            return;
+        }
+
+        results.forEach((commune, index) => {
+            const item = document.createElement('li');
+            item.className = 'draw-line-map-search__result';
+            item.setAttribute('role', 'option');
+            item.dataset.index = String(index);
+
+            const name = document.createElement('span');
+            name.className = 'draw-line-map-search__result-name';
+            name.textContent = commune.nom;
+
+            const meta = document.createElement('span');
+            meta.className = 'draw-line-map-search__result-meta';
+            meta.textContent = ` (${commune.codeDepartement || commune.code})`;
+
+            item.appendChild(name);
+            item.appendChild(meta);
+
+            item.addEventListener('mousedown', (e) => {
+                // Prevent input blur before click triggers selection
+                e.preventDefault();
+            });
+            item.addEventListener('click', () => this.#selectCommune(commune));
+            item.addEventListener('mouseenter', () => this.#setSearchActiveIndex(index));
+
+            this.searchResultsTarget.appendChild(item);
+        });
+
+        this.#showSearchResults();
+    }
+
+    #moveSearchActive(delta) {
+        const count = this.#searchResults.length;
+
+        if (count === 0) {
+            return;
+        }
+
+        const next = (this.#searchActiveIndex + delta + count) % count;
+        this.#setSearchActiveIndex(next);
+    }
+
+    #setSearchActiveIndex(index) {
+        this.#searchActiveIndex = index;
+        const items = this.searchResultsTarget.querySelectorAll('.draw-line-map-search__result');
+        items.forEach((el, i) => {
+            el.classList.toggle('draw-line-map-search__result--active', i === index);
+        });
+    }
+
+    #selectCommune(commune) {
+        if (!commune || !this.#map) {
+            this.#hideSearchResults();
+
+            return;
+        }
+
+        if (commune.contour && Array.isArray(commune.contour.coordinates)) {
+            const bounds = new maplibregl.LngLatBounds();
+            this.#extendBoundsFromCoordinates(commune.contour.coordinates, bounds);
+
+            if (!bounds.isEmpty()) {
+                this.#map.fitBounds(bounds, { padding: 40, maxZoom: 14, animate: true });
+            }
+        } else if (commune.centre && Array.isArray(commune.centre.coordinates)) {
+            this.#map.flyTo({ center: commune.centre.coordinates, zoom: 13 });
+        }
+
+        if (this.hasSearchInputTarget) {
+            this.searchInputTarget.value = commune.nom;
+        }
+
+        this.#hideSearchResults();
+    }
+
+    #extendBoundsFromCoordinates(coordinates, bounds) {
+        if (!Array.isArray(coordinates) || coordinates.length === 0) {
+            return;
+        }
+
+        if (typeof coordinates[0] === 'number' && typeof coordinates[1] === 'number') {
+            bounds.extend([coordinates[0], coordinates[1]]);
+
+            return;
+        }
+
+        coordinates.forEach((c) => this.#extendBoundsFromCoordinates(c, bounds));
+    }
+
+    #showSearchResults() {
+        if (this.hasSearchResultsTarget) {
+            this.searchResultsTarget.hidden = false;
+        }
+    }
+
+    #hideSearchResults() {
+        if (this.hasSearchResultsTarget) {
+            this.searchResultsTarget.hidden = true;
+        }
     }
 
     toggleDraw() {
