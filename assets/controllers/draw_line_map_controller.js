@@ -2,6 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
+import { getMeasureTypeStyle } from '../measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
@@ -20,6 +21,7 @@ export default class extends Controller {
     static values = {
         centerJson: { type: String, default: '[2.725, 47.16]' },
         zoom: { type: Number, default: 15 },
+        measureType: { type: String, default: '' },
     };
 
     #map = null;
@@ -353,6 +355,7 @@ export default class extends Controller {
 
             this.#map.on('load', () => {
                 this.#map.addControl(new maplibregl.NavigationControl(), 'bottom-left');
+                this.#addHouseNumbersLayer();
                 this.#setupLineLayer();
                 this.#map.on('click', (e) => this.#handleMapClick(e));
                 this.#loadFromField();
@@ -369,15 +372,43 @@ export default class extends Controller {
         }
     }
 
+    #addHouseNumbersLayer() {
+        this.#map.addLayer({
+            id: 'house-numbers',
+            type: 'symbol',
+            source: 'plan_ign',
+            'source-layer': 'toponyme_parcellaire_adresse_ponc',
+            minzoom: 15,
+            filter: ['==', 'txt_typo', 'ADRESSE'],
+            layout: {
+                'symbol-placement': 'point',
+                'text-field': ['concat', ['get', 'numero'], ['get', 'indice_de_repetition']],
+                'text-size': {
+                    stops: [[15, 9], [17, 11], [18, 13]],
+                },
+                'text-anchor': 'center',
+                'text-font': ['Noto Sans Regular'],
+                'text-allow-overlap': false,
+            },
+            paint: {
+                'text-color': '#695744',
+                'text-halo-width': 1,
+                'text-halo-color': '#FFFFFF',
+            },
+        });
+    }
+
     #setupLineLayer() {
+        const style = getMeasureTypeStyle(this.measureTypeValue);
         this.#map.addSource(LINE_SOURCE, { type: 'geojson', data: EMPTY_FC });
         this.#map.addLayer({
             id: LINE_LAYER,
             type: 'line',
             source: LINE_SOURCE,
             paint: {
-                'line-color': '#000091',
-                'line-width': 4,
+                'line-color': style.color,
+                'line-width': style.lineWidth,
+                'line-dasharray': style.dasharray,
             },
         });
 
