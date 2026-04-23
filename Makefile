@@ -247,6 +247,9 @@ test_integration: ## Run integration tests only
 test_all: ## Run the test suite (with coverage)
 	make test_cov
 
+test_js: ## Run JS tests (Vitest)
+	$(BIN_NPM) test
+
 ##
 ## ----------------
 ## Blog
@@ -274,6 +277,7 @@ ci: ## Run CI steps
 	make dbfixtures
 	make check
 	make test_all
+	make test_js
 
 ci_eudonet_paris_import: ## Run CI steps for Eudonet Paris Import workflow
 	make composer CMD="install -n --prefer-dist"
