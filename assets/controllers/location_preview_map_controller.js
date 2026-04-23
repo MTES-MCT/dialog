@@ -2,7 +2,9 @@ import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
-import { getMeasureTypeStyle, DEFAULT_MEASURE_STYLE } from '../measure_type_styles';
+import { addHouseNumbersLayer } from '../maps/layers';
+import { boundsFromGeoJSON, extractFirstGeometry } from '../maps/geojson';
+import { getMeasureTypeStyle } from '../measure_type_styles';
 
 export default class extends Controller {
     static targets = ['container', 'loader', 'message'];
@@ -187,7 +189,7 @@ export default class extends Controller {
         }
 
         try {
-            const geojson = this.#toGeometry(JSON.parse(raw));
+            const geojson = extractFirstGeometry(JSON.parse(raw));
 
             if (!geojson) {
                 this.#hideMap();
@@ -198,22 +200,6 @@ export default class extends Controller {
         } catch {
             this.#hideMap();
         }
-    }
-
-    #toGeometry(parsed) {
-        if (!parsed || !parsed.type) {
-            return null;
-        }
-
-        if (parsed.type === 'FeatureCollection') {
-            return parsed.features?.[0]?.geometry || null;
-        }
-
-        if (parsed.type === 'Feature') {
-            return parsed.geometry || null;
-        }
-
-        return parsed;
     }
 
     async #fetchAndDisplay(params) {
@@ -300,41 +286,13 @@ export default class extends Controller {
         this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
         this.#map.on('load', () => {
-            this.#addHouseNumbersLayer();
+            addHouseNumbersLayer(this.#map);
             this.#addSourceAndLayers(geojson);
             this.#fitBounds(geojson);
         });
 
         this.#map.on('error', () => {
             this.#hideMap();
-        });
-    }
-
-    #addHouseNumbersLayer() {
-        this.#map.addLayer({
-            id: 'house-numbers',
-            type: 'symbol',
-            source: 'plan_ign',
-            'source-layer': 'toponyme_parcellaire_adresse_ponc',
-            minzoom: 15,
-            maxzoom: 24,
-            filter: ['==', 'txt_typo', 'ADRESSE'],
-            layout: {
-                'symbol-placement': 'point',
-                'text-field': ['concat', ['get', 'numero'], ['get', 'indice_de_repetition']],
-                'text-size': {
-                    stops: [[15, 9], [17, 11], [18, 13]],
-                },
-                'text-anchor': 'center',
-                'text-font': ['Noto Sans Regular'],
-                'text-allow-overlap': false,
-                'text-ignore-placement': false,
-            },
-            paint: {
-                'text-color': '#695744',
-                'text-halo-width': 1,
-                'text-halo-color': '#FFFFFF',
-            },
         });
     }
 
@@ -407,8 +365,7 @@ export default class extends Controller {
     }
 
     #fitBounds(geojson) {
-        const bounds = new maplibregl.LngLatBounds();
-        this.#extractBounds(geojson, bounds);
+        const bounds = boundsFromGeoJSON(geojson);
 
         if (bounds.isEmpty()) {
             return;
@@ -426,33 +383,6 @@ export default class extends Controller {
             padding: 40,
             maxZoom: 18,
             animate: false,
-        });
-    }
-
-    #extractBounds(geojson, bounds) {
-        if (geojson.type === 'GeometryCollection') {
-            geojson.geometries.forEach(g => this.#extractBounds(g, bounds));
-
-            return;
-        }
-
-        this.#processCoordinates(geojson.coordinates, bounds);
-    }
-
-    #processCoordinates(coordinates, bounds) {
-        if (!Array.isArray(coordinates) || coordinates.length === 0) {
-            return;
-        }
-
-        if (typeof coordinates[0] === 'number' && typeof coordinates[1] === 'number') {
-            bounds.extend([coordinates[0], coordinates[1]]);
-            return;
-        }
-
-        coordinates.forEach(coord => {
-            if (Array.isArray(coord)) {
-                this.#processCoordinates(coord, bounds);
-            }
         });
     }
 
