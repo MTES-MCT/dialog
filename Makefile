@@ -372,3 +372,5 @@ scalingo-node-postbuild: ## Scalingo postbuild hook for the Node buildpack
 scalingo-postdeploy: ## Scalingo postdeploy hook
 	@echo 'Executing migrations...'
 	php bin/console doctrine:migrations:migrate --no-interaction
+	@echo 'Syncing team admins...'
+	php bin/console app:team:sync-admins
