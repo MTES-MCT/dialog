@@ -498,7 +498,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
-        $this->assertSame('Données brutes GeoJSON', $rawGeoJSONOption->innerText());
+        $this->assertSame('Tracé libre (GeoJSON)', $rawGeoJSONOption->innerText());
         $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
         $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
     }
@@ -511,7 +511,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
-        $this->assertSame('Données brutes GeoJSON', $rawGeoJSONOption->innerText());
+        $this->assertSame('Tracé libre (GeoJSON)', $rawGeoJSONOption->innerText());
         $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
         $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
     }
