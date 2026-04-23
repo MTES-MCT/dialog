@@ -63,3 +63,67 @@
     font-size: 0.875rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
+
+.draw-line-map-search {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 3;
+    width: 16rem;
+    max-width: calc(100% - 10rem);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.draw-line-map-search__input-wrapper {
+    padding: 0.4rem;
+}
+
+.draw-line-map-search__input {
+    width: 100%;
+    background-image: none;
+}
+
+.draw-line-map-search__results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 14rem;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+}
+
+.draw-line-map-search__result {
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.draw-line-map-search__result:last-child {
+    border-bottom: none;
+}
+
+.draw-line-map-search__result:hover,
+.draw-line-map-search__result--active {
+    background-color: #f0f0ff;
+}
+
+.draw-line-map-search__result-name {
+    font-weight: 500;
+    color: #161616;
+}
+
+.draw-line-map-search__result-meta {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.draw-line-map-search__empty {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.875rem;
+    color: #666;
+    font-style: italic;
+}
