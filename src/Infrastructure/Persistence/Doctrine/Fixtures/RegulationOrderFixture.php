@@ -90,7 +90,7 @@ final class RegulationOrderFixture extends Fixture implements DependentFixtureIn
             identifier: 'F2024/RAWGEOJSON',
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             subject: RegulationSubjectEnum::ROAD_MAINTENANCE->value,
-            title: 'Arrêté avec données brutes GeoJSON',
+            title: 'Arrêté avec tracé libre (GeoJSON)',
         );
 
         $litteralisRegulationOrder = new RegulationOrder(
