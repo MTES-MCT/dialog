@@ -53,6 +53,15 @@ final class ListRegulationsController
             );
         }
 
+        $sort = $request->query->get('sort');
+        $sortDir = $request->query->get('dir');
+        if (\is_string($sort) && \in_array($sort, RegulationListFiltersDTO::ALLOWED_SORTS, true)) {
+            $dto->sort = $sort;
+            $dto->sortDir = \is_string($sortDir) && \in_array($sortDir, RegulationListFiltersDTO::ALLOWED_SORT_DIRS, true)
+                ? $sortDir
+                : RegulationListFiltersDTO::SORT_DIR_ASC;
+        }
+
         /** @var AbstractAuthenticatedUser|null */
         $user = $this->authenticatedUser->getSessionUser();
         $dto->user = $user;
@@ -92,6 +101,8 @@ final class ListRegulationsController
                 'pageSize' => $dto->pageSize,
                 'page' => $dto->page,
                 'newsNotice' => $newsNotice,
+                'sort' => $dto->sort,
+                'sortDir' => $dto->sortDir,
             ],
         ));
     }

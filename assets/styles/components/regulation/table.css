@@ -4,3 +4,45 @@
 .app-regulation-table th:nth-child(4) { width: 10%; }
 .app-regulation-table th:nth-child(5) { width: 15%; }
 .app-regulation-table th:nth-child(6) { width: 15%; }
+
+.app-sort-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-sort-chevrons {
+    display: inline-flex;
+    flex-direction: column;
+    line-height: 0;
+}
+
+.app-sort-chevron {
+    background-image: none;
+    background-color: transparent;
+    color: var(--text-mention-grey);
+    text-decoration: none;
+    padding: 0;
+    height: 0.875rem;
+    width: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.55;
+}
+
+.app-sort-chevron::before {
+    --icon-size: 1rem;
+    margin: 0;
+}
+
+.app-sort-chevron:hover {
+    opacity: 1;
+    font-weight: 700;
+}
+
+.app-sort-chevron--active {
+    color: var(--text-action-high-blue-france);
+    opacity: 1;
+    font-weight: 700;
+}

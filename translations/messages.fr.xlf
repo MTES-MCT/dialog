@@ -348,6 +348,14 @@
                 <source>regulation.list.filters.status.placeholder</source>
                 <target>Tous les statuts</target>
             </trans-unit>
+            <trans-unit id="regulation.list.sort.asc">
+                <source>regulation.list.sort.asc</source>
+                <target>Trier par %column% croissant</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.sort.desc">
+                <source>regulation.list.sort.desc</source>
+                <target>Trier par %column% décroissant</target>
+            </trans-unit>
             <trans-unit id="regulation">
                 <source>regulation</source>
                 <target>Arrêté</target>

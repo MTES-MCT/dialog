@@ -18,6 +18,7 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -137,9 +138,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
         $query
             ->innerJoin('roc.organization', 'o')
-            ->innerJoin('roc.regulationOrder', 'ro')
-            ->orderBy('overallStartDate', 'DESC')
-            ->addOrderBy('ro.identifier', 'ASC')
+            ->innerJoin('roc.regulationOrder', 'ro');
+
+        $this->applyOrderBy($query, $dto);
+
+        $query
             ->addGroupBy('ro, roc, o')
             ->setFirstResult($dto->pageSize * ($dto->page - 1))
             ->setMaxResults($dto->pageSize)
@@ -156,6 +159,21 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         }
 
         return $result;
+    }
+
+    private function applyOrderBy(QueryBuilder $query, RegulationListFiltersDTO $dto): void
+    {
+        $direction = $dto->sortDir === RegulationListFiltersDTO::SORT_DIR_ASC ? 'ASC' : 'DESC';
+
+        match ($dto->sort) {
+            RegulationListFiltersDTO::SORT_IDENTIFIER => $query->orderBy('ro.identifier', $direction),
+            RegulationListFiltersDTO::SORT_PERIOD => $query->orderBy('overallStartDate', $direction),
+            RegulationListFiltersDTO::SORT_SOURCE => $query->orderBy('roc.source', $direction),
+            RegulationListFiltersDTO::SORT_STATUS => $query->orderBy('roc.status', $direction),
+            default => $query->orderBy('overallStartDate', 'DESC'),
+        };
+
+        $query->addOrderBy('ro.identifier', 'ASC');
     }
 
     public function findOneByUuid(string $uuid): ?RegulationOrderRecord
