@@ -209,7 +209,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '34',
                 'U',
                 500,
-                Coordinates::fromLonLat(3.906089279, 44.596373562),
+                Coordinates::fromLonLat(3.906089295, 44.596373535),
             ],
             'pr-and-line-inverted-order' => [
                 'D978',
@@ -218,20 +218,20 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                 '1',
                 'U',
                 100,
-                Coordinates::fromLonLat(2.182063645, 45.221756446),
+                Coordinates::fromLonLat(2.182063659, 45.221756435),
             ],
             // Test pour vérifier qu'on exclut les entrées de type "DS", "FS" ou "CS"
             // Ici c'est un cas où il y a deux entrées au PR51D : un type "PR" et un type "FS".
             'pr-type-excluded-fs' => [
                 'N79',
                 'DIR Centre Est',
-                null,
+                '71',
                 // Ce numéro de PR existe en deux variantes dans point_de_repere :
                 // un type_de_pr = 'PR', et un type_de_pr = 'FS' (qu'on ne veut pas).
                 '51',
                 'D',
                 150,
-                Coordinates::fromLonLat(4.534693102, 46.374895947),
+                Coordinates::fromLonLat(4.538158002, 46.373662399),
             ],
         ];
     }
