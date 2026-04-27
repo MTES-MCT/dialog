@@ -58,9 +58,11 @@ jobs:
       - name: Init environment variables
         run: |
           echo "DATABASE_URL=${{ secrets.APP_LITTERALIS_IMPORT_DATABASE_URL }}" >> .env.local
-          echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
           echo "MESSENGER_ASYNC_DSN=sync://" >> .env.local
           echo "MATTERMOST_WEBHOOK_URL=${{ secrets.MATTERMOST_WEBHOOK_URL }}" >> .env.local
+          echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
+          echo "BDTOPO_2025_2_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
+          echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
           # Deal with JSON quotes
           printf "APP_LITTERALIS_ENABLED_ORGS='%s'\n" '${{ vars.APP_LITTERALIS_ENABLED_ORGS }}' >> .env.local
           printf "APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS='%s'\n" '${{ vars.APP_LITTERALIS_COMMUNICATION_ENABLED_ORGS }}' >> .env.local
