@@ -18,37 +18,31 @@ def _sizeof_fmt(num: float, suffix: str = "B") -> str:
         num /= 1024.0
     return f"{num:.1f} Yi{suffix}"
 
+GDAL_IMAGE = "ghcr.io/osgeo/gdal:alpine-small-3.12.3"
 
 def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: list):
     assert directory.is_absolute()
     assert path.is_absolute()
 
-    # Make ogr2ogr access database tunnel connection open on the host
-    # https://stackoverflow.com/a/43541732
-    urlobj = urlparse(database_url)
-    database_url_from_container = urlobj._replace(
-        netloc=f"{urlobj.username}:{urlobj.password}@host.docker.internal:{urlobj.port}"
-    ).geturl()
-
     command = [
         "docker",
-        "compose",
-        "-f",
-        "docker-compose.yml",
-        "--profile",
-        "gdal",
         "run",
-        "--rm",  # Do not leave dead containers
+        "--rm",
+        "--init",  # Forward signals such as Ctrl+C
+        # Use host networking so the container can directly access
+        # database tunnels open on localhost.
+        "--network",
+        "host",
         "-v",
         f"{directory}:/home/data",
-        "gdal",
+        GDAL_IMAGE,
         "ogr2ogr",
         # Setup connection to the PostgreSQL database
         # See specific PostgreSQL options here:
         # https://gdal.org/drivers/vector/pg.html
         "-f",
         "PostgreSQL",
-        f"PG:{database_url_from_container}",
+        f"PG:{database_url}",
         *options,
         str(Path("/home/data") / path.relative_to(directory)),
     ]
