@@ -159,7 +159,12 @@
                                 <conditions xsi:type="ConditionSet">
                                     <operator>or</operator>
                                     {% for vehicle in vehicles %}
-                                        {% if vehicle.nonVehicularRoadUser %}
+                                        {% if vehicle.accessConditionType %}
+                                            <conditions xsi:type="AccessCondition">
+                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                                <accessConditionType>{{ vehicle.accessConditionType }}</accessConditionType>
+                                            </conditions>
+                                        {% elseif vehicle.nonVehicularRoadUser %}
                                             <conditions xsi:type="NonVehicularRoadUserCondition">
                                                 <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
                                                 <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>

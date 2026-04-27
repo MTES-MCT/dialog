@@ -2072,11 +2072,19 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.roadMaintenanceOrConstruction">
                 <source>regulation.vehicle_set.type.roadMaintenanceOrConstruction</source>
-                <target>Véhicules de services</target>
+                <target>Véhicules de l'entreprise de travaux</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.cityLogistics">
                 <source>regulation.vehicle_set.type.cityLogistics</source>
                 <target>Véhicules de livraisons</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.police">
+                <source>regulation.vehicle_set.type.police</source>
+                <target>Véhicules de police</target>
+            </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.desserteLocale">
+                <source>regulation.vehicle_set.type.desserteLocale</source>
+                <target>Desserte locale</target>
             </trans-unit>
             <trans-unit id="regulation.vehicles.all">
                 <source>regulation.vehicles.all</source>
