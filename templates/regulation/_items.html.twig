@@ -7,16 +7,44 @@
     {% set userOrganizationUuids = [] %}
 {% endif %}
 
+{% set currentSort = sort|default(null) %}
+{% set currentSortDir = sortDir|default(null) %}
+
+{% macro sortHeader(label, column, currentSort, currentSortDir) %}
+    {% set baseParams = app.request.query.all()|merge({ page: 1 }) %}
+    {% set ascParams = baseParams|merge({ sort: column, dir: 'asc' }) %}
+    {% set descParams = baseParams|merge({ sort: column, dir: 'desc' }) %}
+    {% set isAscActive = currentSort == column and currentSortDir == 'asc' %}
+    {% set isDescActive = currentSort == column and currentSortDir == 'desc' %}
+    <span class="app-sort-header">
+        <span>{{ label }}</span>
+        <span class="app-sort-chevrons">
+            <a
+                href="{{ path('app_regulations_list', ascParams) }}"
+                class="app-sort-chevron fr-icon-arrow-up-s-line{% if isAscActive %} app-sort-chevron--active{% endif %}"
+                aria-label="{{ 'regulation.list.sort.asc'|trans({ '%column%': label }) }}"
+                title="{{ 'regulation.list.sort.asc'|trans({ '%column%': label }) }}"
+            ></a>
+            <a
+                href="{{ path('app_regulations_list', descParams) }}"
+                class="app-sort-chevron fr-icon-arrow-down-s-line{% if isDescActive %} app-sort-chevron--active{% endif %}"
+                aria-label="{{ 'regulation.list.sort.desc'|trans({ '%column%': label }) }}"
+                title="{{ 'regulation.list.sort.desc'|trans({ '%column%': label }) }}"
+            ></a>
+        </span>
+    </span>
+{% endmacro %}
+
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
     <table class="app-regulation-table" data-testid="app-regulation-table">
         <caption>{{ 'regulation.list.title'|trans }}</caption>
         <thead>
             <tr>
-                <th scope="col" class="fr-x-nowrap">{{ 'regulation'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap">{{ _self.sortHeader('regulation'|trans, 'identifier', currentSort, currentSortDir) }}</th>
                 <th scope="col" class="fr-x-nowrap">{{ 'regulation.locations'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.source'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.status'|trans }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ _self.sortHeader('regulation.period'|trans, 'period', currentSort, currentSortDir) }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ _self.sortHeader('regulation.source'|trans, 'source', currentSort, currentSortDir) }}</th>
+                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ _self.sortHeader('regulation.status'|trans, 'status', currentSort, currentSortDir) }}</th>
                 <th scope="col" class="fr-x-nowrap">{{ 'common.actions'|trans }}</th>
             </tr>
         </thead>

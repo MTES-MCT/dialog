@@ -53,6 +53,61 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(4)->filter('td')->eq(2)->text());
     }
 
+    public function testSortByIdentifierAsc(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?pageSize=100&page=1&sort=identifier&dir=asc');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $identifiers = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(1)')
+            ->each(fn ($node) => $node->text());
+
+        $sorted = $identifiers;
+        sort($sorted, SORT_STRING);
+        $this->assertSame($sorted, $identifiers);
+    }
+
+    public function testSortByIdentifierDesc(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?pageSize=100&page=1&sort=identifier&dir=desc');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $identifiers = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(1)')
+            ->each(fn ($node) => $node->text());
+
+        $sorted = $identifiers;
+        rsort($sorted, SORT_STRING);
+        $this->assertSame($sorted, $identifiers);
+    }
+
+    public function testSortChevronsAreRendered(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // Identifiant, Période, Source, Statut → 4 colonnes triables, 2 chevrons chacune
+        $chevrons = $crawler->filter('[data-testid="app-regulation-table"] thead .app-sort-chevron');
+        $this->assertSame(8, $chevrons->count());
+    }
+
+    public function testSortInvalidColumnIsIgnored(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?pageSize=5&page=1&sort=hacker&dir=asc');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // Comportement par défaut conservé : tri par overallStartDate DESC, NULLs en premier (PG default)
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame('', $rows->eq(0)->filter('td')->eq(2)->text());
+        $this->assertSame('', $rows->eq(1)->filter('td')->eq(2)->text());
+    }
+
     public function testRegulationRendering(): void
     {
         $client = $this->login();
