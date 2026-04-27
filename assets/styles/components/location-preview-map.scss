@@ -17,6 +17,14 @@
     background-color: var(--background-alt-grey);
 }
 
+.location-preview-map-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    cursor: zoom-in;
+    background-color: transparent;
+}
+
 .location-preview-map-message {
     color: var(--text-mention-grey);
     font-size: 0.875rem;
