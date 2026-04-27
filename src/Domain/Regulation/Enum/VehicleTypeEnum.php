@@ -21,6 +21,10 @@ enum VehicleTypeEnum: string
     case CITY_LOGISTICS = 'cityLogistics';
     case HAZARDOUS_MATERIALS = 'hazardousMaterials';
     case ROAD_MAINTENANCE_OR_CONSTRUCTION = 'roadMaintenanceOrConstruction';
+    // CUSTOM UI label "Véhicules de police". DATEX II has no dedicated police value: maps to vehicleUsage=emergencyServices.
+    case POLICE = 'police';
+    // CUSTOM: mapped to DATEX II AccessCondition with accessConditionType=destinationTraffic
+    case DESSERTE_LOCALE = 'desserteLocale';
 
     public static function restrictedCases(): array
     {
@@ -44,6 +48,8 @@ enum VehicleTypeEnum: string
             VehicleTypeEnum::CAR_SHARING,
             VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION,
             VehicleTypeEnum::CITY_LOGISTICS,
+            VehicleTypeEnum::POLICE,
+            VehicleTypeEnum::DESSERTE_LOCALE,
             VehicleTypeEnum::OTHER,
         ];
     }
