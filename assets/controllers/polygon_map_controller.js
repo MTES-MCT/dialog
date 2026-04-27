@@ -1,5 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
+import { extendBoundsFromCoordinates } from '../maps/geojson';
 
 export default class extends Controller {
     static targets = ['container', 'loading'];
@@ -159,7 +160,7 @@ export default class extends Controller {
     centerMapOnPolygon() {
         try {
             const bounds = new maplibregl.LngLatBounds();
-            this.processCoordinates(this.geojsonValue.coordinates, bounds);
+            extendBoundsFromCoordinates(this.geojsonValue.coordinates, bounds);
 
             this.map.fitBounds(bounds, {
                 padding: this.paddingValue,
@@ -168,29 +169,6 @@ export default class extends Controller {
             });
         } catch (error) {
             console.error('Error centering map', error);
-        }
-    }
-
-    processCoordinates(coordinates, bounds) {
-        try {
-            if (coordinates.length === 0) {
-                return;
-            }
-
-            // Point [longitude, latitude]
-            if (typeof coordinates[0] === 'number' && typeof coordinates[1] === 'number' && coordinates.length === 2) {
-                bounds.extend([coordinates[0], coordinates[1]]);
-                return;
-            }
-
-            // Parcourir récursivement les tableaux de coordonnées
-            coordinates.forEach(coord => {
-                if (Array.isArray(coord)) {
-                    this.processCoordinates(coord, bounds);
-                }
-            });
-        } catch (error) {
-            console.error('Error processing coordinates', error);
         }
     }
 

@@ -1,0 +1,151 @@
+.draw-line-map-wrapper {
+    position: relative;
+}
+
+.draw-line-map-canvas {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.draw-line-map-container {
+    height: 400px;
+    width: 100%;
+    border: 1px solid var(--border-default-grey, #ddd);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.draw-line-map-controls {
+    position: absolute;
+    right: 0.5rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: stretch;
+    padding: 0.4rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.draw-line-map-controls--top {
+    top: 0.5rem;
+}
+
+.draw-line-map-controls--bottom {
+    bottom: 1.75rem;
+}
+
+.draw-line-map-controls .fr-btn {
+    justify-content: flex-start;
+    white-space: nowrap;
+}
+
+.draw-line-map-controls .fr-btn.active {
+    background-color: #000091;
+    color: #fff;
+}
+
+.draw-line-map-controls .fr-btn.active::before,
+.draw-line-map-controls .fr-btn.active::after {
+    --icon-color: #fff;
+}
+
+.draw-line-map-warning {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    right: 8rem;
+    z-index: 2;
+    background-color: #fff4e5;
+    border-left: 3px solid #b34000;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.draw-line-map-search {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 3;
+    width: 16rem;
+    max-width: calc(100% - 10rem);
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.draw-line-map-search__input-wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+.draw-line-map-search__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    min-height: 2.5rem;
+    background-color: #000091;
+    color: #fff;
+    --icon-color: #fff;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.draw-line-map-search .draw-line-map-search__input {
+    flex: 1;
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid #000091;
+    box-shadow: none;
+    outline: none;
+    padding: 0 0.5rem;
+    font-size: 0.875rem;
+}
+
+.draw-line-map-search__results {
+    list-style: none;
+    max-height: 14rem;
+    overflow-y: auto;
+    border-top: 1px solid #ddd;
+}
+
+.draw-line-map-search .draw-line-map-search__result {
+    padding: .4rem .6rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.draw-line-map-search .draw-line-map-search__result:last-child {
+    border-bottom: none;
+}
+
+.draw-line-map-search .draw-line-map-search__result:hover,
+.draw-line-map-search .draw-line-map-search__result--active {
+    background-color: #f0f0ff;
+}
+
+.draw-line-map-search__result-name {
+    font-weight: 500;
+    color: #161616;
+}
+
+.draw-line-map-search__result-meta {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.draw-line-map-search__empty {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.875rem;
+    color: #666;
+    font-style: italic;
+}

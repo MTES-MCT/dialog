@@ -711,7 +711,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
-                <target>Données brutes GeoJSON</target>
+                <target>Tracé libre (GeoJSON)</target>
             </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
