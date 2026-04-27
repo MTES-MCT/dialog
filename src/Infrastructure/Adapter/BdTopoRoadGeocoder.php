@@ -292,25 +292,59 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 \sprintf(
                     'WITH pr_section AS (
                         -- Trouver la section qui contient le PR de référence
-                        -- On utilise geography pour que la fraction (pr_position) soit cohérente avec section_length (mètres)
+                        -- On projette en Lambert-93 (EPSG:2154) pour que la fraction (pr_position) soit cohérente avec section_length (mètres)
                         SELECT
                             s.identifiant_de_section,
                             s.geometrie,
                             ST_Length(s.geometrie::geography) AS section_length,
-                            ST_LineLocatePoint(s.geometrie::geography, p.geometrie::geography) AS pr_position,
-                            CASE WHEN ST_Distance(
-                                ST_StartPoint(s.geometrie),
-                                (
-                                    SELECT pp.geometrie
-                                    FROM point_de_repere AS pp
-                                    WHERE pp.identifiant_de_section = s.identifiant_de_section
-                                    AND pp.ordre >= 0
-                                    ORDER BY pp.ordre ASC
+                            ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(p.geometrie, 2154)) AS pr_position,
+                            CASE
+                                WHEN (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_first.geometrie, 2154))
+                                    FROM point_de_repere AS pp_first
+                                    WHERE pp_first.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_first.ordre >= 0
+                                    ORDER BY pp_first.ordre ASC
+                                    LIMIT 1
+                                ) < (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_last.geometrie, 2154))
+                                    FROM point_de_repere AS pp_last
+                                    WHERE pp_last.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_last.ordre >= 0
+                                    ORDER BY pp_last.ordre DESC
                                     LIMIT 1
                                 )
-                            ) < ST_Length(s.geometrie) / 4
-                            THEN 1
-                            ELSE -1
+                                THEN 1
+                                WHEN (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_first.geometrie, 2154))
+                                    FROM point_de_repere AS pp_first
+                                    WHERE pp_first.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_first.ordre >= 0
+                                    ORDER BY pp_first.ordre ASC
+                                    LIMIT 1
+                                ) > (
+                                    SELECT ST_LineLocatePoint(ST_Transform(s.geometrie, 2154), ST_Transform(pp_last.geometrie, 2154))
+                                    FROM point_de_repere AS pp_last
+                                    WHERE pp_last.identifiant_de_section = s.identifiant_de_section
+                                    AND pp_last.ordre >= 0
+                                    ORDER BY pp_last.ordre DESC
+                                    LIMIT 1
+                                )
+                                THEN -1
+                                -- Fallback : un seul PR sur la section, on compare sa proximité au début de la ligne
+                                WHEN ST_Distance(
+                                    ST_StartPoint(s.geometrie),
+                                    (
+                                        SELECT pp.geometrie
+                                        FROM point_de_repere AS pp
+                                        WHERE pp.identifiant_de_section = s.identifiant_de_section
+                                        AND pp.ordre >= 0
+                                        ORDER BY pp.ordre ASC
+                                        LIMIT 1
+                                    )
+                                ) < ST_Length(s.geometrie) / 4
+                                THEN 1
+                                ELSE -1
                             END AS direction
                         FROM point_de_repere AS p
                         LEFT JOIN section_de_points_de_repere AS s
@@ -321,6 +355,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                         AND p.cote = :side
                         AND p.type_de_pr LIKE \'PR%%\'
                         %s
+                        ORDER BY s.identifiant_de_section
+                        LIMIT 1
                     ),
                     next_pr AS (
                         -- Trouver le PR suivant sur la même route
@@ -330,7 +366,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             s2.identifiant_de_section,
                             s2.geometrie AS section_geometrie,
                             ST_Length(s2.geometrie::geography) AS section_length,
-                            ST_LineLocatePoint(s2.geometrie::geography, p2.geometrie::geography) AS pr_position
+                            ST_LineLocatePoint(ST_Transform(s2.geometrie, 2154), ST_Transform(p2.geometrie, 2154)) AS pr_position
                         FROM pr_section AS ps
                         LEFT JOIN point_de_repere AS p2 ON p2.gestionnaire = :administrator
                             AND p2.route = :roadNumber
@@ -339,6 +375,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                             AND p2.type_de_pr LIKE \'PR%%\'
                         LEFT JOIN section_de_points_de_repere AS s2
                             ON p2.identifiant_de_section = s2.identifiant_de_section
+                        ORDER BY s2.identifiant_de_section
+                        LIMIT 1
                     ),
                     position_calculation AS (
                         -- Calculer la position cible
@@ -385,10 +423,13 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                         LEFT JOIN next_pr AS np ON ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
                     )
                     SELECT ST_AsGeoJSON(
-                        ST_LineInterpolatePoint(
-                            pc.target_geometrie::geography,
-                            pc.final_position
-                        )::geometry
+                        ST_Transform(
+                            ST_LineInterpolatePoint(
+                                ST_Transform(pc.target_geometrie, 2154),
+                                pc.final_position
+                            ),
+                            4326
+                        )
                     ) AS geom,
                     pc.pr_position,
                     pc.direction,
