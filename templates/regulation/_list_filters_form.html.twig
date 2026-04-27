@@ -14,13 +14,19 @@
                 }
             }) }}
 
-            {{ form_row(form.organizationUuid, {
-                group_class: 'fr-select-group',
-                widget_class: 'fr-select',
-                row_attr: {
-                    class: 'fr-mb-0 fr-x-max-w-37w',
-                },
-            }) }}
+            <d-searchable-select
+                search-placeholder="{{ 'regulation.list.filters.organizationUuid.search_placeholder'|trans }}"
+                no-results-label="{{ 'regulation.list.filters.organizationUuid.no_results'|trans }}"
+                no-choices-label="{{ 'regulation.list.filters.organizationUuid.no_results'|trans }}"
+            >
+                {{ form_row(form.organizationUuid, {
+                    group_class: 'fr-select-group',
+                    widget_class: 'fr-select',
+                    row_attr: {
+                        class: 'fr-mb-0 fr-x-max-w-37w',
+                    },
+                }) }}
+            </d-searchable-select>
 
             {{ form_row(form.regulationOrderType, {
                 group_class: 'fr-select-group',
