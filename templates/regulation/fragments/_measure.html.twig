@@ -52,6 +52,22 @@
                                     </span>
                                 </div>
                             {% endif %}
+                            {% if location.geometry %}
+                                {% set geometryFieldId = 'location-geometry-' ~ location.uuid %}
+                                <input type="hidden" id="{{ geometryFieldId }}" value="{{ location.geometry }}">
+                                <div
+                                    data-controller="location-preview-map"
+                                    data-location-preview-map-road-type-value="rawGeoJSON"
+                                    data-location-preview-map-geometry-field-value="{{ geometryFieldId }}"
+                                    data-location-preview-map-measure-type-value="{{ measure.type }}"
+                                    data-location-preview-map-interactive-value="false"
+                                    class="fr-mt-1w"
+                                >
+                                    <div data-location-preview-map-target='container' hidden class='location-preview-map-container'>
+                                        <div data-location-preview-map-target='overlay' hidden class='location-preview-map-overlay' title="Cliquer pour activer le zoom"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Domain\Geography\Coordinates;
@@ -82,8 +83,8 @@ final class APIAdresseGeocoder implements GeocoderInterface
         }
 
         if (\count($data['features']) === 0) {
-            $message = \sprintf('%s: error: expected 1 result, got 0', $errorMsgPrefix);
-            throw new GeocodingFailureException($message);
+            $message = \sprintf('%s: address not found', $errorMsgPrefix);
+            throw new GeocodingAddressNotFoundException($message);
         }
 
         $point = $data['features'][0];

@@ -1,0 +1,50 @@
+.location-preview-map-container {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border-default-grey);
+    position: relative;
+}
+
+.location-preview-map-loader,
+.location-preview-map-message {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-alt-grey);
+}
+
+.location-preview-map-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    cursor: zoom-in;
+    background-color: transparent;
+}
+
+.location-preview-map-message {
+    color: var(--text-mention-grey);
+    font-size: 0.875rem;
+}
+
+.location-preview-map-loader {
+
+    &::after {
+        content: '';
+        width: 2rem;
+        height: 2rem;
+        border: 3px solid var(--border-default-grey);
+        border-top-color: var(--text-action-high-blue-france);
+        border-radius: 50%;
+        animation: location-preview-map-spin 0.8s linear infinite;
+    }
+}
+
+@keyframes location-preview-map-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
