@@ -5,7 +5,7 @@ import { mapStyles } from 'carte-facile';
 import { getMeasureTypeStyle, DEFAULT_MEASURE_STYLE } from '../measure_type_styles';
 
 export default class extends Controller {
-    static targets = ['container', 'loader', 'message'];
+    static targets = ['container', 'loader', 'message', 'overlay'];
     static values = {
         url: String,
         roadType: String,
@@ -35,8 +35,7 @@ export default class extends Controller {
     #abortController = null;
     #debounceTimer = null;
     #boundDebouncedLoad = null;
-    #lastGeoJSON = null;
-    #boundActivateInteractive = null;
+    #boundDismissOverlay = null;
 
     connect() {
         this.#boundDebouncedLoad = () => this.#debouncedLoad();
@@ -48,9 +47,9 @@ export default class extends Controller {
         this.#abortController?.abort();
         clearTimeout(this.#debounceTimer);
         this.#stopListeningForm();
-        if (this.#boundActivateInteractive) {
-            this.containerTarget.removeEventListener('click', this.#boundActivateInteractive);
-            this.#boundActivateInteractive = null;
+        if (this.#boundDismissOverlay && this.hasOverlayTarget) {
+            this.overlayTarget.removeEventListener('click', this.#boundDismissOverlay);
+            this.#boundDismissOverlay = null;
         }
         this.#map?.remove();
         this.#map = null;
@@ -279,8 +278,6 @@ export default class extends Controller {
             return;
         }
 
-        this.#lastGeoJSON = geojson;
-
         const wasHidden = this.containerTarget.hidden;
         this.containerTarget.hidden = false;
 
@@ -295,27 +292,23 @@ export default class extends Controller {
     }
 
     #initializeMap(geojson) {
-        const interactive = this.interactiveValue;
-
         this.#map = new maplibregl.Map({
             container: this.containerTarget,
             style: mapStyles.desaturated,
-            interactive,
+            interactive: true,
             attributionControl: false,
-            dragPan: interactive,
             dragRotate: false,
             keyboard: false,
             touchPitch: false,
             boxZoom: false,
-            scrollZoom: interactive,
-            doubleClickZoom: interactive,
-            touchZoomRotate: interactive,
         });
 
-        if (interactive) {
-            this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
-        } else {
-            this.#enableActivateOnClick();
+        this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+
+        if (!this.interactiveValue && this.hasOverlayTarget) {
+            this.overlayTarget.hidden = false;
+            this.#boundDismissOverlay = () => this.#dismissOverlay();
+            this.overlayTarget.addEventListener('click', this.#boundDismissOverlay);
         }
 
         this.#map.on('load', () => {
@@ -329,34 +322,11 @@ export default class extends Controller {
         });
     }
 
-    #enableActivateOnClick() {
-        this.containerTarget.style.cursor = 'pointer';
-        this.containerTarget.title = 'Cliquer pour activer le zoom';
-        this.#boundActivateInteractive = (event) => this.#activateInteractive(event);
-        this.containerTarget.addEventListener('click', this.#boundActivateInteractive);
-    }
-
-    #activateInteractive(event) {
-        event?.preventDefault();
-        event?.stopPropagation();
-
-        if (this.#boundActivateInteractive) {
-            this.containerTarget.removeEventListener('click', this.#boundActivateInteractive);
-            this.#boundActivateInteractive = null;
-        }
-
-        this.containerTarget.style.cursor = '';
-        this.containerTarget.removeAttribute('title');
-
-        this.interactiveValue = true;
-
-        const geojson = this.#lastGeoJSON;
-
-        this.#map?.remove();
-        this.#map = null;
-
-        if (geojson) {
-            this.#initializeMap(geojson);
+    #dismissOverlay() {
+        if (this.#boundDismissOverlay && this.hasOverlayTarget) {
+            this.overlayTarget.removeEventListener('click', this.#boundDismissOverlay);
+            this.overlayTarget.hidden = true;
+            this.#boundDismissOverlay = null;
         }
     }
 
