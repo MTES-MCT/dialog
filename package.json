@@ -36,6 +36,7 @@
     "dependencies": {
         "@gouvfr/dsfr": "^1.14.1",
         "carte-facile": "^0.8.3",
+        "choices.js": "^11.2.2",
         "quill": "^2.0.3",
         "remixicon": "^2.5.0"
     },

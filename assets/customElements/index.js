@@ -4,3 +4,4 @@ import './map';
 import './map_form';
 import './map_search_form';
 import './responsive_iframe';
+import './searchable_select';

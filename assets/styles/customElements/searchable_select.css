@@ -1,0 +1,56 @@
+/* Choices.js CSS is imported via JS in searchable_select.js so Webpack resolves
+   the node_modules path correctly. */
+
+/* Keep the native <select> visible when JS hasn't upgraded yet. */
+d-searchable-select:not(:defined) > select { display: block; }
+
+/* --- Match DSFR fr-select look on the Choices.js closed state --- */
+
+d-searchable-select .choices {
+    margin-bottom: 0;
+}
+
+d-searchable-select .choices[data-type*="select-one"]::after {
+    /* Hide Choices' own caret triangle; we draw the DSFR chevron on .choices__inner. */
+    display: none;
+}
+
+d-searchable-select .choices__inner {
+    display: flex;
+    align-items: center;
+    min-height: auto;
+    width: 100%;
+    border: 0;
+    border-radius: 0.25rem 0.25rem 0 0;
+    box-shadow: inset 0 -2px 0 0 var(--border-plain-grey);
+    background-color: var(--background-contrast-grey);
+    color: var(--text-default-grey);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    background-repeat: no-repeat;
+    background-position: calc(100% - 1rem) 50%;
+    background-size: 1rem 1rem;
+    background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' viewBox='0 0 24 24'><path fill='%23161616' d='M12,13.1l5-4.9l1.4,1.4L12,15.9L5.6,9.5l1.4-1.4L12,13.1z'/></svg>");
+}
+
+d-searchable-select .choices__list--single {
+    padding: 0;
+}
+
+d-searchable-select .choices__placeholder {
+    opacity: 1;
+    color: var(--text-default-grey);
+}
+
+/* Open dropdown panel: keep Choices' default look but anchor it to the field. */
+d-searchable-select .choices__list--dropdown,
+d-searchable-select .choices__list[aria-expanded] {
+    border: 1px solid var(--border-default-grey);
+    border-radius: 0;
+    background-color: var(--background-default-grey);
+}
+
+d-searchable-select .choices__input {
+    background-color: var(--background-default-grey);
+}
