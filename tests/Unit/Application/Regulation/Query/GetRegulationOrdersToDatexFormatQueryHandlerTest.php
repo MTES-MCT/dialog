@@ -410,7 +410,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
         $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getExemptedTypes')
-            ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value, VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value, VehicleTypeEnum::PATROL->value, VehicleTypeEnum::DESSERTE_LOCALE->value]);
+            ->willReturn([VehicleTypeEnum::COMMERCIAL->value, VehicleTypeEnum::OTHER->value, VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value, VehicleTypeEnum::POLICE->value, VehicleTypeEnum::DESSERTE_LOCALE->value]);
         $winterMaintenanceVehicleSet
             ->expects(self::once())
             ->method('getOtherExemptedTypeText')
@@ -704,8 +704,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                 new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
                                 new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, isExempted: true, otherTypeText: 'Véhicules de service'),
                                 new DatexVehicleConditionView(VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value, isExempted: true),
-                                new DatexVehicleConditionView(VehicleTypeEnum::PATROL->value, isExempted: true),
-                                new DatexVehicleConditionView(VehicleTypeEnum::DESSERTE_LOCALE->value, isExempted: true, otherTypeText: 'Desserte locale'),
+                                new DatexVehicleConditionView(VehicleTypeEnum::POLICE->value, isExempted: true),
+                                new DatexVehicleConditionView(VehicleTypeEnum::DESSERTE_LOCALE->value, isExempted: true),
                             ],
                         ),
                         new DatexTrafficRegulationView(
@@ -726,8 +726,8 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                                 new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true),
                                 new DatexVehicleConditionView(VehicleTypeEnum::OTHER->value, isExempted: true, otherTypeText: 'Véhicules de service'),
                                 new DatexVehicleConditionView(VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value, isExempted: true),
-                                new DatexVehicleConditionView(VehicleTypeEnum::PATROL->value, isExempted: true),
-                                new DatexVehicleConditionView(VehicleTypeEnum::DESSERTE_LOCALE->value, isExempted: true, otherTypeText: 'Desserte locale'),
+                                new DatexVehicleConditionView(VehicleTypeEnum::POLICE->value, isExempted: true),
+                                new DatexVehicleConditionView(VehicleTypeEnum::DESSERTE_LOCALE->value, isExempted: true),
                             ],
                         ),
                     ],

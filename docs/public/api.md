@@ -104,7 +104,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
 - `dailyRange.applicableDays` (ApplicableDayEnum): `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`
 - `vehicleSet.restrictedTypes` / `vehicleSet.exemptedTypes` (VehicleTypeEnum, sous-ensembles):
   - Restreints possibles: `heavyGoodsVehicle`, `dimensions`, `critair`, `hazardousMaterials`, `other`
-  - Exemptés possibles: `commercial`, `emergencyServices`, `bicycle`, `pedestrians`, `taxi`, `carSharing`, `roadMaintenanceOrConstruction`, `cityLogistics`, `patrol`, `desserteLocale`, `other`
+  - Exemptés possibles: `commercial`, `emergencyServices`, `bicycle`, `pedestrians`, `taxi`, `carSharing`, `roadMaintenanceOrConstruction`, `cityLogistics`, `police`, `desserteLocale`, `other`
 - `vehicleSet.critairTypes` (CritairEnum): `critair0` (ex. VE), `critair1`, `critair2`, `critair3`, `critair4`, `critair5`
 
 #### Exemple de requête (complet)

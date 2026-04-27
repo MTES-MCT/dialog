@@ -39,27 +39,25 @@ final class DatexVehicleConditionViewTest extends TestCase
         $this->assertFalse($view->isOther);
     }
 
-    public function testPatrol(): void
+    public function testPoliceCollapsesToEmergencyServicesInDatex(): void
     {
-        $view = new DatexVehicleConditionView(VehicleTypeEnum::PATROL->value, isExempted: true);
+        $view = new DatexVehicleConditionView(VehicleTypeEnum::POLICE->value, isExempted: true);
 
-        $this->assertSame('patrol', $view->vehicleUsage);
+        $this->assertSame('emergencyServices', $view->vehicleUsage);
         $this->assertNull($view->type);
         $this->assertFalse($view->isOther);
     }
 
-    public function testDesserteLocale(): void
+    public function testDesserteLocaleMapsToAccessConditionDestinationTraffic(): void
     {
-        $view = new DatexVehicleConditionView(
-            VehicleTypeEnum::DESSERTE_LOCALE->value,
-            isExempted: true,
-            otherTypeText: 'Desserte locale',
-        );
+        $view = new DatexVehicleConditionView(VehicleTypeEnum::DESSERTE_LOCALE->value, isExempted: true);
 
-        $this->assertTrue($view->isOther);
-        $this->assertSame('Desserte locale', $view->otherTypeText);
+        $this->assertSame('destinationTraffic', $view->accessConditionType);
         $this->assertNull($view->type);
         $this->assertNull($view->vehicleUsage);
+        $this->assertNull($view->nonVehicularRoadUser);
+        $this->assertFalse($view->isOther);
+        $this->assertTrue($view->isExempted);
     }
 
     public function testCritair(): void

@@ -13,6 +13,7 @@ final class DatexVehicleConditionView
     public ?string $nonVehicularRoadUser = null;
     public ?string $emissionClassificationOther = null;
     public ?string $vehicleUsage = null;
+    public ?string $accessConditionType = null;
     public bool $isDangerousSubstances = false;
     public bool $isOther = false;
 
@@ -32,12 +33,15 @@ final class DatexVehicleConditionView
             case VehicleTypeEnum::EMERGENCY_SERVICES->value:
                 $this->vehicleUsage = $vehicleType;
                 break;
+            case VehicleTypeEnum::POLICE->value:
+                // No dedicated DATEX II value for police: collapse to emergencyServices (police is part of emergency services).
+                $this->vehicleUsage = VehicleTypeEnum::EMERGENCY_SERVICES->value;
+                break;
             case VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value:
-            case VehicleTypeEnum::PATROL->value:
                 $this->vehicleUsage = $vehicleType;
                 break;
             case VehicleTypeEnum::DESSERTE_LOCALE->value:
-                $this->isOther = true;
+                $this->accessConditionType = 'destinationTraffic';
                 break;
             case CritairEnum::CRITAIR_0->value:
             case CritairEnum::CRITAIR_1->value:

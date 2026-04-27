@@ -322,7 +322,7 @@ final class BacIdfTransformer
                         $otherExemptedTypes[] = 'Transport de déchets';
                         break;
                     case 'POLICE':
-                        $exemptedTypes[] = VehicleTypeEnum::PATROL->value;
+                        $exemptedTypes[] = VehicleTypeEnum::POLICE->value;
                         break;
                     case 'SECOURS':
                         $exemptedTypes[] = VehicleTypeEnum::EMERGENCY_SERVICES->value;
@@ -370,7 +370,7 @@ final class BacIdfTransformer
             $vehicleSetCommand->otherExemptedTypeText = $this->formatOtherExemptedTypes($otherExemptedTypes);
         }
 
-        $vehicleSetCommand->exemptedTypes = $exemptedTypes;
+        $vehicleSetCommand->exemptedTypes = array_values(array_unique($exemptedTypes));
 
         return $vehicleSetCommand;
     }
