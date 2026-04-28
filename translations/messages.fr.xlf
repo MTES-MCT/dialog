@@ -316,6 +316,14 @@
                 <source>regulation.list.filters.organizationUuid.my_organizations</source>
                 <target>Mes organisations</target>
             </trans-unit>
+            <trans-unit id="regulation.list.filters.organizationUuid.search_placeholder">
+                <source>regulation.list.filters.organizationUuid.search_placeholder</source>
+                <target>Rechercher une organisation</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.organizationUuid.no_results">
+                <source>regulation.list.filters.organizationUuid.no_results</source>
+                <target>Aucune organisation trouvée</target>
+            </trans-unit>
             <trans-unit id="regulation.list.filters.regulationOrderType">
                 <source>regulation.list.filters.regulationOrderType</source>
                 <target>Type d'arrêté</target>
