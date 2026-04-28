@@ -136,7 +136,7 @@ describe('addMeasureLineLayer', () => {
 
         const layer = map.addLayer.mock.calls[0][0];
         expect(layer.paint['line-color']).toBe('#CE0500');
-        expect(layer.paint['line-width']).toBe(3);
+        expect(layer.paint['line-width']).toBe(4);
         expect(layer.paint['line-dasharray']).toEqual([1, 0]);
     });
 
@@ -151,7 +151,7 @@ describe('addMeasureLineLayer', () => {
 
         const layer = map.addLayer.mock.calls[0][0];
         expect(layer.paint['line-color']).toBe('#000000');
-        expect(layer.paint['line-width']).toBe(3);
+        expect(layer.paint['line-width']).toBe(4);
         expect(layer.paint['line-dasharray']).toEqual([1, 0]);
     });
 });

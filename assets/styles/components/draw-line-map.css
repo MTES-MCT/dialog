@@ -42,13 +42,7 @@
 }
 
 .draw-line-map-controls .fr-btn.active {
-    background-color: #000091;
-    color: #fff;
-}
-
-.draw-line-map-controls .fr-btn.active::before,
-.draw-line-map-controls .fr-btn.active::after {
-    --icon-color: #fff;
+    background-color: #EBEBEB;
 }
 
 .draw-line-map-warning {
@@ -56,7 +50,7 @@
     top: 0.5rem;
     left: 0.5rem;
     right: 8rem;
-    z-index: 2;
+    z-index: 4;
     background-color: #fff4e5;
     border-left: 3px solid #b34000;
     padding: 0.5rem 0.75rem;

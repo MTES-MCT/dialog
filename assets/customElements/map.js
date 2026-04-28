@@ -2,7 +2,7 @@
 
 import { getAttributeOrError } from './util';
 import { mapStyles } from 'carte-facile';
-import { buildLineColorExpression, buildLineDasharrayExpression, buildLineWidthExpression } from '../measure_type_styles';
+import { buildLineColorExpression, buildLineDasharrayExpression, buildLineWidthExpression } from '../maps/measure_type_styles';
 
 /**
  * A source for map data that reads GeoJSON data in the textContent of an HTML element.

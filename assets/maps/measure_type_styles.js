@@ -11,14 +11,14 @@
 
 /** @type {Record<string, MeasureTypeStyle>} */
 export const MEASURE_TYPE_STYLES = {
-    noEntry:            { color: '#CE0500', dasharray: [1, 0], lineWidth: 3 }, // red — priorité 1
-    speedLimitation:    { color: '#f6c43c', dasharray: [1, 0], lineWidth: 3 }, // yellow — priorité 2
-    parkingProhibited:  { color: '#000000', dasharray: [1, 0], lineWidth: 3 }, // black — priorité 3
-    alternateRoad:      { color: '#6A6AF4', dasharray: [3, 2], lineWidth: 3 }, // purple — priorité 4
-    noOvertaking:       { color: '#DA70D6', dasharray: [1, 2, 4, 2], lineWidth: 3 }, // pink — priorité 5
+    noEntry:            { color: '#CE0500', dasharray: [1, 0], lineWidth: 4 }, // red — priorité 1
+    speedLimitation:    { color: '#f6c43c', dasharray: [1, 0], lineWidth: 4 }, // yellow — priorité 2
+    parkingProhibited:  { color: '#000000', dasharray: [1, 0], lineWidth: 4}, // black — priorité 3
+    alternateRoad:      { color: '#6A6AF4', dasharray: [3, 2], lineWidth: 4 }, // purple — priorité 4
+    noOvertaking:       { color: '#DA70D6', dasharray: [1, 2, 4, 2], lineWidth: 4 }, // pink — priorité 5
 };
 
-export const DEFAULT_MEASURE_STYLE = { color: '#000000', dasharray: [1, 0], lineWidth: 3 };
+export const DEFAULT_MEASURE_STYLE = { color: '#000000', dasharray: [1, 0], lineWidth: 4 };
 
 /**
  * @param {string} measureType

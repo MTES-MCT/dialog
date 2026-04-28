@@ -1,6 +1,6 @@
 // @ts-check
 
-import { getMeasureTypeStyle } from '../measure_type_styles';
+import { getMeasureTypeStyle } from './measure_type_styles';
 import { toFeatureCollection } from './geojson';
 
 /**

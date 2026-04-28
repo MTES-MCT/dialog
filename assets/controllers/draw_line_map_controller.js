@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
 import { extractSingleGeometry } from '../maps/geojson';
-import { getMeasureTypeStyle } from '../measure_type_styles';
+import { getMeasureTypeStyle } from '../maps/measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
