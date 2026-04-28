@@ -334,7 +334,7 @@ export default class extends Controller {
                 this.#initializeMap();
             } else {
                 this.#map?.resize();
-                this.#fitBoundsToCoordinates();
+                this.#fitBoundsToCoordinates({ animate: false });
             }
         });
 
@@ -579,17 +579,21 @@ export default class extends Controller {
             };
         });
 
+        this.#setHoverState(null);
         source.setData({ type: 'FeatureCollection', features });
-        this.#hoveredIndex = null;
     }
 
-    #fitBoundsToCoordinates() {
+    #fitBoundsToCoordinates({ animate = true } = {}) {
         if (!this.#map || this.#coordinates.length === 0) {
             return;
         }
 
         if (this.#coordinates.length === 1) {
-            this.#map.flyTo({ center: this.#coordinates[0], zoom: 15 });
+            if (animate) {
+                this.#map.flyTo({ center: this.#coordinates[0], zoom: 15 });
+            } else {
+                this.#map.jumpTo({ center: this.#coordinates[0], zoom: 15 });
+            }
 
             return;
         }
@@ -598,7 +602,7 @@ export default class extends Controller {
             (b, c) => b.extend(c),
             new maplibregl.LngLatBounds(this.#coordinates[0], this.#coordinates[0]),
         );
-        this.#map.fitBounds(bounds, { padding: 40, maxZoom: 17 });
+        this.#map.fitBounds(bounds, { padding: 40, maxZoom: 17, animate });
     }
 
     #loadFromField() {
@@ -625,7 +629,7 @@ export default class extends Controller {
         this.#hideWarning();
         this.#coordinates = coords;
         this.#refreshMapFromCoordinates();
-        this.#fitBoundsToCoordinates();
+        this.#fitBoundsToCoordinates({ animate: false });
     }
 
     #handleFieldInput() {

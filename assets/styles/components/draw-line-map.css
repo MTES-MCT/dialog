@@ -8,7 +8,7 @@
 }
 
 .draw-line-map-container {
-    height: 400px;
+    height: 33rem;
     width: 100%;
     border: 1px solid var(--border-default-grey, #ddd);
     border-radius: 4px;
@@ -23,18 +23,17 @@
     flex-direction: column;
     gap: 0.25rem;
     align-items: stretch;
-    padding: 0.4rem;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 4px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .draw-line-map-controls--top {
-    top: 0.5rem;
+    top: .75rem;
 }
 
 .draw-line-map-controls--bottom {
-    bottom: 1.75rem;
+    bottom: .75rem;
 }
 
 .draw-line-map-controls .fr-btn {
@@ -67,10 +66,10 @@
 
 .draw-line-map-search {
     position: absolute;
-    top: 0.5rem;
+    top: 0.75rem;
     left: 0.5rem;
     z-index: 3;
-    width: 16rem;
+    width: 21rem;
     max-width: calc(100% - 10rem);
     background: #fff;
     border-radius: 4px;
