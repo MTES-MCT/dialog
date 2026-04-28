@@ -356,10 +356,32 @@ export default class extends Controller {
         });
     }
 
+    #toFeatureCollection(geojson) {
+        if (geojson.type === 'FeatureCollection') {
+            return geojson;
+        }
+
+        if (geojson.type === 'Feature') {
+            return { type: 'FeatureCollection', features: [geojson] };
+        }
+
+        if (geojson.type === 'GeometryCollection') {
+            return {
+                type: 'FeatureCollection',
+                features: (geojson.geometries || []).map(g => ({ type: 'Feature', properties: {}, geometry: g })),
+            };
+        }
+
+        return {
+            type: 'FeatureCollection',
+            features: [{ type: 'Feature', properties: {}, geometry: geojson }],
+        };
+    }
+
     #addSourceAndLayers(geojson) {
         this.#map.addSource('location-preview', {
             type: 'geojson',
-            data: geojson,
+            data: this.#toFeatureCollection(geojson),
         });
 
         const style = getMeasureTypeStyle(this.measureTypeValue);
@@ -368,10 +390,24 @@ export default class extends Controller {
             id: 'location-preview-line',
             type: 'line',
             source: 'location-preview',
+            filter: ['in', '$type', 'LineString', 'Polygon'],
             paint: {
                 'line-color': style.color,
                 'line-width': style.lineWidth,
                 'line-dasharray': style.dasharray,
+            },
+        });
+
+        this.#map.addLayer({
+            id: 'location-preview-point',
+            type: 'circle',
+            source: 'location-preview',
+            filter: ['==', '$type', 'Point'],
+            paint: {
+                'circle-radius': 6,
+                'circle-color': style.color,
+                'circle-stroke-color': '#FFFFFF',
+                'circle-stroke-width': 2,
             },
         });
     }
@@ -380,7 +416,7 @@ export default class extends Controller {
         const source = this.#map.getSource('location-preview');
 
         if (source) {
-            source.setData(geojson);
+            source.setData(this.#toFeatureCollection(geojson));
         } else if (this.#map.loaded()) {
             this.#addSourceAndLayers(geojson);
         }
@@ -392,13 +428,23 @@ export default class extends Controller {
         const bounds = new maplibregl.LngLatBounds();
         this.#extractBounds(geojson, bounds);
 
-        if (!bounds.isEmpty()) {
-            this.#map.fitBounds(bounds, {
-                padding: 40,
-                maxZoom: 18,
-                animate: false,
-            });
+        if (bounds.isEmpty()) {
+            return;
         }
+
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+
+        if (sw.lng === ne.lng && sw.lat === ne.lat) {
+            this.#map.jumpTo({ center: sw, zoom: 17 });
+            return;
+        }
+
+        this.#map.fitBounds(bounds, {
+            padding: 40,
+            maxZoom: 17,
+            animate: false,
+        });
     }
 
     #extractBounds(geojson, bounds) {
