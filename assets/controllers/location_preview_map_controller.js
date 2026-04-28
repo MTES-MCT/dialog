@@ -5,7 +5,7 @@ import { mapStyles } from 'carte-facile';
 import { getMeasureTypeStyle, DEFAULT_MEASURE_STYLE } from '../measure_type_styles';
 
 export default class extends Controller {
-    static targets = ['container', 'loader', 'message', 'overlay'];
+    static targets = ['container', 'loader', 'message'];
     static values = {
         url: String,
         roadType: String,
@@ -28,14 +28,12 @@ export default class extends Controller {
         isEntireStreetField: String,
         geometryField: String,
         measureType: { type: String, default: '' },
-        interactive: { type: Boolean, default: true },
     };
 
     #map = null;
     #abortController = null;
     #debounceTimer = null;
     #boundDebouncedLoad = null;
-    #boundDismissOverlay = null;
 
     connect() {
         this.#boundDebouncedLoad = () => this.#debouncedLoad();
@@ -47,10 +45,6 @@ export default class extends Controller {
         this.#abortController?.abort();
         clearTimeout(this.#debounceTimer);
         this.#stopListeningForm();
-        if (this.#boundDismissOverlay && this.hasOverlayTarget) {
-            this.overlayTarget.removeEventListener('click', this.#boundDismissOverlay);
-            this.#boundDismissOverlay = null;
-        }
         this.#map?.remove();
         this.#map = null;
     }
@@ -305,12 +299,6 @@ export default class extends Controller {
 
         this.#map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
 
-        if (!this.interactiveValue && this.hasOverlayTarget) {
-            this.overlayTarget.hidden = false;
-            this.#boundDismissOverlay = () => this.#dismissOverlay();
-            this.overlayTarget.addEventListener('click', this.#boundDismissOverlay);
-        }
-
         this.#map.on('load', () => {
             this.#addHouseNumbersLayer();
             this.#addSourceAndLayers(geojson);
@@ -320,14 +308,6 @@ export default class extends Controller {
         this.#map.on('error', () => {
             this.#hideMap();
         });
-    }
-
-    #dismissOverlay() {
-        if (this.#boundDismissOverlay && this.hasOverlayTarget) {
-            this.overlayTarget.removeEventListener('click', this.#boundDismissOverlay);
-            this.overlayTarget.hidden = true;
-            this.#boundDismissOverlay = null;
-        }
     }
 
     #addHouseNumbersLayer() {
