@@ -3,7 +3,8 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
-import { extendBoundsFromCoordinates, extractSingleGeometry } from '../maps/geojson';
+import { extractSingleGeometry } from '../maps/geojson';
+import { getMeasureTypeStyle } from '../measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
@@ -12,10 +13,17 @@ const POINTS_SOURCE = 'draw-points-source';
 const POINTS_LAYER = 'draw-points-layer';
 const EMPTY_FC = { type: 'FeatureCollection', features: [] };
 
-const SEARCH_API_URL = 'https://geo.api.gouv.fr/communes';
+const SEARCH_API_URL = 'https://api-adresse.data.gouv.fr/search/';
 const SEARCH_DEBOUNCE_MS = 250;
-const SEARCH_MIN_LENGTH = 2;
+const SEARCH_MIN_LENGTH = 3;
 const SEARCH_LIMIT = 5;
+const SEARCH_ZOOM_BY_TYPE = {
+    housenumber: 18,
+    street: 17,
+    locality: 16,
+    municipality: 13,
+};
+const SEARCH_DEFAULT_ZOOM = 15;
 
 export default class extends Controller {
     static targets = ['container', 'geometryField', 'drawBtn', 'undoBtn', 'clearBtn', 'warning', 'searchInput', 'searchResults'];
@@ -95,7 +103,7 @@ export default class extends Controller {
             return;
         }
 
-        this.#searchDebounceTimer = setTimeout(() => this.#searchCommunes(query), SEARCH_DEBOUNCE_MS);
+        this.#searchDebounceTimer = setTimeout(() => this.#searchAddresses(query), SEARCH_DEBOUNCE_MS);
     }
 
     onSearchFocus() {
@@ -126,21 +134,20 @@ export default class extends Controller {
         } else if (event.key === 'Enter') {
             event.preventDefault();
             const index = this.#searchActiveIndex >= 0 ? this.#searchActiveIndex : 0;
-            this.#selectCommune(this.#searchResults[index]);
+            this.#selectAddress(this.#searchResults[index]);
         } else if (event.key === 'Escape') {
             this.#hideSearchResults();
         }
     }
 
-    async #searchCommunes(query) {
+    async #searchAddresses(query) {
         this.#searchAbortController?.abort();
         this.#searchAbortController = new AbortController();
 
         const url = new URL(SEARCH_API_URL);
-        url.searchParams.set('nom', query);
-        url.searchParams.set('fields', 'nom,code,codeDepartement,centre,contour');
-        url.searchParams.set('boost', 'population');
+        url.searchParams.set('q', query);
         url.searchParams.set('limit', String(SEARCH_LIMIT));
+        url.searchParams.set('autocomplete', '1');
 
         try {
             const response = await fetch(url.toString(), { signal: this.#searchAbortController.signal });
@@ -151,7 +158,8 @@ export default class extends Controller {
             }
 
             const data = await response.json();
-            this.#renderSearchResults(Array.isArray(data) ? data : []);
+            const features = data && Array.isArray(data.features) ? data.features : [];
+            this.#renderSearchResults(features);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 this.#renderSearchResults([]);
@@ -171,14 +179,15 @@ export default class extends Controller {
         if (results.length === 0) {
             const empty = document.createElement('li');
             empty.className = 'draw-line-map-search__empty';
-            empty.textContent = 'Aucune commune trouvée';
+            empty.textContent = 'Aucune adresse trouvée';
             this.searchResultsTarget.appendChild(empty);
             this.#showSearchResults();
 
             return;
         }
 
-        results.forEach((commune, index) => {
+        results.forEach((feature, index) => {
+            const props = feature.properties || {};
             const item = document.createElement('li');
             item.className = 'draw-line-map-search__result';
             item.setAttribute('role', 'option');
@@ -186,11 +195,22 @@ export default class extends Controller {
 
             const name = document.createElement('span');
             name.className = 'draw-line-map-search__result-name';
-            name.textContent = commune.nom;
+            name.textContent = props.label || props.name || '';
+
+            const item_meta_parts = [];
+            if (props.type === 'municipality') {
+                if (props.context) {
+                    item_meta_parts.push(props.context);
+                }
+            } else if (props.city) {
+                item_meta_parts.push(`${props.postcode || ''} ${props.city}`.trim());
+            } else if (props.context) {
+                item_meta_parts.push(props.context);
+            }
 
             const meta = document.createElement('span');
             meta.className = 'draw-line-map-search__result-meta';
-            meta.textContent = ` (${commune.codeDepartement || commune.code})`;
+            meta.textContent = item_meta_parts.length > 0 ? ` — ${item_meta_parts.join(', ')}` : '';
 
             item.appendChild(name);
             item.appendChild(meta);
@@ -199,7 +219,7 @@ export default class extends Controller {
                 // Prevent input blur before click triggers selection
                 e.preventDefault();
             });
-            item.addEventListener('click', () => this.#selectCommune(commune));
+            item.addEventListener('click', () => this.#selectAddress(feature));
             item.addEventListener('mouseenter', () => this.#setSearchActiveIndex(index));
 
             this.searchResultsTarget.appendChild(item);
@@ -227,26 +247,26 @@ export default class extends Controller {
         });
     }
 
-    #selectCommune(commune) {
-        if (!commune || !this.#map) {
+    #selectAddress(feature) {
+        if (!feature || !this.#map) {
             this.#hideSearchResults();
 
             return;
         }
 
-        if (commune.contour && Array.isArray(commune.contour.coordinates)) {
-            const bounds = new maplibregl.LngLatBounds();
-            extendBoundsFromCoordinates(commune.contour.coordinates, bounds);
+        const props = feature.properties || {};
+        const geometry = feature.geometry || {};
 
-            if (!bounds.isEmpty()) {
-                this.#map.fitBounds(bounds, { padding: 40, maxZoom: 14, animate: true });
-            }
-        } else if (commune.centre && Array.isArray(commune.centre.coordinates)) {
-            this.#map.flyTo({ center: commune.centre.coordinates, zoom: 13 });
+        if (Array.isArray(feature.bbox) && feature.bbox.length === 4) {
+            const [minLng, minLat, maxLng, maxLat] = feature.bbox;
+            this.#map.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 40, maxZoom: 16, animate: true });
+        } else if (Array.isArray(geometry.coordinates) && geometry.coordinates.length === 2) {
+            const zoom = SEARCH_ZOOM_BY_TYPE[props.type] || SEARCH_DEFAULT_ZOOM;
+            this.#map.flyTo({ center: geometry.coordinates, zoom });
         }
 
         if (this.hasSearchInputTarget) {
-            this.searchInputTarget.value = commune.nom;
+            this.searchInputTarget.value = props.label || props.name || this.searchInputTarget.value;
         }
 
         this.#hideSearchResults();
@@ -367,6 +387,7 @@ export default class extends Controller {
         });
 
         this.#map.addSource(POINTS_SOURCE, { type: 'geojson', data: EMPTY_FC });
+        const pointColor = getMeasureTypeStyle(this.measureTypeValue).color;
         this.#map.addLayer({
             id: POINTS_LAYER,
             type: 'circle',
@@ -377,13 +398,7 @@ export default class extends Controller {
                     ['boolean', ['feature-state', 'hover'], false], 8,
                     5,
                 ],
-                'circle-color': [
-                    'match',
-                    ['get', 'role'],
-                    'start', '#18753c',
-                    'end', '#ce0500',
-                    '#000091',
-                ],
+                'circle-color': pointColor,
                 'circle-stroke-color': '#ffffff',
                 'circle-stroke-width': 2,
             },
