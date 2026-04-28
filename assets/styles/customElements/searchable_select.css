@@ -4,10 +4,17 @@
 /* Keep the native <select> visible when JS hasn't upgraded yet. */
 d-searchable-select:not(:defined) > select { display: block; }
 
+/* Behave as a block-level flex item so labels align with sibling filters
+   and the configured width is honored. */
+d-searchable-select {
+    display: block;
+}
+
 /* --- Match DSFR fr-select look on the Choices.js closed state --- */
 
 d-searchable-select .choices {
     margin-bottom: 0;
+    width: 100%;
 }
 
 d-searchable-select .choices[data-type*="select-one"]::after {
