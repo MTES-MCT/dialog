@@ -77,6 +77,39 @@ export function extractFirstGeometry(parsed) {
 }
 
 /**
+ * Wraps a bare geometry, Feature, FeatureCollection or GeometryCollection into
+ * a FeatureCollection. A FeatureCollection is returned as-is.
+ *
+ * @param {*} geojson
+ * @returns {{ type: 'FeatureCollection', features: Array<*> }}
+ */
+export function toFeatureCollection(geojson) {
+    if (!geojson || !geojson.type) {
+        return { type: 'FeatureCollection', features: [] };
+    }
+
+    if (geojson.type === 'FeatureCollection') {
+        return geojson;
+    }
+
+    if (geojson.type === 'Feature') {
+        return { type: 'FeatureCollection', features: [geojson] };
+    }
+
+    if (geojson.type === 'GeometryCollection') {
+        return {
+            type: 'FeatureCollection',
+            features: (geojson.geometries || []).map((g) => ({ type: 'Feature', properties: {}, geometry: g })),
+        };
+    }
+
+    return {
+        type: 'FeatureCollection',
+        features: [{ type: 'Feature', properties: {}, geometry: geojson }],
+    };
+}
+
+/**
  * Strict variant of {@link extractFirstGeometry}: returns the geometry only
  * when the input unambiguously describes a single geometry (a bare geometry,
  * a Feature, or a FeatureCollection holding exactly one Feature).

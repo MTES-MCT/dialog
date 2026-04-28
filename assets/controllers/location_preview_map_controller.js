@@ -2,9 +2,8 @@ import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
-import { addHouseNumbersLayer } from '../maps/layers';
-import { boundsFromGeoJSON, extractFirstGeometry } from '../maps/geojson';
-import { getMeasureTypeStyle } from '../measure_type_styles';
+import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
+import { boundsFromGeoJSON, extractFirstGeometry, toFeatureCollection } from '../maps/geojson';
 
 export default class extends Controller {
     static targets = ['container', 'loader', 'message'];
@@ -296,59 +295,13 @@ export default class extends Controller {
         });
     }
 
-    #toFeatureCollection(geojson) {
-        if (geojson.type === 'FeatureCollection') {
-            return geojson;
-        }
-
-        if (geojson.type === 'Feature') {
-            return { type: 'FeatureCollection', features: [geojson] };
-        }
-
-        if (geojson.type === 'GeometryCollection') {
-            return {
-                type: 'FeatureCollection',
-                features: (geojson.geometries || []).map(g => ({ type: 'Feature', properties: {}, geometry: g })),
-            };
-        }
-
-        return {
-            type: 'FeatureCollection',
-            features: [{ type: 'Feature', properties: {}, geometry: geojson }],
-        };
-    }
-
     #addSourceAndLayers(geojson) {
-        this.#map.addSource('location-preview', {
-            type: 'geojson',
-            data: this.#toFeatureCollection(geojson),
-        });
-
-        const style = getMeasureTypeStyle(this.measureTypeValue);
-
-        this.#map.addLayer({
-            id: 'location-preview-line',
-            type: 'line',
-            source: 'location-preview',
-            filter: ['in', '$type', 'LineString', 'Polygon'],
-            paint: {
-                'line-color': style.color,
-                'line-width': style.lineWidth,
-                'line-dasharray': style.dasharray,
-            },
-        });
-
-        this.#map.addLayer({
-            id: 'location-preview-point',
-            type: 'circle',
-            source: 'location-preview',
-            filter: ['==', '$type', 'Point'],
-            paint: {
-                'circle-radius': 6,
-                'circle-color': style.color,
-                'circle-stroke-color': '#FFFFFF',
-                'circle-stroke-width': 2,
-            },
+        addMeasureLineLayer(this.#map, {
+            sourceId: 'location-preview',
+            layerId: 'location-preview-line',
+            pointLayerId: 'location-preview-point',
+            measureType: this.measureTypeValue,
+            data: geojson,
         });
     }
 
@@ -356,7 +309,7 @@ export default class extends Controller {
         const source = this.#map.getSource('location-preview');
 
         if (source) {
-            source.setData(this.#toFeatureCollection(geojson));
+            source.setData(toFeatureCollection(geojson));
         } else if (this.#map.loaded()) {
             this.#addSourceAndLayers(geojson);
         }

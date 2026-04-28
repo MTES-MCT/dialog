@@ -6,6 +6,7 @@ import {
     boundsFromGeoJSON,
     extractFirstGeometry,
     extractSingleGeometry,
+    toFeatureCollection,
 } from './geojson';
 import maplibregl from 'maplibre-gl';
 
@@ -191,5 +192,48 @@ describe('extractSingleGeometry', () => {
 
     it('returns null for an object lacking a "coordinates" key', () => {
         expect(extractSingleGeometry({ type: 'Point' })).toBeNull();
+    });
+});
+
+describe('toFeatureCollection', () => {
+    it('returns an empty FeatureCollection for null/undefined or untyped input', () => {
+        expect(toFeatureCollection(null)).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(toFeatureCollection(undefined)).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(toFeatureCollection({})).toEqual({ type: 'FeatureCollection', features: [] });
+    });
+
+    it('returns a FeatureCollection unchanged', () => {
+        const fc = { type: 'FeatureCollection', features: [{ type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [0, 0] } }] };
+        expect(toFeatureCollection(fc)).toBe(fc);
+    });
+
+    it('wraps a Feature into a FeatureCollection', () => {
+        const f = { type: 'Feature', properties: {}, geometry: { type: 'Point', coordinates: [1, 2] } };
+        expect(toFeatureCollection(f)).toEqual({ type: 'FeatureCollection', features: [f] });
+    });
+
+    it('expands a GeometryCollection into a FeatureCollection', () => {
+        const gc = {
+            type: 'GeometryCollection',
+            geometries: [
+                { type: 'Point', coordinates: [1, 2] },
+                { type: 'LineString', coordinates: [[0, 0], [1, 1]] },
+            ],
+        };
+        expect(toFeatureCollection(gc)).toEqual({
+            type: 'FeatureCollection',
+            features: [
+                { type: 'Feature', properties: {}, geometry: gc.geometries[0] },
+                { type: 'Feature', properties: {}, geometry: gc.geometries[1] },
+            ],
+        });
+    });
+
+    it('wraps a bare geometry into a FeatureCollection', () => {
+        const g = { type: 'Point', coordinates: [3, 4] };
+        expect(toFeatureCollection(g)).toEqual({
+            type: 'FeatureCollection',
+            features: [{ type: 'Feature', properties: {}, geometry: g }],
+        });
     });
 });

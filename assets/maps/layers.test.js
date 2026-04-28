@@ -71,6 +71,60 @@ describe('addMeasureLineLayer', () => {
         expect(sourceConfig.data).toEqual({ type: 'FeatureCollection', features: [] });
     });
 
+    it('wraps a bare geometry into a FeatureCollection on the source', () => {
+        const map = createMapMock();
+        const point = { type: 'Point', coordinates: [2.35, 48.85] };
+
+        addMeasureLineLayer(/** @type {any} */ (map), {
+            sourceId: 's',
+            layerId: 'l',
+            measureType: 'noEntry',
+            data: point,
+        });
+
+        expect(map.addSource.mock.calls[0][1].data).toEqual({
+            type: 'FeatureCollection',
+            features: [{ type: 'Feature', properties: {}, geometry: point }],
+        });
+    });
+
+    it('does not filter the line layer when no pointLayerId is given', () => {
+        const map = createMapMock();
+
+        addMeasureLineLayer(/** @type {any} */ (map), {
+            sourceId: 's',
+            layerId: 'l',
+            measureType: 'noEntry',
+        });
+
+        expect(map.addLayer).toHaveBeenCalledTimes(1);
+        expect(map.addLayer.mock.calls[0][0].filter).toBeUndefined();
+    });
+
+    it('adds a point circle layer and filters the line layer when pointLayerId is given', () => {
+        const map = createMapMock();
+
+        addMeasureLineLayer(/** @type {any} */ (map), {
+            sourceId: 's',
+            layerId: 'l',
+            pointLayerId: 'p',
+            measureType: 'noEntry',
+        });
+
+        expect(map.addLayer).toHaveBeenCalledTimes(2);
+
+        const lineLayer = map.addLayer.mock.calls[0][0];
+        expect(lineLayer.id).toBe('l');
+        expect(lineLayer.filter).toEqual(['in', '$type', 'LineString', 'Polygon']);
+
+        const pointLayer = map.addLayer.mock.calls[1][0];
+        expect(pointLayer.id).toBe('p');
+        expect(pointLayer.type).toBe('circle');
+        expect(pointLayer.source).toBe('s');
+        expect(pointLayer.filter).toEqual(['==', '$type', 'Point']);
+        expect(pointLayer.paint['circle-color']).toBe('#CE0500');
+    });
+
     it('applies the measure type style (noEntry → red, solid)', () => {
         const map = createMapMock();
 
