@@ -8,13 +8,7 @@
 .app-sort-header {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.app-sort-chevrons {
-    display: inline-flex;
-    flex-direction: column;
-    line-height: 0;
+    gap: 0.25rem;
 }
 
 .app-sort-chevron {
@@ -23,8 +17,6 @@
     color: var(--text-mention-grey);
     text-decoration: none;
     padding: 0;
-    height: 0.875rem;
-    width: 0.875rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -38,11 +30,9 @@
 
 .app-sort-chevron:hover {
     opacity: 1;
-    font-weight: 700;
 }
 
 .app-sort-chevron--active {
     color: var(--text-action-high-blue-france);
     opacity: 1;
-    font-weight: 700;
 }

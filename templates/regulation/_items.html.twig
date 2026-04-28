@@ -12,26 +12,26 @@
 
 {% macro sortHeader(label, column, currentSort, currentSortDir) %}
     {% set baseParams = app.request.query.all()|merge({ page: 1 }) %}
-    {% set ascParams = baseParams|merge({ sort: column, dir: 'asc' }) %}
-    {% set descParams = baseParams|merge({ sort: column, dir: 'desc' }) %}
     {% set isAscActive = currentSort == column and currentSortDir == 'asc' %}
     {% set isDescActive = currentSort == column and currentSortDir == 'desc' %}
+    {% set nextDir = isAscActive ? 'desc' : 'asc' %}
+    {% set nextParams = baseParams|merge({ sort: column, dir: nextDir }) %}
+    {% if isAscActive %}
+        {% set iconClass = 'fr-icon-arrow-up-line' %}
+    {% elseif isDescActive %}
+        {% set iconClass = 'fr-icon-arrow-down-line' %}
+    {% else %}
+        {% set iconClass = 'fr-icon-arrow-up-down-line' %}
+    {% endif %}
+    {% set ariaLabel = ('regulation.list.sort.' ~ nextDir)|trans({ '%column%': label }) %}
     <span class="app-sort-header">
         <span>{{ label }}</span>
-        <span class="app-sort-chevrons">
-            <a
-                href="{{ path('app_regulations_list', ascParams) }}"
-                class="app-sort-chevron fr-icon-arrow-up-s-line{% if isAscActive %} app-sort-chevron--active{% endif %}"
-                aria-label="{{ 'regulation.list.sort.asc'|trans({ '%column%': label }) }}"
-                title="{{ 'regulation.list.sort.asc'|trans({ '%column%': label }) }}"
-            ></a>
-            <a
-                href="{{ path('app_regulations_list', descParams) }}"
-                class="app-sort-chevron fr-icon-arrow-down-s-line{% if isDescActive %} app-sort-chevron--active{% endif %}"
-                aria-label="{{ 'regulation.list.sort.desc'|trans({ '%column%': label }) }}"
-                title="{{ 'regulation.list.sort.desc'|trans({ '%column%': label }) }}"
-            ></a>
-        </span>
+        <a
+            href="{{ path('app_regulations_list', nextParams) }}"
+            class="app-sort-chevron {{ iconClass }}{% if isAscActive or isDescActive %} app-sort-chevron--active{% endif %}"
+            aria-label="{{ ariaLabel }}"
+            title="{{ ariaLabel }}"
+        ></a>
     </span>
 {% endmacro %}
 

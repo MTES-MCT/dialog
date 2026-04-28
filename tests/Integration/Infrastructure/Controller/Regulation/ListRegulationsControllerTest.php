@@ -90,9 +90,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        // Identifiant, Période, Source, Statut → 4 colonnes triables, 2 chevrons chacune
+        // Identifiant, Période, Source, Statut → 4 colonnes triables, 1 icône chacune
         $chevrons = $crawler->filter('[data-testid="app-regulation-table"] thead .app-sort-chevron');
-        $this->assertSame(8, $chevrons->count());
+        $this->assertSame(4, $chevrons->count());
     }
 
     public function testSortInvalidColumnIsIgnored(): void
