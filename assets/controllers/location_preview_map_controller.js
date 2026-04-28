@@ -337,6 +337,7 @@ export default class extends Controller {
             source: 'plan_ign',
             'source-layer': 'toponyme_parcellaire_adresse_ponc',
             minzoom: 15,
+            maxzoom: 24,
             filter: ['==', 'txt_typo', 'ADRESSE'],
             layout: {
                 'symbol-placement': 'point',
@@ -347,6 +348,7 @@ export default class extends Controller {
                 'text-anchor': 'center',
                 'text-font': ['Noto Sans Regular'],
                 'text-allow-overlap': false,
+                'text-ignore-placement': false,
             },
             paint: {
                 'text-color': '#695744',
@@ -436,13 +438,13 @@ export default class extends Controller {
         const ne = bounds.getNorthEast();
 
         if (sw.lng === ne.lng && sw.lat === ne.lat) {
-            this.#map.jumpTo({ center: sw, zoom: 17 });
+            this.#map.jumpTo({ center: sw, zoom: 18 });
             return;
         }
 
         this.#map.fitBounds(bounds, {
             padding: 40,
-            maxZoom: 17,
+            maxZoom: 18,
             animate: false,
         });
     }
