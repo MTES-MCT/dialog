@@ -158,7 +158,7 @@
     </li>
 {% endmacro %}
 
-{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject, regulationOrderRecord) %}
+{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject, regulationOrderRecord, measureType) %}
     {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
 
     <div
@@ -358,10 +358,32 @@
                 {% do form[roadType].storageArea.setRendered %}
             {% endif %}
         </fieldset>
+
+        <div
+            data-controller="location-preview-map"
+            data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+            data-location-preview-map-road-type-value="{{ roadType }}"
+            data-location-preview-map-administrator-field-value="{{ form[roadType].administrator.vars.id }}"
+            data-location-preview-map-road-number-field-value="{{ form[roadType].roadNumber.vars.id }}"
+            data-location-preview-map-from-point-number-field-value="{{ form[roadType].fromPointNumber.vars.id }}"
+            data-location-preview-map-from-side-field-value="{{ form[roadType].fromSide.vars.id }}"
+            data-location-preview-map-from-abscissa-field-value="{{ form[roadType].fromAbscissa.vars.id }}"
+            data-location-preview-map-to-point-number-field-value="{{ form[roadType].toPointNumber.vars.id }}"
+            data-location-preview-map-to-side-field-value="{{ form[roadType].toSide.vars.id }}"
+            data-location-preview-map-to-abscissa-field-value="{{ form[roadType].toAbscissa.vars.id }}"
+            data-location-preview-map-direction-field-value="{{ form[roadType].direction.vars.id }}"
+            data-location-preview-map-measure-type-value="{{ measureType }}"
+            class="fr-mt-2w"
+        >
+            <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
+                <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
+                <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
+            </div>
+        </div>
     </div>
 {% endmacro %}
 
-{% macro locations_list_item(form, index, position, regulationSubject, regulationOrderRecord) %}
+{% macro locations_list_item(form, index, position, regulationSubject, regulationOrderRecord, measureType) %}
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
@@ -389,8 +411,8 @@
                     },
                 }) }}
 
-                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject, regulationOrderRecord) }}
-                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject, regulationOrderRecord) }}
+                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject, regulationOrderRecord, measureType) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject, regulationOrderRecord, measureType) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
@@ -583,6 +605,28 @@
                             </fieldset>
                         </div>
                     </fieldset>
+
+                    <div
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="lane"
+                        data-location-preview-map-road-ban-id-field-value="{{ form.namedStreet.roadBanId.vars.id }}"
+                        data-location-preview-map-road-name-field-value="{{ form.namedStreet.roadName.vars.id }}"
+                        data-location-preview-map-city-code-field-value="{{ form.namedStreet.cityCode.vars.id }}"
+                        data-location-preview-map-from-house-number-field-value="{{ form.namedStreet.fromHouseNumber.vars.id }}"
+                        data-location-preview-map-from-road-ban-id-field-value="{{ form.namedStreet.fromRoadBanId.vars.id }}"
+                        data-location-preview-map-to-house-number-field-value="{{ form.namedStreet.toHouseNumber.vars.id }}"
+                        data-location-preview-map-to-road-ban-id-field-value="{{ form.namedStreet.toRoadBanId.vars.id }}"
+                        data-location-preview-map-direction-field-value="{{ form.namedStreet.direction.vars.id }}"
+                        data-location-preview-map-is-entire-street-field-value="{{ form.namedStreet.isEntireStreet.vars.id }}"
+                        data-location-preview-map-measure-type-value="{{ measureType }}"
+                        class="fr-mt-2w"
+                    >
+                        <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
+                            <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
+                            <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
+                        </div>
+                    </div>
                 </div>
 
                 {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
@@ -619,6 +663,17 @@
                             'disabled': not isRawGeoJSON,
                         },
                     }) }}
+
+                    <div
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="rawGeoJSON"
+                        data-location-preview-map-geometry-field-value="{{ form.rawGeoJSON.geometry.vars.id }}"
+                        data-location-preview-map-measure-type-value="{{ measureType }}"
+                        class="raw-geojson-map-container fr-mt-2w"
+                    >
+                        <div data-location-preview-map-target="container" hidden class="location-preview-map-container"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -638,6 +693,7 @@
         >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
             {{ form_start(form, {attr: {id: 'measure-form'}}) }}
+                {{ form_row(form._token) }}
                 <div class="app-card">
                     <div class="app-card__header">
                         <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
@@ -768,7 +824,7 @@
                             data-controller="form-collection"
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject, regulationOrderRecord)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject, regulationOrderRecord, form.type.vars.value)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-2w d-stack"
@@ -777,7 +833,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject, regulationOrderRecord) }}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject, regulationOrderRecord, form.type.vars.value) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}
