@@ -11,28 +11,6 @@
     gap: 0.25rem;
 }
 
-.app-sort-chevron {
-    background-image: none;
-    background-color: transparent;
-    color: var(--text-mention-grey);
-    text-decoration: none;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.55;
-}
-
-.app-sort-chevron::before {
-    --icon-size: 1rem;
-    margin: 0;
-}
-
-.app-sort-chevron:hover {
-    opacity: 1;
-}
-
-.app-sort-chevron--active {
-    color: var(--text-action-high-blue-france);
-    opacity: 1;
+.app-sort-header .fr-btn--sort {
+    box-shadow: none;
 }
