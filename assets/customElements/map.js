@@ -5,48 +5,10 @@ import { mapStyles } from 'carte-facile';
 import { buildLineColorExpression, buildLineDasharrayExpression, buildLineWidthExpression } from '../maps/measure_type_styles';
 
 /**
- * A source for map data that reads GeoJSON data in the textContent of an HTML element.
+ * The `source-layer` name used inside the MVT tiles produced by the backend
+ * (see LocationRepository::findRestrictionsAsMVT).
  */
-class MapDataSource {
-    /** @type {MapElement} */
-    #mapElement;
-
-    /** @type {any} */
-    #data = null;
-
-    /**
-     * @param {MapElement} element
-     */
-    constructor(element) {
-        this.#mapElement = element;
-    }
-
-    /** @returns {Promise<any>} */
-    async readValue() {
-        if (!this.#data) {
-            const url = this.#mapElement.getDataUrl();
-            const response = await fetch(url);
-            const text = await response.text();
-            const data = text ? JSON.parse(text) : {};
-            this.#data = data;
-        }
-
-        return this.#data;
-    }
-
-    /**
-     * @param {(value: any) => void} callback
-     */
-    onChange(callback) {
-        this.#mapElement.onDataUrlChange(() => {
-            this.#data = null;
-
-            this.readValue().then((json) => {
-                callback(json);
-            });
-        });
-    }
-}
+const RESTRICTIONS_SOURCE_LAYER = 'restrictions';
 
 class MapLibreMap {
     /** @type {string} */
@@ -61,25 +23,31 @@ class MapLibreMap {
     /** @type {maplibregl.Map} */
     #map;
 
+    /** @type {MapElement} */
+    #mapElement;
+
     /**
+     * @param {MapElement} mapElement
      * @param {HTMLElement} root
      * @param {string} height
      * @param {string} minHeight
      * @param {[number, number]} center
      * @param {number} zoom
      * @param {string} locationPopupUrl
-     * @param {MapDataSource} dataSource
+     * @param {[[number, number], [number, number]] | null} initialBbox
      */
     constructor(
+        mapElement,
         root,
         height,
         minHeight,
         center,
         zoom,
         locationPopupUrl,
-        dataSource,
+        initialBbox,
     ) {
         this.#locationPopupUrl = locationPopupUrl;
+        this.#mapElement = mapElement;
 
         // Create a container for the map
         const mapContainer = document.createElement('div');
@@ -96,23 +64,28 @@ class MapLibreMap {
             maxZoom: 18, // Default is 22, adjust so that maximum zoom makes house numbers visible
         };
 
-        this.#prom = this.#init(dataSource, mapOptions, mapContainer);
+        // Apply the initial bbox via Map options so that MapLibre treats it as the canonical
+        // initial position (it overrides center/zoom). Setting it via fitBounds() after
+        // construction can race with MapLibre's `hash` option and/or be overridden.
+        // We only honor the bbox when the URL doesn't already carry a position hash.
+        if (initialBbox && !window.location.hash.includes('mapZoomAndPosition=')) {
+            mapOptions.bounds = initialBbox;
+            mapOptions.fitBoundsOptions = { padding: 40, animate: false };
+        }
+
+        this.#prom = this.#init(mapOptions, mapContainer);
     }
 
     /**
-     * @param {MapDataSource} dataSource
      * @param {Partial<maplibregl.MapOptions>} mapOptions
      * @param {HTMLElement} mapContainer
      * @returns {Promise<maplibregl.Map>}
      */
-    async #init(dataSource, mapOptions, mapContainer) {
+    async #init(mapOptions, mapContainer) {
         // Lazy load to only transfer MapLibre JS when loading the map
         const exports = await import('maplibre-gl');
         const maplibregl = exports.default;
         this.#maplibregl = maplibregl;
-
-        // Load data before creating maplibre Map
-        const data = await dataSource.readValue();
 
         return new Promise((resolve) => {
             // NOTE: creation and configuration of the map should be done synchronously, without any 'await' in between.
@@ -131,19 +104,21 @@ class MapLibreMap {
                 map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 
                 map.addSource('locations-source', {
-                    type: 'geojson',
-                    data,
-                    // This option enables simplification of geometries at low zoom levels.
-                    // Expressed in meters.
-                    // Use > 0 to avoid "blob effect" at low zoom levels.
-                    // Use a small enough value to enable details at bigger zoom levels.
-                    // NOTE: computation is performed on the client's CPU using the data loaded in memory.
-                    tolerance: 1,
+                    type: 'vector',
+                    tiles: [this.#mapElement.getTilesUrl()],
+                    minzoom: 0,
+                    // Beyond this zoom MapLibre re-uses ("overzooms") the z=14 tile
+                    // instead of fetching higher-zoom tiles. For line geometries this
+                    // is visually fine and drastically reduces the number of requests
+                    // at deep zoom levels.
+                    maxzoom: 14,
                 });
 
-                dataSource.onChange(data => {
-                    // credits to https://maplibre.org/maplibre-gl-js/docs/examples/live-update-feature/
-                    map.getSource('locations-source').setData(data);
+                this.#mapElement.onTilesUrlChange(() => {
+                    const source = /** @type {maplibregl.VectorTileSource} */ (map.getSource('locations-source'));
+                    if (source && typeof source.setTiles === 'function') {
+                        source.setTiles([this.#mapElement.getTilesUrl()]);
+                    }
                 });
 
                 const lineWidthFirstStep = 15;
@@ -153,6 +128,7 @@ class MapLibreMap {
                         'id': 'locations-layer',
                         'type': 'line',
                         'source': 'locations-source',
+                        'source-layer': RESTRICTIONS_SOURCE_LAYER,
                         'layout': {
                             'line-join': 'round',
                             'line-cap': 'round',
@@ -170,6 +146,7 @@ class MapLibreMap {
                         'id': 'locations-layer-click-zone',
                         'type': 'line',
                         'source': 'locations-source',
+                        'source-layer': RESTRICTIONS_SOURCE_LAYER,
                         'layout': {
                             'line-join': 'round',
                             'line-cap': 'round',
@@ -266,16 +243,35 @@ export class MapElement extends HTMLElement {
         const mapPos = JSON.parse(this.getAttribute('mapPos') || METROPOLITAN_FRANCE_CENTER);
         const mapZoom = +(this.getAttribute('mapZoom') || 13);
         const locationPopupUrl = getAttributeOrError(this, 'locationPopupUrl');
-        const dataSource = new MapDataSource(this);
+
+        const initialBboxAttr = this.getAttribute('initialBbox');
+        /** @type {[[number, number], [number, number]] | null} */
+        let initialBbox = null;
+        if (initialBboxAttr) {
+            try {
+                const parsed = JSON.parse(initialBboxAttr);
+                if (parsed && typeof parsed === 'object'
+                    && Number.isFinite(parsed.minLon) && Number.isFinite(parsed.minLat)
+                    && Number.isFinite(parsed.maxLon) && Number.isFinite(parsed.maxLat)) {
+                    initialBbox = [
+                        [parsed.minLon, parsed.minLat],
+                        [parsed.maxLon, parsed.maxLat],
+                    ];
+                }
+            } catch (e) {
+                // Invalid JSON: fall back to the default position.
+            }
+        }
 
         const map = new MapLibreMap(
+            this,
             this,
             mapHeight,
             mapMinHeight,
             mapPos,
             mapZoom,
             locationPopupUrl,
-            dataSource,
+            initialBbox,
         );
 
         map.onReady((mapInstance) => {
@@ -288,19 +284,23 @@ export class MapElement extends HTMLElement {
     }
 
     /**
+     * Returns the tile URL template as an absolute URL. MapLibre's tile workers
+     * require absolute URLs (the `Request` constructor in worker context cannot
+     * resolve relative URLs against `document.baseURI`).
      * @returns {string}
      */
-    getDataUrl() {
-        return getAttributeOrError(this, 'dataUrl');
+    getTilesUrl() {
+        const url = getAttributeOrError(this, 'tilesUrl');
+        return url.startsWith('http') ? url : window.location.origin + url;
     }
 
     /**
      * @param {() => void} callback
      */
-    onDataUrlChange(callback) {
+    onTilesUrlChange(callback) {
         const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
-                if (mutation.type === "attributes" && mutation.attributeName?.toLowerCase() === 'dataurl') {
+                if (mutation.type === "attributes" && mutation.attributeName?.toLowerCase() === 'tilesurl') {
                     callback();
                 }
             }
