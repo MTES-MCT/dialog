@@ -10,6 +10,7 @@ use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class LocationRepository extends ServiceEntityRepository implements LocationRepositoryInterface
@@ -71,6 +72,154 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
     ): string {
+        [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
+            $includePermanentRegulations,
+            $includeTemporaryRegulations,
+            $measureTypes,
+            $startDate,
+            $endDate,
+        );
+
+        $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
+            \sprintf(
+                'SELECT
+                    ST_AsGeoJSON(
+                        ST_SimplifyPreserveTopology(
+                            l.geometry,
+                            -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
+                            3 * 0.00001
+                        )
+                    ) AS geometry,
+                    m.type AS measure_type,
+                    l.uuid AS location_uuid,
+                    ro.category AS regulation_category
+                FROM location AS l
+                INNER JOIN measure AS m ON m.uuid = l.measure_uuid
+                INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
+                INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+                WHERE roc.status = :status
+                AND l.geometry IS NOT NULL
+                AND m.type IN (:measureTypes)
+                %s
+                %s
+                ORDER BY CASE m.type
+                    WHEN \'alternateRoad\' THEN 1
+                    WHEN \'parkingProhibited\' THEN 2
+                    WHEN \'speedLimitation\' THEN 3
+                    WHEN \'noEntry\' THEN 4
+                    ELSE 5
+                END
+                ',
+                $regulationTypeWhereClause,
+                $measureDatesCondition,
+            ),
+            $parameters,
+            $types,
+        );
+
+        $features = [];
+
+        foreach ($rows as $row) {
+            $features[] = [
+                'type' => 'Feature',
+                'geometry' => json_decode($row['geometry']),
+                'properties' => [
+                    'location_uuid' => $row['location_uuid'],
+                    'measure_type' => $row['measure_type'],
+                    'regulation_category' => $row['regulation_category'],
+                ],
+            ];
+        }
+
+        return json_encode(['type' => 'FeatureCollection', 'features' => $features]);
+    }
+
+    public function findRestrictionsAsMVT(
+        int $z,
+        int $x,
+        int $y,
+        bool $includePermanentRegulations = false,
+        bool $includeTemporaryRegulations = false,
+        array $measureTypes = [],
+        ?\DateTimeInterface $startDate = null,
+        ?\DateTimeInterface $endDate = null,
+    ): string {
+        [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
+            $includePermanentRegulations,
+            $includeTemporaryRegulations,
+            $measureTypes,
+            $startDate,
+            $endDate,
+        );
+
+        $parameters['z'] = $z;
+        $parameters['x'] = $x;
+        $parameters['y'] = $y;
+        $types['z'] = ParameterType::INTEGER;
+        $types['x'] = ParameterType::INTEGER;
+        $types['y'] = ParameterType::INTEGER;
+
+        // ST_TileEnvelope produces the tile bounds in EPSG:3857 (Web Mercator), the projection
+        // used for vector tiles. We pre-filter geometries with a `&&` (bbox intersection) on the
+        // 4326 envelope of the tile to leverage the GIST index on `location.geometry`.
+        $sql = \sprintf(
+            'WITH bounds AS (
+                SELECT
+                    ST_TileEnvelope(:z, :x, :y) AS geom_3857,
+                    ST_Transform(ST_TileEnvelope(:z, :x, :y), 4326) AS geom_4326
+            ),
+            mvtgeom AS (
+                SELECT
+                    ST_AsMVTGeom(
+                        ST_Transform(l.geometry, 3857),
+                        bounds.geom_3857,
+                        extent => 4096,
+                        buffer => 64,
+                        clip_geom => true
+                    ) AS geom,
+                    m.type AS measure_type,
+                    l.uuid::text AS location_uuid,
+                    ro.category AS regulation_category
+                FROM bounds, location AS l
+                INNER JOIN measure AS m ON m.uuid = l.measure_uuid
+                INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
+                INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+                WHERE roc.status = :status
+                AND l.geometry IS NOT NULL
+                AND m.type IN (:measureTypes)
+                AND l.geometry && bounds.geom_4326
+                %s
+                %s
+            )
+            SELECT COALESCE(ST_AsMVT(mvtgeom.*, \'restrictions\', 4096, \'geom\'), \'\'::bytea) AS mvt
+            FROM mvtgeom
+            WHERE geom IS NOT NULL',
+            $regulationTypeWhereClause,
+            $measureDatesCondition,
+        );
+
+        $row = $this->getEntityManager()->getConnection()->fetchAssociative($sql, $parameters, $types);
+
+        $mvt = $row['mvt'] ?? '';
+
+        // PostgreSQL bytea may come back as a resource (stream) depending on the driver.
+        if (\is_resource($mvt)) {
+            $mvt = stream_get_contents($mvt);
+        }
+
+        return $mvt === false ? '' : (string) $mvt;
+    }
+
+    /**
+     * @return array{0: string, 1: string, 2: array<string, mixed>, 3: array<string, mixed>}
+     */
+    private function buildMapFilterSql(
+        bool $includePermanentRegulations,
+        bool $includeTemporaryRegulations,
+        array $measureTypes,
+        ?\DateTimeInterface $startDate,
+        ?\DateTimeInterface $endDate,
+    ): array {
         $parameters = [
             'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
             'measureTypes' => $measureTypes,
@@ -142,58 +291,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             }
         }
 
-        $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
-            \sprintf(
-                'SELECT
-                    ST_AsGeoJSON(
-                        ST_SimplifyPreserveTopology(
-                            l.geometry,
-                            -- Simplify lines smaller than 3m (0.00001° ~= 1m) to reduce transfer size
-                            3 * 0.00001
-                        )
-                    ) AS geometry,
-                    m.type AS measure_type,
-                    l.uuid AS location_uuid,
-                    ro.category AS regulation_category
-                FROM location AS l
-                INNER JOIN measure AS m ON m.uuid = l.measure_uuid
-                INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
-                INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
-                WHERE roc.status = :status
-                AND l.geometry IS NOT NULL
-                AND m.type IN (:measureTypes)
-                %s
-                %s
-                ORDER BY CASE m.type
-                    WHEN \'alternateRoad\' THEN 1
-                    WHEN \'parkingProhibited\' THEN 2
-                    WHEN \'speedLimitation\' THEN 3
-                    WHEN \'noEntry\' THEN 4
-                    ELSE 5
-                END
-                ',
-                $regulationTypeWhereClause,
-                $measureDatesCondition,
-            ),
-            $parameters,
-            $types,
-        );
-
-        $features = [];
-
-        foreach ($rows as $row) {
-            $features[] = [
-                'type' => 'Feature',
-                'geometry' => json_decode($row['geometry']),
-                'properties' => [
-                    'location_uuid' => $row['location_uuid'],
-                    'measure_type' => $row['measure_type'],
-                    'regulation_category' => $row['regulation_category'],
-                ],
-            ];
-        }
-
-        return json_encode(['type' => 'FeatureCollection', 'features' => $features]);
+        return [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types];
     }
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array
