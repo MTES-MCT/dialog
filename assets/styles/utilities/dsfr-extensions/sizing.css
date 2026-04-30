@@ -18,6 +18,10 @@
     max-width: calc(156 * 0.5rem);
 }
 
+.fr-x-w-50w {
+    width: calc(50 * 0.5rem);
+}
+
 .fr-x-h-full {
     height: 100%;
 }

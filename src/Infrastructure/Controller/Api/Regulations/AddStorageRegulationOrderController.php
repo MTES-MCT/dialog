@@ -15,11 +15,12 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Infrastructure\Security\User\OrganizationAwareUserInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AddStorageRegulationOrderController
 {
@@ -27,7 +28,6 @@ final class AddStorageRegulationOrderController
         private readonly CommandBusInterface $commandBus,
         private readonly QueryBusInterface $queryBus,
         private readonly Security $security,
-        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -124,8 +124,11 @@ final class AddStorageRegulationOrderController
             ],
         ),
     )]
-    public function __invoke(Request $request, string $identifier): JsonResponse
-    {
+    public function __invoke(
+        Request $request,
+        string $identifier,
+        #[MapUploadedFile] ?UploadedFile $file = null,
+    ): JsonResponse {
         /** @var OrganizationAwareUserInterface $user */
         $user = $this->security->getUser();
 
@@ -144,7 +147,6 @@ final class AddStorageRegulationOrderController
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $existingStorage = $this->queryBus->handle(new GetStorageRegulationOrderQuery($regulationOrder));
 
-        $file = $request->files->get('file');
         $url = $request->request->get('url');
         $title = $request->request->get('title');
 
@@ -157,33 +159,9 @@ final class AddStorageRegulationOrderController
         }
 
         $command = new SaveRegulationOrderStorageCommand($regulationOrder, $existingStorage);
-
-        if ($file !== null) {
-            $command->file = $file;
-            $command->url = null;
-            $command->title = $title;
-        } else {
-            $command->url = $url;
-            $command->title = $title;
-        }
-
-        $errors = $this->validator->validate($command);
-
-        if (\count($errors) > 0) {
-            $violations = [];
-            foreach ($errors as $error) {
-                $violations[] = [
-                    'propertyPath' => $error->getPropertyPath(),
-                    'title' => $error->getMessage(),
-                ];
-            }
-
-            return new JsonResponse([
-                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
-                'detail' => 'Validation failed',
-                'violations' => $violations,
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $command->file = $file;
+        $command->url = $file !== null ? null : $url;
+        $command->title = $title;
 
         $isCreation = $existingStorage === null;
         $this->commandBus->handle($command);

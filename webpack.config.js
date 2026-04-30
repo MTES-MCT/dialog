@@ -110,7 +110,10 @@ Encore
                 // Quill classes
                 /^ql-/,
                 // Map filter icons
-                /^map-filter-label--/
+                /^map-filter-label--/,
+                // Choices.js (classes added at runtime, not present in templates)
+                /^choices/,
+                /^is-(open|focused|active|highlighted|selected|flipped|loading|disabled)$/
             ],
             greedy: [
                 // Source of complex selectors
