@@ -44,7 +44,15 @@ customElements.define('d-map-form', class extends HTMLElement {
             searchParams.append(key, value.toString());
         }
 
-        const url = this.#form.action + '?' + searchParams.toString();
+        // Use the raw `action` attribute rather than `form.action`: when the action
+        // contains URL-template placeholders like `{z}/{x}/{y}` (e.g. for MapLibre
+        // vector tile sources), the `action` property would URL-encode the curly
+        // braces (`%7Bz%7D`), which prevents MapLibre from substituting them.
+        // We then prefix with the document origin to produce an absolute URL,
+        // as MapLibre tile workers cannot resolve relative URLs.
+        const action = this.#form.getAttribute('action') || this.#form.action;
+        const absoluteAction = action.startsWith('http') ? action : window.location.origin + action;
+        const url = absoluteAction + '?' + searchParams.toString();
 
         this.#map.setAttribute(this.#urlAttribute, url);
     }
