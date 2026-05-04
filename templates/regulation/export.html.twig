@@ -50,3 +50,29 @@
         <p>{{ signingAuthority.signatoryName }}, {{ signingAuthority.role }}</p>
     </div>
 {% endif %}
+
+{% if mapImageBase64 %}
+    <p style="page-break-before: always"></p>
+    <div custom-style="Dialog_TitrePrincipal">Annexe — Carte de l'arrêté</div><br/>
+    <p><img src="data:image/jpeg;base64,{{ mapImageBase64 }}" width="600px" /></p>
+
+    <p><b>Légende</b></p>
+    <table>
+        <tr>
+            <td>{{ 'regulation.measure.type.noEntry'|trans }}</td>
+            <td><img src="{{ legendSwatches.noEntry }}" /></td>
+        </tr>
+        <tr>
+            <td>{{ 'regulation.measure.type.speedLimitation'|trans }}</td>
+            <td><img src="{{ legendSwatches.speedLimitation }}" /></td>
+        </tr>
+        <tr>
+            <td>{{ 'regulation.measure.type.parkingProhibited'|trans }}</td>
+            <td><img src="{{ legendSwatches.parkingProhibited }}" /></td>
+        </tr>
+        <tr>
+            <td>{{ 'regulation.measure.type.alternateRoad'|trans }}</td>
+            <td><img src="{{ legendSwatches.alternateRoad }}" /></td>
+        </tr>
+    </table>
+{% endif %}

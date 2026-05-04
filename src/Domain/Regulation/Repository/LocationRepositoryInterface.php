@@ -22,6 +22,11 @@ interface LocationRepositoryInterface
         ?\DateTimeInterface $endDate = null,
     ): string;
 
+    /**
+     * @return list<array{geometry: string, measure_type: string}>
+     */
+    public function findGeometriesForRegulationOrderRecord(string $uuid): array;
+
     /** @return Location[] */
     public function findAllWithoutGeometry(): array;
 }
