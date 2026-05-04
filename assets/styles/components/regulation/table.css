@@ -4,3 +4,13 @@
 .app-regulation-table th:nth-child(4) { width: 10%; }
 .app-regulation-table th:nth-child(5) { width: 15%; }
 .app-regulation-table th:nth-child(6) { width: 15%; }
+
+.app-sort-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.app-sort-header .fr-btn--sort {
+    box-shadow: none;
+}
