@@ -21,4 +21,11 @@ interface UserRepositoryInterface
     public function findAllForExport(): array;
 
     public function findAll(): array;
+
+    /**
+     * Retourne tous les utilisateurs possédant le rôle donné (présent dans le tableau `roles`).
+     *
+     * @return User[]
+     */
+    public function findAllByRole(string $role): array;
 }

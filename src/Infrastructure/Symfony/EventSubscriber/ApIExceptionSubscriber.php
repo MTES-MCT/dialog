@@ -7,6 +7,7 @@ namespace App\Infrastructure\Symfony\EventSubscriber;
 use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
@@ -93,6 +94,7 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
     private function getErrorMap(): array
     {
         return [
+            [IntersectionGeocodingFailureException::class, $this->translator->trans('regulation.location.error.intersection_not_found', [], 'validators')],
             [LaneGeocodingFailureException::class, $this->translator->trans('regulation.location.error.lane_geocoding_failed', [], 'validators')],
             [AbscissaOutOfRangeException::class, $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators')],
             [RoadGeocodingFailureException::class, $this->translator->trans('regulation.location.error.numbered_road_geocoding_failed', [], 'validators')],
