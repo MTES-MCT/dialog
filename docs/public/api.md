@@ -15,6 +15,7 @@ L’authentification est requise pour les endpoints suivants :
 
 - POST `/api/regulations` (création d'un arrêté)
 - PUT `/api/regulations/publish/{identifier}` (publication d'un arrêté existant)
+- POST `/api/regulations/{identifier}/storage` (ajout ou mise à jour de l'arrêté officiel)
 - DELETE `/api/regulations/{identifier}` (suppression d'un arrêté)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 - POST `/api/nearby-streets` (recherche de rues à proximité d'une géométrie)
@@ -365,6 +366,104 @@ Remarques :
 - Seuls les arrêtés appartenant à l'organisation liée aux identifiants API peuvent être supprimés.
 - Si l'arrêté n'existe pas ou appartient à une autre organisation, une erreur 404 est retournée.
 - La suppression est définitive et irréversible.
+
+### Joindre l'arrêté officiel à un arrêté existant
+
+- Méthode: POST
+- URL: `/api/regulations/{identifier}/storage`
+- Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
+- Corps: `multipart/form-data`
+- Réponses: 200, 201, 401, 404, 422
+
+Ce endpoint permet de joindre l'arrêté officiel à un arrêté existant. Vous devez fournir **soit** un fichier (champ `file`), **soit** une URL (champ `url`), mais pas les deux. Si l'arrêté possède déjà un document attaché, il est remplacé (réponse `200`) ; sinon il est créé (réponse `201`).
+
+L'identifiant utilisé dans l'URL correspond à l'identifiant de l'arrêté (ex: `F2025/001`), qui est unique au sein de votre organisation.
+
+#### Schéma du corps (multipart/form-data)
+
+- `file` (binary, optionnel) — document de l'arrêté officiel. Formats acceptés : `pdf`, `docx`, `odt`, `jpg`. Taille maximale : 5 Mo.
+- `url` (string, optionnel) — URL HTTPS pointant vers l'arrêté officiel.
+- `title` (string, optionnel) — titre du document, max 30 caractères. **Obligatoire** lorsque `url` est fourni.
+
+> `file` et `url` sont mutuellement exclusifs : un seul des deux doit être présent.
+
+#### Exemple de requête (fichier)
+
+```bash
+curl -X POST \
+  'https://dialog.beta.gouv.fr/api/regulations/F2025/001/storage' \
+  -H 'X-Client-Id: VOTRE_CLIENT_ID' \
+  -H 'X-Client-Secret: VOTRE_CLIENT_SECRET' \
+  -F 'file=@arrete.pdf' \
+  -F 'title=Arrêté municipal'
+```
+
+#### Exemple de requête (URL)
+
+```bash
+curl -X POST \
+  'https://dialog.beta.gouv.fr/api/regulations/F2025/001/storage' \
+  -H 'X-Client-Id: VOTRE_CLIENT_ID' \
+  -H 'X-Client-Secret: VOTRE_CLIENT_SECRET' \
+  -F 'url=https://example.com/arrete.pdf' \
+  -F 'title=Arrêté municipal'
+```
+
+#### Exemples de réponses
+
+- 201 Document attaché
+
+```json
+{
+  "identifier": "F2025/001",
+  "url": null,
+  "title": "Arrêté municipal",
+  "mimeType": "PDF",
+  "fileSize": 248
+}
+```
+
+- 200 Document mis à jour (un document existait déjà)
+
+```json
+{
+  "identifier": "F2025/001",
+  "url": "https://example.com/arrete.pdf",
+  "title": "Arrêté municipal",
+  "mimeType": null,
+  "fileSize": null
+}
+```
+
+- 404 Arrêté inexistant ou n'appartenant pas à votre organisation
+
+```json
+{
+  "status": 404,
+  "detail": "Not Found"
+}
+```
+
+- 422 Erreur de validation (fichier trop gros, mauvais format, `file` et `url` simultanés, etc.)
+
+```json
+{
+  "status": 422,
+  "detail": "Validation failed",
+  "violations": [
+    {
+      "propertyPath": "file",
+      "title": "Le fichier est trop volumineux."
+    }
+  ]
+}
+```
+
+Remarques :
+- `mimeType` est exposé sous une forme lisible (`PDF`, `DOCX`, `DOC`, `ODT`, `JPG`).
+- `fileSize` est exprimé en kilo-octets (Ko).
+- Les champs `mimeType` et `fileSize` ne sont renseignés que pour le mode `file`.
+- Lorsque l'on bascule d'un fichier vers une URL (ou inversement), l'ancien fichier est automatiquement supprimé du stockage.
 
 ### Lister les identifiants existants de son organisation
 
