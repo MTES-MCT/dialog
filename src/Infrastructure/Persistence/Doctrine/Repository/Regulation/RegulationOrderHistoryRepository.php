@@ -27,7 +27,7 @@ final class RegulationOrderHistoryRepository extends ServiceEntityRepository imp
     public function findLastRegulationOrderHistoryByUuid(string $regulationOrderUuid): ?array
     {
         return $this->createQueryBuilder('roh')
-            ->select(' roh.action, roh.date')
+            ->select('roh.action, roh.date, roh.userUuid')
             ->where('roh.regulationOrderUuid = :uuid')
             ->setParameter('uuid', $regulationOrderUuid)
             ->orderBy('roh.date', 'DESC')

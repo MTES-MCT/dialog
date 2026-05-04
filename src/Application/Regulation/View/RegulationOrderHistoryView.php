@@ -9,6 +9,7 @@ final readonly class RegulationOrderHistoryView
     public function __construct(
         public readonly \DateTimeInterface $date,
         public readonly string $action,
+        public readonly ?string $userFullName = null,
     ) {
     }
 }

@@ -1,4 +1,9 @@
 {% if latestHistory %}
-	<p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v fr-mb-0" data-testid="history">{{ ('regulation.regulation_order_history.action.' ~ latestHistory.action)|trans({'%date%': app_datetime(latestHistory.date, true)}) }}
+	<p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v fr-mb-0" data-testid="history">
+		{% if latestHistory.userFullName %}
+			{{ ('regulation.regulation_order_history.action.' ~ latestHistory.action ~ '.with_user')|trans({'%date%': app_datetime(latestHistory.date, true), '%name%': latestHistory.userFullName}) }}
+		{% else %}
+			{{ ('regulation.regulation_order_history.action.' ~ latestHistory.action)|trans({'%date%': app_datetime(latestHistory.date, true)}) }}
+		{% endif %}
 	</p>
 {% endif %}
