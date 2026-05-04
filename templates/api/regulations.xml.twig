@@ -62,6 +62,10 @@
                             <typeOfRegulation xsi:type="RoadOrCarriagewayOrLaneManagement">
                                 <roadOrCarriagewayOrLaneManagementType>singleAlternateLineTraffic</roadOrCarriagewayOrLaneManagementType>
                             </typeOfRegulation>
+                        {% elseif trafficRegulation.type == 'noOvertaking' %}
+                            <typeOfRegulation xsi:type="GeneralInstructionToRoadUsers">
+                                <generalInstructionToRoadUsersType>noOvertaking</generalInstructionToRoadUsersType>
+                            </typeOfRegulation>
                         {% elseif trafficRegulation.type == 'storageArea' %}
                             <typeOfRegulation xsi:type="MandatoryRoadOrCarriagewayOrLaneUsage">
                                 <otherObligation>
