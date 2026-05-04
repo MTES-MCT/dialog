@@ -7,16 +7,49 @@
     {% set userOrganizationUuids = [] %}
 {% endif %}
 
+{% set currentSort = sort|default(null) %}
+{% set currentSortDir = sortDir|default(null) %}
+
+{% macro sortableTh(label, column, currentSort, currentSortDir, extraClasses = '') %}
+    {% set baseParams = app.request.query.all()|merge({ page: 1 }) %}
+    {% set isAscActive = currentSort == column and currentSortDir == 'asc' %}
+    {% set isDescActive = currentSort == column and currentSortDir == 'desc' %}
+    {% set nextDir = isAscActive ? 'desc' : 'asc' %}
+    {% set nextParams = baseParams|merge({ sort: column, dir: nextDir }) %}
+    {% if isAscActive %}
+        {% set sortModifier = 'fr-btn--sort-asc' %}
+        {% set ariaSort = 'ascending' %}
+    {% elseif isDescActive %}
+        {% set sortModifier = 'fr-btn--sort-desc' %}
+        {% set ariaSort = 'descending' %}
+    {% else %}
+        {% set sortModifier = '' %}
+        {% set ariaSort = 'none' %}
+    {% endif %}
+    {% set ariaLabel = ('regulation.list.sort.' ~ nextDir)|trans({ '%column%': label }) %}
+    <th scope="col" class="fr-x-nowrap{% if extraClasses %} {{ extraClasses }}{% endif %}" aria-sort="{{ ariaSort }}">
+        <span class="app-sort-header">
+            <span>{{ label }}</span>
+            <a
+                href="{{ path('app_regulations_list', nextParams) }}"
+                class="fr-btn fr-btn--sort{% if sortModifier %} {{ sortModifier }}{% endif %}"
+                aria-label="{{ ariaLabel }}"
+                title="{{ ariaLabel }}"
+            >{{ ariaLabel }}</a>
+        </span>
+    </th>
+{% endmacro %}
+
 <div class="fr-table fr-table--layout-fixed fr-table--no-caption">
-    <table data-testid="app-regulation-table">
+    <table class="app-regulation-table" data-testid="app-regulation-table">
         <caption>{{ 'regulation.list.title'|trans }}</caption>
         <thead>
             <tr>
-                <th scope="col" class="fr-x-nowrap">{{ 'regulation'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.organization'|trans }}</th>
+                {{ _self.sortableTh('regulation'|trans, 'identifier', currentSort, currentSortDir) }}
                 <th scope="col" class="fr-x-nowrap">{{ 'regulation.locations'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm">{{ 'regulation.period'|trans }}</th>
-                <th scope="col" class="fr-x-nowrap fr-hidden fr-x-revert-sm app-table__actions">{{ 'regulation.status'|trans }}</th>
+                {{ _self.sortableTh('regulation.period'|trans, 'period', currentSort, currentSortDir, 'fr-hidden fr-x-revert-sm') }}
+                {{ _self.sortableTh('regulation.source'|trans, 'source', currentSort, currentSortDir, 'fr-hidden fr-x-revert-sm') }}
+                {{ _self.sortableTh('regulation.status'|trans, 'status', currentSort, currentSortDir, 'fr-hidden fr-x-revert-sm') }}
                 <th scope="col" class="fr-x-nowrap">{{ 'common.actions'|trans }}</th>
             </tr>
         </thead>
@@ -29,9 +62,6 @@
                 <tr>
                     <td>
                         {{ regulation.identifier }}
-                    </td>
-                    <td class="fr-hidden fr-x-revert-sm">
-                        {{ regulation.organizationName }}
                     </td>
                     <td>
                         {% if location %}
@@ -59,6 +89,9 @@
                                 {% endif %}
                             </b>
                         {% endif %}
+                    </td>
+                    <td class="fr-hidden fr-x-revert-sm">
+                        {{ ('regulation.source.' ~ regulation.source.value)|trans }}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
                         {% include 'regulation/_status_badge.html.twig' with { status: regulation.status } only %}

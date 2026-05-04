@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
@@ -102,6 +103,32 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->expects(self::once())
             ->method('fetchAllAssociative')
             ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->computeIntersection('93070_1234', '93070_5678');
+    }
+
+    public function testComputeIntersectionNoRows(): void
+    {
+        $this->expectException(IntersectionGeocodingFailureException::class);
+        $this->expectExceptionMessage('no intersection exists between roadBanId="93070_1234" and otherRoadBanId="93070_5678"');
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willReturn([]);
+
+        $this->roadGeocoder->computeIntersection('93070_1234', '93070_5678');
+    }
+
+    public function testComputeIntersectionNullCoordinates(): void
+    {
+        $this->expectException(IntersectionGeocodingFailureException::class);
+        $this->expectExceptionMessage('no intersection found between roadBanId="93070_1234" and otherRoadBanId="93070_5678"');
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willReturn([['x' => null, 'y' => null]]);
 
         $this->roadGeocoder->computeIntersection('93070_1234', '93070_5678');
     }

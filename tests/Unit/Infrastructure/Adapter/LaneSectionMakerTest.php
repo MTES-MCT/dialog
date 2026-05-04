@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
+use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\GeocoderInterface;
 use App\Application\IntersectionGeocoderInterface;
 use App\Application\LineSectionMakerInterface;
@@ -111,6 +112,31 @@ final class LaneSectionMakerTest extends TestCase
             toHouseNumber: null,
             toRoadBanId: null,
         ));
+    }
+
+    public function testComputeSectionIntersectionNotFound(): void
+    {
+        $this->expectException(IntersectionGeocodingFailureException::class);
+
+        $this->intersectionGeocoder
+            ->expects(self::once())
+            ->method('computeIntersection')
+            ->with($this->roadBanId, '01010_5678')
+            ->willThrowException(new IntersectionGeocodingFailureException('no intersection found'));
+
+        $this->laneSectionMaker->computeSection(
+            $this->fullLaneGeometry,
+            $this->roadBanId,
+            $this->roadName,
+            $this->cityCode,
+            $this->direction,
+            fromCoords: $this->fromCoords,
+            fromHouseNumber: null,
+            fromRoadBanId: null,
+            toCoords: null,
+            toHouseNumber: null,
+            toRoadBanId: '01010_5678',
+        );
     }
 
     private function provideTestComputeSectionDirection(): array

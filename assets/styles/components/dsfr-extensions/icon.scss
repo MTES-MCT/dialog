@@ -42,7 +42,9 @@
     'government',
     'youtube-line',
     'function-add-line',
-    'city-logistics'
+    'city-logistics',
+    'police',
+    'desserte-locale'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');

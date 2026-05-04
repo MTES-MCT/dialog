@@ -30,6 +30,10 @@
                 <source>regulation.location.error.abscissa_out_of_range</source>
                 <target>Cette abscisse n'est pas située sur la route. Veuillez vérifier votre saisie.</target>
             </trans-unit>
+            <trans-unit id="regulation.location.error.intersection_not_found">
+                <source>regulation.location.error.intersection_not_found</source>
+                <target>Les deux rues spécifiées ne sont pas en intersection. Veuillez vérifier que les rues se croisent bien.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.lane_geocoding_failed">
                 <source>regulation.location.error.lane_geocoding_failed</source>
                 <target>La géolocalisation de la voie entre ces points a échoué. Veuillez vérifier que ces points existent et appartiennent bien à une même chaussée.</target>

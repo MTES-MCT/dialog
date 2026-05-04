@@ -56,9 +56,15 @@
                 <aside class="fr-col fr-col-md-4 fr-col-xl-3 fr-mt-8w fr-mx-n4v fr-mx-md-0 fr-mt-md-0">
                     <div class="app-card app-card--raised">
                         <div class="app-card__content">
-                            <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.status'|trans }}</h3>
+                            <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.details'|trans }}</h3>
+                            <p class="fr-text--bold fr-mb-0">{{ 'regulation.status'|trans }}</p>
                             {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
-                            {% include 'regulation/_regulation_order_history.html.twig' with { latestHistory: latestHistory } %}
+                            <p class="fr-text--bold fr-mb-0 fr-mt-2w">{{ 'regulation.source'|trans }}</p>
+                            <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v fr-mb-0">{{ ('regulation.source.' ~ generalInfo.source.value)|trans }}</p>
+                            {% if latestHistory %}
+                                <p class="fr-text--bold fr-mb-0 fr-mt-2w">{{ 'regulation.date'|trans }}</p>
+                                {% include 'regulation/_regulation_order_history.html.twig' with { latestHistory: latestHistory } %}
+                            {% endif %}
                         </div>
                     </div>
 
