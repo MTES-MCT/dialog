@@ -168,6 +168,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getNamedStreet')
             ->willReturn($namedStreet);
+        $location1
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn('{"type":"LineString","coordinates":[[1.3,44.0],[1.4,44.1]]}');
         $namedStreet
             ->expects(self::never())
             ->method('getCityCode');
@@ -252,6 +256,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getStorageArea')
             ->willReturn($storageArea);
+        $location2
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn(null);
 
         $measure = $this->createMock(Measure::class);
         $measure
@@ -324,6 +332,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                                 toHouseNumber: '253',
                                 toRoadName: null,
                             ),
+                            geometry: '{"type":"LineString","coordinates":[[1.3,44.0],[1.4,44.1]]}',
                         ),
                         new LocationView(
                             uuid: '9b80de91-a68e-45a1-b516-77d667c55d53',

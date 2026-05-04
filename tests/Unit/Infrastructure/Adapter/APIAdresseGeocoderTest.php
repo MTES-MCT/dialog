@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
+use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Infrastructure\Adapter\APIAdresseGeocoder;
 use PHPUnit\Framework\TestCase;
@@ -68,21 +69,21 @@ final class APIAdresseGeocoderTest extends TestCase
     private function provideDecodeErrorData(): array
     {
         return [
-            ['{"features": }', '/^requesting https:\/\/.*: invalid json: .*$/'],
-            ['{}', '/^requesting https:\/\/.*: key error: features$/'],
-            ['{"features": []}', '/requesting https:\/\/.*: expected 1 result, got 0$/'],
-            ['{"features": [{}]}', '/^requesting https:\/\/.*: key error: geometry$/'],
-            ['{"features": [{"geometry": {}}]}', '/^requesting https:\/\/.*: key error: coordinates$/'],
-            ['{"features": [{"geometry": {"coordinates": [42]}}]}', '/^requesting https:\/\/.*: expected 2 coordinates, got 1$/'],
+            ['{"features": }', '/^requesting https:\/\/.*: invalid json: .*$/', GeocodingFailureException::class],
+            ['{}', '/^requesting https:\/\/.*: key error: features$/', GeocodingFailureException::class],
+            ['{"features": []}', '/requesting https:\/\/.*: address not found$/', GeocodingAddressNotFoundException::class],
+            ['{"features": [{}]}', '/^requesting https:\/\/.*: key error: geometry$/', GeocodingFailureException::class],
+            ['{"features": [{"geometry": {}}]}', '/^requesting https:\/\/.*: key error: coordinates$/', GeocodingFailureException::class],
+            ['{"features": [{"geometry": {"coordinates": [42]}}]}', '/^requesting https:\/\/.*: expected 2 coordinates, got 1$/', GeocodingFailureException::class],
         ];
     }
 
     /**
      * @dataProvider provideDecodeErrorData
      */
-    public function testComputeCoordinatesDecodeError(string $body, string $pattern): void
+    public function testComputeCoordinatesDecodeError(string $body, string $pattern, string $exception): void
     {
-        $this->expectException(GeocodingFailureException::class);
+        $this->expectException($exception);
         $this->expectExceptionMessageMatches($pattern);
 
         $response = new MockResponse($body, ['http_code' => 200]);

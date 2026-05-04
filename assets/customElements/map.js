@@ -2,6 +2,7 @@
 
 import { getAttributeOrError } from './util';
 import { mapStyles } from 'carte-facile';
+import { buildLineColorExpression, buildLineDasharrayExpression, buildLineWidthExpression } from '../measure_type_styles';
 
 /**
  * A source for map data that reads GeoJSON data in the textContent of an HTML element.
@@ -157,19 +158,9 @@ class MapLibreMap {
                             'line-cap': 'round',
                         },
                         'paint': {
-                            'line-color': [
-                                'case', // https://maplibre.org/maplibre-style-spec/expressions/#case : ['case', boolean, returned value, default value]
-                                ['==', ['get', 'measure_type'], 'noEntry'], '#CE0500', // red — priorité 1
-                                ['==', ['get', 'measure_type'], 'speedLimitation'], '#f6c43c', // yellow — priorité 2
-                                ['==', ['get', 'measure_type'], 'parkingProhibited'], '#000000', // black — priorité 3
-                                ['==', ['get', 'measure_type'], 'alternateRoad'], '#6A6AF4', // purple — priorité 4
-                                '#000000'], // default
-                            'line-dasharray': [
-                                'case',
-                                ['==', ['get', 'measure_type'], 'alternateRoad'], ['literal', [1, 2]],
-                                ['literal', [1, 0]]
-                            ],
-                            'line-width': ["step", ["zoom"], 4, lineWidthFirstStep, 8, lineWidthSecondStep, 16], // line-width = 4 when zoom < 15, line-width = 8 when zoom bewteen 15 and 18, and line-width = 16 for zoom > 18 ; https://maplibre.org/maplibre-style-spec/expressions/#step
+                            'line-color': buildLineColorExpression(),
+                            'line-dasharray': buildLineDasharrayExpression(),
+                            'line-width': buildLineWidthExpression(4, lineWidthFirstStep, lineWidthSecondStep),
                         },
                     }
                 );
