@@ -45,7 +45,11 @@
     background-color: #EBEBEB;
 }
 
-.draw-line-map-warning {
+.draw-line-map-controls .fr-btn.fr-icon-x-draw-line::before {
+    --icon-size: 1.25rem;
+}
+
+.draw-line-map-warning { 
     position: absolute;
     top: 0.5rem;
     left: 0.5rem;
@@ -141,4 +145,12 @@
     font-size: 0.875rem;
     color: #666;
     font-style: italic;
+}
+
+textarea.fr-input.draw-line-map-geometry-field {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    min-height: 30rem;
+    white-space: pre;
 }

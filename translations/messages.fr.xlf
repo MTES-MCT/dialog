@@ -953,9 +953,25 @@
                 <source>regulation.location.raw_geojson.draw_line_map.search.aria_label</source>
                 <target>Rechercher une adresse ou une commune sur la carte</target>
             </trans-unit>
-            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw">
-                <source>regulation.location.raw_geojson.draw_line_map.draw</source>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.start">
+                <source>regulation.location.raw_geojson.draw_line_map.draw.start</source>
                 <target>Tracer une ligne</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.finish">
+                <source>regulation.location.raw_geojson.draw_line_map.draw.finish</source>
+                <target>Terminer le tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.edit">
+                <source>regulation.location.raw_geojson.draw_line_map.draw.edit</source>
+                <target>Modifier le tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.undo.title">
+                <source>regulation.location.raw_geojson.draw_line_map.undo.title</source>
+                <target>Annuler le tracé précédent</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.clear.title">
+                <source>regulation.location.raw_geojson.draw_line_map.clear.title</source>
+                <target>Supprimer tout le tracé</target>
             </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>

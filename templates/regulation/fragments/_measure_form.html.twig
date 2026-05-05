@@ -659,6 +659,19 @@
                         data-draw-line-map-center-json-value='[2.725, 47.16]'
                         data-draw-line-map-zoom-value="5"
                         data-draw-line-map-measure-type-value="{{ measureType }}"
+                        data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
+                        data-draw-line-map-start-value='{{ {
+                            "label": "regulation.location.raw_geojson.draw_line_map.draw.start"|trans,
+                            "icon": "fr-icon-x-draw-line"
+                        }|json_encode }}'
+                        data-draw-line-map-finish-value='{{ {
+                            "label": "regulation.location.raw_geojson.draw_line_map.draw.finish"|trans,
+                            "icon": "fr-icon-checkbox-line"
+                        }|json_encode }}'
+                        data-draw-line-map-edit-value='{{ {
+                            "label": "regulation.location.raw_geojson.draw_line_map.draw.edit"|trans,
+                            "icon": "fr-icon-edit-line"
+                        }|json_encode }}'
                         class="draw-line-map-wrapper fr-mb-3w"
                     >
                         <div
@@ -692,12 +705,12 @@
                             <div class="draw-line-map-controls draw-line-map-controls--top">
                                 <button
                                     type="button"
-                                    class="fr-btn fr-btn--md fr-btn--secondary fr-icon-edit-line fr-btn--icon-left"
+                                    class="fr-btn fr-btn--secondary fr-icon-x-draw-line fr-btn--icon-left"
                                     data-draw-line-map-target="drawBtn"
                                     data-action="click->draw-line-map#toggleDraw"
                                     aria-pressed="false"
                                 >
-                                    {{ 'regulation.location.raw_geojson.draw_line_map.draw'|trans }}
+                                    {{ 'regulation.location.raw_geojson.draw_line_map.draw.start'|trans }}
                                 </button>
                             </div>
                             <div class="draw-line-map-controls draw-line-map-controls--bottom">
@@ -706,6 +719,8 @@
                                     class="fr-btn fr-btn--md fr-btn--secondary fr-icon-arrow-go-back-line"
                                     data-draw-line-map-target="undoBtn"
                                     data-action="click->draw-line-map#undo"
+                                    title="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"
+                                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"
                                 >
                                 </button>
                                 <button
@@ -713,6 +728,8 @@
                                     class="fr-btn fr-btn--md fr-btn--secondary fr-icon-delete-bin-line"
                                     data-draw-line-map-target="clearBtn"
                                     data-action="click->draw-line-map#clear"
+                                    title="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"
+                                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"
                                 >
                                 </button>
                             </div>
@@ -724,12 +741,13 @@
 
                         {{ form_row(form.rawGeoJSON.geometry, {
                             group_class: 'fr-input-group',
-                            widget_class: 'fr-input',
+                            widget_class: 'fr-input draw-line-map-geometry-field',
                             attr: {
                                 'data-form-reveal-target': 'formControl',
                                 'data-value': 'rawGeoJSON',
                                 'disabled': not isRawGeoJSON,
                                 'data-draw-line-map-target': 'geometryField',
+                                'rows': 12,
                             },
                         }) }}
                     </div>
