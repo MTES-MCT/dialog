@@ -49,8 +49,6 @@ final class MapPreviewController
     /**
      * Parse the optional `bounds=minLon,minLat,maxLon,maxLat` query param and derive a (center, zoom)
      * sized to the export viewport so MapLibre's first tile load already targets the right area.
-     *
-     * @return array{0: float, 1: float, 2: float}
      */
     private function initialViewport(?string $boundsParam): array
     {

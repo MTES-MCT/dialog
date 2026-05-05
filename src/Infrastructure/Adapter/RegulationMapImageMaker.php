@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Adapter;
 
+use App\Application\StorageInterface;
 use App\Domain\Regulation\RegulationMapImageMakerInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Psr\Log\LoggerInterface;
@@ -17,9 +18,11 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
     private const RENDER_TIMEOUT_SECONDS = 30;
     private const PAGE_TIMEOUT_MS = 15000;
     private const JPEG_SIGNATURE = "\xFF\xD8\xFF";
+    private const CACHE_PREFIX = 'regulation-maps/';
 
     public function __construct(
         private readonly LocationRepositoryInterface $locationRepository,
+        private readonly StorageInterface $storage,
         private readonly LoggerInterface $logger,
         private readonly string $projectDir,
         private readonly string $internalAppUrl,
@@ -41,13 +44,10 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
         }
 
         $cachePath = $this->getCachePath($regulationOrderRecordUuid, $rows);
+        $cached = $this->storage->read($cachePath);
 
-        if (is_file($cachePath)) {
-            $cached = @file_get_contents($cachePath);
-
-            if ($cached !== false) {
-                return base64_encode($cached);
-            }
+        if ($cached !== null) {
+            return base64_encode($cached);
         }
 
         $jpeg = $this->renderViaPlaywright($regulationOrderRecordUuid, $bounds);
@@ -56,16 +56,11 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
             return null;
         }
 
-        $this->writeCache($cachePath, $jpeg);
+        $this->storage->writeContent($cachePath, $jpeg, 'image/jpeg');
 
         return base64_encode($jpeg);
     }
 
-    /**
-     * @param list<array{geometry: string, measure_type: string}> $rows
-     *
-     * @return array{0: array{0: float, 1: float}, 1: array{0: float, 1: float}}|null
-     */
     private function computeBounds(array $rows): ?array
     {
         $minLon = \INF;
@@ -160,9 +155,6 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
         }
     }
 
-    /**
-     * @param array{0: array{0: float, 1: float}, 1: array{0: float, 1: float}} $bounds
-     */
     private function renderViaPlaywright(string $uuid, array $bounds): ?string
     {
         // Pass bounds in the URL so the controller can pre-compute the initial viewport,
@@ -217,36 +209,15 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
             return null;
         }
 
-        $stderr = $process->getErrorOutput();
-
-        if ($stderr !== '') {
-            $this->logger->info('Regulation map render timings.', [
-                'uuid' => $uuid,
-                'stderr' => $stderr,
-            ]);
-        }
-
         return $jpeg;
     }
 
-    /**
-     * @param list<array{geometry: string, measure_type: string}> $rows
-     */
     private function getCachePath(string $uuid, array $rows): string
     {
+        // Hashing the rows in the key gives us automatic invalidation when the geometry/measure_type set changes:
+        // a different hash means a different object, no need to explicitly evict on every update.
         $key = sha1(json_encode([$uuid, $rows, self::RENDER_WIDTH, self::RENDER_HEIGHT]));
 
-        return $this->projectDir . '/var/cache/regulation-maps/' . $key . '.png';
-    }
-
-    private function writeCache(string $path, string $png): void
-    {
-        $dir = \dirname($path);
-
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
-        }
-
-        @file_put_contents($path, $png);
+        return self::CACHE_PREFIX . $key . '.jpg';
     }
 }

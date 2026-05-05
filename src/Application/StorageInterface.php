@@ -10,6 +10,8 @@ interface StorageInterface
 {
     public function write(string $folder, UploadedFile $file): string;
 
+    public function writeContent(string $path, string $contents, string $mimeType): void;
+
     public function delete(string $path): void;
 
     public function getUrl(string $path): string;

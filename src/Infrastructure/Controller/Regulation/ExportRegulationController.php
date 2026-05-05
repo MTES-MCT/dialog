@@ -79,6 +79,7 @@ final class ExportRegulationController extends AbstractRegulationController
             ->from('html')
             ->input($content)
             ->option('reference-doc', $this->projectDir . '/data/regulation-order-template.docx')
+            ->option('lua-filter', $this->projectDir . '/data/pandoc/pagebreak.lua')
             ->to('docx')
             ->run(),
         );

@@ -10,12 +10,6 @@ final class RegulationMeasureLegendBuilder
     private const SWATCH_HEIGHT = 8;
     private const STROKE_WIDTH = 4;
 
-    /**
-     * Match the styles defined in assets/measure_type_styles.js so the legend swatches look identical
-     * to the lines drawn on the regulation map by MapLibre.
-     *
-     * @var array<string, array{color: array{0: int, 1: int, 2: int}, dashed: bool}>
-     */
     private const STYLES = [
         'noEntry' => ['color' => [0xCE, 0x05, 0x00], 'dashed' => false],
         'speedLimitation' => ['color' => [0xF6, 0xC4, 0x3C], 'dashed' => false],
@@ -23,9 +17,6 @@ final class RegulationMeasureLegendBuilder
         'alternateRoad' => ['color' => [0x6A, 0x6A, 0xF4], 'dashed' => true],
     ];
 
-    /**
-     * @return array<string, string> Measure type code → data URI of a PNG line swatch.
-     */
     public function buildSwatches(): array
     {
         $result = [];
@@ -37,9 +28,6 @@ final class RegulationMeasureLegendBuilder
         return $result;
     }
 
-    /**
-     * @param array{0: int, 1: int, 2: int} $rgb
-     */
     private function buildSwatch(array $rgb, bool $dashed): string
     {
         $img = imagecreatetruecolor(self::SWATCH_WIDTH, self::SWATCH_HEIGHT);
