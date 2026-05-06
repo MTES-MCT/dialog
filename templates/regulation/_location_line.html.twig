@@ -3,5 +3,5 @@
 {%- elseif location.roadType in ['departmentalRoad', 'nationalRoad'] -%}
     {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }}) {% include 'regulation/_reference_points.html.twig' with { location: location.numberedRoad } only %}
 {%- elseif location.roadType == 'rawGeoJSON' -%}
-    {{ location.rawGeoJSON.label }} ({{ 'regulation.location.road.type.rawGeoJSON'|trans|lower }})
+    {{ location.rawGeoJSON.label }} - {{ 'regulation.location.road.type.rawGeoJSON'|trans|lower }}
 {%- endif -%}

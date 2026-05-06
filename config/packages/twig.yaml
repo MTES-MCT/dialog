@@ -4,6 +4,7 @@ twig:
     globals:
         dialogOrgId: '%env(DIALOG_ORG_ID)%'
         baseUrl: '%env(BASE_URL)%'
+        apiAdresseBaseUrl: '%env(API_ADRESSE_BASE_URL)%'
 when@test:
     twig:
         strict_variables: true
