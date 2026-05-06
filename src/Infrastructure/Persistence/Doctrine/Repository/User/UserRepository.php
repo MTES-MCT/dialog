@@ -43,6 +43,11 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
             ->getOneOrNullResult();
     }
 
+    public function findOneByUuid(string $uuid): ?User
+    {
+        return $this->find($uuid);
+    }
+
     public function countUsers(): int
     {
         return $this->createQueryBuilder('u')
