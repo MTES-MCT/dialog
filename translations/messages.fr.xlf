@@ -1772,6 +1772,10 @@
                 <source>regulation.measure.type.parkingProhibited</source>
                 <target>Stationnement interdit</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.noOvertaking">
+                <source>regulation.measure.type.noOvertaking</source>
+                <target>Interdiction de dépasser</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.card.title">
                 <source>regulation.measure.card.title</source>
                 <target>Mesure</target>
@@ -2457,6 +2461,10 @@
             <trans-unit id="map.filter.type.parkingProhibited">
                 <source>map.filter.type.parkingProhibited</source>
                 <target>Stationnement interdit</target>
+            </trans-unit>
+            <trans-unit id="map.filter.type.noOvertaking">
+                <source>map.filter.type.noOvertaking</source>
+                <target>Interdiction de dépasser</target>
             </trans-unit>
             <trans-unit id="map.filters.title.application.period">
                 <source>map.filters.title.application.period</source>
