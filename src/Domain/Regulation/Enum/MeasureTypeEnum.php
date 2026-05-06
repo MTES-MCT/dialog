@@ -7,6 +7,7 @@ namespace App\Domain\Regulation\Enum;
 enum MeasureTypeEnum: string
 {
     case ALTERNATE_ROAD = 'alternateRoad';
+    case NO_OVERTAKING = 'noOvertaking';
     case NO_ENTRY = 'noEntry';
     case SPEED_LIMITATION = 'speedLimitation';
     case PARKING_PROHIBITED = 'parkingProhibited';

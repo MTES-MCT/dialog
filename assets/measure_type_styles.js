@@ -15,6 +15,7 @@ export const MEASURE_TYPE_STYLES = {
     speedLimitation:    { color: '#f6c43c', dasharray: [1, 0], lineWidth: 3 }, // yellow — priorité 2
     parkingProhibited:  { color: '#000000', dasharray: [1, 0], lineWidth: 3 }, // black — priorité 3
     alternateRoad:      { color: '#6A6AF4', dasharray: [3, 2], lineWidth: 3 }, // purple — priorité 4
+    noOvertaking:       { color: '#DA70D6', dasharray: [1, 2, 4, 2], lineWidth: 3 }, // pink — priorité 5
 };
 
 export const DEFAULT_MEASURE_STYLE = { color: '#000000', dasharray: [1, 0], lineWidth: 3 };
