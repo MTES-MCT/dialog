@@ -78,6 +78,7 @@ final class MapFilterFormType extends AbstractType
             MeasureTypeEnum::SPEED_LIMITATION,
             MeasureTypeEnum::PARKING_PROHIBITED,
             MeasureTypeEnum::ALTERNATE_ROAD,
+            MeasureTypeEnum::NO_OVERTAKING,
         ];
 
         $choices = [];
