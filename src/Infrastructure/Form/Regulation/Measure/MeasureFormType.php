@@ -80,9 +80,16 @@ final class MeasureFormType extends AbstractType
 
     private function getTypeOptions(): array
     {
-        $choices = [];
+        $displayOrder = [
+            MeasureTypeEnum::NO_ENTRY,
+            MeasureTypeEnum::SPEED_LIMITATION,
+            MeasureTypeEnum::PARKING_PROHIBITED,
+            MeasureTypeEnum::ALTERNATE_ROAD,
+            MeasureTypeEnum::NO_OVERTAKING,
+        ];
 
-        foreach (MeasureTypeEnum::cases() as $case) {
+        $choices = [];
+        foreach ($displayOrder as $case) {
             $choices[\sprintf('regulation.measure.type.%s', $case->value)] = $case->value;
         }
 

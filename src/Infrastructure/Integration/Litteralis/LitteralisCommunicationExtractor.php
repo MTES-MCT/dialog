@@ -26,6 +26,7 @@ final class LitteralisCommunicationExtractor
         '%limitation de vitesse%',
         '%interruption de circulation%',
         '%interdiction de stationnement%',
+        '%interdiction de dépasser%',
     ];
 
     public function __construct(

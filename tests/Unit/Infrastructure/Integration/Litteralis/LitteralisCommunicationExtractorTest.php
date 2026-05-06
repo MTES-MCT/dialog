@@ -107,7 +107,7 @@ final class LitteralisCommunicationExtractorTest extends TestCase
             ->willReturn($this->client);
 
         $expectedDate = $laterThan->format(\DateTimeInterface::ISO8601);
-        $cqlFilter = "(mesure ILIKE '%circulation interdite%' OR mesure ILIKE '%limitation de vitesse%' OR mesure ILIKE '%interruption de circulation%' OR mesure ILIKE '%interdiction de stationnement%') AND (arretefin IS NULL OR arretefin >= '" . $expectedDate . "')";
+        $cqlFilter = "(mesure ILIKE '%circulation interdite%' OR mesure ILIKE '%limitation de vitesse%' OR mesure ILIKE '%interruption de circulation%' OR mesure ILIKE '%interdiction de stationnement%' OR mesure ILIKE '%interdiction de dépasser%') AND (arretefin IS NULL OR arretefin >= '" . $expectedDate . "')";
 
         $this->client
             ->expects(self::exactly(2))
@@ -241,7 +241,7 @@ final class LitteralisCommunicationExtractorTest extends TestCase
             ->willReturn($this->client);
 
         $expectedDate = $laterThan->format(\DateTimeInterface::ISO8601);
-        $cqlFilter = "(mesure ILIKE '%circulation interdite%' OR mesure ILIKE '%limitation de vitesse%' OR mesure ILIKE '%interruption de circulation%' OR mesure ILIKE '%interdiction de stationnement%') AND (arretefin IS NULL OR arretefin >= '" . $expectedDate . "')";
+        $cqlFilter = "(mesure ILIKE '%circulation interdite%' OR mesure ILIKE '%limitation de vitesse%' OR mesure ILIKE '%interruption de circulation%' OR mesure ILIKE '%interdiction de stationnement%' OR mesure ILIKE '%interdiction de dépasser%') AND (arretefin IS NULL OR arretefin >= '" . $expectedDate . "')";
 
         $this->client
             ->expects(self::exactly(2))
