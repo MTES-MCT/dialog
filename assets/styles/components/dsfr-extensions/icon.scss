@@ -44,7 +44,8 @@
     'function-add-line',
     'city-logistics',
     'police',
-    'desserte-locale'
+    'desserte-locale',
+    'draw-line'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');

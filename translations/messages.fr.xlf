@@ -739,7 +739,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
-                <target>Données brutes GeoJSON</target>
+                <target>Tracé libre (GeoJSON)</target>
             </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
@@ -940,6 +940,38 @@
             <trans-unit id="regulation.location.raw_geojson.geometry">
                 <source>regulation.location.raw_geojson.geometry</source>
                 <target>Géométrie GeoJSON</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.warning">
+                <source>regulation.location.raw_geojson.draw_line_map.warning</source>
+                <target>La géométrie actuelle n'est pas une simple ligne point par point. Le tracé sur la carte est désactivé. Cliquez sur « Effacer » pour repartir d'un tracé vierge.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.search.placeholder">
+                <source>regulation.location.raw_geojson.draw_line_map.search.placeholder</source>
+                <target>Rechercher une adresse ou une commune</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.search.aria_label">
+                <source>regulation.location.raw_geojson.draw_line_map.search.aria_label</source>
+                <target>Rechercher une adresse ou une commune sur la carte</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.start">
+                <source>regulation.location.raw_geojson.draw_line_map.draw.start</source>
+                <target>Tracer une ligne</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.finish">
+                <source>regulation.location.raw_geojson.draw_line_map.draw.finish</source>
+                <target>Terminer le tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.edit">
+                <source>regulation.location.raw_geojson.draw_line_map.draw.edit</source>
+                <target>Modifier le tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.undo.title">
+                <source>regulation.location.raw_geojson.draw_line_map.undo.title</source>
+                <target>Annuler le tracé précédent</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.draw_line_map.clear.title">
+                <source>regulation.location.raw_geojson.draw_line_map.clear.title</source>
+                <target>Supprimer tout le tracé</target>
             </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>
