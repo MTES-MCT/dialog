@@ -400,6 +400,18 @@
                 <source>regulation.regulation_order_history.action.update</source>
                 <target>Modifié le %date%</target>
             </trans-unit>
+            <trans-unit id="regulation.regulation_order_history.action.create.with_user">
+                <source>regulation.regulation_order_history.action.create.with_user</source>
+                <target>Créé le %date% par %name%</target>
+            </trans-unit>
+            <trans-unit id="regulation.regulation_order_history.action.publish.with_user">
+                <source>regulation.regulation_order_history.action.publish.with_user</source>
+                <target>Publié le %date% par %name%</target>
+            </trans-unit>
+            <trans-unit id="regulation.regulation_order_history.action.update.with_user">
+                <source>regulation.regulation_order_history.action.update.with_user</source>
+                <target>Modifié le %date% par %name%</target>
+            </trans-unit>
             <trans-unit id="regulation.status">
                 <source>regulation.status</source>
                 <target>Statut</target>
