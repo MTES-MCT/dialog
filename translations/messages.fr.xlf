@@ -440,6 +440,14 @@
                 <source>regulation.export.doc.mention.disabled</source>
                 <target>Le document n'est pas disponible car il n'est pas associé à un modèle d'arrêté.</target>
             </trans-unit>
+            <trans-unit id="regulation.export.doc.loading">
+                <source>regulation.export.doc.loading</source>
+                <target>Génération du document en cours…</target>
+            </trans-unit>
+            <trans-unit id="regulation.export.doc.error">
+                <source>regulation.export.doc.error</source>
+                <target>Une erreur est survenue lors de la génération du document.</target>
+            </trans-unit>
             <trans-unit id="regulation.import">
                 <source>regulation.import</source>
                 <target>Arrêté officiel</target>

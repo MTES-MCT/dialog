@@ -9,6 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
+use App\Application\Regulation\Command\MapImage\WarmRegulationMapImageCacheCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
@@ -57,6 +58,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $createdLocation = $this->createMock(Location::class);
         $createdMeasure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $createdMeasure->method('getRegulationOrder')->willReturn($regulationOrder);
 
         $createdMeasure
             ->expects(self::once())
@@ -129,6 +131,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $createdPeriod = $this->createMock(Period::class);
         $createdMeasure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $createdMeasure->method('getRegulationOrder')->willReturn($regulationOrder);
 
         $createdMeasure
             ->expects(self::once())
@@ -191,6 +194,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $createdVehicleSet = $this->createMock(VehicleSet::class);
         $createdMeasure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $createdMeasure->method('getRegulationOrder')->willReturn($regulationOrder);
 
         $createdMeasure
             ->expects(self::once())
@@ -234,6 +238,40 @@ final class SaveMeasureCommandHandlerTest extends TestCase
         $result = $handler($command);
 
         $this->assertSame($createdMeasure, $result);
+    }
+
+    public function testCreateDispatchesMapWarmupWhenRegulationOrderRecordExists(): void
+    {
+        $this->idFactory->method('make')->willReturn('d035fec0-30f3-4134-95b9-d74c68eb53e3');
+        $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2023-06-13'));
+
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $regulationOrderRecord->method('getUuid')->willReturn('record-uuid');
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder->method('getRegulationOrderRecord')->willReturn($regulationOrderRecord);
+
+        $createdMeasure = $this->createMock(Measure::class);
+        $createdMeasure->method('getRegulationOrder')->willReturn($regulationOrder);
+
+        $this->measureRepository->method('add')->willReturn($createdMeasure);
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with($this->equalTo(new WarmRegulationMapImageCacheCommand('record-uuid')));
+
+        $handler = new SaveMeasureCommandHandler(
+            $this->idFactory,
+            $this->measureRepository,
+            $this->commandBus,
+            $this->dateUtils,
+        );
+
+        $command = new SaveMeasureCommand($regulationOrder);
+        $command->type = MeasureTypeEnum::NO_ENTRY->value;
+
+        $handler($command);
     }
 
     public function testUpdate(): void
@@ -297,6 +335,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $measure = $this->createMock(Measure::class);
         $regulationOrder = $this->createMock(RegulationOrder::class);
+        $measure->method('getRegulationOrder')->willReturn($regulationOrder);
 
         $measure
             ->expects(self::once())

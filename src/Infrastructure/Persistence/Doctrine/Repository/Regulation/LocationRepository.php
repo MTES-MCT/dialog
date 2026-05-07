@@ -196,6 +196,25 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         return json_encode(['type' => 'FeatureCollection', 'features' => $features]);
     }
 
+    public function findGeometriesForRegulationOrderRecord(string $uuid): array
+    {
+        $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
+            'SELECT
+                ST_AsGeoJSON(l.geometry) AS geometry,
+                m.type AS measure_type
+            FROM location AS l
+            INNER JOIN measure AS m ON m.uuid = l.measure_uuid
+            INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
+            INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+            WHERE roc.uuid = :uuid
+            AND l.geometry IS NOT NULL
+            ORDER BY l.uuid',
+            ['uuid' => $uuid],
+        );
+
+        return array_values($rows);
+    }
+
     public function findAllWithoutGeometry(): array
     {
         return $this->createQueryBuilder('l')

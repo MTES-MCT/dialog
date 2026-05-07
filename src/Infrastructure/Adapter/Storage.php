@@ -27,6 +27,15 @@ final readonly class Storage implements StorageInterface
         return $path;
     }
 
+    public function writeContent(string $path, string $contents, string $mimeType): void
+    {
+        $this->storage->write($path, $contents, [
+            'visibility' => 'public',
+            'directory_visibility' => 'public',
+            'mimetype' => $mimeType,
+        ]);
+    }
+
     public function delete(string $path): void
     {
         if (!$this->storage->has($path)) {

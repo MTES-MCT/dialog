@@ -29,7 +29,8 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN pecl install redis && docker-php-ext-enable redis
 
 # Install extensions
-RUN docker-php-ext-install pdo pdo_pgsql zip opcache exif pcntl intl
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg=no
+RUN docker-php-ext-install pdo pdo_pgsql zip opcache exif pcntl intl gd
 RUN docker-php-ext-configure intl
 RUN pecl install apcu && docker-php-ext-enable apcu
 RUN pecl install xdebug && docker-php-ext-enable xdebug
@@ -37,6 +38,19 @@ RUN pecl install xdebug && docker-php-ext-enable xdebug
 # Install Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash \
     && apt-get install -y nodejs
+
+# Chromium runtime libraries required by Playwright (used to render regulation map exports).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libnspr4 libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libdbus-1-3 \
+        libcups2t64 libxkbcommon0 libasound2t64 libcairo2 libpango-1.0-0 \
+        libxcomposite1 libxdamage1 libatspi2.0-0t64 libxrandr2 libxfixes3 \
+        libgbm1 libdrm2 fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Playwright browsers inside node_modules so they are reachable by any user
+# (root for CLI, www-data for php-fpm) and survive build/deploy cycles on Scalingo,
+# whose /app/.cache/ build cache is not included in the runtime slug.
+ENV PLAYWRIGHT_BROWSERS_PATH=0
 
 # Install Symfony cli
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash && \

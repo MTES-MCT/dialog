@@ -10,6 +10,7 @@ use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
+use App\Application\Regulation\Command\MapImage\WarmRegulationMapImageCacheCommand;
 use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Measure;
@@ -89,6 +90,8 @@ final class SaveMeasureCommandHandler
                 }
             }
 
+            $this->dispatchMapWarmup($command->measure);
+
             return $command->measure;
         }
 
@@ -129,6 +132,19 @@ final class SaveMeasureCommandHandler
             }
         }
 
+        $this->dispatchMapWarmup($measure);
+
         return $measure;
+    }
+
+    private function dispatchMapWarmup(Measure $measure): void
+    {
+        $regulationOrderRecord = $measure->getRegulationOrder()->getRegulationOrderRecord();
+
+        if ($regulationOrderRecord === null) {
+            return;
+        }
+
+        $this->commandBus->dispatchAsync(new WarmRegulationMapImageCacheCommand($regulationOrderRecord->getUuid()));
     }
 }
