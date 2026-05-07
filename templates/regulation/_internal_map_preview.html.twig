@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Map preview</title>
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; width: 100%; background: #fff; }
+        d-map { display: block; width: 100%; height: 100%; }
+    </style>
+    {{ encore_entry_link_tags('app') }}
+</head>
+<body>
+    <d-map
+        id="map"
+        mapHeight="100%"
+        mapMinHeight="100%"
+        mapPos="[{{ mapCenterLon }}, {{ mapCenterLat }}]"
+        mapZoom="{{ mapZoom }}"
+        dataUrl="{{ geoJsonUrl }}"
+        locationPopupUrl="/_internal/dummy-popup"
+    ></d-map>
+    {{ encore_entry_script_tags('app') }}
+</body>
+</html>

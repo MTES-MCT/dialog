@@ -10,8 +10,10 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\Query\RegulationOrderTemplate\GetRegulationOrderTemplateQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Regulation\RegulationMapImageMakerInterface;
 use App\Domain\Regulation\RegulationOrderTemplateTransformer;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Infrastructure\Adapter\RegulationMeasureLegendBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +28,8 @@ final class ExportRegulationController extends AbstractRegulationController
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         private readonly RegulationOrderTemplateTransformer $regulationOrderTemplateTransformer,
+        private readonly RegulationMapImageMakerInterface $regulationMapImageMaker,
+        private readonly RegulationMeasureLegendBuilder $regulationMeasureLegendBuilder,
         private readonly \Twig\Environment $twig,
         private readonly string $projectDir,
     ) {
@@ -55,6 +59,9 @@ final class ExportRegulationController extends AbstractRegulationController
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $regulationOrderTransformed = $this->regulationOrderTemplateTransformer->transform($regulationOrderTemplate, $generalInfo, $signingAuthority);
 
+        $mapImageBase64 = $this->regulationMapImageMaker->makeBase64Jpeg($uuid);
+        $legendSwatches = $this->regulationMeasureLegendBuilder->buildSwatches();
+
         $content = $this->twig->render(
             name: 'regulation/export.html.twig',
             context: [
@@ -62,6 +69,8 @@ final class ExportRegulationController extends AbstractRegulationController
                 'generalInfo' => $generalInfo,
                 'measures' => $measures,
                 'signingAuthority' => $signingAuthority,
+                'mapImageBase64' => $mapImageBase64,
+                'legendSwatches' => $legendSwatches,
             ],
         );
 
@@ -70,6 +79,7 @@ final class ExportRegulationController extends AbstractRegulationController
             ->from('html')
             ->input($content)
             ->option('reference-doc', $this->projectDir . '/data/regulation-order-template.docx')
+            ->option('lua-filter', $this->projectDir . '/data/pandoc/pagebreak.lua')
             ->to('docx')
             ->run(),
         );

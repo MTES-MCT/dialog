@@ -34,6 +34,7 @@ services:
             $proConnectDomain: '%env(PRO_CONNECT_DOMAIN)%'
             $emailSupport: '%env(EMAIL_SUPPORT)%'
             $mattermostWebhookUrl: '%env(MATTERMOST_WEBHOOK_URL)%'
+            $internalAppUrl: '%env(APP_DIALOG_BASE_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -178,6 +179,8 @@ when@test:
         App\Tests\Mock\IgnGeocoderMockClient:
             decorates: 'ign.geocoder.client'
             decoration_inner_name: 'App\Tests\Mock\IgnGeocoderMockClient::ign.geocoder.client'
+        App\Tests\Mock\NullRegulationMapImageMaker: ~
+        App\Domain\Regulation\RegulationMapImageMakerInterface: '@App\Tests\Mock\NullRegulationMapImageMaker'
         App\Tests\Mock\DiaLogMockHttpClient:
             decorates: 'dialog.http.client'
             decoration_inner_name: 'App\Tests\Mock\DiaLogMockHttpClient::dialog.http.client'
