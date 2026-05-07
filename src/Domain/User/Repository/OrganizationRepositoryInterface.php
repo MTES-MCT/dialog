@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Repository;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Application\User\View\OrganizationView;
 use App\Domain\User\Organization;
 
@@ -34,10 +35,8 @@ interface OrganizationRepositoryInterface
      * Returns the bounding box (in EPSG:4326) used for the initial map view:
      * - if $userUuid is given, the bbox of the user's first organization (with a non-empty geometry);
      * - otherwise, the bbox of a randomly picked organization among the cached top published organizations.
-     *
-     * @return array{minLon: float, minLat: float, maxLon: float, maxLat: float}|null
      */
-    public function findInitialMapBbox(?string $userUuid): ?array;
+    public function findInitialMapBbox(?string $userUuid): ?MapBboxView;
 
     /**
      * Refreshes the `top_published_organization` cache table with the top

@@ -15,6 +15,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class MapTilesController
 {
+    // Aligned with the `maxzoom` declared on the MapLibre vector source
+    // (see assets/customElements/map.js): beyond this zoom the client overzooms
+    // the z=14 tile and never requests deeper tiles from the backend.
     private const MAX_ZOOM = 22;
 
     public function __construct(

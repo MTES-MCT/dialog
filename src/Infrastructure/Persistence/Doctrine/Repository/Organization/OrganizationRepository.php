@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Organization;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Application\User\View\OrganizationView;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -168,7 +169,7 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         return $result['centroid'];
     }
 
-    public function findInitialMapBbox(?string $userUuid): ?array
+    public function findInitialMapBbox(?string $userUuid): ?MapBboxView
     {
         $connection = $this->getEntityManager()->getConnection();
 
@@ -194,7 +195,7 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
                 ['userUuid' => $userUuid],
             );
 
-            return $row ? $this->bboxRowToArray($row) : null;
+            return $row ? $this->bboxRowToView($row) : null;
         }
 
         // Tirage aléatoire dans la table cache top_published_organization
@@ -206,7 +207,7 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             LIMIT 1',
         );
 
-        return $row ? $this->bboxRowToArray($row) : null;
+        return $row ? $this->bboxRowToView($row) : null;
     }
 
     public function refreshTopPublishedOrganizations(int $limit = 10): void
@@ -249,16 +250,14 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
 
     /**
      * @param array<string, mixed> $row
-     *
-     * @return array{minLon: float, minLat: float, maxLon: float, maxLat: float}
      */
-    private function bboxRowToArray(array $row): array
+    private function bboxRowToView(array $row): MapBboxView
     {
-        return [
-            'minLon' => (float) $row['min_lon'],
-            'minLat' => (float) $row['min_lat'],
-            'maxLon' => (float) $row['max_lon'],
-            'maxLat' => (float) $row['max_lat'],
-        ];
+        return new MapBboxView(
+            minLon: (float) $row['min_lon'],
+            minLat: (float) $row['min_lat'],
+            maxLon: (float) $row['max_lon'],
+            maxLat: (float) $row['max_lat'],
+        );
     }
 }
