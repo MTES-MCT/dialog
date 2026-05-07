@@ -355,8 +355,10 @@ final class LitteralisTransformerTest extends TestCase
         $this->assertSame([VehicleTypeEnum::OTHER->value], $command->measureCommands[0]->vehicleSet->exemptedTypes);
         $this->assertSame("véhicules de l'entreprise exécutant les travaux", $command->measureCommands[0]->vehicleSet->otherExemptedTypeText);
 
-        $this->assertSame(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[1]->type);
-        $this->assertSame(30, $command->measureCommands[1]->maxSpeed);
+        $this->assertSame(MeasureTypeEnum::NO_OVERTAKING->value, $command->measureCommands[1]->type);
+
+        $this->assertSame(MeasureTypeEnum::SPEED_LIMITATION->value, $command->measureCommands[2]->type);
+        $this->assertSame(30, $command->measureCommands[2]->maxSpeed);
 
         foreach ($command->measureCommands as $measureCommand) {
             $this->assertCount(1, $measureCommand->periods);
