@@ -30,6 +30,7 @@ final readonly class LitteralisTransformer
         'Limitation de vitesse' => MeasureTypeEnum::SPEED_LIMITATION->value,
         'Limitation de vitesse (Arrêté Permanent)' => MeasureTypeEnum::SPEED_LIMITATION->value,
         'Interdiction de stationnement' => MeasureTypeEnum::PARKING_PROHIBITED->value,
+        'Interdiction de dépasser' => MeasureTypeEnum::NO_OVERTAKING->value,
 
         // Montpellier - Mesures avec préfixes dynamiques (gérés par normalizeMeasureName)
         // Les préfixes "YYYY - " (ex: "2021 - ", "2022 - ") et "AP - " sont retirés automatiquement

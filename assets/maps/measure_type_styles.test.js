@@ -16,6 +16,7 @@ describe('getMeasureTypeStyle', () => {
         expect(getMeasureTypeStyle('speedLimitation')).toBe(MEASURE_TYPE_STYLES.speedLimitation);
         expect(getMeasureTypeStyle('parkingProhibited')).toBe(MEASURE_TYPE_STYLES.parkingProhibited);
         expect(getMeasureTypeStyle('alternateRoad')).toBe(MEASURE_TYPE_STYLES.alternateRoad);
+        expect(getMeasureTypeStyle('noOvertaking')).toBe(MEASURE_TYPE_STYLES.noOvertaking);
     });
 
     it('returns the default style for an unknown measure type', () => {
