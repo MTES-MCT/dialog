@@ -23,7 +23,7 @@ interface LocationRepositoryInterface
     ): string;
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array;
-    
+
     /**
      * Returns a Mapbox Vector Tile (MVT) binary blob with the locations of the
      * published regulation orders matching the given filters, restricted to the

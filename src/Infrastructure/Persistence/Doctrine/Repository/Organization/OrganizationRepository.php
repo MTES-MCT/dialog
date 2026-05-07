@@ -174,8 +174,6 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         $connection = $this->getEntityManager()->getConnection();
 
         if ($userUuid !== null) {
-            // Première organisation de l'utilisateur (ordre stable par UUID de l'OrganizationUser)
-            // avec une géométrie utilisable.
             $row = $connection->fetchAssociative(
                 'SELECT
                     ST_XMin(env) AS min_lon,
@@ -198,8 +196,6 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
             return $row ? $this->bboxRowToView($row) : null;
         }
 
-        // Tirage aléatoire dans la table cache top_published_organization
-        // (rafraîchie quotidiennement par la commande app:map:refresh-top-published-organizations).
         $row = $connection->fetchAssociative(
             'SELECT min_lon, min_lat, max_lon, max_lat
             FROM top_published_organization
