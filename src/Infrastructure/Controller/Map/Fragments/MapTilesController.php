@@ -78,8 +78,6 @@ final class MapTilesController
             $mvt,
             headers: [
                 'Content-Type' => 'application/vnd.mapbox-vector-tile',
-                // Allow browser/CDN caching of tiles for a few minutes. Pan/zoom over
-                // already visited areas then incurs no network round-trip.
                 'Cache-Control' => 'public, max-age=300',
             ],
         );
