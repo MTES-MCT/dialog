@@ -107,7 +107,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     WHEN \'parkingProhibited\' THEN 2
                     WHEN \'speedLimitation\' THEN 3
                     WHEN \'noEntry\' THEN 4
-                    ELSE 5
+                    WHEN \'noOvertaking\' THEN 5
+                    ELSE 6
                 END
                 ',
                 $regulationTypeWhereClause,
@@ -202,7 +203,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 
         $mvt = $row['mvt'] ?? '';
 
-        // PostgreSQL bytea may come back as a resource (stream) depending on the driver.
+        // PostgreSQL may come back as a resource (stream) depending on its driver.
         if (\is_resource($mvt)) {
             $mvt = stream_get_contents($mvt);
         }

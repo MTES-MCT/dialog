@@ -15,11 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class MapTilesController
 {
-    // Aligned with the `maxzoom` declared on the MapLibre vector source
-    // (see assets/customElements/map.js): beyond this zoom the client overzooms
-    // the z=14 tile and never requests deeper tiles from the backend.
-    private const MAX_ZOOM = 22;
-
     public function __construct(
         private FormFactoryInterface $formFactory,
         private LocationRepositoryInterface $locationRepository,
@@ -39,10 +34,6 @@ final class MapTilesController
     )]
     public function __invoke(Request $request, int $z, int $x, int $y): Response
     {
-        if ($z > self::MAX_ZOOM) {
-            return new Response('', Response::HTTP_NO_CONTENT);
-        }
-
         $maxIndex = (1 << $z) - 1;
         if ($x < 0 || $x > $maxIndex || $y < 0 || $y > $maxIndex) {
             return new Response('', Response::HTTP_NO_CONTENT);
@@ -78,8 +69,6 @@ final class MapTilesController
             $mvt,
             headers: [
                 'Content-Type' => 'application/vnd.mapbox-vector-tile',
-                // Allow browser/CDN caching of tiles for a few minutes. Pan/zoom over
-                // already visited areas then incurs no network round-trip.
                 'Cache-Control' => 'public, max-age=300',
             ],
         );
