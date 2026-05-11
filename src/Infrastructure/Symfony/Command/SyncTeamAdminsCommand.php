@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Command;
 
-use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\StringUtilsInterface;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
-use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
-use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,11 +32,9 @@ final class SyncTeamAdminsCommand extends Command
 
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private PasswordUserRepositoryInterface $passwordUserRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepository,
         private OrganizationRepositoryInterface $organizationRepository,
         private IdFactoryInterface $idFactory,
-        private DateUtilsInterface $dateUtils,
         private StringUtilsInterface $stringUtils,
         private EntityManagerInterface $entityManager,
         private string $projectDir,
@@ -106,7 +101,6 @@ final class SyncTeamAdminsCommand extends Command
             $desiredByEmail[$email] = [
                 'email' => $email,
                 'full_name' => $admin['full_name'],
-                'password_hash' => $admin['password_hash'] ?? null,
             ];
         }
 
@@ -116,7 +110,7 @@ final class SyncTeamAdminsCommand extends Command
             $existingByEmail[$this->stringUtils->normalizeEmail($user->getEmail())] = $user;
         }
 
-        $created = $updated = $deleted = $skipped = 0;
+        $updated = $deleted = $skipped = 0;
 
         foreach ($desiredByEmail as $email => $desired) {
             if (isset($existingByEmail[$email])) {
@@ -145,41 +139,11 @@ final class SyncTeamAdminsCommand extends Command
                 continue;
             }
 
-            if (null === $desired['password_hash']) {
-                $output->writeln(\sprintf(
-                    '<comment>[skip]</comment> %s : utilisateur inexistant et aucun `password_hash` fourni (ignoré).',
-                    $email,
-                ));
-                ++$skipped;
-                continue;
-            }
-
-            $output->writeln(\sprintf('<info>[create]</info> %s (%s)', $email, $desired['full_name']));
-            if (!$dryRun) {
-                $user = (new User($this->idFactory->make()))
-                    ->setFullName($desired['full_name'])
-                    ->setEmail($email)
-                    ->setRoles([UserRolesEnum::ROLE_SUPER_ADMIN->value])
-                    ->setRegistrationDate($this->dateUtils->getNow())
-                    ->setIsVerified();
-
-                $passwordUser = new PasswordUser(
-                    uuid: $this->idFactory->make(),
-                    password: $desired['password_hash'],
-                    user: $user,
-                );
-                $user->setPasswordUser($passwordUser);
-
-                $this->userRepository->add($user);
-                $this->passwordUserRepository->add($passwordUser);
-
-                $organizationUser = (new OrganizationUser($this->idFactory->make()))
-                    ->setUser($user)
-                    ->setOrganization($organization)
-                    ->setIsOwner(true);
-                $this->organizationUserRepository->add($organizationUser);
-            }
-            ++$created;
+            $output->writeln(\sprintf(
+                '<comment>[skip]</comment> %s : utilisateur inexistant en base (ignoré, création non gérée par cette commande).',
+                $email,
+            ));
+            ++$skipped;
         }
 
         foreach ($existingByEmail as $email => $user) {
@@ -198,9 +162,8 @@ final class SyncTeamAdminsCommand extends Command
         }
 
         $output->writeln(\sprintf(
-            '<info>Terminé%s — créés: %d, mis à jour: %d, supprimés: %d, ignorés: %d.</info>',
+            '<info>Terminé%s — mis à jour: %d, supprimés: %d, ignorés: %d.</info>',
             $dryRun ? ' (dry-run)' : '',
-            $created,
             $updated,
             $deleted,
             $skipped,
@@ -210,7 +173,7 @@ final class SyncTeamAdminsCommand extends Command
     }
 
     /**
-     * @param array{email: string, full_name: string, password_hash: ?string} $desired
+     * @param array{email: string, full_name: string} $desired
      */
     private function updateExistingUser(
         User $user,
