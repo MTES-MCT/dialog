@@ -6,5 +6,5 @@ namespace App\Domain\Regulation;
 
 interface RegulationMapImageMakerInterface
 {
-    public function makeBase64Jpeg(string $regulationOrderRecordUuid): ?string;
+    public function make(string $regulationOrderRecordUuid): ?RegulationMapImage;
 }

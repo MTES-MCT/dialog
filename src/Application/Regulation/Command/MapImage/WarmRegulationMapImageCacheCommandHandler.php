@@ -15,7 +15,7 @@ final readonly class WarmRegulationMapImageCacheCommandHandler
 
     public function __invoke(WarmRegulationMapImageCacheCommand $command): void
     {
-        // makeBase64Jpeg renders + caches when the storage entry is missing, and is a no-op when already cached.
-        $this->regulationMapImageMaker->makeBase64Jpeg($command->regulationOrderRecordUuid);
+        // Renders + caches when the storage entry is missing, and is a no-op when already cached.
+        $this->regulationMapImageMaker->make($command->regulationOrderRecordUuid);
     }
 }

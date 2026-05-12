@@ -16,7 +16,7 @@ final class WarmRegulationMapImageCacheCommandHandlerTest extends TestCase
         $imageMaker = $this->createMock(RegulationMapImageMakerInterface::class);
         $imageMaker
             ->expects(self::once())
-            ->method('makeBase64Jpeg')
+            ->method('make')
             ->with('record-uuid');
 
         $handler = new WarmRegulationMapImageCacheCommandHandler($imageMaker);

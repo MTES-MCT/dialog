@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Application\StorageInterface;
+use App\Domain\Regulation\RegulationMapImage;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Infrastructure\Adapter\RegulationMapImageMaker;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +34,7 @@ final class RegulationMapImageMakerTest extends TestCase
             'http://internal',
         );
 
-        $this->assertNull($maker->makeBase64Jpeg('record-uuid'));
+        $this->assertNull($maker->make('record-uuid'));
     }
 
     public function testReturnsCachedJpegWithoutInvokingPlaywright(): void
@@ -67,6 +68,10 @@ final class RegulationMapImageMakerTest extends TestCase
             'http://internal',
         );
 
-        $this->assertSame(base64_encode($jpegBytes), $maker->makeBase64Jpeg('record-uuid'));
+        $result = $maker->make('record-uuid');
+
+        $this->assertInstanceOf(RegulationMapImage::class, $result);
+        $this->assertSame(base64_encode($jpegBytes), $result->base64Jpeg);
+        $this->assertSame(['noEntry'], $result->measureTypes);
     }
 }
