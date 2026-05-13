@@ -26,7 +26,7 @@
                     </h2>
                     <div class="fr-collapse fr-collapse--expanded" id="map-filters-accordion">
                         <h3 class="fr-h6 fr-my-2w">{{ 'map.filters.title.restriction'|trans }}</h3>
-                        <d-map-form target="map" urlAttribute="dataUrl" class="fr-x-block fr-mb-2w">
+                        <d-map-form target="map" urlAttribute="tilesUrl" class="fr-x-block fr-mb-2w">
                             {{ form_start(form, {
                                 attr: {
                                     class: 'd-stack',
@@ -74,7 +74,8 @@
                 mapMinHeight="600px"
                 mapPos="[2.725, 47.16]"
                 mapZoom="5"
-                dataUrl="{{ path('app_carto_data') }}"
+                tilesUrl="{{ tilesUrlTemplate }}"
+                {% if initialBbox %}initialBbox="{{ initialBbox|json_encode }}"{% endif %}
                 locationPopupUrl="{{ path('fragment_map_location') }}"
             >
                 <p data-map-hidewhen="ready" class="fr-mt-5w fr-x-text--center">

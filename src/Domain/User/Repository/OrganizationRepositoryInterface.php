@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Repository;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Application\User\View\OrganizationView;
 use App\Domain\User\Organization;
 
@@ -29,6 +30,10 @@ interface OrganizationRepositoryInterface
     public function findAllForStatistics(): array;
 
     public function findAllForMetabaseExport(): array;
+
+    public function findInitialMapBbox(?string $userUuid): ?MapBboxView;
+
+    public function refreshTopPublishedOrganizations(int $limit = 10): void;
 
     /**
      * Calcule le centroïde d'une géométrie GeoJSON avec PostGIS.
