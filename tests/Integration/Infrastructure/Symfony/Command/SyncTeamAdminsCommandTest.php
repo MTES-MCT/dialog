@@ -73,35 +73,7 @@ final class SyncTeamAdminsCommandTest extends KernelTestCase
         );
     }
 
-    public function testCreateMissingAdminWithPasswordHash(): void
-    {
-        self::bootKernel();
-        $email = 'new.team.member@beta.gouv.fr';
-        $this->writeConfig([
-            [
-                'email' => UserFixture::DEPARTMENT_93_ADMIN_EMAIL,
-                'full_name' => 'Mathieu FERNANDEZ',
-            ],
-            [
-                'email' => $email,
-                'full_name' => 'New MEMBER',
-                'password_hash' => '$2y$13$FGzLfRBW0sGZqn/eh3hlBO/nQI4XZKzrzI1svPbCYUKWlRrQELCPm',
-            ],
-        ]);
-
-        $tester = $this->runCommand();
-        $tester->assertCommandIsSuccessful();
-
-        $userRepo = static::getContainer()->get(UserRepositoryInterface::class);
-        $created = $userRepo->findOneByEmail($email);
-        $this->assertNotNull($created);
-        $this->assertSame('New MEMBER', $created->getFullName());
-        $this->assertTrue($created->isVerified());
-        $this->assertContains(UserRolesEnum::ROLE_SUPER_ADMIN->value, $created->getRoles());
-        $this->assertNotNull($created->getPasswordUser());
-    }
-
-    public function testSkipCreationWhenPasswordHashMissing(): void
+    public function testSkipsWhenUserDoesNotExist(): void
     {
         self::bootKernel();
         $email = 'ghost.member@beta.gouv.fr';
