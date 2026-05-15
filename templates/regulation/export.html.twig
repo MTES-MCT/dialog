@@ -56,23 +56,15 @@
     <div custom-style="Dialog_TitrePrincipal">Annexe — Carte de l'arrêté</div><br/>
     <p><img src="data:image/jpeg;base64,{{ mapImageBase64 }}" width="600px" /></p>
 
-    <p><b>Légende</b></p>
-    <table>
-        <tr>
-            <td>{{ 'regulation.measure.type.noEntry'|trans }}&nbsp;&nbsp;</td>
-            <td><img src="{{ legendSwatches.noEntry }}" /></td>
-        </tr>
-        <tr>
-            <td>{{ 'regulation.measure.type.speedLimitation'|trans }}&nbsp;&nbsp;</td>
-            <td><img src="{{ legendSwatches.speedLimitation }}" /></td>
-        </tr>
-        <tr>
-            <td>{{ 'regulation.measure.type.parkingProhibited'|trans }}&nbsp;&nbsp;</td>
-            <td><img src="{{ legendSwatches.parkingProhibited }}" /></td>
-        </tr>
-        <tr>
-            <td>{{ 'regulation.measure.type.alternateRoad'|trans }}&nbsp;&nbsp;</td>
-            <td><img src="{{ legendSwatches.alternateRoad }}" /></td>
-        </tr>
-    </table>
+    {% if legendSwatches is not empty %}
+        <p><b>Légende</b></p>
+        <table>
+            {% for type, swatch in legendSwatches %}
+                <tr>
+                    <td>{{ ('regulation.measure.type.' ~ type)|trans }}&nbsp;&nbsp;</td>
+                    <td><img src="{{ swatch }}" /></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endif %}

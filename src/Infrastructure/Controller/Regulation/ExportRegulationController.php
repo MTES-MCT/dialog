@@ -59,8 +59,10 @@ final class ExportRegulationController extends AbstractRegulationController
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $regulationOrderTransformed = $this->regulationOrderTemplateTransformer->transform($regulationOrderTemplate, $generalInfo, $signingAuthority);
 
-        $mapImageBase64 = $this->regulationMapImageMaker->makeBase64Jpeg($uuid);
-        $legendSwatches = $this->regulationMeasureLegendBuilder->buildSwatches();
+        $mapImage = $this->regulationMapImageMaker->make($uuid);
+        $legendSwatches = $mapImage
+            ? array_intersect_key($this->regulationMeasureLegendBuilder->buildSwatches(), array_flip($mapImage->measureTypes))
+            : [];
 
         $content = $this->twig->render(
             name: 'regulation/export.html.twig',
@@ -69,7 +71,7 @@ final class ExportRegulationController extends AbstractRegulationController
                 'generalInfo' => $generalInfo,
                 'measures' => $measures,
                 'signingAuthority' => $signingAuthority,
-                'mapImageBase64' => $mapImageBase64,
+                'mapImageBase64' => $mapImage?->base64Jpeg,
                 'legendSwatches' => $legendSwatches,
             ],
         );

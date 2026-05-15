@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Adapter;
 
 use App\Application\StorageInterface;
+use App\Domain\Regulation\RegulationMapImage;
 use App\Domain\Regulation\RegulationMapImageMakerInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,7 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
     private const RENDER_TIMEOUT_SECONDS = 30;
     private const PAGE_TIMEOUT_MS = 15000;
     private const JPEG_SIGNATURE = "\xFF\xD8\xFF";
-    private const CACHE_PREFIX = 'regulation-maps/';
+    private const CACHE_PREFIX = 'regulation-maps/v2/';
 
     public function __construct(
         private readonly LocationRepositoryInterface $locationRepository,
@@ -29,7 +30,7 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
     ) {
     }
 
-    public function makeBase64Jpeg(string $regulationOrderRecordUuid): ?string
+    public function make(string $regulationOrderRecordUuid): ?RegulationMapImage
     {
         $rows = $this->locationRepository->findGeometriesForRegulationOrderRecord($regulationOrderRecordUuid);
 
@@ -43,11 +44,12 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
             return null;
         }
 
+        $measureTypes = array_values(array_unique(array_column($rows, 'measure_type')));
         $cachePath = $this->getCachePath($regulationOrderRecordUuid, $rows);
         $cached = $this->storage->read($cachePath);
 
         if ($cached !== null) {
-            return base64_encode($cached);
+            return new RegulationMapImage(base64_encode($cached), $measureTypes);
         }
 
         $jpeg = $this->renderViaPlaywright($regulationOrderRecordUuid, $bounds);
@@ -58,7 +60,7 @@ final class RegulationMapImageMaker implements RegulationMapImageMakerInterface
 
         $this->storage->writeContent($cachePath, $jpeg, 'image/jpeg');
 
-        return base64_encode($jpeg);
+        return new RegulationMapImage(base64_encode($jpeg), $measureTypes);
     }
 
     private function computeBounds(array $rows): ?array
