@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Organization;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Application\User\View\OrganizationView;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -166,5 +167,93 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         );
 
         return $result['centroid'];
+    }
+
+    public function findInitialMapBbox(?string $userUuid): ?MapBboxView
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        if ($userUuid !== null) {
+            $row = $connection->fetchAssociative(
+                'SELECT
+                    ST_XMin(env) AS min_lon,
+                    ST_YMin(env) AS min_lat,
+                    ST_XMax(env) AS max_lon,
+                    ST_YMax(env) AS max_lat
+                FROM (
+                    SELECT ST_Envelope(o.geometry) AS env, ou.uuid AS ou_uuid
+                    FROM organizations_users AS ou
+                    INNER JOIN organization AS o ON o.uuid = ou.organization_uuid
+                    WHERE ou.user_uuid = :userUuid
+                    AND o.geometry IS NOT NULL
+                    AND NOT ST_IsEmpty(o.geometry)
+                ) AS t
+                ORDER BY ou_uuid
+                LIMIT 1',
+                ['userUuid' => $userUuid],
+            );
+
+            return $row ? $this->bboxRowToView($row) : null;
+        }
+
+        $row = $connection->fetchAssociative(
+            'SELECT min_lon, min_lat, max_lon, max_lat
+            FROM top_published_organization
+            ORDER BY random()
+            LIMIT 1',
+        );
+
+        return $row ? $this->bboxRowToView($row) : null;
+    }
+
+    public function refreshTopPublishedOrganizations(int $limit = 10): void
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $connection->transactional(function ($connection) use ($limit): void {
+            $connection->executeStatement('TRUNCATE TABLE top_published_organization');
+
+            $connection->executeStatement(
+                'INSERT INTO top_published_organization (organization_uuid, nb_published, min_lon, min_lat, max_lon, max_lat, refreshed_at)
+                SELECT
+                    o.uuid,
+                    COUNT(roc.uuid) AS nb_published,
+                    ST_XMin(ST_Envelope(o.geometry)),
+                    ST_YMin(ST_Envelope(o.geometry)),
+                    ST_XMax(ST_Envelope(o.geometry)),
+                    ST_YMax(ST_Envelope(o.geometry)),
+                    now()
+                FROM organization AS o
+                INNER JOIN regulation_order_record AS roc ON roc.organization_uuid = o.uuid
+                WHERE roc.status = :published
+                AND o.uuid <> :dialogOrgId
+                AND o.geometry IS NOT NULL
+                AND NOT ST_IsEmpty(o.geometry)
+                GROUP BY o.uuid, o.geometry
+                ORDER BY nb_published DESC
+                LIMIT :limit',
+                [
+                    'published' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+                    'dialogOrgId' => $this->dialogOrgId,
+                    'limit' => $limit,
+                ],
+                [
+                    'limit' => \PDO::PARAM_INT,
+                ],
+            );
+        });
+    }
+
+    /**
+     * @param array<string, mixed> $row
+     */
+    private function bboxRowToView(array $row): MapBboxView
+    {
+        return new MapBboxView(
+            minLon: (float) $row['min_lon'],
+            minLat: (float) $row['min_lat'],
+            maxLon: (float) $row['max_lon'],
+            maxLat: (float) $row['max_lat'],
+        );
     }
 }

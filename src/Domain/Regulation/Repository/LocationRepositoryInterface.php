@@ -24,6 +24,22 @@ interface LocationRepositoryInterface
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array;
 
+    /**
+     * Returns a Mapbox Vector Tile (MVT) binary blob with the locations of the
+     * published regulation orders matching the given filters, restricted to the
+     * geographical extent of the (z, x, y) tile.
+     */
+    public function findRestrictionsAsMVT(
+        int $z,
+        int $x,
+        int $y,
+        bool $includePermanentRegulations = false,
+        bool $includeTemporaryRegulations = false,
+        array $measureTypes = [],
+        ?\DateTimeInterface $startDate = null,
+        ?\DateTimeInterface $endDate = null,
+    ): string;
+
     /** @return Location[] */
     public function findAllWithoutGeometry(): array;
 }
