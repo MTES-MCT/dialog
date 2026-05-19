@@ -983,15 +983,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.preview_map.display">
                 <source>regulation.location.preview_map.display</source>
-                <target>Afficher la carte</target>
+                <target>Afficher l'aperçu</target>
             </trans-unit>
             <trans-unit id="regulation.location.preview_map.hide">
                 <source>regulation.location.preview_map.hide</source>
-                <target>Masquer la carte</target>
-            </trans-unit>
-            <trans-unit id="regulation.location.preview_map.title">
-                <source>regulation.location.preview_map.title</source>
-                <target>Aperçu de la localisation</target>
+                <target>Masquer l'aperçu</target>
             </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>

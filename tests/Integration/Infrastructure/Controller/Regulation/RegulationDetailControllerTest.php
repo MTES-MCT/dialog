@@ -42,7 +42,7 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Vitesse limitée à 50 km/h', $measure1Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure1Content->filter('li')->eq(0)->text());
         $this->assertSame('tous les jours', $measure1Content->filter('li')->eq(1)->text());
-        $this->assertSame('Rue du Docteur Bauer à Saint-Ouen-sur-Seine Afficher la carte Masquer la carte Aperçu de la localisation', $measure1Content->filter('li')->eq(3)->text());
+        $this->assertSame('Rue du Docteur Bauer à Saint-Ouen-sur-Seine', $measure1Content->filter('li')->eq(3)->text());
 
         // Measure 2
         $measure2Header = $crawler->filter('[data-testid="measure"]')->eq(1);
@@ -51,8 +51,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSame('Circulation interdite', $measure2Header->filter('h3')->text());
         $this->assertSame('pour tous les véhicules', $measure2Content->filter('li')->eq(0)->text());
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure2Content->filter('li')->eq(1)->text());
-        $this->assertSame('Rue Adrien Lesesne à Saint-Ouen-sur-Seine Afficher la carte Masquer la carte Aperçu de la localisation', $measure2Content->filter('li')->eq(3)->text());
-        $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine Afficher la carte Masquer la carte Aperçu de la localisation', $measure2Content->filter('li')->eq(4)->text());
+        $this->assertSame('Rue Adrien Lesesne à Saint-Ouen-sur-Seine', $measure2Content->filter('li')->eq(3)->text());
+        $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine', $measure2Content->filter('li')->eq(4)->text());
 
         $editLocationForm = $measures->eq(1)->selectButton('Modifier')->form();
         $this->assertSame(

@@ -361,12 +361,11 @@
 
         {% set previewMapAccordionId = 'location-preview-map-' ~ locationIndex ~ '-' ~ roadType %}
         <section class="fr-mt-2w app-preview-map-toggle">
-            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="false" aria-controls="{{ previewMapAccordionId }}">
+            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ previewMapAccordionId }}">
                 <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
                 <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
             </button>
             <div class="fr-collapse" id="{{ previewMapAccordionId }}">
-                <p class="fr-mb-1w fr-mt-1w app-preview-map-toggle__title">{{ 'regulation.location.preview_map.title'|trans }}</p>
                 <div
                     data-controller="location-preview-map"
                     data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
@@ -617,7 +616,7 @@
 
                     {% set lanePreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-lane' %}
                     <section class="fr-mt-2w app-preview-map-toggle">
-                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="false" aria-controls="{{ lanePreviewMapAccordionId }}">
+                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ lanePreviewMapAccordionId }}">
                             <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
                             <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
                         </button>

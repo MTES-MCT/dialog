@@ -404,7 +404,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
                         'toAbscissa' => '650',
                     ],
                 ],
-                'expectedText' => 'D906 (Ardèche) du PR 34+100 (côté U) au PR 35+650 (côté U) Afficher la carte Masquer la carte Aperçu de la localisation',
+                'expectedText' => 'D906 (Ardèche) du PR 34+100 (côté U) au PR 35+650 (côté U)',
             ],
             'nationalRoad' => [
                 'locationForm' => [
@@ -420,7 +420,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
                         'toAbscissa' => '50',
                     ],
                 ],
-                'expectedText' => 'N176 (DIR Ouest) du PR 1+0 (côté D) au PR 2+50 (côté D) Afficher la carte Masquer la carte Aperçu de la localisation',
+                'expectedText' => 'N176 (DIR Ouest) du PR 1+0 (côté D) au PR 2+50 (côté D)',
             ],
         ];
     }
@@ -495,7 +495,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
         $this->assertSame(
-            'N176 (DIR Ouest) du PR 24+0 (côté D) au PR 28+0 (côté D) Aire de stockage : Zone de stockage 18-22 N176 Voie de droite Afficher la carte Masquer la carte Aperçu de la localisation',
+            'N176 (DIR Ouest) du PR 24+0 (côté D) au PR 28+0 (côté D) Aire de stockage : Zone de stockage 18-22 N176 Voie de droite',
             $measures->eq(0)->filter('.app-card__content li')->eq(3)->text(),
         );
     }
@@ -576,7 +576,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('Village olympique - tracé libre (geojson) Afficher la carte Masquer la carte Aperçu de la localisation', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Village olympique - tracé libre (geojson)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testAddRawGeoJSONAsAdminInvalidBlank(): void
