@@ -41,7 +41,7 @@ describe('addHouseNumbersLayer', () => {
 describe('addMeasureLineLayer', () => {
     it('adds a GeoJSON source and a line layer with the given ids', () => {
         const map = createMapMock();
-        const data = { type: 'FeatureCollection', features: [] };
+        const data = /** @type {import('geojson').FeatureCollection} */ ({ type: 'FeatureCollection', features: [] });
 
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 'my-src',
@@ -73,7 +73,7 @@ describe('addMeasureLineLayer', () => {
 
     it('wraps a bare geometry into a FeatureCollection on the source', () => {
         const map = createMapMock();
-        const point = { type: 'Point', coordinates: [2.35, 48.85] };
+        const point = /** @type {import('geojson').Point} */ ({ type: 'Point', coordinates: [2.35, 48.85] });
 
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 's',
@@ -125,7 +125,7 @@ describe('addMeasureLineLayer', () => {
         expect(pointLayer.paint['circle-color']).toBe('#CE0500');
     });
 
-    it('applies the measure type style (noEntry → red, solid)', () => {
+    it('applies the measure type style (noEntry → red, dashed)', () => {
         const map = createMapMock();
 
         addMeasureLineLayer(/** @type {any} */ (map), {
@@ -137,7 +137,7 @@ describe('addMeasureLineLayer', () => {
         const layer = map.addLayer.mock.calls[0][0];
         expect(layer.paint['line-color']).toBe('#CE0500');
         expect(layer.paint['line-width']).toBe(4);
-        expect(layer.paint['line-dasharray']).toEqual([1, 0]);
+        expect(layer.paint['line-dasharray']).toEqual([1, 1]);
     });
 
     it('falls back to the default style for unknown measure types', () => {

@@ -2,7 +2,7 @@
 
 import { getAttributeOrError } from './util';
 import { mapStyles } from 'carte-facile';
-import { buildLineColorExpression, buildLineDasharrayExpression, buildLineWidthExpression } from '../maps/measure_type_styles';
+import { MEASURE_TYPE_STYLES, buildMeasureLineLayers } from '../maps/measure_type_styles';
 
 /**
  * The `source-layer` name used inside the MVT tiles produced by the backend
@@ -123,24 +123,23 @@ class MapLibreMap {
 
                 const lineWidthFirstStep = 15;
                 const lineWidthSecondStep = 18;
-                map.addLayer(
-                    {
-                        'id': 'locations-layer',
-                        'type': 'line',
-                        'source': 'locations-source',
-                        'source-layer': RESTRICTIONS_SOURCE_LAYER,
-                        'layout': {
-                            'line-join': 'round',
-                            'line-cap': 'round',
-                        },
-                        'paint': {
-                            'line-color': buildLineColorExpression(),
-                            'line-dasharray': buildLineDasharrayExpression(),
-                            'line-width': buildLineWidthExpression(4, lineWidthFirstStep, lineWidthSecondStep),
-                        },
+                const measureLayerIds = [];
+                for (const [measureType, style] of Object.entries(MEASURE_TYPE_STYLES)) {
+                    const layers = buildMeasureLineLayers(measureType, style, {
+                        sourceId: 'locations-source',
+                        sourceLayer: RESTRICTIONS_SOURCE_LAYER,
+                        lineWidthFirstStep,
+                        lineWidthSecondStep,
+                    });
+                    for (const layer of layers) {
+                        map.addLayer(layer);
+                        measureLayerIds.push(layer.id);
                     }
-                );
+                }
 
+                // Invisible click-zone layer covering all measures, inserted below the
+                // first measure layer so that visible styling is preserved while click
+                // events still reach this layer's listeners.
                 map.addLayer(
                     {
                         'id': 'locations-layer-click-zone',
@@ -153,11 +152,11 @@ class MapLibreMap {
                         },
                         'paint': {
                             'line-color': '#000000',
-                            'line-width': ["step", ["zoom"], 12, lineWidthFirstStep, 16, lineWidthSecondStep, 20], // like the 'locations-layer' above : steps are zoom = 15 and zoom = 18
+                            'line-width': ["step", ["zoom"], 12, lineWidthFirstStep, 16, lineWidthSecondStep, 20], // like the measures layers above : steps are zoom = 15 and zoom = 18
                             'line-opacity': 0, // fully transparent
                         },
                     },
-                    "locations-layer" // insert this layer below the 'locations-layer' layer
+                    measureLayerIds[0],
                 );
 
                 // popup when clicking on a feature of the locations layer
