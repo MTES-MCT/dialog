@@ -97,8 +97,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $measures = $crawler->filter('[data-testid="measure"]');
 
-        $this->assertSame('Rue Ardoin à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
-        $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
+        $this->assertSame('Rue Ardoin à Saint-Ouen-sur-Seine Afficher la carte Masquer la carte Aperçu de la localisation', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine Afficher la carte Masquer la carte Aperçu de la localisation', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
     public function testRemoveManyLocations(): void
@@ -125,7 +125,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertCount(1, $measures->eq(0)->filter('[data-location-uuid]'));
-        $this->assertSame('Avenue Michelet de Allée Isabeau à Avenue Du Cimetière à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Avenue Michelet de Allée Isabeau à Avenue Du Cimetière à Saint-Ouen-sur-Seine Afficher la carte Masquer la carte Aperçu de la localisation', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testDeletePeriod(): void
