@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -26,12 +27,13 @@ final class GetRegulationsController
 
     #[Route(
         '/api/regulations.{_format}',
-        methods: 'GET',
+        methods: ['GET', 'HEAD'],
         name: 'api_regulations_list',
         defaults: ['_format' => 'xml'],
     )]
     #[OA\Tag(name: 'Public')]
     public function __invoke(
+        Request $request,
         #[MapQueryParameter]
         bool $includePermanent = true,
         #[MapQueryParameter]
@@ -39,15 +41,27 @@ final class GetRegulationsController
         #[MapQueryParameter]
         bool $includeExpired = false,
     ): Response {
+        if ($request->isMethod('HEAD')) {
+            return new Response(
+                '',
+                Response::HTTP_OK,
+                [
+                    'Content-Type' => 'text/xml; charset=UTF-8',
+                    'Content-Length' => (string) $this->datexGenerator->getCachedDatexSize(),
+                ],
+            );
+        }
+
         $isDefaultParams = $includePermanent && $includeTemporary && !$includeExpired;
 
         if ($isDefaultParams) {
-            $regulationOrders = $this->datexGenerator->getCachedDatex();
-
             return new Response(
-                $regulationOrders,
+                $this->datexGenerator->getCachedDatex(),
                 Response::HTTP_OK,
-                ['Content-Type' => 'text/xml; charset=UTF-8'],
+                [
+                    'Content-Type' => 'text/xml; charset=UTF-8',
+                    'Content-Length' => (string) $this->datexGenerator->getCachedDatexSize(),
+                ],
             );
         }
 

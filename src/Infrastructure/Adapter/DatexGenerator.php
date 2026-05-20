@@ -63,4 +63,13 @@ final class DatexGenerator implements DatexGeneratorInterface
 
         return $this->storage->read(self::DATEX_PATH);
     }
+
+    public function getCachedDatexSize(): int
+    {
+        if (!$this->storage->fileExists(self::DATEX_PATH)) {
+            $this->generate();
+        }
+
+        return $this->storage->fileSize(self::DATEX_PATH);
+    }
 }

@@ -11,6 +11,7 @@ use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Infrastructure\Controller\Api\Regulations\GetRegulationsController;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -44,16 +45,22 @@ final class GetRegulationsControllerTest extends TestCase
             ->method('getCachedDatex')
             ->willReturn('<xml>cached</xml>');
 
+        $this->datexGenerator
+            ->expects(self::once())
+            ->method('getCachedDatexSize')
+            ->willReturn(17);
+
         $this->queryBus
             ->expects(self::never())
             ->method('handle');
 
-        $response = ($this->controller)();
+        $response = ($this->controller)(Request::create('/api/regulations.xml'));
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertNotInstanceOf(StreamedResponse::class, $response);
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('Content-Type'));
+        $this->assertSame('17', $response->headers->get('Content-Length'));
         $this->assertSame('<xml>cached</xml>', $response->getContent());
     }
 
@@ -64,15 +71,45 @@ final class GetRegulationsControllerTest extends TestCase
             ->method('getCachedDatex')
             ->willReturn('<xml>generated</xml>');
 
+        $this->datexGenerator
+            ->expects(self::once())
+            ->method('getCachedDatexSize')
+            ->willReturn(19);
+
         $this->queryBus
             ->expects(self::never())
             ->method('handle');
 
-        $response = ($this->controller)();
+        $response = ($this->controller)(Request::create('/api/regulations.xml'));
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('<xml>generated</xml>', $response->getContent());
+    }
+
+    public function testHeadRequestReturnsSizeOnly(): void
+    {
+        $this->datexGenerator
+            ->expects(self::once())
+            ->method('getCachedDatexSize')
+            ->willReturn(1234);
+
+        $this->datexGenerator
+            ->expects(self::never())
+            ->method('getCachedDatex');
+
+        $this->queryBus
+            ->expects(self::never())
+            ->method('handle');
+
+        $response = ($this->controller)(Request::create('/api/regulations.xml', 'HEAD'));
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertNotInstanceOf(StreamedResponse::class, $response);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('Content-Type'));
+        $this->assertSame('1234', $response->headers->get('Content-Length'));
+        $this->assertSame('', $response->getContent());
     }
 
     public function testCustomFiltersReturnStreamedResponse(): void
@@ -112,6 +149,11 @@ final class GetRegulationsControllerTest extends TestCase
             ->method('generate');
 
         $response = ($this->controller)(
+            Request::create('/api/regulations.xml', 'GET', [
+                'includePermanent' => false,
+                'includeTemporary' => true,
+                'includeExpired' => true,
+            ]),
             includePermanent: false,
             includeTemporary: true,
             includeExpired: true,
