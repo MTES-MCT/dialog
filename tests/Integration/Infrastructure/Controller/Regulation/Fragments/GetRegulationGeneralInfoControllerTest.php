@@ -20,8 +20,10 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $this->assertSame('Title 3', $crawler->filter('h3')->text());
-        $this->assertSame(OrganizationFixture::SEINE_SAINT_DENIS_NAME, $crawler->filter('li')->eq(0)->text());
-        $this->assertSame('Title 3', $crawler->filter('li')->eq(2)->text());
+        $this->assertStringContainsString('Identifiant de l\'arrêté :', $crawler->filter('li')->eq(0)->text());
+        $this->assertStringContainsString(OrganizationFixture::SEINE_SAINT_DENIS_NAME, $crawler->filter('li')->eq(1)->text());
+        $this->assertStringContainsString('Objet de l\'arrêté :', $crawler->filter('li')->eq(3)->text());
+        $this->assertStringContainsString('Title 3', $crawler->filter('li')->eq(3)->text());
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_PERMANENT, $editForm->getUri());
         $this->assertSame('GET', $editForm->getMethod());
@@ -33,7 +35,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_LONG_DESCRIPTION . '/general_info');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Title 5 that is very long and will be...', $crawler->filter('h3')->text());
+        $this->assertSame('Title 5 that is very long and will be truncated in the general info fragment because it exceeds the maximum length allowed for display in this context and...', $crawler->filter('h3')->text());
     }
 
     public function testGetOtherCategoryTextDisplay(): void
@@ -42,7 +44,7 @@ final class GetRegulationGeneralInfoControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_OTHER_CATEGORY . '/general_info');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
-        $this->assertSame('Autre : Dérogation préfectorale', $crawler->filter('li')->eq(1)->text());
+        $this->assertStringContainsString('Autre : Dérogation préfectorale', $crawler->filter('li')->eq(2)->text());
     }
 
     public function testGetPublished(): void
