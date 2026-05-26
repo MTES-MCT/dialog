@@ -981,6 +981,14 @@
                 <source>regulation.location.raw_geojson.draw_line_map.clear.title</source>
                 <target>Supprimer tout le tracé</target>
             </trans-unit>
+            <trans-unit id="regulation.location.preview_map.display">
+                <source>regulation.location.preview_map.display</source>
+                <target>Afficher l'aperçu</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.preview_map.hide">
+                <source>regulation.location.preview_map.hide</source>
+                <target>Masquer l'aperçu</target>
+            </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>
                 <target>Revenir aux arrêtés</target>
