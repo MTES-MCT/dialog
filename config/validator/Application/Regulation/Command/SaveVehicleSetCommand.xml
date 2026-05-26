@@ -121,17 +121,26 @@
             </constraint>
             <constraint name="PositiveOrZero"></constraint>
             <constraint name="LessThanOrEqual">
-                <option name="value">100</option>
+                <option name="value">44</option>
             </constraint>
         </property>
         <property name="maxWidth">
             <constraint name="PositiveOrZero"></constraint>
+            <constraint name="LessThanOrEqual">
+                <option name="value">10</option>
+            </constraint>
         </property>
         <property name="maxLength">
             <constraint name="PositiveOrZero"></constraint>
+            <constraint name="LessThanOrEqual">
+                <option name="value">50</option>
+            </constraint>
         </property>
         <property name="maxHeight">
             <constraint name="PositiveOrZero"></constraint>
+            <constraint name="LessThanOrEqual">
+                <option name="value">10</option>
+            </constraint>
         </property>
     </class>
 </constraint-mapping>
