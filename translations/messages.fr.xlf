@@ -386,7 +386,7 @@
             </trans-unit>
             <trans-unit id="regulation.status_badge.published.hint">
                 <source>regulation.status_badge.published.hint</source>
-                <target>Données envoyées aux GPS</target>
+                <target>Données accessibles aux réutilisateurs (GPS...)</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.create">
                 <source>regulation.regulation_order_history.action.create</source>
