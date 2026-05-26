@@ -74,7 +74,7 @@
             <ul class="app-card__actions" id="app-card--with-head-background">
                 <li>
                     <form method="POST" action="{{ path('fragment_regulations_measure_duplicate', { regulationOrderRecordUuid: generalInfo.uuid,uuid: measure.uuid})}}">
-                        <button class="fr-btn fr-btn--tertiary fr-icon-x-file-copy-line">
+                        <button class="fr-btn fr-btn--tertiary fr-icon-x-file-copy-line" title="{{ 'common.duplicate'|trans }}" aria-label="{{ 'common.duplicate'|trans }}">
                         </button>
                         <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
                     </form>
