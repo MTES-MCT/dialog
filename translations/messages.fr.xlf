@@ -1635,6 +1635,10 @@
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>
             </trans-unit>
+            <trans-unit id="regulation.storage.delete_modal.title">
+                <source>regulation.storage.delete_modal.title</source>
+                <target>Supprimer le lien vers l'arrêté officiel ?</target>
+            </trans-unit>
             <trans-unit id="location.delete_modal.title">
                 <source>location.delete_modal.title</source>
                 <target>Supprimer cette localisation ?</target>
