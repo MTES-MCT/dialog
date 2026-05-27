@@ -1041,6 +1041,10 @@
                     dans cette copie de la réglementation.<![CDATA[</p>]]>
                 </target>
             </trans-unit>
+            <trans-unit id="measure.duplicated.success">
+                <source>measure.duplicated.success</source>
+                <target>La mesure a été dupliquée avec succès.</target>
+            </trans-unit>
             <trans-unit id="regulation.duplicated.identifier_error">
                 <source>regulation.duplicated.identifier_error</source>
                 <target>

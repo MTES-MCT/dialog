@@ -1,6 +1,9 @@
 <turbo-stream action="append" target="measure_list">
     <template>
-        <li>
+        <li class="fr-mx-n4v fr-mx-md-0" data-controller="viewport" data-viewport-target="scroll">
+            <div class="fr-alert fr-alert--success fr-alert--sm fr-mt-3w fr-mb-2w" role="status" data-test-flash-type="success" style="background-color: var(--background-default-grey);">
+                <p>{{ 'measure.duplicated.success'|trans }}</p>
+            </div>
             {% include 'regulation/fragments/_measure.html.twig' with { measure, generalInfo, canDelete, isReadOnly: false } only %}
         </li>
     </template>
