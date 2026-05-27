@@ -28,9 +28,11 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
 
         // General info
         $this->assertSame('Title 1', $generalInfo->filter('h3')->text());
-        $this->assertSame(OrganizationFixture::SEINE_SAINT_DENIS_NAME, $generalInfo->filter('li')->eq(0)->text());
-        $this->assertSame('Évènement', $generalInfo->filter('li')->eq(1)->text());
-        $this->assertSame('Title 1', $generalInfo->filter('li')->eq(2)->text());
+        $this->assertStringContainsString('Identifiant de l\'arrêté :', $generalInfo->filter('li')->eq(0)->text());
+        $this->assertStringContainsString(OrganizationFixture::SEINE_SAINT_DENIS_NAME, $generalInfo->filter('li')->eq(1)->text());
+        $this->assertStringContainsString('Évènement', $generalInfo->filter('li')->eq(2)->text());
+        $this->assertStringContainsString('Objet de l\'arrêté :', $generalInfo->filter('li')->eq(3)->text());
+        $this->assertStringContainsString('Title 1', $generalInfo->filter('li')->eq(3)->text());
         $editGeneralInfoForm = $generalInfo->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL, $editGeneralInfoForm->getUri());
         $this->assertSame('GET', $editGeneralInfoForm->getMethod());

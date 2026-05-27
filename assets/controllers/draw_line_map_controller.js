@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
 import { extractSingleGeometry } from '../maps/geojson';
-import { getMeasureTypeStyle } from '../maps/measure_type_styles';
+import { getMeasureTypeStyle, buildMeasurePointPaint } from '../maps/measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
@@ -443,21 +443,19 @@ export default class extends Controller {
     });
 
     this.#map.addSource(POINTS_SOURCE, { type: 'geojson', data: EMPTY_FC });
-    const pointColor = getMeasureTypeStyle(this.measureTypeValue).color;
+    const style = getMeasureTypeStyle(this.measureTypeValue);
     this.#map.addLayer({
       id: POINTS_LAYER,
       type: 'circle',
       source: POINTS_SOURCE,
       paint: {
+        ...buildMeasurePointPaint(style, { radius: 5 }),
         'circle-radius': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
           8,
           5,
         ],
-        'circle-color': pointColor,
-        'circle-stroke-color': '#ffffff',
-        'circle-stroke-width': 2,
       },
     });
 

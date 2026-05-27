@@ -31,7 +31,7 @@
 }
 
 .map-filter-label--parkingProhibited::after {
-    color: #000000;
+    color: #FA7A35;
 }
 
 .map-filter-label--noOvertaking::after {
