@@ -6,6 +6,34 @@
     position: relative;
 }
 
+.app-preview-map-toggle__btn {
+    &::before {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    &[aria-expanded='true']::before {
+        transform: rotate(180deg);
+    }
+}
+
+.app-preview-map-toggle__title {
+    color: var(--text-title-grey);
+}
+
+.app-preview-map-toggle__label-hide {
+    display: none;
+}
+
+.app-preview-map-toggle__btn[aria-expanded='true'] {
+    .app-preview-map-toggle__label-display {
+        display: none;
+    }
+
+    .app-preview-map-toggle__label-hide {
+        display: inline;
+    }
+}
+
 .location-preview-map-loader,
 .location-preview-map-message {
     position: absolute;

@@ -28,6 +28,7 @@ export default class extends Controller {
         toAbscissaField: String,
         isEntireStreetField: String,
         geometryField: String,
+        geometryFields: Array,
         measureType: { type: String, default: '' },
     };
 
@@ -179,26 +180,40 @@ export default class extends Controller {
     }
 
     #loadForRawGeoJSON() {
-        const field = document.getElementById(this.geometryFieldValue);
-        const raw = field?.value;
+        const fieldIds = this.geometryFieldsValue?.length
+            ? this.geometryFieldsValue
+            : (this.geometryFieldValue ? [this.geometryFieldValue] : []);
 
-        if (!raw) {
+        if (fieldIds.length === 0) {
             this.#hideMap();
             return;
         }
 
-        try {
-            const geojson = extractFirstGeometry(JSON.parse(raw));
+        const geometries = [];
 
-            if (!geojson) {
-                this.#hideMap();
-                return;
+        for (const id of fieldIds) {
+            const raw = document.getElementById(id)?.value;
+
+            if (!raw) continue;
+
+            try {
+                const geometry = extractFirstGeometry(JSON.parse(raw));
+                if (geometry) geometries.push(geometry);
+            } catch {
+                // Ignore invalid entries; keep displaying the rest.
             }
-
-            this.#displayGeometry(geojson);
-        } catch {
-            this.#hideMap();
         }
+
+        if (geometries.length === 0) {
+            this.#hideMap();
+            return;
+        }
+
+        const geojson = geometries.length === 1
+            ? geometries[0]
+            : { type: 'GeometryCollection', geometries };
+
+        this.#displayGeometry(geojson);
     }
 
     async #fetchAndDisplay(params) {

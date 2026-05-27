@@ -1,6 +1,10 @@
 // @ts-check
 
-import { getMeasureTypeStyle } from './measure_type_styles';
+import {
+    buildMeasureLineLayers,
+    buildMeasurePointPaint,
+    getMeasureTypeStyle,
+} from './measure_type_styles';
 import { toFeatureCollection } from './geojson';
 
 /**
@@ -41,7 +45,15 @@ export function addHouseNumbersLayer(map) {
 }
 
 /**
- * Adds a GeoJSON source and a line layer styled according to a measure type.
+ * Adds a GeoJSON source and the line layer(s) styled according to a measure
+ * type. All styling (color, dasharray, border, background, line-cap/join,
+ * zoom-based width) comes from `MEASURE_TYPE_STYLES` in
+ * `assets/maps/measure_type_styles.js` so the preview stays in sync with the
+ * main map.
+ *
+ * Several MapLibre layers may be added (border + background + main line) when
+ * the measure type style requires it. The `layerId` is used for the main line
+ * layer; additional layers use `<layerId>-background` / `<layerId>-border`.
  *
  * @param {import('maplibre-gl').Map} map
  * @param {Object} options
@@ -60,17 +72,26 @@ export function addMeasureLineLayer(map, { sourceId, layerId, measureType, data,
         data: data !== undefined ? toFeatureCollection(data) : { type: 'FeatureCollection', features: [] },
     });
 
-    map.addLayer({
-        id: layerId,
-        type: 'line',
-        source: sourceId,
-        ...(pointLayerId ? { filter: ['in', '$type', 'LineString', 'Polygon'] } : {}),
-        paint: {
-            'line-color': style.color,
-            'line-width': style.lineWidth,
-            'line-dasharray': style.dasharray,
-        },
+    const lineLayers = buildMeasureLineLayers(measureType, style, {
+        sourceId,
+        layerIdPrefix: layerId,
+        // The source is a GeoJSON whose features all belong to the same
+        // measure (no `measure_type` property to filter on). When we also
+        // render points, restrict the line layers to non-Point geometries.
+        filter: pointLayerId
+            ? /** @type {import('maplibre-gl').FilterSpecification} */ (['in', '$type', 'LineString', 'Polygon'])
+            : null,
     });
+
+    // The helper names layers `${layerIdPrefix}-${measureType}[-border|-background]`.
+    // For GeoJSON consumers we use the caller-supplied `layerId` as the public
+    // id of the main line layer (and `${layerId}-border` / `${layerId}-background`
+    // for the optional underlays), so the existing contract is preserved.
+    const generatedPrefix = `${layerId}-${measureType}`;
+    for (const layer of lineLayers) {
+        layer.id = layerId + layer.id.slice(generatedPrefix.length);
+        map.addLayer(layer);
+    }
 
     if (pointLayerId) {
         map.addLayer({
@@ -78,12 +99,7 @@ export function addMeasureLineLayer(map, { sourceId, layerId, measureType, data,
             type: 'circle',
             source: sourceId,
             filter: ['==', '$type', 'Point'],
-            paint: {
-                'circle-radius': 6,
-                'circle-color': style.color,
-                'circle-stroke-color': '#FFFFFF',
-                'circle-stroke-width': 2,
-            },
+            paint: buildMeasurePointPaint(style),
         });
     }
 }
