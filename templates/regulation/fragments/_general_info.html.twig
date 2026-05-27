@@ -3,24 +3,34 @@
         <div class="app-card__header">
             <span class="app-card__img fr-icon-article-line fr-x-icon-decorative--blue-france fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
-                {{ generalInfo.title|u.truncate(36, '...', false) }}
+                {{ generalInfo.title|u.truncate(152, '...', false) }}
             </h3>
         </div>
         <div class="app-card__content" style="--card-content-margin-desktop: var(--6w)">
-            <ul class="fr-ml-1w fr-my-0 fr-list">
-                <li>{{ generalInfo.organizationName }}</li>
+            <ul class="fr-raw-list d-stack fr-my-0" style="--stack-gap: var(--1w)">
+                <li class="fr-grid-row fr-x-gap-1w fr-icon-barcode-box-line fr-x-icon--dark-border">
+                    <span class="fr-x-grow fr-mb-1w"><span class="fr-text--bold">Identifiant de l'arrêté :</span> {{ generalInfo.identifier }}</span>
+                </li>
+
+                <li class="fr-grid-row fr-x-gap-1w fr-icon-government-line fr-x-icon--dark-border">
+                    <span class="fr-x-grow fr-mb-1w"><span class="fr-text--bold">Organisation :</span> {{ generalInfo.organizationName }}</span>
+                </li>
 
                 {% if generalInfo.subject %}
-                    <li>
-                        {% if generalInfo.subject == 'other' %}
-                            {{ 'regulation.subject.other'|trans }} : {{ generalInfo.otherCategoryText }}
-                        {% else %}
-                            {{ ('regulation.subject.' ~ generalInfo.subject)|trans }}
-                        {% endif %}
+                    <li class="fr-grid-row fr-x-gap-1w fr-icon-alert-warning-2-fill fr-x-icon--dark-border">
+                        <span class="fr-x-grow fr-mb-1w"><span class="fr-text--bold">Type de réglementation :</span> 
+                            {% if generalInfo.subject == 'other' %}
+                                {{ 'regulation.subject.other'|trans }} : {{ generalInfo.otherCategoryText }}
+                            {% else %}
+                                {{ ('regulation.subject.' ~ generalInfo.subject)|trans }}
+                            {% endif %}
+                        </span>
                     </li>
                 {% endif %}
 
-                <li>{{ generalInfo.title }}</li>
+                <li class="fr-grid-row fr-x-gap-1w fr-icon-alarm-warning-line fr-x-icon--dark-border">
+                    <span class="fr-x-grow fr-mb-1w"><span class="fr-text--bold">Objet de l'arrêté :</span> {{ generalInfo.title }}</span>
+                </li>
             </ul>
         </div>
 

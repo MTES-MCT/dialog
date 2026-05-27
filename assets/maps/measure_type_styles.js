@@ -115,12 +115,23 @@ export function buildLineWidthExpression(baseWidth = 4, firstStep = 15, secondSt
 }
 
 /** @typedef {import('maplibre-gl').LineLayerSpecification} LineLayerSpecification */
+/** @typedef {import('maplibre-gl').CircleLayerSpecification} CircleLayerSpecification */
 /** @typedef {import('maplibre-gl').FilterSpecification} FilterSpecification */
 
 /**
  * @typedef {Object} BuildMeasureLineLayersOptions
  * @property {string} sourceId - MapLibre source id (e.g. 'locations-source').
- * @property {string} sourceLayer - Vector tile source-layer name.
+ * @property {string} [sourceLayer] - Vector tile source-layer name. Omit for
+ *   GeoJSON sources.
+ * @property {string} [layerIdPrefix='locations-layer'] - Prefix used to build
+ *   layer ids (`<prefix>-<measureType>`, `<prefix>-<measureType>-background`,
+ *   `<prefix>-<measureType>-border`).
+ * @property {FilterSpecification | null} [filter] - Layer filter:
+ *   - omitted (`undefined`): defaults to `['==', ['get', 'measure_type'], measureType]`
+ *     (the convention for the vector-tile `locations-source`).
+ *   - `null`: no filter at all (useful when the GeoJSON source already only
+ *     contains the geometry to render).
+ *   - any other value: used as-is.
  * @property {number} [lineWidthFirstStep=15] - Zoom level for the first width step.
  * @property {number} [lineWidthSecondStep=18] - Zoom level for the second width step.
  */
@@ -139,28 +150,42 @@ export function buildMeasureLineLayers(measureType, style, options) {
     const {
         sourceId,
         sourceLayer,
+        layerIdPrefix = 'locations-layer',
+        filter,
         lineWidthFirstStep = 15,
         lineWidthSecondStep = 18,
     } = options;
 
-    const filter = /** @type {FilterSpecification} */ (
-        ['==', ['get', 'measure_type'], measureType]
-    );
+    const resolvedFilter = filter === null
+        ? undefined
+        : (filter ?? /** @type {FilterSpecification} */ (['==', ['get', 'measure_type'], measureType]));
     const lineWidthExpr = buildLineWidthExpression(style.lineWidth, lineWidthFirstStep, lineWidthSecondStep);
     const mainLayout = buildMeasureLineLayout(style);
+
+    /**
+     * @param {string} id
+     * @param {Record<string, unknown>} layout
+     * @param {Record<string, unknown>} paint
+     * @returns {LineLayerSpecification}
+     */
+    const makeLayer = (id, layout, paint) => /** @type {LineLayerSpecification} */ ({
+        id,
+        type: 'line',
+        source: sourceId,
+        ...(sourceLayer ? { 'source-layer': sourceLayer } : {}),
+        ...(resolvedFilter ? { filter: resolvedFilter } : {}),
+        layout,
+        paint,
+    });
 
     /** @type {LineLayerSpecification[]} */
     const layers = [];
 
     if (style.borderColor && style.borderWidth) {
-        layers.push({
-            'id': `locations-layer-${measureType}-border`,
-            'type': 'line',
-            'source': sourceId,
-            'source-layer': sourceLayer,
-            'filter': filter,
-            'layout': mainLayout,
-            'paint': {
+        layers.push(makeLayer(
+            `${layerIdPrefix}-${measureType}-border`,
+            mainLayout,
+            {
                 'line-color': style.borderColor,
                 'line-width': buildLineWidthExpression(
                     style.lineWidth + 2 * style.borderWidth,
@@ -168,37 +193,58 @@ export function buildMeasureLineLayers(measureType, style, options) {
                     lineWidthSecondStep,
                 ),
             },
-        });
+        ));
     }
 
     if (style.backgroundColor) {
-        layers.push({
-            'id': `locations-layer-${measureType}-background`,
-            'type': 'line',
-            'source': sourceId,
-            'source-layer': sourceLayer,
-            'filter': filter,
-            'layout': buildMeasureBackgroundLineLayout(style),
-            'paint': {
+        layers.push(makeLayer(
+            `${layerIdPrefix}-${measureType}-background`,
+            buildMeasureBackgroundLineLayout(style),
+            {
                 'line-color': style.backgroundColor,
                 'line-width': lineWidthExpr,
             },
-        });
+        ));
     }
 
-    layers.push({
-        'id': `locations-layer-${measureType}`,
-        'type': 'line',
-        'source': sourceId,
-        'source-layer': sourceLayer,
-        'filter': filter,
-        'layout': mainLayout,
-        'paint': {
+    layers.push(makeLayer(
+        `${layerIdPrefix}-${measureType}`,
+        mainLayout,
+        {
             'line-color': style.color,
             'line-dasharray': style.dasharray,
             'line-width': lineWidthExpr,
         },
-    });
+    ));
 
     return layers;
+}
+
+/**
+ * Build the `paint` block for a circle layer that visually matches a measure
+ * type's line styling — used for endpoints / vertices of a drawn or previewed
+ * geometry. Falls back to the border color when the main color is
+ * intentionally light (e.g. `parkingProhibited` is white over an orange
+ * border), so the point stays visible.
+ *
+ * @param {MeasureTypeStyle} style
+ * @param {Object} [options]
+ * @param {number | ExpressionSpecification} [options.radius=6]
+ * @param {number} [options.strokeWidth=2]
+ * @param {string} [options.strokeColor='#FFFFFF']
+ * @returns {CircleLayerSpecification['paint']}
+ */
+export function buildMeasurePointPaint(style, options = {}) {
+    const {
+        radius = 6,
+        strokeWidth = 2,
+        strokeColor = '#FFFFFF',
+    } = options;
+
+    return {
+        'circle-radius': radius,
+        'circle-color': style.borderColor ?? style.color,
+        'circle-stroke-color': strokeColor,
+        'circle-stroke-width': strokeWidth,
+    };
 }

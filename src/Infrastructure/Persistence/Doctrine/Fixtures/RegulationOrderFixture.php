@@ -55,7 +55,7 @@ final class RegulationOrderFixture extends Fixture implements DependentFixtureIn
         $regulationOrderNoLocations = new RegulationOrder(
             uuid: 'e589f277-ccd4-4364-967a-7e9db80e6d34',
             identifier: 'F2023/no-locations',
-            title: 'Title 5 that is very long and will be truncated',
+            title: 'Title 5 that is very long and will be truncated in the general info fragment because it exceeds the maximum length allowed for display in this context and we want to make sure that the truncation works as expected',
             category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
             subject: RegulationSubjectEnum::OTHER->value,
             otherCategoryText: 'Dérogation préfectorale',
