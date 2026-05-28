@@ -153,6 +153,39 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $endDate,
         );
 
+        $extraWhere = \sprintf(
+            'AND roc.status = :status AND m.type IN (:measureTypes) %s %s',
+            $regulationTypeWhereClause,
+            $measureDatesCondition,
+        );
+
+        return $this->fetchRestrictionsMVT($z, $x, $y, $extraWhere, $parameters, $types);
+    }
+
+    public function findRestrictionsAsMVTForRegulationOrderRecord(
+        string $regulationOrderRecordUuid,
+        int $z,
+        int $x,
+        int $y,
+    ): string {
+        return $this->fetchRestrictionsMVT(
+            $z,
+            $x,
+            $y,
+            'AND roc.uuid = :rocUuid',
+            ['rocUuid' => $regulationOrderRecordUuid],
+            [],
+        );
+    }
+
+    private function fetchRestrictionsMVT(
+        int $z,
+        int $x,
+        int $y,
+        string $extraWhere,
+        array $parameters,
+        array $types,
+    ): string {
         $parameters['z'] = $z;
         $parameters['x'] = $x;
         $parameters['y'] = $y;
@@ -185,18 +218,14 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
-                WHERE roc.status = :status
-                AND l.geometry IS NOT NULL
-                AND m.type IN (:measureTypes)
+                WHERE l.geometry IS NOT NULL
                 AND l.geometry && bounds.geom_4326
-                %s
                 %s
             )
             SELECT COALESCE(ST_AsMVT(mvtgeom.*, \'restrictions\', 4096, \'geom\'), \'\'::bytea) AS mvt
             FROM mvtgeom
             WHERE geom IS NOT NULL',
-            $regulationTypeWhereClause,
-            $measureDatesCondition,
+            $extraWhere,
         );
 
         $row = $this->getEntityManager()->getConnection()->fetchAssociative($sql, $parameters, $types);
