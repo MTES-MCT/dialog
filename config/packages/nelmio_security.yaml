@@ -2,6 +2,9 @@ nelmio_security:
     # prevents framing of the entire site
     clickjacking:
         paths:
+            # La carte publique peut être intégrée via iframe sur des sites tiers
+            # (fonctionnalité « Partager la carte » > « Intégrer la carte »).
+            '^/carte($|\?|/tiles/)': ALLOW
             '^/.*': DENY
 
     # disables content type sniffing for script resources

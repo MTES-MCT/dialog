@@ -56,6 +56,40 @@ final class OrganizationRepositoryTest extends AbstractWebTestCase
         $this->assertNull($bbox);
     }
 
+    public function testFindMapBboxByOrganizationUuidReturnsBboxWhenGeometryExists(): void
+    {
+        $bbox = $this->organizationRepository->findMapBboxByOrganizationUuid(
+            OrganizationFixture::SEINE_SAINT_DENIS_ID,
+        );
+
+        $this->assertInstanceOf(MapBboxView::class, $bbox);
+        $this->assertGreaterThan(2.0, $bbox->minLon);
+        $this->assertLessThan(3.0, $bbox->maxLon);
+        $this->assertGreaterThan(48.0, $bbox->minLat);
+        $this->assertLessThan(49.5, $bbox->maxLat);
+        $this->assertLessThan($bbox->maxLon, $bbox->minLon);
+        $this->assertLessThan($bbox->maxLat, $bbox->minLat);
+    }
+
+    public function testFindMapBboxByOrganizationUuidReturnsNullForUnknownOrganization(): void
+    {
+        $bbox = $this->organizationRepository->findMapBboxByOrganizationUuid(
+            '00000000-0000-0000-0000-000000000000',
+        );
+
+        $this->assertNull($bbox);
+    }
+
+    public function testFindMapBboxByOrganizationUuidReturnsNullWhenOrganizationHasNoGeometry(): void
+    {
+        // DialogOrg has no geometry attached in fixtures.
+        $bbox = $this->organizationRepository->findMapBboxByOrganizationUuid(
+            OrganizationFixture::DIALOG_ORG_ID,
+        );
+
+        $this->assertNull($bbox);
+    }
+
     public function testRefreshTopPublishedOrganizationsAndPickRandom(): void
     {
         $this->organizationRepository->refreshTopPublishedOrganizations();

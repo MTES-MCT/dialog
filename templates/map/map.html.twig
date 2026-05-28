@@ -80,7 +80,7 @@
 
             <d-map
                 id="map"
-                class="fr-col-12 fr-col-sm-8 fr-col-md-9"
+                class="fr-col-12 fr-col-sm-8 fr-col-md-9 d-map-with-share"
                 aria-hidden="true"
                 mapHeight="100%"
                 mapMinHeight="600px"
@@ -94,6 +94,12 @@
                 <p data-map-hidewhen="ready" class="fr-mt-5w fr-x-text--center">
                     {{ 'map.loading'|trans }}
                 </p>
+                {% if app.user %}
+                    {% include 'map/_share.html.twig' with {
+                        organizations: app.user.userOrganizations,
+                        carteUrl: url('app_carto'),
+                    } only %}
+                {% endif %}
             </d-map>
         </div>
     </div>

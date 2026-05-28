@@ -70,3 +70,26 @@ main {
         transform: rotate(360deg);
     }
 }
+
+.d-map-with-share {
+    position: relative;
+}
+
+.d-map-share {
+    display: contents;
+}
+
+.d-map-share__trigger {
+    position: absolute;
+    top: var(--1w);
+    right: var(--1w);
+    z-index: 2;
+    background-color: var(--background-default-grey, #fff);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.d-map-share__modal {
+    max-width: 640px;
+    width: 100%;
+}
+
