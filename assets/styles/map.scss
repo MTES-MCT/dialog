@@ -28,3 +28,45 @@ main {
 .d-map-popup .maplibregl-popup-content {
     padding: var(--2w);
 }
+
+.d-map-loader {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+.d-map-loader__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--1w);
+    padding: var(--1v) var(--2w);
+    background: var(--background-default-grey);
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(22, 22, 22, 0.2);
+    color: var(--text-default-grey);
+    font-size: 0.875rem;
+}
+
+.d-map-loader__spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--border-default-grey);
+    border-top-color: var(--text-action-high-blue-france);
+    border-radius: 50%;
+    animation: d-map-spin 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes d-map-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

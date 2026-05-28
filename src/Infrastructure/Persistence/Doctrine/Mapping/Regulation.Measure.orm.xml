@@ -3,6 +3,9 @@
   <entity
     name="App\Domain\Regulation\Measure"
     table="measure">
+    <indexes>
+      <index name="idx_measure_type" columns="type"/>
+    </indexes>
     <id name="uuid" type="guid" column="uuid"/>
     <field name="type" type="string" column="type" nullable="false" length="17"/>
     <field name="createdAt" type="datetimetz" column="created_at" nullable="false"/>
