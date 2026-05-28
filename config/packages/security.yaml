@@ -19,6 +19,11 @@ security:
             provider: api_client
             custom_authenticator:
                 - App\Infrastructure\Security\Authenticator\ApiClientAuthenticator
+        # Public MVT tiles: keep stateless so no PHPSESSID cookie is emitted,
+        # allowing shared caches (browser, CDN) to cache responses freely.
+        tiles:
+            pattern: ^/carte/tiles/
+            security: false
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false

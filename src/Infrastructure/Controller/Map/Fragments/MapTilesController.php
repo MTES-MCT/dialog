@@ -69,7 +69,10 @@ final class MapTilesController
             $mvt,
             headers: [
                 'Content-Type' => 'application/vnd.mapbox-vector-tile',
-                'Cache-Control' => 'public, max-age=300',
+                // The route is served by a stateless firewall (no PHPSESSID),
+                // so shared caches (browser, CDN, reverse proxy) can store this response.
+                // stale-while-revalidate keeps the UI snappy when a tile just expired.
+                'Cache-Control' => 'public, max-age=300, s-maxage=300, stale-while-revalidate=300',
             ],
         );
     }

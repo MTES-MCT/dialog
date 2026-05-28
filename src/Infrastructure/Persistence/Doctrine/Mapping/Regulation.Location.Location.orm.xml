@@ -5,6 +5,13 @@
   <entity
     name="App\Domain\Regulation\Location\Location"
     table="location">
+    <indexes>
+      <index name="idx_location_geometry" columns="geometry" flags="GIST">
+        <options>
+          <option name="where">(geometry IS NOT NULL)</option>
+        </options>
+      </index>
+    </indexes>
     <id name="uuid" type="guid" column="uuid" />
     <field name="roadType" type="string" column="road_type" nullable="false" length="40" />
     <field name="geometry" type="geojson_geometry" column="geometry" nullable="true">
