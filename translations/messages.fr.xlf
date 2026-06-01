@@ -2502,6 +2502,18 @@
                 <source>map.filter.temporaries</source>
                 <target>Restrictions temporaires</target>
             </trans-unit>
+            <trans-unit id="map.filters.title.status">
+                <source>map.filters.title.status</source>
+                <target>Statut des arrêtés</target>
+            </trans-unit>
+            <trans-unit id="map.filter.published">
+                <source>map.filter.published</source>
+                <target>Arrêtés publiés</target>
+            </trans-unit>
+            <trans-unit id="map.filter.drafts">
+                <source>map.filter.drafts</source>
+                <target>Arrêtés en brouillon</target>
+            </trans-unit>
             <trans-unit id="map.filter.type.alternateRoad">
                 <source>map.filter.type.alternateRoad</source>
                 <target>Circulation alternée</target>

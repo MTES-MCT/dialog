@@ -36,6 +36,28 @@ final class MapControllerTest extends AbstractWebTestCase
 
         // No initialBbox attribute when the user is anonymous and the cache table is empty.
         $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+
+        // The "Statut des arrêtés" filter (drafts) and the drafts endpoint are reserved to
+        // logged-in users: neither the checkboxes nor the draftsUrl attribute are rendered.
+        $this->assertCount(0, $crawler->filter('[name="map_filter_form[displayDrafts]"]'));
+        $this->assertNull($crawler->filter('d-map')->attr('draftsurl'));
+    }
+
+    public function testGetAuthenticatedShowsStatusFilter(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // The "Statut des arrêtés" section exposes the published + drafts checkboxes...
+        $this->assertCount(1, $crawler->filter('[name="map_filter_form[displayPublished]"]'));
+        $this->assertCount(1, $crawler->filter('[name="map_filter_form[displayDrafts]"]'));
+
+        // ...and the map element is given the authenticated drafts endpoint URL.
+        $draftsUrl = $crawler->filter('d-map')->attr('draftsurl');
+        $this->assertNotNull($draftsUrl);
+        $this->assertStringContainsString('/carte/drafts.geojson', $draftsUrl);
     }
 
     public function testGetAuthenticatedExposesInitialBbox(): void

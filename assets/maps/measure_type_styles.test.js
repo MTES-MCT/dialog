@@ -169,4 +169,31 @@ describe('buildMeasureLineLayers', () => {
         });
         expect(paintOf(layers[0])['line-width']).toEqual(['step', ['zoom'], 4, 10, 8, 14, 16]);
     });
+
+    it('does not emit line-opacity when the opacity option is omitted', () => {
+        const layers = buildMeasureLineLayers('speedLimitation', MEASURE_TYPE_STYLES.speedLimitation, baseOptions);
+        for (const layer of layers) {
+            expect(paintOf(layer)['line-opacity']).toBeUndefined();
+        }
+    });
+
+    it('applies the opacity option to every sub-layer (border, background, main)', () => {
+        const style = {
+            color: '#000',
+            dasharray: [1, 1],
+            lineWidth: 2,
+            backgroundColor: '#fff',
+            borderColor: '#f00',
+            borderWidth: 1,
+        };
+        const layers = buildMeasureLineLayers('draft', style, { ...baseOptions, opacity: 0.5 });
+        expect(layers.map((l) => l.id)).toEqual([
+            'locations-layer-draft-border',
+            'locations-layer-draft-background',
+            'locations-layer-draft',
+        ]);
+        for (const layer of layers) {
+            expect(paintOf(layer)['line-opacity']).toBe(0.5);
+        }
+    });
 });

@@ -10,6 +10,14 @@ import { MEASURE_TYPE_STYLES, buildMeasureLineLayers } from '../maps/measure_typ
  */
 const RESTRICTIONS_SOURCE_LAYER = 'restrictions';
 
+/** MapLibre source id holding the logged-in organization's draft regulations (GeoJSON). */
+const DRAFTS_SOURCE_ID = 'drafts-source';
+const DRAFTS_LAYER_PREFIX = 'drafts-layer';
+const DRAFTS_CLICK_ZONE_LAYER_ID = 'drafts-layer-click-zone';
+const PUBLISHED_CLICK_ZONE_LAYER_ID = 'locations-layer-click-zone';
+/** Opacity applied to draft traces so they read as "not yet published". */
+const DRAFTS_OPACITY = 0.5;
+
 class MapLibreMap {
     /** @type {string} */
     #locationPopupUrl;
@@ -30,6 +38,13 @@ class MapLibreMap {
     #loader;
 
     /**
+     * Base URL of the authenticated draft GeoJSON endpoint, or null when the user is not
+     * logged in (in which case the whole "Statut des arrêtés" feature is disabled).
+     * @type {string | null}
+     */
+    #draftsBaseUrl;
+
+    /**
      * @param {MapElement} mapElement
      * @param {HTMLElement} root
      * @param {string} height
@@ -38,6 +53,7 @@ class MapLibreMap {
      * @param {number} zoom
      * @param {string} locationPopupUrl
      * @param {[[number, number], [number, number]] | null} initialBbox
+     * @param {string | null} draftsBaseUrl
      */
     constructor(
         mapElement,
@@ -48,9 +64,11 @@ class MapLibreMap {
         zoom,
         locationPopupUrl,
         initialBbox,
+        draftsBaseUrl,
     ) {
         this.#locationPopupUrl = locationPopupUrl;
         this.#mapElement = mapElement;
+        this.#draftsBaseUrl = draftsBaseUrl;
 
         // Create a container for the map
         const mapContainer = document.createElement('div');
@@ -118,6 +136,11 @@ class MapLibreMap {
             map.on('load', () => {
                 map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
 
+                // Assigned below when the draft overlay is enabled (logged-in users). Reapplies the
+                // "Statut des arrêtés" filters (published visibility + draft fetch) on form changes.
+                /** @type {(() => void) | null} */
+                let syncStatusFilters = null;
+
                 map.addSource('locations-source', {
                     type: 'vector',
                     tiles: [this.#mapElement.getTilesUrl()],
@@ -133,6 +156,9 @@ class MapLibreMap {
                     const source = /** @type {maplibregl.VectorTileSource} */ (map.getSource('locations-source'));
                     if (source && typeof source.setTiles === 'function') {
                         source.setTiles([this.#mapElement.getTilesUrl()]);
+                    }
+                    if (syncStatusFilters) {
+                        syncStatusFilters();
                     }
                 });
 
@@ -207,6 +233,101 @@ class MapLibreMap {
                     map.getCanvas().style.cursor = '';
                 });
 
+                // "Statut des arrêtés" overlay (logged-in users only): the user's own organization
+                // drafts, served by a separate authenticated GeoJSON endpoint and drawn with the same
+                // per-measure-type styles at reduced opacity. The published path above is untouched.
+                if (this.#draftsBaseUrl) {
+                    map.addSource(DRAFTS_SOURCE_ID, {
+                        type: 'geojson',
+                        data: { type: 'FeatureCollection', features: [] },
+                    });
+
+                    const draftLayerIds = [];
+                    for (const [measureType, style] of Object.entries(MEASURE_TYPE_STYLES)) {
+                        const layers = buildMeasureLineLayers(measureType, style, {
+                            sourceId: DRAFTS_SOURCE_ID,
+                            layerIdPrefix: DRAFTS_LAYER_PREFIX,
+                            opacity: DRAFTS_OPACITY,
+                            lineWidthFirstStep,
+                            lineWidthSecondStep,
+                        });
+                        for (const layer of layers) {
+                            map.addLayer(layer);
+                            draftLayerIds.push(layer.id);
+                        }
+                    }
+
+                    // Invisible click-zone for drafts, mirroring the published one.
+                    map.addLayer({
+                        'id': DRAFTS_CLICK_ZONE_LAYER_ID,
+                        'type': 'line',
+                        'source': DRAFTS_SOURCE_ID,
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round',
+                        },
+                        'paint': {
+                            'line-color': '#000000',
+                            'line-width': ["step", ["zoom"], 12, lineWidthFirstStep, 16, lineWidthSecondStep, 20],
+                            'line-opacity': 0,
+                        },
+                    });
+
+                    map.on('click', DRAFTS_CLICK_ZONE_LAYER_ID, (event) => {
+                        if (!event.features) {
+                            return;
+                        }
+                        const { properties } = event.features[0];
+                        this.#openLocationPopup(event.lngLat.toArray(), properties.location_uuid);
+                    });
+                    map.on('mouseenter', DRAFTS_CLICK_ZONE_LAYER_ID, () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                    });
+                    map.on('mouseleave', DRAFTS_CLICK_ZONE_LAYER_ID, () => {
+                        map.getCanvas().style.cursor = '';
+                    });
+
+                    const publishedLayerIds = [...measureLayerIds, PUBLISHED_CLICK_ZONE_LAYER_ID];
+                    const draftAllLayerIds = [...draftLayerIds, DRAFTS_CLICK_ZONE_LAYER_ID];
+
+                    /**
+                     * @param {string[]} ids
+                     * @param {boolean} visible
+                     */
+                    const setLayersVisible = (ids, visible) => {
+                        for (const id of ids) {
+                            map.setLayoutProperty(id, 'visibility', visible ? 'visible' : 'none');
+                        }
+                    };
+
+                    // Read the two "Statut des arrêtés" checkboxes from the (already form-serialized)
+                    // tiles URL query string, toggle published visibility client-side, and (re)fetch
+                    // the org's drafts when their checkbox is on. An unchecked checkbox is simply
+                    // absent from the query string.
+                    syncStatusFilters = () => {
+                        const tilesUrl = this.#mapElement.getTilesUrl();
+                        const queryIndex = tilesUrl.indexOf('?');
+                        if (queryIndex === -1) {
+                            // Bare tile template (form not serialized yet): keep defaults.
+                            return;
+                        }
+                        const queryString = tilesUrl.slice(queryIndex + 1);
+                        const params = new URLSearchParams(queryString);
+                        const displayPublished = params.get('map_filter_form[displayPublished]') !== null;
+                        const displayDrafts = params.get('map_filter_form[displayDrafts]') !== null;
+
+                        setLayersVisible(publishedLayerIds, displayPublished);
+                        setLayersVisible(draftAllLayerIds, displayDrafts);
+
+                        if (displayDrafts) {
+                            this.#fetchDrafts(`${this.#draftsBaseUrl}?${queryString}`);
+                        }
+                    };
+
+                    // Apply the initial state (drafts off by default), then on every filter change.
+                    syncStatusFilters();
+                }
+
                 // The map is ready to be revealed
                 mapContainer.hidden = false;
 
@@ -222,6 +343,34 @@ class MapLibreMap {
         this.#prom.then(() => {
             callback(this.#map);
         });
+    }
+
+    /**
+     * Fetch the organization's draft regulations from the authenticated GeoJSON endpoint and
+     * feed them to the `drafts-source`. The loader is shown during the request and hidden again
+     * once it settles (mirroring the published-tiles loader behaviour).
+     * @param {string} url
+     */
+    #fetchDrafts(url) {
+        this.#loader.hidden = false;
+
+        fetch(url, { headers: { 'Accept': 'application/json' } })
+            .then((response) => (response.ok ? response.json() : null))
+            .then((data) => {
+                if (!data) {
+                    return;
+                }
+                const source = /** @type {maplibregl.GeoJSONSource} */ (this.#map.getSource(DRAFTS_SOURCE_ID));
+                if (source && typeof source.setData === 'function') {
+                    source.setData(data);
+                }
+            })
+            .catch(() => {
+                // Network/server error: keep whatever draft data is currently displayed.
+            })
+            .finally(() => {
+                this.#loader.hidden = this.#map.isSourceLoaded('locations-source');
+            });
     }
 
     /**
@@ -293,6 +442,10 @@ export class MapElement extends HTMLElement {
             }
         }
 
+        // Present only for logged-in users (see map.html.twig): base URL of the authenticated
+        // endpoint serving the organization's own drafts. Absent → the draft overlay is disabled.
+        const draftsBaseUrl = this.getAttribute('draftsUrl');
+
         const map = new MapLibreMap(
             this,
             this,
@@ -302,6 +455,7 @@ export class MapElement extends HTMLElement {
             mapZoom,
             locationPopupUrl,
             initialBbox,
+            draftsBaseUrl,
         );
 
         map.onReady((mapInstance) => {

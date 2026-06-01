@@ -7,7 +7,11 @@ namespace App\Infrastructure\Controller\Map\Fragments;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\Location\GetLocationByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,6 +23,8 @@ final class GetLocationController
     public function __construct(
         private \Twig\Environment $twig,
         private QueryBusInterface $queryBus,
+        private Security $security,
+        private CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
     ) {
     }
 
@@ -36,9 +42,23 @@ final class GetLocationController
         }
 
         $measure = $location->getMeasure();
-        $measureView = MeasureView::fromEntity($measure);
         $regulation = $measure->getRegulationOrder();
-        $regulationOrderRecordId = $regulation->getRegulationOrderRecord()->getUuid();
+        $regulationOrderRecord = $regulation->getRegulationOrderRecord();
+
+        // Draft regulations are private: only members of the owning organization may preview
+        // their locations on the map. For anyone else (anonymous or another organization), behave
+        // as if the location did not exist so we don't disclose the draft's existence.
+        if ($regulationOrderRecord->getStatus() === RegulationOrderRecordStatusEnum::DRAFT->value) {
+            $user = $this->security->getUser();
+            $organizationUuids = $user instanceof AbstractAuthenticatedUser ? $user->getUserOrganizationUuids() : [];
+
+            if (!$this->canOrganizationAccessToRegulation->isSatisfiedBy($regulationOrderRecord, $organizationUuids)) {
+                throw new NotFoundHttpException();
+            }
+        }
+
+        $measureView = MeasureView::fromEntity($measure);
+        $regulationOrderRecordId = $regulationOrderRecord->getUuid();
 
         return new Response(
             $this->twig->render(

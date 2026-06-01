@@ -51,6 +51,9 @@ security:
         - { path: '^/regulations/([0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$', methods: [GET], roles: PUBLIC_ACCESS }
         - { path: '^/regulations$', methods: [GET], roles: PUBLIC_ACCESS }
         - { path: ^/_fragment/map, roles: PUBLIC_ACCESS }
+        # Draft regulations on the map are private and organization-scoped (served as GeoJSON,
+        # not cached), unlike the public MVT tiles handled by the stateless `tiles` firewall.
+        - { path: ^/carte/drafts, roles: ROLE_USER }
         - { path: '^/(_fragment|regulations|feedback|mon-espace)', roles: ROLE_USER }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
