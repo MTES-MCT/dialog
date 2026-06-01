@@ -67,6 +67,7 @@ customElements.define('d-map-share', class extends HTMLElement {
     #openModal() {
         this.#linkInput.value = window.location.href;
         this.#modal.showModal();
+        requestAnimationFrame(() => this.#updateTabsHeight());
     }
 
     /** @param {string} name */
@@ -82,6 +83,15 @@ customElements.define('d-map-share', class extends HTMLElement {
             const isActive = panel.dataset.sharePanel === name;
             panel.classList.toggle('fr-tabs__panel--selected', isActive);
         });
+        this.#updateTabsHeight();
+    }
+
+    #updateTabsHeight() {
+        const tabsEl = /** @type {HTMLElement|null} */ (this.#modal.querySelector('.fr-tabs'));
+        const selectedPanel = /** @type {HTMLElement|null} */ (this.#modal.querySelector('.fr-tabs__panel--selected'));
+        const tabsList = /** @type {HTMLElement|null} */ (this.#modal.querySelector('.fr-tabs__list'));
+        if (!tabsEl || !selectedPanel || !tabsList) return;
+        tabsEl.style.setProperty('--tabs-height', `${tabsList.offsetHeight + selectedPanel.scrollHeight}px`);
     }
 
     #updateEmbed() {
@@ -91,6 +101,7 @@ customElements.define('d-map-share', class extends HTMLElement {
         const organizationUuid = this.#orgSelect.value;
         const absoluteCarteUrl = new URL(this.#carteUrl, window.location.origin);
         absoluteCarteUrl.searchParams.set('organizationUuid', organizationUuid);
+        absoluteCarteUrl.searchParams.set('embed', '1');
         const src = absoluteCarteUrl.toString();
         this.#embedInput.value = `<iframe src="${src}" width="800" height="600" frameborder="0" title="DiaLog"></iframe>`;
     }
@@ -106,9 +117,15 @@ customElements.define('d-map-share', class extends HTMLElement {
             // fallback: select the text so the user can copy manually
         }
         const feedback = /** @type {HTMLElement|null} */ (this.#modal.querySelector(`[data-share-role="${feedbackRole}"]`));
+        const labelRole = feedbackRole.replace('Feedback', 'Label');
+        const label = /** @type {HTMLElement|null} */ (this.#modal.querySelector(`[data-share-role="${labelRole}"]`));
         if (feedback) {
+            if (label) label.hidden = true;
             feedback.hidden = false;
-            setTimeout(() => { feedback.hidden = true; }, 2000);
+            setTimeout(() => {
+                feedback.hidden = true;
+                if (label) label.hidden = false;
+            }, 2000);
         }
     }
 });

@@ -88,8 +88,22 @@ main {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-.d-map-share__modal {
-    max-width: 640px;
+dialog.app-modal.d-map-share__modal {
+    max-width: 49.5rem;
     width: 100%;
+    height: fit-content;
 }
 
+dialog.app-modal .fr-tabs__panel {
+    transition: none;
+}
+
+.d-map-share__input-row {
+    display: flex;
+    align-items: center;
+    gap: var(--1w);
+}
+
+.d-map-share__embed-options {
+    width: 100%;
+}

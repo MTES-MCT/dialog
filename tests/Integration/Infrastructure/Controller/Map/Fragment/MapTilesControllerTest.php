@@ -17,7 +17,7 @@ final class MapTilesControllerTest extends AbstractWebTestCase
         $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
+        $this->assertSecurityHeadersWithoutFraming();
         $this->assertResponseHeaderSame('Content-Type', 'application/vnd.mapbox-vector-tile');
         $this->assertResponseHeaderSame('Cache-Control', 'max-age=300, public, s-maxage=300, stale-while-revalidate=300');
 

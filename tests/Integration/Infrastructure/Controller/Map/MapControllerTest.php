@@ -135,4 +135,19 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
     }
+
+    public function testGetEmbedHidesHeaderAndFooter(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?embed=1');
+
+        $this->assertResponseStatusCodeSame(200);
+        // Embed mode: neither the global header nor the footer are rendered.
+        $this->assertCount(0, $crawler->filter('header.fr-header'));
+        $this->assertCount(0, $crawler->filter('footer'));
+        // The map itself is still rendered.
+        $this->assertCount(1, $crawler->filter('d-map'));
+        // The "share" button is also hidden inside the iframe.
+        $this->assertCount(0, $crawler->filter('d-map-share'));
+    }
 }

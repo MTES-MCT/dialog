@@ -27,6 +27,7 @@
             <h1 id="map-share-modal-title" class="fr-h4">
                 {{ 'map.share.modal.title'|trans }}
             </h1>
+            <p>Partagez le lien vers la carte DiaLog ou copiez le code pour intégrer la carte dans votre site.</p>
 
             <div class="fr-tabs" data-share-role="tabs">
                 <ul class="fr-tabs__list" role="tablist" aria-label="{{ 'map.share.modal.title'|trans }}">
@@ -48,61 +49,67 @@
                         <label class="fr-label" for="map-share-link-input">
                             {{ 'map.share.link.label'|trans }}
                         </label>
-                        <input
-                            id="map-share-link-input"
-                            class="fr-input"
-                            type="text"
-                            readonly
-                            data-share-role="linkInput"
-                            value=""
-                        />
+                        <div class="d-map-share__input-row">
+                            <input
+                                id="map-share-link-input"
+                                class="fr-input"
+                                type="text"
+                                readonly
+                                data-share-role="linkInput"
+                                value=""
+                            />
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--tertiary-no-outline fr-icon-clipboard-line fr-btn--icon-left"
+                                data-share-role="copyLink"
+                            >
+                                <span data-share-role="copyLinkLabel">{{ 'map.share.copy'|trans }}</span>
+                                <span data-share-role="copyLinkFeedback" hidden>{{ 'map.share.copied'|trans }}</span>
+                            </button>
+                        </div>
                     </div>
-                    <button
-                        type="button"
-                        class="fr-btn fr-btn--secondary fr-icon-clipboard-line fr-btn--icon-left fr-mt-1w"
-                        data-share-role="copyLink"
-                    >
-                        {{ 'map.share.copy'|trans }}
-                    </button>
-                    <span class="fr-text--sm fr-ml-1w" data-share-role="copyLinkFeedback" hidden>{{ 'map.share.copied'|trans }}</span>
                 </div>
 
                 <div id="map-share-tab-embed-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="map-share-tab-embed" tabindex="0" data-share-panel="embed">
                     <p class="fr-text--sm">{{ 'map.share.embed.description'|trans }}</p>
-                    <div class="fr-select-group">
-                        <label class="fr-label" for="map-share-org-select">
-                            {{ 'map.share.embed.organization.label'|trans }}
-                        </label>
-                        <select
-                            id="map-share-org-select"
-                            class="fr-select"
-                            data-share-role="orgSelect"
+                    <div class='d-map-share__input-row'>
+                        <div class='d-map-share__embed-options'>
+                            <div class="fr-select-group">
+                                <label class="fr-label" for="map-share-org-select">
+                                    {{ 'map.share.embed.organization.label'|trans }}
+                                </label>
+                                <select
+                                    id="map-share-org-select"
+                                    class="fr-select"
+                                    data-share-role="orgSelect"
+                                >
+                                    {% for org in organizations %}
+                                        <option value="{{ org.uuid }}"{% if loop.first %} selected{% endif %}>{{ org.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="fr-input-group fr-mt-2w">
+                                <label class="fr-label" for="map-share-embed-code">
+                                    {{ 'map.share.embed.code.label'|trans }}
+                                </label>
+                                <textarea
+                                    id="map-share-embed-code"
+                                    class="fr-input"
+                                    rows="4"
+                                    readonly
+                                    data-share-role="embedInput"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            class="fr-btn fr-btn--tertiary-no-outline fr-icon-clipboard-line fr-btn--icon-left fr-mt-1w"
+                            data-share-role="copyEmbed"
                         >
-                            {% for org in organizations %}
-                                <option value="{{ org.uuid }}"{% if loop.first %} selected{% endif %}>{{ org.name }}</option>
-                            {% endfor %}
-                        </select>
+                            <span data-share-role="copyEmbedLabel">{{ 'map.share.copy'|trans }}</span>
+                            <span data-share-role="copyEmbedFeedback" hidden>{{ 'map.share.copied'|trans }}</span>
+                        </button>
                     </div>
-                    <div class="fr-input-group fr-mt-2w">
-                        <label class="fr-label" for="map-share-embed-code">
-                            {{ 'map.share.embed.code.label'|trans }}
-                        </label>
-                        <textarea
-                            id="map-share-embed-code"
-                            class="fr-input"
-                            rows="4"
-                            readonly
-                            data-share-role="embedInput"
-                        ></textarea>
-                    </div>
-                    <button
-                        type="button"
-                        class="fr-btn fr-btn--secondary fr-icon-clipboard-line fr-btn--icon-left fr-mt-1w"
-                        data-share-role="copyEmbed"
-                    >
-                        {{ 'map.share.copy'|trans }}
-                    </button>
-                    <span class="fr-text--sm fr-ml-1w" data-share-role="copyEmbedFeedback" hidden>{{ 'map.share.copied'|trans }}</span>
                 </div>
             </div>
         </form>

@@ -6,10 +6,9 @@ dialog.app-modal {
 
 @media (max-width: 768px) {
     dialog.app-modal {
-      width: 100%;
       height: auto;
     }
-  }
+}
 
 dialog.app-modal h1 {
     font-size: 1.5rem;
