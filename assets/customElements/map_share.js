@@ -83,7 +83,7 @@ customElements.define('d-map-share', class extends HTMLElement {
             const isActive = panel.dataset.sharePanel === name;
             panel.classList.toggle('fr-tabs__panel--selected', isActive);
         });
-        this.#updateTabsHeight();
+        requestAnimationFrame(() => this.#updateTabsHeight());
     }
 
     #updateTabsHeight() {
@@ -103,7 +103,7 @@ customElements.define('d-map-share', class extends HTMLElement {
         absoluteCarteUrl.searchParams.set('organizationUuid', organizationUuid);
         absoluteCarteUrl.searchParams.set('embed', '1');
         const src = absoluteCarteUrl.toString();
-        this.#embedInput.value = `<iframe src="${src}" width="800" height="600" frameborder="0" title="DiaLog"></iframe>`;
+        this.#embedInput.value = `<iframe src="${src}" width="1280" height="600" frameborder="0" title="DiaLog"></iframe>`;
     }
 
     /**

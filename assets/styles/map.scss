@@ -81,8 +81,8 @@ main {
 
 .d-map-share__trigger {
     position: absolute;
-    top: var(--1w);
-    right: var(--1w);
+    top: var(--2w);
+    right: var(--2w);
     z-index: 2;
     background-color: var(--background-default-grey, #fff);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
@@ -92,6 +92,7 @@ dialog.app-modal.d-map-share__modal {
     max-width: 49.5rem;
     width: 100%;
     height: fit-content;
+    padding-bottom: 4rem;
 }
 
 dialog.app-modal .fr-tabs__panel {
