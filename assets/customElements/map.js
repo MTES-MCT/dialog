@@ -26,6 +26,9 @@ class MapLibreMap {
     /** @type {MapElement} */
     #mapElement;
 
+    /** @type {HTMLElement} */
+    #loader;
+
     /**
      * @param {MapElement} mapElement
      * @param {HTMLElement} root
@@ -53,8 +56,20 @@ class MapLibreMap {
         const mapContainer = document.createElement('div');
         mapContainer.style.height = height;
         mapContainer.style.minHeight = minHeight;
+        mapContainer.style.position = 'relative'; // Anchor the absolutely-positioned loader overlay
         mapContainer.hidden = true; // Don't show an empty map
         root.appendChild(mapContainer);
+
+        // Loader overlay shown while restriction tiles are being fetched.
+        const loader = document.createElement('div');
+        loader.className = 'd-map-loader';
+        loader.hidden = true;
+        loader.innerHTML = '<div class="d-map-loader__chip" role="status" aria-live="polite">'
+            + '<span class="d-map-loader__spinner" aria-hidden="true"></span>'
+            + '<span>Chargement…</span>'
+            + '</div>';
+        mapContainer.appendChild(loader);
+        this.#loader = loader;
 
         /** @type {Partial<maplibregl.MapOptions>} */
         const mapOptions = {
@@ -118,6 +133,22 @@ class MapLibreMap {
                     const source = /** @type {maplibregl.VectorTileSource} */ (map.getSource('locations-source'));
                     if (source && typeof source.setTiles === 'function') {
                         source.setTiles([this.#mapElement.getTilesUrl()]);
+                    }
+                });
+
+                // Show the loader while restriction tiles are being fetched (initial load,
+                // pan/zoom, and filter changes — which trigger a tile refetch via setTiles).
+                const updateLoader = () => {
+                    this.#loader.hidden = map.isSourceLoaded('locations-source');
+                };
+                map.on('sourcedataloading', (event) => {
+                    if (event.sourceId === 'locations-source') {
+                        this.#loader.hidden = false;
+                    }
+                });
+                map.on('sourcedata', (event) => {
+                    if (event.sourceId === 'locations-source') {
+                        updateLoader();
                     }
                 });
 
