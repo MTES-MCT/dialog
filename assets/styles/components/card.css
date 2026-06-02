@@ -79,6 +79,7 @@
 
 .app-card__content {
     padding: var(--card-padding, 1.5rem);
+    padding-top: .5rem;
     grid-area: content;
     flex: 1;
     margin-inline: var(--card-content-margin, 0);

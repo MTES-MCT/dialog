@@ -46,12 +46,14 @@ describe('addMeasureLineLayer', () => {
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 'my-src',
             layerId: 'my-layer',
-            measureType: 'noEntry',
+            measureType: 'unknownMeasure',
             data,
         });
 
         expect(map.addSource).toHaveBeenCalledWith('my-src', { type: 'geojson', data });
 
+        // Default style has no border/background → a single line layer.
+        expect(map.addLayer).toHaveBeenCalledTimes(1);
         const layer = map.addLayer.mock.calls[0][0];
         expect(layer.id).toBe('my-layer');
         expect(layer.type).toBe('line');
@@ -64,7 +66,7 @@ describe('addMeasureLineLayer', () => {
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 's',
             layerId: 'l',
-            measureType: 'noEntry',
+            measureType: 'unknownMeasure',
         });
 
         const sourceConfig = map.addSource.mock.calls[0][1];
@@ -78,7 +80,7 @@ describe('addMeasureLineLayer', () => {
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 's',
             layerId: 'l',
-            measureType: 'noEntry',
+            measureType: 'unknownMeasure',
             data: point,
         });
 
@@ -94,21 +96,21 @@ describe('addMeasureLineLayer', () => {
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 's',
             layerId: 'l',
-            measureType: 'noEntry',
+            measureType: 'unknownMeasure',
         });
 
         expect(map.addLayer).toHaveBeenCalledTimes(1);
         expect(map.addLayer.mock.calls[0][0].filter).toBeUndefined();
     });
 
-    it('adds a point circle layer and filters the line layer when pointLayerId is given', () => {
+    it('adds a point circle layer and filters the line layers when pointLayerId is given', () => {
         const map = createMapMock();
 
         addMeasureLineLayer(/** @type {any} */ (map), {
             sourceId: 's',
             layerId: 'l',
             pointLayerId: 'p',
-            measureType: 'noEntry',
+            measureType: 'unknownMeasure',
         });
 
         expect(map.addLayer).toHaveBeenCalledTimes(2);
@@ -122,10 +124,10 @@ describe('addMeasureLineLayer', () => {
         expect(pointLayer.type).toBe('circle');
         expect(pointLayer.source).toBe('s');
         expect(pointLayer.filter).toEqual(['==', '$type', 'Point']);
-        expect(pointLayer.paint['circle-color']).toBe('#CE0500');
+        expect(pointLayer.paint['circle-color']).toBe('#000000');
     });
 
-    it('applies the measure type style (noEntry → red, dashed)', () => {
+    it('applies the measure type style (noEntry → red dashed line over a white background line)', () => {
         const map = createMapMock();
 
         addMeasureLineLayer(/** @type {any} */ (map), {
@@ -134,10 +136,56 @@ describe('addMeasureLineLayer', () => {
             measureType: 'noEntry',
         });
 
-        const layer = map.addLayer.mock.calls[0][0];
-        expect(layer.paint['line-color']).toBe('#CE0500');
-        expect(layer.paint['line-width']).toBe(4);
-        expect(layer.paint['line-dasharray']).toEqual([1, 1]);
+        // noEntry has a backgroundColor → 2 layers: background underlay + main dashed line.
+        expect(map.addLayer).toHaveBeenCalledTimes(2);
+
+        const background = map.addLayer.mock.calls[0][0];
+        expect(background.id).toBe('l-background');
+        expect(background.paint['line-color']).toBe('#FFFFFF');
+
+        const main = map.addLayer.mock.calls[1][0];
+        expect(main.id).toBe('l');
+        expect(main.paint['line-color']).toBe('#CE0500');
+        expect(main.paint['line-dasharray']).toEqual([1, 1]);
+        // Width is now a zoom-based step expression coming from
+        // buildLineWidthExpression — assert its shape rather than a scalar.
+        expect(main.paint['line-width']).toEqual(['step', ['zoom'], 4, 15, 8, 18, 16]);
+    });
+
+    it('applies the border underlay (parkingProhibited → white line with orange border)', () => {
+        const map = createMapMock();
+
+        addMeasureLineLayer(/** @type {any} */ (map), {
+            sourceId: 's',
+            layerId: 'l',
+            measureType: 'parkingProhibited',
+        });
+
+        // parkingProhibited has a borderColor → 2 layers: border underlay + main white line.
+        expect(map.addLayer).toHaveBeenCalledTimes(2);
+
+        const border = map.addLayer.mock.calls[0][0];
+        expect(border.id).toBe('l-border');
+        expect(border.paint['line-color']).toBe('#FA7A35');
+
+        const main = map.addLayer.mock.calls[1][0];
+        expect(main.id).toBe('l');
+        expect(main.paint['line-color']).toBe('#FFFFFF');
+    });
+
+    it('uses the border color as the point color when available (parkingProhibited)', () => {
+        const map = createMapMock();
+
+        addMeasureLineLayer(/** @type {any} */ (map), {
+            sourceId: 's',
+            layerId: 'l',
+            pointLayerId: 'p',
+            measureType: 'parkingProhibited',
+        });
+
+        const pointLayer = map.addLayer.mock.calls.at(-1)[0];
+        expect(pointLayer.id).toBe('p');
+        expect(pointLayer.paint['circle-color']).toBe('#FA7A35');
     });
 
     it('falls back to the default style for unknown measure types', () => {
@@ -149,9 +197,10 @@ describe('addMeasureLineLayer', () => {
             measureType: 'unknownMeasure',
         });
 
+        expect(map.addLayer).toHaveBeenCalledTimes(1);
         const layer = map.addLayer.mock.calls[0][0];
         expect(layer.paint['line-color']).toBe('#000000');
-        expect(layer.paint['line-width']).toBe(4);
+        expect(layer.paint['line-width']).toEqual(['step', ['zoom'], 4, 15, 8, 18, 16]);
         expect(layer.paint['line-dasharray']).toEqual([1, 0]);
     });
 });

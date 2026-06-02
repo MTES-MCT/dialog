@@ -386,7 +386,7 @@
             </trans-unit>
             <trans-unit id="regulation.status_badge.published.hint">
                 <source>regulation.status_badge.published.hint</source>
-                <target>Données envoyées aux GPS</target>
+                <target>Données accessibles aux réutilisateurs (GPS...)</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.create">
                 <source>regulation.regulation_order_history.action.create</source>
@@ -981,6 +981,14 @@
                 <source>regulation.location.raw_geojson.draw_line_map.clear.title</source>
                 <target>Supprimer tout le tracé</target>
             </trans-unit>
+            <trans-unit id="regulation.location.preview_map.display">
+                <source>regulation.location.preview_map.display</source>
+                <target>Afficher l'aperçu</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.preview_map.hide">
+                <source>regulation.location.preview_map.hide</source>
+                <target>Masquer l'aperçu</target>
+            </trans-unit>
             <trans-unit id="regulation.back">
                 <source>regulation.back</source>
                 <target>Revenir aux arrêtés</target>
@@ -1032,6 +1040,10 @@
                     <![CDATA[<p>]]>Vous pouvez modifier les informations que vous souhaitez
                     dans cette copie de la réglementation.<![CDATA[</p>]]>
                 </target>
+            </trans-unit>
+            <trans-unit id="measure.duplicated.success">
+                <source>measure.duplicated.success</source>
+                <target>La mesure a été dupliquée avec succès.</target>
             </trans-unit>
             <trans-unit id="regulation.duplicated.identifier_error">
                 <source>regulation.duplicated.identifier_error</source>
@@ -1634,6 +1646,10 @@
             <trans-unit id="regulation.delete_modal.title">
                 <source>regulation.delete_modal.title</source>
                 <target>Supprimer cet arrêté ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.storage.delete_modal.title">
+                <source>regulation.storage.delete_modal.title</source>
+                <target>Supprimer le lien vers l'arrêté officiel ?</target>
             </trans-unit>
             <trans-unit id="location.delete_modal.title">
                 <source>location.delete_modal.title</source>

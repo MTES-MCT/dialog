@@ -19,6 +19,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
@@ -58,10 +59,21 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
             throw new NotFoundHttpException();
         }
 
-        $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
-        $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrderRecord->getRegulationOrder(), ActionTypeEnum::UPDATE->value));
-
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+        try {
+            $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
+            $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrderRecord->getRegulationOrder(), ActionTypeEnum::UPDATE->value));
+        } catch (ValidationFailedException $e) {
+            return new Response(
+                $this->twig->render(
+                    name: 'regulation/fragments/_measure.duplicated_error.stream.html.twig',
+                    context: [
+                        'message' => $e->getViolations()[0]->getMessage(),
+                    ],
+                ),
+            );
+        }
 
         return new Response(
             $this->twig->render(
