@@ -25,6 +25,9 @@
                 </option>
             </constraint>
             <constraint name="Positive"></constraint>
+            <constraint name="LessThanOrEqual">
+                <option name="value">130</option>
+            </constraint>
         </property>
        <property name="vehicleSet">
             <constraint name="Valid"/>
