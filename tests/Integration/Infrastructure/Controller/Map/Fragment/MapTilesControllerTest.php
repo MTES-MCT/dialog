@@ -19,7 +19,7 @@ final class MapTilesControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertResponseHeaderSame('Content-Type', 'application/vnd.mapbox-vector-tile');
-        $this->assertResponseHeaderSame('Cache-Control', 'max-age=300, public');
+        $this->assertResponseHeaderSame('Cache-Control', 'max-age=300, public, s-maxage=300, stale-while-revalidate=300');
 
         // MVT is a non-empty binary blob.
         $this->assertNotSame('', $client->getResponse()->getContent());
