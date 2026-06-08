@@ -1,9 +1,20 @@
 .app-regulation-table th:nth-child(1) { width: 15%; }
 .app-regulation-table th:nth-child(2) { width: 25%; }
-.app-regulation-table th:nth-child(3) { width: 25%; }
+.app-regulation-table th:nth-child(3) { width: 22%; }
 .app-regulation-table th:nth-child(4) { width: 10%; }
 .app-regulation-table th:nth-child(5) { width: 15%; }
-.app-regulation-table th:nth-child(6) { width: 15%; }
+.app-regulation-table th:nth-child(6) { width: 18%; }
+
+/* Keep the row action icons (view / edit / delete) on a single line (issue #1884) */
+.app-regulation-table td .fr-btns-group {
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+    margin: 0;
+}
+
+.app-regulation-table td .fr-btns-group .fr-btn {
+    margin: 0;
+}
 
 .app-sort-header {
     display: inline-flex;
