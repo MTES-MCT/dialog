@@ -211,7 +211,7 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         $connection = $this->getEntityManager()->getConnection();
 
         $connection->transactional(function ($connection) use ($limit): void {
-            $connection->executeStatement('TRUNCATE TABLE top_published_organization');
+            $connection->executeStatement('DELETE FROM top_published_organization');
 
             $connection->executeStatement(
                 'INSERT INTO top_published_organization (organization_uuid, nb_published, min_lon, min_lat, max_lon, max_lat, refreshed_at)
