@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation\Internal;
 
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,7 +36,8 @@ final class MapPreviewController
         [$centerLon, $centerLat, $zoom] = $this->initialViewport($request->query->get('bounds'));
 
         $html = $this->twig->render('regulation/_internal_map_preview.html.twig', [
-            'geoJsonUrl' => \sprintf('/_internal/regulation-map/%s.geojson', $uuid),
+            // MapLibre replaces the literal `{z}/{x}/{y}` placeholders at runtime.
+            'tilesUrl' => \sprintf('/_internal/regulation-map/%s/tiles/{z}/{x}/{y}.mvt', $uuid),
             'mapCenterLon' => $centerLon,
             'mapCenterLat' => $centerLat,
             'mapZoom' => $zoom,
@@ -87,27 +87,29 @@ final class MapPreviewController
     }
 
     #[Route(
-        '/_internal/regulation-map/{uuid}.geojson',
-        name: 'app_regulation_internal_map_geojson',
-        requirements: ['uuid' => Requirement::UUID],
+        '/_internal/regulation-map/{uuid}/tiles/{z}/{x}/{y}.mvt',
+        name: 'app_regulation_internal_map_tiles',
+        requirements: [
+            'uuid' => Requirement::UUID,
+            'z' => '\d+',
+            'x' => '\d+',
+            'y' => '\d+',
+        ],
         methods: ['GET'],
     )]
-    public function geojson(string $uuid): JsonResponse
+    public function tiles(string $uuid, int $z, int $x, int $y): Response
     {
-        $rows = $this->locationRepository->findGeometriesForRegulationOrderRecord($uuid);
-        $features = [];
-
-        foreach ($rows as $row) {
-            $features[] = [
-                'type' => 'Feature',
-                'geometry' => json_decode($row['geometry'], true),
-                'properties' => ['measure_type' => $row['measure_type']],
-            ];
+        $maxIndex = (1 << $z) - 1;
+        if ($x < 0 || $x > $maxIndex || $y < 0 || $y > $maxIndex) {
+            return new Response('', Response::HTTP_NO_CONTENT);
         }
 
-        return new JsonResponse([
-            'type' => 'FeatureCollection',
-            'features' => $features,
-        ]);
+        $mvt = $this->locationRepository->findRestrictionsAsMVTForRegulationOrderRecord($uuid, $z, $x, $y);
+
+        if ($mvt === '') {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
+
+        return new Response($mvt, headers: ['Content-Type' => 'application/vnd.mapbox-vector-tile']);
     }
 }

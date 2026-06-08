@@ -49,6 +49,23 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#measure_form_maxSpeed_error')->text());
     }
 
+    public function testWithMaxSpeedTooHigh(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+        $form['measure_form[type]'] = 'speedLimitation';
+        $form['measure_form[maxSpeed]'] = '150';
+
+        $crawler = $client->submit($form);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Cette valeur doit être inférieure ou égale à 130.', $crawler->filter('#measure_form_maxSpeed_error')->text());
+    }
+
     public function testWithoutMaxSpeed(): void
     {
         $client = $this->login();
