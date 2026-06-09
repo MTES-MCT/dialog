@@ -199,7 +199,7 @@ class MapLibreMap {
                 // events still reach this layer's listeners.
                 map.addLayer(
                     {
-                        'id': 'locations-layer-click-zone',
+                        'id': PUBLISHED_CLICK_ZONE_LAYER_ID,
                         'type': 'line',
                         'source': 'locations-source',
                         'source-layer': RESTRICTIONS_SOURCE_LAYER,
@@ -217,7 +217,7 @@ class MapLibreMap {
                 );
 
                 // popup when clicking on a feature of the locations layer
-                map.on('click', 'locations-layer-click-zone', (event) => {
+                map.on('click', PUBLISHED_CLICK_ZONE_LAYER_ID, (event) => {
                     // When restrictions overlap, pick the topmost rendered measure
                     // feature so the popup matches the trace the user sees on top.
                     // event.features[0] comes from the invisible click-zone and does
@@ -232,10 +232,10 @@ class MapLibreMap {
                 });
 
                 // change the cursor when the mouse is over the locations layer
-                map.on('mouseenter', 'locations-layer-click-zone', () => {
+                map.on('mouseenter', PUBLISHED_CLICK_ZONE_LAYER_ID, () => {
                     map.getCanvas().style.cursor = 'pointer';
                 });
-                map.on('mouseleave', 'locations-layer-click-zone', () => {
+                map.on('mouseleave', PUBLISHED_CLICK_ZONE_LAYER_ID, () => {
                     map.getCanvas().style.cursor = '';
                 });
 
