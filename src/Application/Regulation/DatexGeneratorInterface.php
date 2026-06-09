@@ -9,4 +9,6 @@ interface DatexGeneratorInterface
     public function generate(): void;
 
     public function getCachedDatex(): string;
+
+    public function getCachedDatexSize(): int;
 }
