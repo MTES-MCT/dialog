@@ -59,6 +59,9 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ->leftJoin('p.timeSlots', 't')
             ->leftJoin('l.storageArea', 'sa')
             ->where('l.uuid = :uuid')
+            // The `periods` association has no mapped order: sort chronologically so the popup
+            // lists periods deterministically (oldest first) instead of in DB row order.
+            ->addOrderBy('p.startDateTime', 'ASC')
             ->setParameter('uuid', $uuid)
             ->getQuery()
             ->getOneOrNullResult()
@@ -71,6 +74,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
+        RegulationOrderRecordStatusEnum $status = RegulationOrderRecordStatusEnum::PUBLISHED,
+        array $organizationUuids = [],
     ): string {
         [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
             $includePermanentRegulations,
@@ -78,6 +83,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $measureTypes,
             $startDate,
             $endDate,
+            $status,
+            $organizationUuids,
         );
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
@@ -151,6 +158,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $measureTypes,
             $startDate,
             $endDate,
+            RegulationOrderRecordStatusEnum::PUBLISHED,
+            [],
         );
 
         $extraWhere = \sprintf(
@@ -241,6 +250,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     }
 
     /**
+     * @param string[] $organizationUuids
+     *
      * @return array{0: string, 1: string, 2: array<string, mixed>, 3: array<string, mixed>}
      */
     private function buildMapFilterSql(
@@ -249,9 +260,11 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         array $measureTypes,
         ?\DateTimeInterface $startDate,
         ?\DateTimeInterface $endDate,
+        RegulationOrderRecordStatusEnum $status,
+        array $organizationUuids,
     ): array {
         $parameters = [
-            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'status' => $status->value,
             'measureTypes' => $measureTypes,
         ];
 
@@ -269,6 +282,14 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
         } else {
             $regulationTypeWhereClause = 'AND FALSE';
+        }
+
+        // Restrict to the given organizations' regulation orders (e.g. to show an organization
+        // its own drafts). Empty array means no organization restriction (the public/published map).
+        if ($organizationUuids) {
+            $regulationTypeWhereClause .= ' AND roc.organization_uuid IN (:organizationUuids)';
+            $parameters['organizationUuids'] = $organizationUuids;
+            $types['organizationUuids'] = ArrayParameterType::STRING;
         }
 
         $measureDatesCondition = '';

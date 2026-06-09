@@ -134,6 +134,9 @@ export function buildLineWidthExpression(baseWidth = 4, firstStep = 15, secondSt
  *   - any other value: used as-is.
  * @property {number} [lineWidthFirstStep=15] - Zoom level for the first width step.
  * @property {number} [lineWidthSecondStep=18] - Zoom level for the second width step.
+ * @property {number} [opacity] - When set, applies this `line-opacity` to every sub-layer
+ *   (border, background, main) — e.g. 0.5 to render draft regulations at 50% transparency.
+ *   When omitted, no `line-opacity` is emitted (layers keep their default full opacity).
  */
 
 /**
@@ -154,6 +157,7 @@ export function buildMeasureLineLayers(measureType, style, options) {
         filter,
         lineWidthFirstStep = 15,
         lineWidthSecondStep = 18,
+        opacity,
     } = options;
 
     const resolvedFilter = filter === null
@@ -161,6 +165,9 @@ export function buildMeasureLineLayers(measureType, style, options) {
         : (filter ?? /** @type {FilterSpecification} */ (['==', ['get', 'measure_type'], measureType]));
     const lineWidthExpr = buildLineWidthExpression(style.lineWidth, lineWidthFirstStep, lineWidthSecondStep);
     const mainLayout = buildMeasureLineLayout(style);
+    // Only emit `line-opacity` when explicitly requested, so the default layers keep their
+    // exact previous paint (and existing tests/snapshots stay valid).
+    const opacityPaint = opacity === undefined ? {} : { 'line-opacity': opacity };
 
     /**
      * @param {string} id
@@ -192,6 +199,7 @@ export function buildMeasureLineLayers(measureType, style, options) {
                     lineWidthFirstStep,
                     lineWidthSecondStep,
                 ),
+                ...opacityPaint,
             },
         ));
     }
@@ -203,6 +211,7 @@ export function buildMeasureLineLayers(measureType, style, options) {
             {
                 'line-color': style.backgroundColor,
                 'line-width': lineWidthExpr,
+                ...opacityPaint,
             },
         ));
     }
@@ -214,6 +223,7 @@ export function buildMeasureLineLayers(measureType, style, options) {
             'line-color': style.color,
             'line-dasharray': style.dasharray,
             'line-width': lineWidthExpr,
+            ...opacityPaint,
         },
     ));
 
