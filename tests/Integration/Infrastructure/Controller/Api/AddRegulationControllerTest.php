@@ -179,6 +179,11 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'title' => 'Géocodage voie en échec',
             'measures' => [[
                 'type' => 'noEntry',
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => true,
+                ]],
                 'locations' => [[
                     'roadType' => 'lane',
                     'namedStreet' => [
@@ -227,6 +232,11 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             'title' => 'Hors périmètre org',
             'measures' => [[
                 'type' => 'noEntry',
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => true,
+                ]],
                 'locations' => [[
                     'roadType' => 'lane',
                     'namedStreet' => [
@@ -307,5 +317,53 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][1]['title']);
         $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale ou GeoJSON brut).', $data['violations'][2]['title']);
         $this->assertSame('La section de localisation doit correspondre à la valeur de type de voie (roadType).', $data['violations'][3]['title']);
+    }
+
+    public function testAddRegulationWithoutPeriods(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'API-PERIOD-0001',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Aucune période',
+            'measures' => [[
+                'type' => 'speedLimitation',
+                'maxSpeed' => 30,
+                'periods' => [],
+                'locations' => [[
+                    'roadType' => 'lane',
+                    'namedStreet' => [
+                        'cityCode' => '93070',
+                        'cityLabel' => 'saint ouen sur seine',
+                        'roadName' => 'rue eugène berthoud',
+                        'direction' => 'BOTH',
+                    ],
+                ]],
+            ]],
+        ];
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            json_encode($payload),
+        );
+
+        $this->assertResponseStatusCodeSame(422);
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertIsArray($data);
+        $this->assertSame(422, $data['status']);
+        $paths = array_map(static fn (array $v) => $v['propertyPath'], $data['violations']);
+        $this->assertContains('periods', $paths);
     }
 }

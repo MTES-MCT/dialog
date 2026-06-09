@@ -113,6 +113,10 @@ class AppExtension extends \Twig\Extension\AbstractExtension
             return 'critair';
         }
 
+        if ($value === 'localResident') {
+            return 'community';
+        }
+
         return $this->stringUtils->toKebabCase($value);
     }
 
