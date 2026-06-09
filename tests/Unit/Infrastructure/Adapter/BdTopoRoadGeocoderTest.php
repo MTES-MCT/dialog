@@ -155,69 +155,6 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->assertSame('{"type":"GeometryCollection","geometries":[]}', $this->roadGeocoder->findSectionsInArea('<geometry>'));
     }
 
-    public function testComputeRoadLineFromNameSuccess(): void
-    {
-        $roadName = 'Rue de la Paix';
-        $inseeCode = '75056';
-        $expectedGeometry = '{"type":"LineString","coordinates":[[2.3522,48.8566],[2.3523,48.8567]]}';
-
-        $this->conn
-            ->expects(self::once())
-            ->method('fetchAllAssociative')
-            ->willReturn([
-                [
-                    'geometry' => $expectedGeometry,
-                ],
-            ]);
-
-        $result = $this->roadGeocoder->computeRoadLineFromName($roadName, $inseeCode);
-
-        $this->assertSame($expectedGeometry, $result);
-    }
-
-    public function testComputeRoadLineFromNameNotFound(): void
-    {
-        $this->expectException(GeocodingFailureException::class);
-        $this->expectExceptionMessage("no result found for roadName='Unknown Street' and inseeCode='75056'");
-
-        $this->conn
-            ->expects(self::once())
-            ->method('fetchAllAssociative')
-            ->willReturn([]);
-
-        $this->roadGeocoder->computeRoadLineFromName('Unknown Street', '75056');
-    }
-
-    public function testComputeRoadLineFromNameEmptyGeometry(): void
-    {
-        $this->expectException(GeocodingFailureException::class);
-        $this->expectExceptionMessage("no result found for roadName='Rue de la Paix' and inseeCode='75056'");
-
-        $this->conn
-            ->expects(self::once())
-            ->method('fetchAllAssociative')
-            ->willReturn([
-                [
-                    'geometry' => null,
-                ],
-            ]);
-
-        $this->roadGeocoder->computeRoadLineFromName('Rue de la Paix', '75056');
-    }
-
-    public function testComputeRoadLineFromNameDatabaseError(): void
-    {
-        $this->expectException(GeocodingFailureException::class);
-        $this->expectExceptionMessage('Road line from name query has failed');
-
-        $this->conn
-            ->expects(self::once())
-            ->method('fetchAllAssociative')
-            ->willThrowException(new \RuntimeException('Database connection failed'));
-
-        $this->roadGeocoder->computeRoadLineFromName('Rue de la Paix', '75056');
-    }
-
     public function testFindNearbyStreetsUnexpectedError(): void
     {
         $this->expectException(GeocodingFailureException::class);

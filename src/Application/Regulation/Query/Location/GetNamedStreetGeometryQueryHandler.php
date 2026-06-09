@@ -58,10 +58,6 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             return $fullLaneGeometry;
         }
 
-        if (!$command->roadBanId) {
-            $command->roadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->roadName, $command->cityCode);
-        }
-
         return $this->laneSectionMaker->computeSection(
             $fullLaneGeometry,
             $command->roadBanId,
@@ -79,15 +75,14 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
 
     private function getFullGeometryLane(SaveNamedStreetCommand $command): string
     {
-        if ($command->roadBanId) {
-            return $this->roadGeocoder->computeRoadLine($command->roadBanId);
+        // On résout le roadBanId à partir du nom de voie quand il n'est pas fourni (cas de l'API)
+        // afin de calculer la géométrie exacte de la voie via computeRoadLine. Sans cela, on retombait
+        // sur une recherche par intersection géométrique qui incluait les tronçons des voies adjacentes.
+        if (!$command->roadBanId) {
+            $command->roadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->roadName, $command->cityCode);
         }
 
-        if ($command->fromRoadBanId) {
-            return $this->roadGeocoder->computeRoadLineFromName($command->fromRoadName, $command->cityCode);
-        }
-
-        return $this->roadGeocoder->computeRoadLineFromName($command->roadName, $command->cityCode);
+        return $this->roadGeocoder->computeRoadLine($command->roadBanId);
     }
 
     private function shouldRecomputeGeometry(GetNamedStreetGeometryQuery $query): bool

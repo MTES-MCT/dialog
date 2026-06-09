@@ -48,36 +48,6 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
-    // Utilisé uniquement dans l'API, car sur le web on a le roadBanId.
-    // On récupère les tronçons en utilisant une intersection géométrique avec voie_nommee.
-    public function computeRoadLineFromName(string $roadName, string $inseeCode): string
-    {
-        try {
-            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
-                <<<'SQL'
-                    SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(t.geometrie)))) AS geometry
-                    FROM troncon_de_route AS t
-                    INNER JOIN voie_nommee AS v ON ST_Intersects(t.geometrie, v.geometrie)
-                    WHERE f_normalize_accents(v.nom_voie_ban) = f_normalize_accents(:road_name)
-                    AND v.insee_commune = :insee_code
-                SQL,
-                [
-                    'road_name' => $roadName,
-                    'insee_code' => $inseeCode,
-                ],
-            );
-        } catch (\Exception $exc) {
-            throw new GeocodingFailureException(\sprintf('Road line from name query has failed: %s', $exc->getMessage()), previous: $exc);
-        }
-
-        if ($rows && $rows[0]['geometry']) {
-            return $rows[0]['geometry'];
-        }
-
-        $message = \sprintf("no result found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
-        throw new GeocodingFailureException($message);
-    }
-
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string
     {
         $roadBanId = $this->bdtopo2025Connection->fetchOne(
