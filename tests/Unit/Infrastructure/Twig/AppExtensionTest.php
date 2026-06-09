@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Twig;
 
+use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Infrastructure\Adapter\StringUtils;
@@ -30,7 +31,7 @@ class AppExtensionTest extends TestCase
 
     public function testGetFunctions(): void
     {
-        $this->assertCount(7, $this->extension->getFunctions());
+        $this->assertCount(8, $this->extension->getFunctions());
     }
 
     public function testGetFilters(): void
@@ -178,7 +179,43 @@ class AppExtensionTest extends TestCase
     {
         $this->assertSame('emergency-services', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::EMERGENCY_SERVICES->value));
         $this->assertSame('critair', $this->extension->getVehicleTypeIconName(CritairEnum::CRITAIR_4->value));
+        $this->assertSame('community', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::LOCAL_RESIDENT->value));
         $this->assertSame('', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::OTHER->value));
+    }
+
+    private function provideGetVehicleSetIconClass(): array
+    {
+        return [
+            'no restriction defaults to car' => [
+                new VehicleSetView([], [], []),
+                'fr-icon-car-line',
+            ],
+            'weight only -> heavy goods vehicle' => [
+                new VehicleSetView([], [], [['name' => 'weight', 'value' => 3.5]]),
+                'fr-icon-x-heavy-goods-vehicle',
+            ],
+            'dimensions only -> car' => [
+                new VehicleSetView([], [], [['name' => 'width', 'value' => 2.5]]),
+                'fr-icon-car-line',
+            ],
+            'weight + dimensions -> heavy goods vehicle (rule)' => [
+                new VehicleSetView([], [], [
+                    ['name' => 'weight', 'value' => 3.5],
+                    ['name' => 'height', 'value' => 4],
+                ]),
+                'fr-icon-x-heavy-goods-vehicle',
+            ],
+            'restricted type without weight -> car' => [
+                new VehicleSetView([['name' => VehicleTypeEnum::HAZARDOUS_MATERIALS->value]], [], []),
+                'fr-icon-car-line',
+            ],
+        ];
+    }
+
+    /** @dataProvider provideGetVehicleSetIconClass */
+    public function testGetVehicleSetIconClass(VehicleSetView $vehicleSet, string $expected): void
+    {
+        $this->assertSame($expected, $this->extension->getVehicleSetIconClass($vehicleSet));
     }
 
     protected function provideIsFieldsetError(): array

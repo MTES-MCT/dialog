@@ -25,6 +25,8 @@ enum VehicleTypeEnum: string
     case POLICE = 'police';
     // CUSTOM: mapped to DATEX II AccessCondition with accessConditionType=destinationTraffic
     case DESSERTE_LOCALE = 'desserteLocale';
+    // Mapped to DATEX II DriverCondition with driverCharacteristicsType=localResident
+    case LOCAL_RESIDENT = 'localResident';
 
     public static function restrictedCases(): array
     {
@@ -50,6 +52,7 @@ enum VehicleTypeEnum: string
             VehicleTypeEnum::CITY_LOGISTICS,
             VehicleTypeEnum::POLICE,
             VehicleTypeEnum::DESSERTE_LOCALE,
+            VehicleTypeEnum::LOCAL_RESIDENT,
             VehicleTypeEnum::OTHER,
         ];
     }

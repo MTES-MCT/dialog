@@ -168,6 +168,11 @@
                                                 <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
                                                 <accessConditionType>{{ vehicle.accessConditionType }}</accessConditionType>
                                             </conditions>
+                                        {% elseif vehicle.driverCharacteristic %}
+                                            <conditions xsi:type="DriverCondition">
+                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+                                                <driverCharacteristicsType>{{ vehicle.driverCharacteristic }}</driverCharacteristicsType>
+                                            </conditions>
                                         {% elseif vehicle.nonVehicularRoadUser %}
                                             <conditions xsi:type="NonVehicularRoadUserCondition">
                                                 <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>

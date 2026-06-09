@@ -215,9 +215,10 @@
                 {% include "common/confirmation_modal.html.twig" with {
                     id: 'regulation-publish-modal',
                     title: hasUnpublishedChanges ? 'regulation.publish_changes_modal.title'|trans : 'regulation.publish_modal.title'|trans,
+                    content: 'regulation.publish_modal.content'|trans,
                     buttons: [
                         { label: publishModalLabel, attr: {type: 'submit', class: 'fr-btn'} },
-                        { label: 'common.do_not_publish'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
+                        { label: 'common.cancel'|trans, attr: {value: 'close', class: 'fr-btn fr-btn--secondary'} },
                     ],
                 } only %}
             {% endif %}

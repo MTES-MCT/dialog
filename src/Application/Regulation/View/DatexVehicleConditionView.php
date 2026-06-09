@@ -14,6 +14,7 @@ final class DatexVehicleConditionView
     public ?string $emissionClassificationOther = null;
     public ?string $vehicleUsage = null;
     public ?string $accessConditionType = null;
+    public ?string $driverCharacteristic = null;
     public bool $isDangerousSubstances = false;
     public bool $isOther = false;
 
@@ -42,6 +43,9 @@ final class DatexVehicleConditionView
                 break;
             case VehicleTypeEnum::DESSERTE_LOCALE->value:
                 $this->accessConditionType = 'destinationTraffic';
+                break;
+            case VehicleTypeEnum::LOCAL_RESIDENT->value:
+                $this->driverCharacteristic = $vehicleType;
                 break;
             case CritairEnum::CRITAIR_0->value:
             case CritairEnum::CRITAIR_1->value:
