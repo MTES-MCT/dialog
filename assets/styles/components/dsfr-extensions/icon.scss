@@ -50,7 +50,9 @@
     'forbidden-circle',
     'noovertake-circle',
     'noparking-circle',
-    'speed-limitation-circle'
+    'speed-limitation-circle',
+    'community',
+    'draw-line'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
