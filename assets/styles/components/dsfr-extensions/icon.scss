@@ -45,7 +45,12 @@
     'city-logistics',
     'police',
     'desserte-locale',
-    'draw-line'
+    'draw-line',
+    'alternate-road-circle',
+    'forbidden-circle',
+    'noovertake-circle',
+    'noparking-circle',
+    'speed-limitation-circle'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');

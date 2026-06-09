@@ -1,11 +1,19 @@
 {% set uuid = measure.uuid %}
 {% set deleteCsrfToken = csrf_token('delete-measure') %}
 {% set duplicateCsrfToken = csrf_token('duplicate-measure') %}
+{% set measureIcons = {
+    alternateRoad: 'fr-icon-x-alternate-road-circle',
+    noEntry: 'fr-icon-x-forbidden-circle',
+    speedLimitation: 'fr-icon-x-speed-limitation-circle',
+    parkingProhibited: 'fr-icon-x-noparking-circle',
+    noOvertaking: 'fr-icon-x-noovertake-circle',
+} %}
+{% set measureIcon = measureIcons[measure.type]|default('fr-icon-x-alternate-road-circle') %}
 
 <turbo-frame id="block_measure_{{ uuid }}">
     <div class="app-card app-card--raised fr-mt-3w" data-testid="measure">
-        <div class="app-card__header app-card--with-background">
-            <span class="app-card__img fr-icon-x-restriction fr-x-icon--primary fr-x-icon--xl" aria-hidden="true"></span>
+        <div class="app-card__header app-card--measure-{{ measure.type }}">
+            <span class="app-card__img {{ measureIcon }} fr-x-icon--xl" aria-hidden="true"></span>
             <h3 class="app-card__title fr-h4 fr-mb-0">
                 {% include 'regulation/_measure_title.html.twig' with { measure } only %}
             </h3>
@@ -69,7 +77,7 @@
                             <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
                             <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
                         </button>
-                        <div class="fr-collapse" id="{{ previewMapAccordionId }}">
+                        <div class="fr-collapse fr-collapse--expanded" id="{{ previewMapAccordionId }}">
                             <div
                                 data-controller="location-preview-map"
                                 data-location-preview-map-road-type-value="rawGeoJSON"
@@ -84,11 +92,10 @@
             </div>
         </div>
         {% if not isReadOnly and (generalInfo.isSourceDialog or generalInfo.isDraft) %}
-            <ul class="app-card__actions" id="app-card--with-head-background">
+            <ul class="app-card__actions app-card--measure-{{ measure.type }}">
                 <li>
-                    <form method="POST" action="{{ path('fragment_regulations_measure_duplicate', { regulationOrderRecordUuid: generalInfo.uuid,uuid: measure.uuid})}}">
-                        <button class="fr-btn fr-btn--tertiary fr-icon-x-file-copy-line" title="{{ 'common.duplicate'|trans }}" aria-label="{{ 'common.duplicate'|trans }}">
-                        </button>
+                    <form method="POST" action="{{ path('fragment_regulations_measure_duplicate', { regulationOrderRecordUuid: generalInfo.uuid, uuid: measure.uuid})}}">
+                        <button class="fr-btn fr-btn--tertiary fr-icon-x-file-copy-line" title="{{ 'common.duplicate'|trans }}" aria-label="{{ 'common.duplicate'|trans }}"></button>
                         <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}" />
                     </form>
                 </li>

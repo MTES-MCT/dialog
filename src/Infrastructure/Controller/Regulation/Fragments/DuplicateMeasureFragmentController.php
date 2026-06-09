@@ -62,7 +62,7 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
         try {
-            $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
+            $duplicatedMeasure = $this->commandBus->handle(new DuplicateMeasureCommand($measure, $regulationOrderRecord));
             $this->commandBus->handle(new CreateRegulationOrderHistoryCommand($regulationOrderRecord->getRegulationOrder(), ActionTypeEnum::UPDATE->value));
         } catch (ValidationFailedException $e) {
             return new Response(
@@ -79,7 +79,7 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
             $this->twig->render(
                 name: 'regulation/fragments/_measure.duplicated.stream.html.twig',
                 context: [
-                    'measure' => MeasureView::fromEntity($measure),
+                    'measure' => MeasureView::fromEntity($duplicatedMeasure),
                     'generalInfo' => $generalInfo,
                     'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                     'regulationOrderRecordUuid' => $regulationOrderRecordUuid,

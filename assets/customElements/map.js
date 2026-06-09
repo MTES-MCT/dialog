@@ -192,11 +192,17 @@ class MapLibreMap {
 
                 // popup when clicking on a feature of the locations layer
                 map.on('click', 'locations-layer-click-zone', (event) => {
-                    if (!event.features) {
+                    // When restrictions overlap, pick the topmost rendered measure
+                    // feature so the popup matches the trace the user sees on top.
+                    // event.features[0] comes from the invisible click-zone and does
+                    // not follow the visual stacking order of the measure layers.
+                    // Fall back to it only when the click lands in a dash gap.
+                    const visibleFeatures = map.queryRenderedFeatures(event.point, { layers: measureLayerIds });
+                    const feature = visibleFeatures[0] ?? event.features?.[0];
+                    if (!feature) {
                         return;
                     }
-                    const { properties } = event.features[0];
-                    this.#openLocationPopup(event.lngLat.toArray(), properties.location_uuid);
+                    this.#openLocationPopup(event.lngLat.toArray(), feature.properties.location_uuid);
                 });
 
                 // change the cursor when the mouse is over the locations layer
