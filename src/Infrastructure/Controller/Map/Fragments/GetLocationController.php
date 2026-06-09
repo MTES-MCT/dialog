@@ -60,11 +60,19 @@ final class GetLocationController
         $measureView = MeasureView::fromEntity($measure);
         $regulationOrderRecordId = $regulationOrderRecord->getUuid();
 
+        $locationView = null;
+        foreach ($measureView->locations as $candidate) {
+            if ($candidate->uuid === $location->getUuid()) {
+                $locationView = $candidate;
+                break;
+            }
+        }
+
         return new Response(
             $this->twig->render(
                 name: 'map/fragments/location_popup.html.twig',
                 context: [
-                    'location' => $location,
+                    'location' => $locationView ?? $location,
                     'measure' => $measureView,
                     'regulation' => $regulation,
                     'regulationOrderRecordId' => $regulationOrderRecordId,
