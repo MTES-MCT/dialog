@@ -46,6 +46,24 @@ final class MapFilterFormType extends AbstractType
                 ],
             )
             ->add(
+                'displayPublished',
+                CheckboxType::class,
+                options: [
+                    'label' => 'map.filter.published',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
+                'displayDrafts',
+                CheckboxType::class,
+                options: [
+                    'label' => 'map.filter.drafts',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
                 'startDate',
                 DateType::class,
                 options: [

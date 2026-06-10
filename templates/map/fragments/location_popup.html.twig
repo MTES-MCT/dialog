@@ -19,7 +19,7 @@
         </li>
 
         <li class="fr-grid-row fr-x-gap-1w fr-text--sm">
-            <span class="fr-icon-car-line fr-x-icon--dark-border" aria-hidden="true"></span>
+            <span class="{{ app_vehicle_set_icon_class(measure.vehicleSet) }} fr-x-icon--dark-border" aria-hidden="true"></span>
             <span class="fr-x-grow">
                 {{ include('regulation/_vehicle_set.html.twig', { vehicleSet: measure.vehicleSet }, with_context = false)|trim|app_capfirst }}
             </span>

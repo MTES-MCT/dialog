@@ -17,6 +17,10 @@
             {{ title }}
         </h1>
 
+        {% if content is defined and content %}
+            <p>{{ content }}</p>
+        {% endif %}
+
         <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg">
             {% for button in buttons %}
                 {% set attr = ({'aria-controls': modalId})|merge(button.attr) %}

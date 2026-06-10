@@ -97,6 +97,45 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $this->assertSame($this->geometry, $result);
     }
 
+    public function testGetFullLaneWithoutRoadBanId(): void
+    {
+        // Cas API : pas de roadBanId fourni et voie entière (pas de bornes).
+        // Le roadBanId doit être résolu depuis le nom de voie afin de calculer la
+        // géométrie exacte de la voie, sans inclure les tronçons des voies adjacentes.
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('getRoadBanIdFromName')
+            ->with($this->roadName, $this->cityCode)
+            ->willReturn($this->roadBanId);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadBanId)
+            ->willReturn($this->geometry);
+
+        $this->laneSectionMaker
+            ->expects(self::never())
+            ->method('computeSection');
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = null;
+        $saveNamedStreetCommand->roadName = $this->roadName;
+
+        $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+
+        $this->assertSame($this->geometry, $result);
+    }
+
     public function testGetWithGeometry(): void
     {
         $location = $this->createMock(Location::class);
@@ -316,7 +355,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 
         $this->roadGeocoder
             ->expects(self::never())
-            ->method('computeRoadLineFromName');
+            ->method('computeRoadLine');
 
         $this->laneSectionMaker
             ->expects(self::never())
@@ -358,10 +397,18 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         ?string $fromRoadName,
         ?string $toRoadName,
     ): void {
+        // Quand le roadBanId n'est pas fourni (cas API), il est résolu à partir du nom de voie
+        // pour calculer la géométrie exacte de la voie via computeRoadLine.
         $this->roadGeocoder
             ->expects(self::atMost(1))
-            ->method('computeRoadLineFromName')
-            ->with($fromRoadName, $this->cityCode)
+            ->method('getRoadBanIdFromName')
+            ->with($this->roadName, $this->cityCode)
+            ->willReturn($this->roadBanId)
+        ;
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
         ;
 
         $this->laneSectionMaker

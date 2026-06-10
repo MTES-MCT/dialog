@@ -60,6 +60,19 @@ final class DatexVehicleConditionViewTest extends TestCase
         $this->assertTrue($view->isExempted);
     }
 
+    public function testLocalResidentMapsToDriverCharacteristic(): void
+    {
+        $view = new DatexVehicleConditionView(VehicleTypeEnum::LOCAL_RESIDENT->value, isExempted: true);
+
+        $this->assertSame('localResident', $view->driverCharacteristic);
+        $this->assertNull($view->type);
+        $this->assertNull($view->vehicleUsage);
+        $this->assertNull($view->nonVehicularRoadUser);
+        $this->assertNull($view->accessConditionType);
+        $this->assertFalse($view->isOther);
+        $this->assertTrue($view->isExempted);
+    }
+
     public function testCritair(): void
     {
         $view = new DatexVehicleConditionView(CritairEnum::CRITAIR_3->value);

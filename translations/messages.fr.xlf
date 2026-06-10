@@ -164,10 +164,6 @@
                 <source>common.publish</source>
                 <target>Publier</target>
             </trans-unit>
-            <trans-unit id="common.do_not_publish">
-                <source>common.do_not_publish</source>
-                <target>Ne pas publier</target>
-            </trans-unit>
             <trans-unit id="common.published">
                 <source>common.published</source>
                 <target>Publiée</target>
@@ -1024,6 +1020,10 @@
             <trans-unit id="regulation.publish_modal.title">
                 <source>regulation.publish_modal.title</source>
                 <target>Publier cet arrêté ?</target>
+            </trans-unit>
+            <trans-unit id="regulation.publish_modal.content">
+                <source>regulation.publish_modal.content</source>
+                <target>Les restrictions seront disponibles aux GPS et visibles sur la carte DiaLog.</target>
             </trans-unit>
             <trans-unit id="regulation.publish_changes">
                 <source>regulation.publish_changes</source>
@@ -2174,6 +2174,10 @@
                 <source>regulation.vehicle_set.type.desserteLocale</source>
                 <target>Desserte locale</target>
             </trans-unit>
+            <trans-unit id="regulation.vehicle_set.type.localResident">
+                <source>regulation.vehicle_set.type.localResident</source>
+                <target>Riverains</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicles.all">
                 <source>regulation.vehicles.all</source>
                 <target>pour tous les véhicules</target>
@@ -2501,6 +2505,18 @@
             <trans-unit id="map.filter.temporaries">
                 <source>map.filter.temporaries</source>
                 <target>Restrictions temporaires</target>
+            </trans-unit>
+            <trans-unit id="map.filters.title.status">
+                <source>map.filters.title.status</source>
+                <target>Statut des arrêtés</target>
+            </trans-unit>
+            <trans-unit id="map.filter.published">
+                <source>map.filter.published</source>
+                <target>Arrêtés publiés</target>
+            </trans-unit>
+            <trans-unit id="map.filter.drafts">
+                <source>map.filter.drafts</source>
+                <target>Arrêtés en brouillon</target>
             </trans-unit>
             <trans-unit id="map.filter.type.alternateRoad">
                 <source>map.filter.type.alternateRoad</source>

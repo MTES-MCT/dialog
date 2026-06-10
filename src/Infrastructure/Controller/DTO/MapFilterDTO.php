@@ -10,6 +10,10 @@ final class MapFilterDTO
 {
     public bool $displayPermanentRegulations = true;
     public bool $displayTemporaryRegulations = true;
+    // "Statut des arrêtés" filter (logged-in users only): published shown by default,
+    // the organization's own drafts hidden by default.
+    public bool $displayPublished = true;
+    public bool $displayDrafts = false;
     public array $measureTypes = [
         MeasureTypeEnum::NO_ENTRY->value,
     ];
