@@ -104,8 +104,8 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | Variable d'environnement | Description | Valeur par défaut | Notes |
 |--------------------------|-------------|--------|-------|
 | `API_ADRESSE_BASE_URL` | URL de l'API de géocodage IGN (anciennement API Adresse) | `https://data.geopf.fr/geocodage` | L'API a été [transférée à l'IGN](https://adresse.data.gouv.fr/blog/lapi-adresse-de-la-base-adresse-nationale-est-transferee-a-lign) en 2025. |
-| `BDTOPO_2025_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
-| `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL à notre [hébergement BD TOPO](../tools/bdtopo.md) (legacy) | _(Obligatoire)_ | En développement, à récupérer auprès d'un membre de l'équipe |
+| `BDTOPO_DATABASE_URL` | URL de connexion PostgreSQL de la base BD TOPO actuellement servie par l'application | _(Obligatoire)_ | En production, peut pointer vers `BDTOPO_2025_DATABASE_URL` ou `BDTOPO_2025_2_DATABASE_URL` selon la base active |
+| `BDTOPO_2025_DATABASE_URL` | URL de connexion PostgreSQL à une instance physique BD TOPO | _(Obligatoire)_ | Utilisée avec `BDTOPO_2025_2_DATABASE_URL` pour gérer l'alternance des bases |
 | `APP_EUDONET_PARIS_BASE_URL` | URL de l'API Eudonet Paris | https://eudonet-partage.apps.paris.fr | |
 | `APP_EUDONET_PARIS_ORG_ID` | Utiliser l'UUID de l'organisation Ville de Paris | _Vide_ | |
 | `APP_JOP_ORG_ID` | UUID de l'organisation où intégrer les données JOP | _Vide_ | |
