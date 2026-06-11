@@ -67,6 +67,11 @@ class RegulationOrder
         }
     }
 
+    public function removeMeasure(Measure $measure): void
+    {
+        $this->measures->removeElement($measure);
+    }
+
     public function getRegulationOrderRecord(): ?RegulationOrderRecord
     {
         return $this->regulationOrderRecord;
