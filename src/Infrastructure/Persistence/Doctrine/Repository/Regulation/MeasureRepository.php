@@ -38,7 +38,44 @@ final class MeasureRepository extends ServiceEntityRepository implements Measure
 
     public function delete(Measure $measure): void
     {
-        $this->getEntityManager()->remove($measure);
+        $em = $this->getEntityManager();
+        $em->remove($measure);
+
+        // Locations, periods and vehicle set still hold a reference to the just-deleted Measure object.
+        // Their rows are removed by the database (ON DELETE CASCADE) ; detach them to prevent
+        // Doctrine from complaining about managed entities referencing a removed one in later flushes.
+
+        foreach ($measure->getLocations() as $location) {
+            if ($ns = $location->getNamedStreet()) {
+                $em->detach($ns);
+            }
+
+            if ($nr = $location->getNumberedRoad()) {
+                $em->detach($nr);
+            }
+
+            if ($rg = $location->getRawGeoJSON()) {
+                $em->detach($rg);
+            }
+
+            $em->detach($location);
+        }
+
+        foreach ($measure->getPeriods() as $period) {
+            if ($dailyRange = $period->getDailyRange()) {
+                $em->detach($dailyRange);
+            }
+
+            foreach ($period->getTimeSlots() as $timeSlot) {
+                $em->detach($timeSlot);
+            }
+
+            $em->detach($period);
+        }
+
+        if ($vehicleSet = $measure->getVehicleSet()) {
+            $em->detach($vehicleSet);
+        }
     }
 
     public function findByRegulationOrderRecordUuid(string $uuid): array
