@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Repository;
 
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 
 interface LocationRepositoryInterface
@@ -14,12 +15,19 @@ interface LocationRepositoryInterface
 
     public function findOneByUuid(string $uuid): ?Location;
 
+    /**
+     * @param string[] $organizationUuids when non-empty, restricts the result to the regulation
+     *                                    orders owned by these organizations (used to display an
+     *                                    organization's own drafts on the map)
+     */
     public function findAllForMapAsGeoJSON(
         bool $includePermanentRegulations = false,
         bool $includeTemporaryRegulations = false,
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
+        RegulationOrderRecordStatusEnum $status = RegulationOrderRecordStatusEnum::PUBLISHED,
+        array $organizationUuids = [],
     ): string;
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array;

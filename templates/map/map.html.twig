@@ -53,6 +53,18 @@
                             {{ form_row(form.displayPermanentRegulations, {group_class: 'fr-checkbox-group', row_attr: {class: 'fr-mb-2w'}}) }}
                             {{ form_row(form.displayTemporaryRegulations, {group_class: 'fr-checkbox-group'}) }}
 
+                            {% if app.user %}
+                                <h4 class="fr-h6 fr-mt-3w fr-mb-2w">{{ 'map.filters.title.status'|trans }}</h4>
+                                {{ form_row(form.displayPublished, {group_class: 'fr-checkbox-group', row_attr: {class: 'fr-mb-2w'}}) }}
+                                {{ form_row(form.displayDrafts, {group_class: 'fr-checkbox-group'}) }}
+                            {% else %}
+                                {# "Statut des arrêtés" is reserved to logged-in users. Mark the fields
+                                   as rendered so form_end() does not auto-render them (unstyled) for
+                                   anonymous visitors — while still letting it render the CSRF token. #}
+                                {% do form.displayPublished.setRendered %}
+                                {% do form.displayDrafts.setRendered %}
+                            {% endif %}
+
                             <h4 class="fr-h6 fr-mt-3w fr-mb-2w">{{ 'map.filters.title.application.period'|trans }}</h4>
                             {{ form_row(form.startDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
                             {{ form_row(form.endDate, {group_class: 'fr-input-group', widget_class: 'fr-input'}) }}
@@ -76,6 +88,7 @@
                 mapZoom="5"
                 tilesUrl="{{ tilesUrlTemplate }}"
                 {% if initialBbox %}initialBbox="{{ initialBbox|json_encode }}"{% endif %}
+                {% if app.user %}draftsUrl="{{ path('app_carto_drafts_data') }}"{% endif %}
                 locationPopupUrl="{{ path('fragment_map_location') }}"
             >
                 <p data-map-hidewhen="ready" class="fr-mt-5w fr-x-text--center">

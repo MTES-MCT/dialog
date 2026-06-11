@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Map\Fragment;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class GetLocationControllerTest extends AbstractWebTestCase
@@ -34,6 +35,34 @@ final class GetLocationControllerTest extends AbstractWebTestCase
     {
         $client = static::createClient();
         $client->request('GET', '/map/fragments/location/' . LocationFixture::UUID_DOES_NOT_EXIST);
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testDraftLocationPopupHiddenFromAnonymous(): void
+    {
+        // UUID_TYPICAL belongs to a DRAFT regulation order (seineSaintDenisOrg). Drafts are private:
+        // an anonymous visitor must not be able to read the draft's details, even with the UUID.
+        $client = static::createClient();
+        $client->request('GET', '/map/fragments/location/' . LocationFixture::UUID_TYPICAL);
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testDraftLocationPopupVisibleToOwningOrganization(): void
+    {
+        // department93User belongs to seineSaintDenisOrg, the owner of the draft.
+        $client = $this->login(UserFixture::DEPARTMENT_93_USER_EMAIL);
+        $client->request('GET', '/map/fragments/location/' . LocationFixture::UUID_TYPICAL);
+
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testDraftLocationPopupHiddenFromOtherOrganization(): void
+    {
+        // otherOrgUser (regionIdfOrg / saintOuenOrg) is not a member of the draft's organization.
+        $client = $this->login(UserFixture::OTHER_ORG_USER_EMAIL);
+        $client->request('GET', '/map/fragments/location/' . LocationFixture::UUID_TYPICAL);
 
         $this->assertResponseStatusCodeSame(404);
     }

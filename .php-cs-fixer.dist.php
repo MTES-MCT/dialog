@@ -8,6 +8,8 @@ $finder = (new PhpCsFixer\Finder())
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
+    // Ignore les fichiers git-ignored (ex: config/reference.php auto-généré par Symfony)
+    ->ignoreVCSIgnored(true)
 ;
 
 return (new PhpCsFixer\Config())
