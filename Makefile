@@ -378,7 +378,30 @@ scalingo-node-postbuild: ## Scalingo postbuild hook for the Node buildpack
 scalingo-postdeploy: ## Scalingo postdeploy hook
 	@echo 'Executing migrations...'
 	php bin/console doctrine:migrations:migrate --no-interaction
-	@echo 'Syncing team admins...'
-	php bin/console app:team:sync-admins
 	@echo 'Update top organizations'
 	php bin/console app:map:refresh-top-published-organizations
+	@echo 'Setup BD dump'
+	$(MAKE) scalingo-review-app-init
+
+##
+## ----------------
+## Hooks Scalingo
+## ----------------
+##
+
+scalingo-restore-from-prod: ## Restore prod data into the current Scalingo app and anonymize (run as one-off)
+	python3 tools/restore_from_prod.py --target remote
+
+scalingo-review-app-init: ## Initial deploy hook for review apps: restore + anonymize prod data
+	@if [ "$$IS_PROD" = "true" ]; then \
+		echo 'IS_PROD=true : skip restore, deploiement standard.'; \
+	elif [ "$$BASE_URL" = "https://dialog.beta.gouv.fr" ]; then \
+		echo 'BASE_URL correspond a la prod : skip restore, deploiement standard.'; \
+	elif [ -z "$$SCALINGO_API_TOKEN" ]; then \
+		echo 'SCALINGO_API_TOKEN absent : skip restore, deploiement standard.'; \
+	else \
+		python3 tools/restore_from_prod.py --target remote; \
+	fi
+
+restore-from-prod: ## Restore prod data into the local Docker database (anonymized).
+	python3 tools/restore_from_prod.py --target local
