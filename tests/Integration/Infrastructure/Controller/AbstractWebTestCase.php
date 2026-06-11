@@ -39,6 +39,19 @@ abstract class AbstractWebTestCase extends WebTestCase
         $this->assertResponseHasHeader('Content-Security-Policy');
     }
 
+    /**
+     * Same as {@see assertSecurityHeaders()} but without asserting `X-Frame-Options: DENY`,
+     * for routes that are explicitly allowed to be embedded as an iframe (e.g. /carte).
+     */
+    protected function assertSecurityHeadersWithoutFraming(): void
+    {
+        $this->assertResponseHeaderSame('X-XSS-Protection', '1; mode=block');
+        $this->assertResponseHeaderNotSame('X-Frame-Options', 'DENY');
+        $this->assertResponseHeaderSame('X-Content-Type-Options', 'nosniff');
+        $this->assertResponseHasHeader('X-Content-Security-Policy');
+        $this->assertResponseHasHeader('Content-Security-Policy');
+    }
+
     protected function assertNavStructure(array $expectedStructure, Crawler $crawler): void
     {
         $actualStructure = $crawler

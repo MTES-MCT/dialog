@@ -2562,6 +2562,50 @@
                 <source>map.location.popup.details</source>
                 <target>Voir les détails</target>
             </trans-unit>
+            <trans-unit id="map.share.button">
+                <source>map.share.button</source>
+                <target>Partager</target>
+            </trans-unit>
+            <trans-unit id="map.share.modal.title">
+                <source>map.share.modal.title</source>
+                <target>Partager la carte</target>
+            </trans-unit>
+            <trans-unit id="map.share.tab.link">
+                <source>map.share.tab.link</source>
+                <target>Partager un lien</target>
+            </trans-unit>
+            <trans-unit id="map.share.tab.embed">
+                <source>map.share.tab.embed</source>
+                <target>Intégrer la carte</target>
+            </trans-unit>
+            <trans-unit id="map.share.link.description">
+                <source>map.share.link.description</source>
+                <target>Copiez ce lien pour partager la carte avec ses paramètres actuels (position, zoom, filtres).</target>
+            </trans-unit>
+            <trans-unit id="map.share.link.label">
+                <source>map.share.link.label</source>
+                <target>Lien de la carte</target>
+            </trans-unit>
+            <trans-unit id="map.share.embed.description">
+                <source>map.share.embed.description</source>
+                <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur l’organisation sélectionnée.</target>
+            </trans-unit>
+            <trans-unit id="map.share.embed.organization.label">
+                <source>map.share.embed.organization.label</source>
+                <target>Organisation à afficher</target>
+            </trans-unit>
+            <trans-unit id="map.share.embed.code.label">
+                <source>map.share.embed.code.label</source>
+                <target>Code d’intégration</target>
+            </trans-unit>
+            <trans-unit id="map.share.copy">
+                <source>map.share.copy</source>
+                <target>Copier</target>
+            </trans-unit>
+            <trans-unit id="map.share.copied">
+                <source>map.share.copied</source>
+                <target>Copié&#160;!</target>
+            </trans-unit>
             <trans-unit id="public.regulation.map">
                 <source>public.regulation.map</source>
                 <target>Carte</target>

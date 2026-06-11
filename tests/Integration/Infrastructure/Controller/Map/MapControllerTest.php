@@ -14,7 +14,7 @@ final class MapControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/carte');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
+        $this->assertSecurityHeadersWithoutFraming();
         $this->assertMetaTitle('Carte - DiaLog', $crawler);
 
         // Search form is present
@@ -79,5 +79,75 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertArrayHasKey('maxLat', $decoded);
         $this->assertLessThan($decoded['maxLon'], $decoded['minLon']);
         $this->assertLessThan($decoded['maxLat'], $decoded['minLat']);
+    }
+
+    public function testShareButtonAndModalHiddenForAnonymousUser(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('d-map-share'));
+    }
+
+    public function testShareButtonAndModalVisibleForAuthenticatedUser(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $share = $crawler->filter('d-map-share');
+        $this->assertCount(1, $share);
+
+        // The organization select must contain the user's organizations.
+        $options = $crawler->filter('#map-share-org-select option');
+        $this->assertGreaterThan(0, $options->count());
+
+        // The link/embed tabs are present.
+        $this->assertCount(1, $crawler->filter('#map-share-tab-link'));
+        $this->assertCount(1, $crawler->filter('#map-share-tab-embed'));
+    }
+
+    public function testGetWithOrganizationUuidUsesOrganizationBbox(): void
+    {
+        $client = static::createClient();
+        // seineSaintDenisOrg has a geometry — use its UUID directly (no login needed).
+        $crawler = $client->request('GET', '/carte?organizationUuid=8f9164ed-dc0f-4c98-ac18-2f590a1cfd22');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $initialBbox = $crawler->filter('d-map')->attr('initialbbox');
+        $this->assertNotNull($initialBbox);
+        $decoded = json_decode($initialBbox, true);
+        // Seine-Saint-Denis bbox: lon ~[2.28, 2.60], lat ~[48.80, 49.01].
+        $this->assertGreaterThan(2.0, $decoded['minLon']);
+        $this->assertLessThan(3.0, $decoded['maxLon']);
+        $this->assertGreaterThan(48.0, $decoded['minLat']);
+        $this->assertLessThan(49.5, $decoded['maxLat']);
+    }
+
+    public function testGetWithUnknownOrganizationUuidReturnsNoBbox(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?organizationUuid=00000000-0000-0000-0000-000000000000');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+    }
+
+    public function testGetEmbedHidesHeaderAndFooter(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?embed=1');
+
+        $this->assertResponseStatusCodeSame(200);
+        // Embed mode: neither the global header nor the footer are rendered.
+        $this->assertCount(0, $crawler->filter('header.fr-header'));
+        $this->assertCount(0, $crawler->filter('footer'));
+        // The map itself is still rendered.
+        $this->assertCount(1, $crawler->filter('d-map'));
+        // The "share" button is also hidden inside the iframe.
+        $this->assertCount(0, $crawler->filter('d-map-share'));
     }
 }

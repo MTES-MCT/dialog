@@ -11,6 +11,7 @@ use App\Infrastructure\Form\Map\MapFilterFormType;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -30,7 +31,7 @@ final class MapController
         name: 'app_carto',
         methods: ['GET'],
     )]
-    public function __invoke(): Response
+    public function __invoke(Request $request): Response
     {
         $dto = new MapFilterDTO($this->dateUtils->getNow());
 
@@ -51,7 +52,13 @@ final class MapController
 
         $user = $this->security->getUser();
         $userUuid = $user instanceof AbstractAuthenticatedUser ? $user->getUuid() : null;
-        $initialBbox = $this->organizationRepository->findInitialMapBbox($userUuid);
+
+        $organizationUuid = $request->query->get('organizationUuid');
+        if (\is_string($organizationUuid) && $organizationUuid !== '') {
+            $initialBbox = $this->organizationRepository->findMapBboxByOrganizationUuid($organizationUuid);
+        } else {
+            $initialBbox = $this->organizationRepository->findInitialMapBbox($userUuid);
+        }
 
         return new Response(
             $this->twig->render(

@@ -206,6 +206,29 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         return $row ? $this->bboxRowToView($row) : null;
     }
 
+    public function findMapBboxByOrganizationUuid(string $organizationUuid): ?MapBboxView
+    {
+        $connection = $this->getEntityManager()->getConnection();
+
+        $row = $connection->fetchAssociative(
+            'SELECT
+                ST_XMin(env) AS min_lon,
+                ST_YMin(env) AS min_lat,
+                ST_XMax(env) AS max_lon,
+                ST_YMax(env) AS max_lat
+            FROM (
+                SELECT ST_Envelope(o.geometry) AS env
+                FROM organization AS o
+                WHERE o.uuid = :organizationUuid
+                AND o.geometry IS NOT NULL
+                AND NOT ST_IsEmpty(o.geometry)
+            ) AS t',
+            ['organizationUuid' => $organizationUuid],
+        );
+
+        return $row && $row['min_lon'] !== null ? $this->bboxRowToView($row) : null;
+    }
+
     public function refreshTopPublishedOrganizations(int $limit = 10): void
     {
         $connection = $this->getEntityManager()->getConnection();

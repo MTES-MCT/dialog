@@ -11,6 +11,11 @@
     align-items: start;
 }
 
+#measureTypes.fr-fieldset input[type="checkbox"] + label{
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
 .map-filter-label::after {
     content: '●';
     font-size: 2rem;
