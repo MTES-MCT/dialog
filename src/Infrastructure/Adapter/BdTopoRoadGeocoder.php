@@ -439,9 +439,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         // Coordinates can be a POINT [1, 2] or a MULTIPOINT [[1, 2], [3, 4]]
         if (\is_array($coordinates[0])) {
             return Coordinates::fromLonLat($coordinates[0][0], $coordinates[0][1]);
-        } else {
-            return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
         }
+
+        return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
     }
 
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array
