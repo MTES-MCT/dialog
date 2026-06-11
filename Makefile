@@ -393,7 +393,9 @@ scalingo-restore-from-prod: ## Restore prod data into the current Scalingo app a
 	python3 tools/restore_from_prod.py --target remote
 
 scalingo-review-app-init: ## Initial deploy hook for review apps: restore + anonymize prod data
-	@if [ "$$BASE_URL" = "https://dialog.beta.gouv.fr" ]; then \
+	@if [ "$$IS_PROD" = "true" ]; then \
+		echo 'IS_PROD=true : skip restore, deploiement standard.'; \
+	elif [ "$$BASE_URL" = "https://dialog.beta.gouv.fr" ]; then \
 		echo 'BASE_URL correspond a la prod : skip restore, deploiement standard.'; \
 	elif [ -z "$$SCALINGO_API_TOKEN" ]; then \
 		echo 'SCALINGO_API_TOKEN absent : skip restore, deploiement standard.'; \

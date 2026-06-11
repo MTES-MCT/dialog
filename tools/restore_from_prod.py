@@ -23,12 +23,21 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 from urllib.parse import urlparse
 
 
-def _run(cmd: list[str], *, check: bool = True, env: dict | None = None, capture: bool = False) -> subprocess.CompletedProcess:
-    return subprocess.run(cmd, check=check, env=env, capture_output=capture, text=capture)
+def _run(cmd: list[str], *, check: bool = True, env: dict | None = None, capture: bool = False, retries: int = 0, retry_delay: float = 5.0) -> subprocess.CompletedProcess:
+    for attempt in range(retries + 1):
+        try:
+            return subprocess.run(cmd, check=check, env=env, capture_output=capture, text=capture)
+        except subprocess.CalledProcessError:
+            if attempt == retries:
+                raise
+            delay = retry_delay * (2 ** attempt)
+            print(f"Échec de la récupération de la base de donnée (tentative {attempt + 1}/{retries + 1}), nouvel essai dans {delay:.0f}s...", file=sys.stderr)
+            time.sleep(delay)
 
 
 def _scalingo_authenticated() -> bool:
@@ -80,10 +89,12 @@ def _resolve_pg_addon(app: str) -> str:
 def _download_backup(app: str, dest_dir: Path) -> Path:
     addon = _resolve_pg_addon(app)
     archive = dest_dir / "backup.tar.gz"
+    # L'API Scalingo peut répondre avec des timeouts transitoires (context deadline
+    # exceeded) depuis les conteneurs postdeploy : on réessaie avec backoff.
     _run([
         "scalingo", "--app", app, "--addon", addon,
         "backups-download", "--output", str(archive),
-    ])
+    ], retries=3)
     _run(["tar", "-xzf", str(archive), "-C", str(dest_dir)])
     candidates = list(dest_dir.rglob("*.pgsql")) + list(dest_dir.rglob("*.dump"))
     if not candidates:
