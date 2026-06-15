@@ -175,7 +175,7 @@ def _post_restore_remote(skip_anonymize: bool) -> None:
     if skip_anonymize:
         print("SKIP_ANONYMIZE : étape d'anonymisation ignorée.")
         return
-    _run(["php", "bin/console", "app:db:anonymize", "--force", "--allow-prod-env"])
+    _run(["php", "bin/console", "app:db:anonymize", "--force"])
     _run(["php", "bin/console", "cache:clear", "--no-warmup"], check=False)
 
 

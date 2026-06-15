@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\String\ByteString;
 
 #[AsCommand(
     name: 'app:db:anonymize',
@@ -20,12 +21,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class AnonymizeDatabaseCommand extends Command
 {
-    private const DEFAULT_PASSWORD = 'staging-password-reset-me';
-
     public function __construct(
         private Connection $connection,
         private PasswordHasherInterface $passwordHasher,
-        private string $appEnv,
+        private bool $isProd,
     ) {
         parent::__construct();
     }
@@ -33,16 +32,15 @@ class AnonymizeDatabaseCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('force', null, InputOption::VALUE_NONE, 'Confirme l\'exécution.')
-            ->addOption('allow-prod-env', null, InputOption::VALUE_NONE, 'Autorise l\'exécution même si APP_ENV=prod (DANGER).');
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Confirme l\'exécution.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        if ($this->appEnv === 'prod' && !$input->getOption('allow-prod-env')) {
-            $io->error('Refus d\'exécuter sur APP_ENV=prod. Utilisez --allow-prod-env si vous savez ce que vous faites.');
+        if ($this->isProd) {
+            $io->warning('Vous êtes sur la production (IS_PROD=true). Cette commande ne doit pas être exécutée car elle va altérer les données.');
 
             return Command::FAILURE;
         }
@@ -53,26 +51,15 @@ class AnonymizeDatabaseCommand extends Command
             return Command::FAILURE;
         }
 
-        // Les super-admins (ROLE_SUPER_ADMIN) sont préservés pour pouvoir se connecter sur staging.
-        // La colonne `roles` est sérialisée par Doctrine (type=array), un LIKE suffit pour filtrer.
-        $preserveRolesPredicate = "roles NOT LIKE '%ROLE_SUPER_ADMIN%'";
-
-        $io->section('Anonymisation des utilisateurs (hors super-admins)');
-        $this->connection->executeStatement(<<<SQL
-            UPDATE "user"
-            SET
-                email = CONCAT('user+', uuid, '@example.invalid'),
-                full_name = CONCAT('Utilisateur ', SUBSTRING(uuid::text, 1, 8))
-            WHERE {$preserveRolesPredicate}
-        SQL);
-
+        // Les super-admins (ROLE_SUPER_ADMIN) sont préservés pour pouvoir se connecter les environnements de staging.
         $io->section('Réinitialisation des mots de passe (hors super-admins)');
-        $hashed = $this->passwordHasher->hash(self::DEFAULT_PASSWORD);
+        $generatedPassword = ByteString::fromRandom(32)->toString();
+        $hashed = $this->passwordHasher->hash($generatedPassword);
         $this->connection->executeStatement(
             <<<SQL
                 UPDATE password_user
                 SET password = :hash
-                WHERE user_uuid IN (SELECT uuid FROM "user" WHERE {$preserveRolesPredicate})
+                WHERE user_uuid IN (SELECT uuid FROM "public"."user" WHERE roles NOT LIKE '%ROLE_SUPER_ADMIN%')
             SQL,
             ['hash' => $hashed],
         );
@@ -98,7 +85,7 @@ class AnonymizeDatabaseCommand extends Command
                 is_active = false
         SQL);
 
-        $io->success('Anonymisation terminée. Super-admins préservés. Mot de passe par défaut des autres utilisateurs : ' . self::DEFAULT_PASSWORD);
+        $io->success('Anonymisation terminée. Super-admins préservés. Mot de passe généré pour les autres utilisateurs : ' . $generatedPassword);
 
         return Command::SUCCESS;
     }
