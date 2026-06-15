@@ -400,7 +400,7 @@ scalingo-review-app-init: ## Initial deploy hook for review apps: restore + anon
 	elif [ -z "$$SCALINGO_API_TOKEN" ]; then \
 		echo 'SCALINGO_API_TOKEN absent : skip restore, deploiement standard.'; \
 	else \
-		python3 tools/restore_from_prod.py --target remote; \
+		$(MAKE) scalingo-restore-from-prod; \
 	fi
 
 restore-from-prod: ## Restore prod data into the local Docker database (anonymized).

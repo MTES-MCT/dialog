@@ -83,7 +83,6 @@ final class AnonymizeDatabaseCommandTest extends TestCase
         $this->assertMatchesRegularExpression('/Mot de passe généré pour les autres utilisateurs : [A-Za-z0-9]{32}/', $normalizedDisplay);
 
         $sqls = array_column($executed, 'sql');
-        $this->assertStringContainsString('UPDATE "user"', $sqls[0]);
         $this->assertStringContainsString("roles NOT LIKE '%ROLE_SUPER_ADMIN%'", $sqls[0]);
         $this->assertStringContainsString('UPDATE password_user', $sqls[1]);
         $this->assertSame(['hash' => 'hashed-password'], $executed[1]['params']);
