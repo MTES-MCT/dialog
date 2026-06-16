@@ -162,6 +162,18 @@
                 <source>welcome.email.signature</source>
                 <target>L’équipe DiaLog</target>
             </trans-unit>
+            <trans-unit id="welcome.email.webinar.title">
+                <source>welcome.email.webinar.title</source>
+                <target>Rejoignez-nous au webinaire de découverte DiaLog, tous les lundi à 15h !</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.webinar.description">
+                <source>welcome.email.webinar.description</source>
+                <target>Venez découvrir DiaLog ou poser vos questions à l’équipe en visio :</target>
+            </trans-unit>
+            <trans-unit id="welcome.email.webinar.link">
+                <source>welcome.email.webinar.link</source>
+                <target>Lien visio du webinaire DiaLog</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

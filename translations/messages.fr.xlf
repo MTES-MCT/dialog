@@ -1627,6 +1627,18 @@
                 <source>contact.email.description2</source>
                 <target>L'équipe DiaLog vous répondra dans les meilleurs délais. </target>
             </trans-unit>
+            <trans-unit id="contact.webinar.title">
+                <source>contact.webinar.title</source>
+                <target>Rejoignez-nous au webinaire de découverte DiaLog, tous les lundi à 15h !</target>
+            </trans-unit>
+            <trans-unit id="contact.webinar.description">
+                <source>contact.webinar.description</source>
+                <target>Venez découvrir DiaLog ou poser vos questions à l’équipe en visio :</target>
+            </trans-unit>
+            <trans-unit id="contact.webinar.link">
+                <source>contact.webinar.link</source>
+                <target>Lien visio du webinaire DiaLog</target>
+            </trans-unit>
             <trans-unit id="landing.diagram.authorities">
                 <source>landing.diagram.authorities</source>
                 <target>Collectivités</target>

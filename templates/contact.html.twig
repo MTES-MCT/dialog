@@ -27,16 +27,22 @@
             <img src="{{ asset('images/landing/contact-email.webp') }}" aria-hidden="true" height="260" loading="lazy" class="fr-hidden fr-unhidden-lg" />
         </div>
     </div>
-
     <div class="fr-container fr-py-4w">
-        <h2>
-            {{ 'contact.email.title'|trans }}
-        </h2>
-
+        <div class="fr-notice fr-notice--info fr-mt-4w fr-mb-4w">
+            <div class="fr-container">
+                <p class="fr-notice__title">{{ 'contact.webinar.title'|trans }}</p>
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__desc">{{ 'contact.webinar.description'|trans }}</span>
+                        <a title="{{ 'contact.webinar.link'|trans }}" href="https://visio.numerique.gouv.fr/ogx-uujt-vsi" target="_blank" rel="noopener external" class="fr-notice__link">{{ 'contact.webinar.link'|trans }}</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <h2>{{ 'contact.email.title'|trans }}</h2>
         <p>
             {{ 'contact.email.description1'|trans|raw }}
         </p>
-
         <p>
             {{ 'contact.email.description2'|trans }}
         </p>
