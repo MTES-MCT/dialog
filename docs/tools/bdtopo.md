@@ -91,10 +91,10 @@ Cette section explique comment mettre à jour une base BDTOPO locale pour tester
    make start
 
    # Créer la base de données BDTOPO locale
-   docker-compose exec database createdb -U dialog dialog_bdtopo
+   docker compose exec database createdb -U dialog dialog_bdtopo
 
    # Installer PostGIS dans la base
-   docker-compose exec database psql -U dialog -d dialog_bdtopo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+   docker compose exec database psql -U dialog -d dialog_bdtopo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
    ```
 
 2. **Télécharger, dézipper et importer les données** :

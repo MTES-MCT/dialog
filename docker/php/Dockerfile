@@ -56,6 +56,10 @@ ENV PLAYWRIGHT_BROWSERS_PATH=0
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash && \
     apt install symfony-cli
 
+# Install Scalingo cli
+RUN curl -fsSL https://cli-dl.scalingo.com/install | bash -s -- \
+    --install-dir /usr/local/bin --yes
+
 # Install composer
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
    mv composer.phar /usr/local/bin/composer
