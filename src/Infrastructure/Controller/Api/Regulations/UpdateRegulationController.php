@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class UpdateRegulationController
 {
@@ -40,6 +41,7 @@ final class UpdateRegulationController
         methods: ['PUT'],
         requirements: ['identifier' => '.+'],
     )]
+    #[IsGranted('ROLE_API')]
     #[OA\Tag(name: 'Private')]
     #[OA\Put(
         summary: 'Mettre à jour un arrêté de circulation par son identifiant',
@@ -318,7 +320,7 @@ final class UpdateRegulationController
         } catch (RegulationOrderRecordNotFoundException) {
             return new JsonResponse([
                 'status' => Response::HTTP_NOT_FOUND,
-                'detail' => 'Not Found',
+                'detail' => \sprintf('Aucun arrêté de circulation trouvé pour l\'identifiant %s au sein de l\'organisation %s.', $identifier, $organization->getName()),
             ], Response::HTTP_NOT_FOUND);
         }
 

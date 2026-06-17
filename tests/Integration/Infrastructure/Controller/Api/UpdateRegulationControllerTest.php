@@ -163,7 +163,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame(404, $data['status']);
-        $this->assertSame('Not Found', $data['detail']);
+        $this->assertSame('Aucun arrêté de circulation trouvé pour l\'identifiant 2025-01 au sein de l\'organisation Département de Seine-Saint-Denis.', $data['detail']);
     }
 
     public function testUpdateReturns404WhenRegulationDoesNotExist(): void
@@ -186,7 +186,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame(404, $data['status']);
-        $this->assertSame('Not Found', $data['detail']);
+        $this->assertSame('Aucun arrêté de circulation trouvé pour l\'identifiant DOES-NOT-EXIST au sein de l\'organisation Département de Seine-Saint-Denis.', $data['detail']);
     }
 
     public function testUpdateUnauthorizedWithInvalidCredentials(): void
