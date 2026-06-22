@@ -28,6 +28,7 @@ services:
             $litteralisCredentials: "%env(litteralis_credentials:APP_LITTERALIS_ORG_)%"
             $metabaseSiteUrl: '%env(APP_METABASE_SITE_URL)%'
             $metabaseSecretKey: '%env(APP_METABASE_SECRET_KEY)%'
+            $isProd: '%env(bool:default::IS_PROD)%'
             $mediaLocation: '%env(APP_MEDIA_LOCATION)%'
             $proConnectClientId: '%env(PRO_CONNECT_CLIENT_ID)%'
             $proConnectClientSecret: '%env(PRO_CONNECT_CLIENT_SECRET)%'

@@ -70,3 +70,41 @@ main {
         transform: rotate(360deg);
     }
 }
+
+.d-map-with-share {
+    position: relative;
+}
+
+.d-map-share {
+    display: contents;
+}
+
+.d-map-share__trigger {
+    position: absolute;
+    top: var(--2w);
+    right: var(--2w);
+    z-index: 2;
+    background-color: var(--background-default-grey, #fff);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+dialog.app-modal.d-map-share__modal {
+    max-width: 49.5rem;
+    width: 100%;
+    height: fit-content;
+    padding-bottom: 4rem;
+}
+
+dialog.app-modal .fr-tabs__panel {
+    transition: none;
+}
+
+.d-map-share__input-row {
+    display: flex;
+    align-items: center;
+    gap: var(--1w);
+}
+
+.d-map-share__embed-options {
+    width: 100%;
+}

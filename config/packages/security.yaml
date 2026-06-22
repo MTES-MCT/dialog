@@ -37,6 +37,11 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+                # Restrict password-based login to local accounts only.
+                # Without this, the firewall's default chain provider (`all`) can resolve a
+                # ProConnect-only account to a ProConnectUser, which does not implement
+                # PasswordAuthenticatedUserInterface and makes CheckCredentialsListener throw.
+                provider: local_user
                 enable_csrf: true
                 username_parameter: email
                 password_parameter: password

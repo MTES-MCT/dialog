@@ -22,19 +22,22 @@
         {{ encore_entry_script_tags('matomo') }}
     {% endblock %}
   </head>
-  <body>
+  <body{% if app.request.query.get('embed') %} class="d-embed"{% endif %}>
+
+    {% set isEmbed = app.request.query.get('embed') ? true : false %}
 
     {% set skipLinks = [
         {href: '#header-navigation', label: 'public.skiplinks.menu'|trans},
     ] %}
 
-    {% include 'common/skiplinks.html.twig' with { skipLinks: [
-        {href: '#content', label: 'common.skiplinks.content'|trans},
-        ...(skipLinks|default([])),
-        {href: '#footer', label: 'common.skiplinks.footer'|trans},
-    ]} only %}
+    {% if not isEmbed %}
+        {% include 'common/skiplinks.html.twig' with { skipLinks: [
+            {href: '#content', label: 'common.skiplinks.content'|trans},
+            ...(skipLinks|default([])),
+            {href: '#footer', label: 'common.skiplinks.footer'|trans},
+        ]} only %}
 
-    {% embed 'common/header.html.twig' %}
+        {% embed 'common/header.html.twig' %}
         {% block navigation %}
             <nav class="fr-nav" id="header-navigation" role="navigation" aria-label="Menu principal">
                 <ul class="fr-nav__list">
@@ -86,6 +89,7 @@
             </nav>
         {% endblock %}
     {% endembed %}
+    {% endif %}
 
     <main class="{% block page_class %}{% endblock page_class %}">
         <noscript>
@@ -109,7 +113,9 @@
             {% block body %}{% endblock %}
         </div>
     </main>
-    {% include 'common/footer.html.twig' %}
+    {% if not isEmbed %}
+        {% include 'common/footer.html.twig' %}
+    {% endif %}
 
     {% block body_end %}{% endblock %}
   </body>
