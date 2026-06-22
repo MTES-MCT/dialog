@@ -376,12 +376,12 @@ scalingo-node-postbuild: ## Scalingo postbuild hook for the Node buildpack
 	make blog_install
 
 scalingo-postdeploy: ## Scalingo postdeploy hook
+	@echo 'Setup BD dump'
+	$(MAKE) scalingo-review-app-init
 	@echo 'Executing migrations...'
 	php bin/console doctrine:migrations:migrate --no-interaction
 	@echo 'Update top organizations'
 	php bin/console app:map:refresh-top-published-organizations
-	@echo 'Setup BD dump'
-	$(MAKE) scalingo-review-app-init
 
 ##
 ## ----------------
