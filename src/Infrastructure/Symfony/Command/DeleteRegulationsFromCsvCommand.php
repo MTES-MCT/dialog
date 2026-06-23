@@ -117,12 +117,12 @@ class DeleteRegulationsFromCsvCommand extends Command
             $regulationOrderRecord = $this->regulationOrderRecordRepository->findOneByIdentifierInOrganization($identifier, $organization);
 
             if ($regulationOrderRecord === null) {
-                $errors[] = \sprintf('Line %d: regulation order "%s" not found in organization "%s".', $line, $identifier, $organizationUuid);
+                $errors[] = \sprintf('Line %d: regulation order "%s" not found in organization "%s".', $line, $identifier, $organization->getName());
                 continue;
             }
 
             if ($dryRun) {
-                $io->writeln(\sprintf('<comment>[dry-run]</comment> Would delete "%s" (%s).', $identifier, $organizationUuid));
+                $io->writeln(\sprintf('<comment>[dry-run]</comment> Would delete "%s" (%s).', $identifier, $organization->getName()));
                 ++$deleted;
                 continue;
             }
@@ -130,10 +130,10 @@ class DeleteRegulationsFromCsvCommand extends Command
             try {
                 $this->commandBus->handle(new DeleteRegulationCommand([$organization->getUuid()], $regulationOrderRecord));
                 $this->entityManager->flush();
-                $io->writeln(\sprintf('<info>Deleted "%s" (%s).</info>', $identifier, $organizationUuid));
+                $io->writeln(\sprintf('<info>Deleted "%s" (%s).</info>', $identifier, $organization->getName()));
                 ++$deleted;
             } catch (\Throwable $exc) {
-                $errors[] = \sprintf('Line %d: failed to delete "%s" (%s): %s', $line, $identifier, $organizationUuid, $exc->getMessage());
+                $errors[] = \sprintf('Line %d: failed to delete "%s" (%s): %s', $line, $identifier, $organization->getName(), $exc->getMessage());
             }
         }
 
