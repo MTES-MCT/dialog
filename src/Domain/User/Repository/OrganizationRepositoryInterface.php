@@ -19,6 +19,8 @@ interface OrganizationRepositoryInterface
 
     public function findOneBySiret(string $siret): ?Organization;
 
+    public function findOneByName(string $name): ?Organization;
+
     public function countOrganizations(): int;
 
     public function add(Organization $organization): void;
