@@ -80,6 +80,17 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
         ;
     }
 
+    public function findOneByName(string $name): ?Organization
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.name = :name')
+            ->setParameter('name', $name)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     public function countOrganizations(): int
     {
         return $this->createQueryBuilder('o')
