@@ -6,6 +6,7 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,6 +17,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 
 #[AsCommand(
     name: 'app:regulations:delete-from-csv',
@@ -29,6 +32,7 @@ class DeleteRegulationsFromCsvCommand extends Command
         private readonly RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private readonly CommandBusInterface $commandBus,
         private readonly EntityManagerInterface $entityManager,
+        private readonly CsvEncoder $csvEncoder = new CsvEncoder(),
     ) {
         parent::__construct();
     }
@@ -55,30 +59,35 @@ class DeleteRegulationsFromCsvCommand extends Command
             return Command::FAILURE;
         }
 
-        $handle = fopen($file, 'r');
+        $content = file_get_contents($file);
 
-        if ($handle === false) {
-            $io->error(\sprintf('Unable to open file: %s', $file));
+        if ($content === false) {
+            $io->error(\sprintf('Unable to read file: %s', $file));
 
             return Command::FAILURE;
         }
 
-        $header = fgetcsv($handle, 0, $delimiter, '"', '\\');
+        try {
+            $rows = $this->csvEncoder->decode($content, CsvEncoder::FORMAT, [
+                CsvEncoder::DELIMITER_KEY => $delimiter,
+                CsvEncoder::AS_COLLECTION_KEY => true,
+            ]);
+        } catch (UnexpectedValueException $exc) {
+            $io->error(\sprintf('Unable to parse CSV file: %s', $exc->getMessage()));
 
-        if ($header === false) {
+            return Command::FAILURE;
+        }
+
+        if ($rows === []) {
             $io->error('The CSV file is empty.');
-            fclose($handle);
 
             return Command::FAILURE;
         }
 
-        $header = array_map(static fn ($value): string => strtolower(trim((string) $value)), $header);
-        $identifierIndex = array_search('identifier', $header, true);
-        $organizationIndex = array_search('organization', $header, true);
+        $columns = array_keys($rows[0]);
 
-        if ($identifierIndex === false || $organizationIndex === false) {
+        if (!\in_array('identifier', $columns, true) || !\in_array('organization', $columns, true)) {
             $io->error('The CSV file must contain the columns "identifier" and "organization".');
-            fclose($handle);
 
             return Command::FAILURE;
         }
@@ -87,15 +96,11 @@ class DeleteRegulationsFromCsvCommand extends Command
         $errors = [];
         $line = 1;
 
-        while (($row = fgetcsv($handle, 0, $delimiter, '"', '\\')) !== false) {
+        foreach ($rows as $row) {
             ++$line;
 
-            if ($row === [null] || $row === []) {
-                continue;
-            }
-
-            $identifier = isset($row[$identifierIndex]) ? trim((string) $row[$identifierIndex]) : '';
-            $organizationName = isset($row[$organizationIndex]) ? trim((string) $row[$organizationIndex]) : '';
+            $identifier = trim((string) ($row['identifier'] ?? ''));
+            $organizationName = trim((string) ($row['organization'] ?? ''));
 
             if ($identifier === '' || $organizationName === '') {
                 $errors[] = \sprintf('Line %d: missing identifier or organization.', $line);
@@ -132,14 +137,13 @@ class DeleteRegulationsFromCsvCommand extends Command
             }
         }
 
-        fclose($handle);
-
         $io->newLine();
 
         if ($dryRun) {
             $io->writeln(\sprintf('<info>%d regulation order(s) would be deleted.</info>', $deleted));
         } else {
             $io->writeln(\sprintf('<info>%d regulation order(s) deleted.</info>', $deleted));
+            $this->commandBus->dispatchAsync(new GenerateDatexCommand());
         }
 
         if ($errors !== []) {
