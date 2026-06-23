@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Location;
 
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Measure;
 
 class Location
@@ -17,6 +18,10 @@ class Location
         private ?NumberedRoad $numberedRoad = null,
         private ?RawGeoJSON $rawGeoJSON = null,
         private ?StorageArea $storageArea = null,
+        // Used only by the "ville entière" (wholeCity) road type, which has no dedicated
+        // sub-entity: the whole-city geometry lives directly on the location.
+        private ?string $cityCode = null,
+        private ?string $cityLabel = null,
     ) {
     }
 
@@ -60,6 +65,16 @@ class Location
         return $this->storageArea;
     }
 
+    public function getCityCode(): ?string
+    {
+        return $this->cityCode;
+    }
+
+    public function getCityLabel(): ?string
+    {
+        return $this->cityLabel;
+    }
+
     public function getCifsStreetLabel(): string
     {
         if ($this->namedStreet) {
@@ -70,6 +85,10 @@ class Location
             return $this->numberedRoad->getRoadNumber();
         }
 
+        if ($this->cityLabel) {
+            return $this->cityLabel;
+        }
+
         return $this->rawGeoJSON->getLabel();
     }
 
@@ -77,6 +96,12 @@ class Location
     {
         $this->roadType = $roadType;
         $this->geometry = $geometry;
+
+        // The city fields only make sense for the "ville entière" road type.
+        if ($roadType !== RoadTypeEnum::WHOLE_CITY->value) {
+            $this->cityCode = null;
+            $this->cityLabel = null;
+        }
     }
 
     public function setNamedStreet(NamedStreet $namedStreet): void
@@ -97,5 +122,11 @@ class Location
     public function setStorageArea(?StorageArea $storageArea): void
     {
         $this->storageArea = $storageArea;
+    }
+
+    public function setWholeCity(?string $cityCode, ?string $cityLabel): void
+    {
+        $this->cityCode = $cityCode;
+        $this->cityLabel = $cityLabel;
     }
 }

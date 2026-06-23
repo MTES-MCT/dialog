@@ -12,6 +12,11 @@ interface RoadGeocoderInterface
 
     public function computeRoadLine(string $roadBanId): string;
 
+    /**
+     * Compute the geometry of all named streets of a city (INSEE code).
+     */
+    public function computeCityGeometry(string $cityCode): string;
+
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string;
 
     public function findRoads(string $search, string $roadType, string $administrator): array;
