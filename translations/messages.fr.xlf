@@ -671,7 +671,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.type">
                 <source>regulation.location.type</source>
-                <target>Type de route ou voie</target>
+                <target>Type de localisation</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.from">
                 <source>regulation.location.referencePoint.from</source>
@@ -727,7 +727,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.type.placeholder">
                 <source>regulation.location.type.placeholder</source>
-                <target>Sélectionner un type de route...</target>
+                <target>Sélectionner un type de localisation...</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.departmentalRoad">
                 <source>regulation.location.road.type.departmentalRoad</source>
@@ -744,6 +744,30 @@
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
                 <target>Tracé libre (GeoJSON)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.road.type.wholeCity">
+                <source>regulation.location.road.type.wholeCity</source>
+                <target>Ville entière</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions">
+                <source>regulation.location.wholeCity.exceptions</source>
+                <target>Exceptions</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.description">
+                <source>regulation.location.wholeCity.exceptions.description</source>
+                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à toute la commune sauf ces voies.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.add">
+                <source>regulation.location.wholeCity.exceptions.add</source>
+                <target>Ajouter une exception</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.remove">
+                <source>regulation.location.wholeCity.exceptions.remove</source>
+                <target>Supprimer l'exception</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.except">
+                <source>regulation.location.wholeCity.except</source>
+                <target>sauf</target>
             </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>

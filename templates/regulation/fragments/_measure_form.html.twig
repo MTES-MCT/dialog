@@ -768,6 +768,182 @@
                         }) }}
                     </div>
                 </div>
+
+                {% set isWholeCity = form.roadType.vars.value == 'wholeCity' %}
+                <div
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="wholeCity"
+                    {% if not isWholeCity %}hidden{% endif %}
+                >
+                    {{ form_row(form.wholeCity.roadType, {
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'wholeCity',
+                            'disabled': not isWholeCity,
+                        }
+                    }) }}
+
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-min-length-value="3"
+                        data-autocomplete-delay-value="500"
+                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+                    >
+                        {{ form_row(form.wholeCity.cityCode, {
+                            attr: {
+                                'data-autocomplete-target': 'hidden',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'wholeCity',
+                                'disabled': not isWholeCity,
+                            }
+                        }) }}
+
+                        {{ form_row(form.wholeCity.cityLabel, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'wholeCity',
+                                'disabled': not isWholeCity,
+                            },
+                        }) }}
+                        <ul
+                            id="{{ form.wholeCity.cityLabel.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        >
+                            <li role="status" data-autocomplete-target="status"></li>
+                        </ul>
+                    </div>
+
+                    <fieldset
+                        aria-labelledby="{{ form.wholeCity.vars.id }}-exceptions-legend"
+                        data-form-reveal-target="formControl"
+                        data-value="wholeCity"
+                        {% if not isWholeCity %}disabled{% endif %}
+                    >
+                        <legend id="{{ form.wholeCity.vars.id }}-exceptions-legend">
+                            {{ 'regulation.location.wholeCity.exceptions'|trans }}
+                        </legend>
+                        <div class="fr-hint-text help-text">
+                            {{ 'regulation.location.wholeCity.exceptions.description'|trans }}
+                        </div>
+
+                        <div
+                            data-controller="form-collection"
+                            data-form-collection-prototype-key-value="exception"
+                            data-form-collection-next-index-value="{{ form.wholeCity.exceptions|length > 0 ? form.wholeCity.exceptions|last.vars.name + 1 : 0 }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', form.wholeCity.cityCode.vars.id)|e('html_attr') }}"
+                        >
+                            <ul
+                                class="fr-raw-list fr-mb-2w"
+                                data-form-collection-target="collectionContainer"
+                                {% if form.wholeCity.exceptions|length == 0 %}data-empty{% endif %}
+                                aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
+                            >
+                                {%- for item in form.wholeCity.exceptions -%}
+                                    {{ _self.whole_city_exception_item(item, loop.index, form.wholeCity.cityCode.vars.id) }}
+                                {%- else -%}
+                                    {%- do form.wholeCity.exceptions.setRendered -%}
+                                {%- endfor -%}
+                            </ul>
+
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                                data-action="form-collection#addCollectionElement"
+                            >
+                                {{ 'regulation.location.wholeCity.exceptions.add'|trans }}
+                            </button>
+                        </div>
+                    </fieldset>
+
+                    {% set wholeCityPreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-wholeCity' %}
+                    <section class="fr-mt-2w app-preview-map-toggle">
+                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ wholeCityPreviewMapAccordionId }}">
+                            <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
+                            <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
+                        </button>
+                        <div class="fr-collapse" id="{{ wholeCityPreviewMapAccordionId }}">
+                            <div
+                                data-controller="location-preview-map"
+                                data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                                data-location-preview-map-road-type-value="wholeCity"
+                                data-location-preview-map-city-code-field-value="{{ form.wholeCity.cityCode.vars.id }}"
+                                data-location-preview-map-measure-type-value="{{ measureType }}"
+                            >
+                                <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
+                                    <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
+                                    <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
+
+{% macro whole_city_exception_item(form, index, cityCodeFieldId) %}
+    <li
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+        class="fr-mb-1w"
+    >
+        <div
+            class="fr-x-autocomplete-wrapper"
+            data-controller="autocomplete"
+            data-autocomplete-url-value="{{ path('fragment_namedStreet_completion') }}"
+            data-autocomplete-query-param-value="search"
+            data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ cityCodeFieldId}|json_encode }}"
+            data-autocomplete-min-length-value="3"
+            data-autocomplete-delay-value="500"
+            data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+            data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+        >
+            <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+                <div class="fr-col">
+                    {{ form_row(form.roadBanId, {
+                        attr: {
+                            'data-autocomplete-target': 'hidden',
+                        }
+                    }) }}
+                    {{ form_row(form.roadName, {
+                        group_class: 'fr-input-group fr-mb-0',
+                        widget_class: 'fr-input',
+                        attr: {
+                            'data-autocomplete-target': 'input',
+                        },
+                    }) }}
+                    <ul
+                        id="{{ form.roadName.vars.id }}-results"
+                        role="listbox"
+                        aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
+                        class="fr-x-autocomplete"
+                        data-autocomplete-target="results"
+                    >
+                        <li role="status" data-autocomplete-target="status"></li>
+                    </ul>
+                </div>
+                <div class="fr-col-auto">
+                    <button
+                        type="button"
+                        class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                        data-action="remove#removeElement"
+                        aria-label="{{ 'regulation.location.wholeCity.exceptions.remove'|trans }}"
+                    >
+                    </button>
+                </div>
             </div>
         </div>
     </li>

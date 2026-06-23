@@ -4,4 +4,7 @@
     {{ location.numberedRoad.roadNumber }} ({{ location.numberedRoad.administrator }}) {% include 'regulation/_reference_points.html.twig' with { location: location.numberedRoad } only %}
 {%- elseif location.roadType == 'rawGeoJSON' -%}
     {{ location.rawGeoJSON.label }} - {{ 'regulation.location.road.type.rawGeoJSON'|trans|lower }}
+{%- elseif location.roadType == 'wholeCity' -%}
+    {{ location.wholeCity.cityLabel }} - {{ 'regulation.location.road.type.wholeCity'|trans|lower }}
+    {%- if location.wholeCity.exceptions is not empty %} ({{ 'regulation.location.wholeCity.except'|trans }} {{ location.wholeCity.exceptions|join(', ') }}){% endif -%}
 {%- endif -%}

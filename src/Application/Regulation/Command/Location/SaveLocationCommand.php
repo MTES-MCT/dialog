@@ -19,6 +19,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?SaveNumberedRoadCommand $nationalRoad = null;
     public ?SaveNamedStreetCommand $namedStreet = null;
     public ?SaveRawGeoJSONCommand $rawGeoJSON = null;
+    public ?SaveWholeCityCommand $wholeCity = null;
     public array $permissions = []; // For validation
 
     public function __construct(
@@ -42,6 +43,10 @@ final class SaveLocationCommand implements CommandInterface
 
         if ($location?->getRawGeoJSON()) {
             $this->rawGeoJSON = new SaveRawGeoJSONCommand($location->getRawGeoJSON());
+        }
+
+        if ($location?->getWholeCity()) {
+            $this->wholeCity = new SaveWholeCityCommand($location->getWholeCity());
         }
     }
 
@@ -68,6 +73,7 @@ final class SaveLocationCommand implements CommandInterface
             $this->namedStreet = null;
             $this->nationalRoad = null;
             $this->rawGeoJSON = null;
+            $this->wholeCity = null;
         }
 
         if ($this->roadType === RoadTypeEnum::NATIONAL_ROAD->value) {
@@ -79,18 +85,28 @@ final class SaveLocationCommand implements CommandInterface
             $this->namedStreet = null;
             $this->departmentalRoad = null;
             $this->rawGeoJSON = null;
+            $this->wholeCity = null;
         }
 
         if ($this->roadType === RoadTypeEnum::LANE->value) {
             $this->departmentalRoad = null;
             $this->nationalRoad = null;
             $this->rawGeoJSON = null;
+            $this->wholeCity = null;
         }
 
         if ($this->roadType == RoadTypeEnum::RAW_GEOJSON->value) {
             $this->namedStreet = null;
             $this->departmentalRoad = null;
             $this->nationalRoad = null;
+            $this->wholeCity = null;
+        }
+
+        if ($this->roadType === RoadTypeEnum::WHOLE_CITY->value) {
+            $this->namedStreet = null;
+            $this->departmentalRoad = null;
+            $this->nationalRoad = null;
+            $this->rawGeoJSON = null;
         }
     }
 
@@ -101,6 +117,7 @@ final class SaveLocationCommand implements CommandInterface
             RoadTypeEnum::DEPARTMENTAL_ROAD->value => $this->departmentalRoad,
             RoadTypeEnum::NATIONAL_ROAD->value => $this->nationalRoad,
             RoadTypeEnum::RAW_GEOJSON->value => $this->rawGeoJSON,
+            RoadTypeEnum::WHOLE_CITY->value => $this->wholeCity,
             default => throw new \LogicException('No road command'),
         };
     }
@@ -117,6 +134,10 @@ final class SaveLocationCommand implements CommandInterface
 
         if (!$this->rawGeoJSON && $rawGeoJSON = $this->location->getRawGeoJSON()) {
             return new DeleteRawGeoJSONCommand($rawGeoJSON);
+        }
+
+        if (!$this->wholeCity && $wholeCity = $this->location->getWholeCity()) {
+            return new DeleteWholeCityCommand($wholeCity);
         }
 
         return null;

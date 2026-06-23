@@ -26,6 +26,7 @@
     <one-to-one field="namedStreet" target-entity="App\Domain\Regulation\Location\NamedStreet" mapped-by="location" />
     <one-to-one field="numberedRoad" target-entity="App\Domain\Regulation\Location\NumberedRoad" mapped-by="location" />
     <one-to-one field="rawGeoJSON" target-entity="App\Domain\Regulation\Location\RawGeoJSON" mapped-by="location" />
+    <one-to-one field="wholeCity" target-entity="App\Domain\Regulation\Location\WholeCity" mapped-by="location" />
     <many-to-one field="storageArea" target-entity="App\Domain\Regulation\Location\StorageArea">
       <join-column name="storage_area_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>

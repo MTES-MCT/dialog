@@ -91,6 +91,22 @@ readonly class MeasureView
                     ),
                     geometry: $location->getGeometry(),
                 );
+            } elseif ($wholeCity = $location->getWholeCity()) {
+                $exceptionRoadNames = array_map(
+                    fn ($exception) => $exception->getRoadName(),
+                    $wholeCity->getExceptions(),
+                );
+
+                $locations[] = new LocationView(
+                    uuid: $location->getUuid(),
+                    roadType: $location->getRoadType(),
+                    wholeCity: new WholeCityView(
+                        cityCode: $wholeCity->getCityCode(),
+                        cityLabel: $wholeCity->getCityLabel(),
+                        exceptions: $exceptionRoadNames,
+                    ),
+                    geometry: $location->getGeometry(),
+                );
             }
         }
 

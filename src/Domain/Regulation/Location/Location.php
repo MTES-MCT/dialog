@@ -17,6 +17,7 @@ class Location
         private ?NumberedRoad $numberedRoad = null,
         private ?RawGeoJSON $rawGeoJSON = null,
         private ?StorageArea $storageArea = null,
+        private ?WholeCity $wholeCity = null,
     ) {
     }
 
@@ -60,6 +61,11 @@ class Location
         return $this->storageArea;
     }
 
+    public function getWholeCity(): ?WholeCity
+    {
+        return $this->wholeCity;
+    }
+
     public function getCifsStreetLabel(): string
     {
         if ($this->namedStreet) {
@@ -68,6 +74,10 @@ class Location
 
         if ($this->numberedRoad) {
             return $this->numberedRoad->getRoadNumber();
+        }
+
+        if ($this->wholeCity) {
+            return $this->wholeCity->getCityLabel();
         }
 
         return $this->rawGeoJSON->getLabel();
@@ -97,5 +107,10 @@ class Location
     public function setStorageArea(?StorageArea $storageArea): void
     {
         $this->storageArea = $storageArea;
+    }
+
+    public function setWholeCity(WholeCity $wholeCity): void
+    {
+        $this->wholeCity = $wholeCity;
     }
 }

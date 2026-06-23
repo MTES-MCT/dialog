@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping https://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="App\Application\Regulation\Command\Location\SaveWholeCityCommand">
+        <property name="cityCode">
+            <constraint name="Length">
+                <option name="min">5</option>
+                <option name="max">5</option>
+            </constraint>
+            <constraint name="When">
+                <option name="expression">this.roadType === 'wholeCity'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank">
+                        <option name="message">regulation.location.cityCode.error.blank</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="cityLabel">
+            <constraint name="When">
+                <option name="expression">this.roadType === 'wholeCity'</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                    <constraint name="Length">
+                        <option name="max">255</option>
+                    </constraint>
+                </option>
+            </constraint>
+        </property>
+        <property name="exceptions">
+            <constraint name="Valid" />
+        </property>
+    </class>
+    <class name="App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand">
+        <property name="roadBanId">
+            <constraint name="Length">
+                <option name="max">20</option>
+            </constraint>
+        </property>
+        <property name="roadName">
+            <constraint name="Length">
+                <option name="max">255</option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>

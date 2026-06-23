@@ -14,6 +14,7 @@ final readonly class LocationView
         public ?RawGeoJSONView $rawGeoJSON = null,
         public ?StorageAreaView $storageArea = null,
         public ?string $geometry = null,
+        public ?WholeCityView $wholeCity = null,
     ) {
     }
 }

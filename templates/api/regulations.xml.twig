@@ -145,6 +145,12 @@
                                                             <com:value>{{ location.rawGeoJSONLabel }}</com:value>
                                                         </com:values>
                                                     </loc:locationDescription>
+                                                {% elseif location.roadType == 'wholeCity' %}
+                                                    <loc:locationDescription>
+                                                        <com:values>
+                                                            <com:value>{{ location.wholeCityLabel }}</com:value>
+                                                        </com:values>
+                                                    </loc:locationDescription>
                                                 {% endif %}
                                             </loc:supplementaryPositionalDescription>
                                             <loc:_linearLocationExtension>

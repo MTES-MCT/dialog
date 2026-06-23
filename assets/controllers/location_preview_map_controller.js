@@ -122,7 +122,40 @@ export default class extends Controller {
             this.#loadForNumberedRoad();
         } else if (roadType === 'rawGeoJSON') {
             this.#loadForRawGeoJSON();
+        } else if (roadType === 'wholeCity') {
+            this.#loadForWholeCity();
         }
+    }
+
+    #loadForWholeCity() {
+        const cityCode = this.#getFieldValue('cityCode');
+
+        if (!cityCode) {
+            this.#hideMap();
+            return;
+        }
+
+        const params = new URLSearchParams({ roadType: 'wholeCity', cityCode });
+
+        const excluded = this.#collectExcludedRoadBanIds();
+        if (excluded.length) {
+            params.set('excludedRoadBanIds', excluded.join(','));
+        }
+
+        this.#fetchAndDisplay(params);
+    }
+
+    #collectExcludedRoadBanIds() {
+        const section = this.element.closest('[data-form-reveal-target="section"]')
+            || this.element.closest('[data-controller~="reset"]');
+
+        if (!section) return [];
+
+        const cityCodeId = this.cityCodeFieldValue;
+
+        return Array.from(section.querySelectorAll('[data-autocomplete-target="hidden"]'))
+            .filter(el => el.id !== cityCodeId && el.value)
+            .map(el => el.value);
     }
 
     #loadForNamedStreet() {
