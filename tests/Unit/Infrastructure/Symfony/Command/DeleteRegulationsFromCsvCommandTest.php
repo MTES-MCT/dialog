@@ -82,8 +82,8 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
 
         $this->organizationRepository
             ->expects(self::once())
-            ->method('findOneByName')
-            ->with('My Org')
+            ->method('findOneByUuid')
+            ->with('org-uuid')
             ->willReturn($organization);
 
         $this->regulationOrderRecordRepository
@@ -104,7 +104,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $file = $this->makeCsv("identifier,organization\nFO1/2023,My Org\n");
+        $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file]);
@@ -120,7 +120,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
 
         $this->organizationRepository
-            ->method('findOneByName')
+            ->method('findOneByUuid')
             ->willReturn($organization);
         $this->regulationOrderRecordRepository
             ->method('findOneByIdentifierInOrganization')
@@ -129,7 +129,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $this->commandBus->expects(self::once())->method('handle');
         $this->entityManager->expects(self::once())->method('flush');
 
-        $file = $this->makeCsv("identifier;organization\nFO1/2023;My Org\n");
+        $file = $this->makeCsv("identifier;organization\nFO1/2023;org-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file, '--delimiter' => ';']);
@@ -144,7 +144,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
 
         $this->organizationRepository
-            ->method('findOneByName')
+            ->method('findOneByUuid')
             ->willReturn($organization);
         $this->regulationOrderRecordRepository
             ->method('findOneByIdentifierInOrganization')
@@ -153,7 +153,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $this->commandBus->expects(self::never())->method('handle');
         $this->entityManager->expects(self::never())->method('flush');
 
-        $file = $this->makeCsv("identifier,organization\nFO1/2023,My Org\n");
+        $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file, '--dry-run' => true]);
@@ -166,18 +166,18 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
     public function testOrganizationNotFound(): void
     {
         $this->organizationRepository
-            ->method('findOneByName')
+            ->method('findOneByUuid')
             ->willReturn(null);
 
         $this->commandBus->expects(self::never())->method('handle');
 
-        $file = $this->makeCsv("identifier,organization\nFO1/2023,Unknown Org\n");
+        $file = $this->makeCsv("identifier,organization\nFO1/2023,unknown-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file]);
 
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
-        $this->assertStringContainsString('organization "Unknown Org" not found', $commandTester->getDisplay());
+        $this->assertStringContainsString('organization "unknown-uuid" not found', $commandTester->getDisplay());
         $this->assertStringContainsString('0 regulation order(s) deleted.', $commandTester->getDisplay());
     }
 
@@ -186,7 +186,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $organization = $this->createMock(Organization::class);
 
         $this->organizationRepository
-            ->method('findOneByName')
+            ->method('findOneByUuid')
             ->willReturn($organization);
         $this->regulationOrderRecordRepository
             ->method('findOneByIdentifierInOrganization')
@@ -194,7 +194,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
 
         $this->commandBus->expects(self::never())->method('handle');
 
-        $file = $this->makeCsv("identifier,organization\nUNKNOWN/2023,My Org\n");
+        $file = $this->makeCsv("identifier,organization\nUNKNOWN/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file]);
@@ -205,9 +205,9 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
 
     public function testMissingValuesInRow(): void
     {
-        $this->organizationRepository->expects(self::never())->method('findOneByName');
+        $this->organizationRepository->expects(self::never())->method('findOneByUuid');
 
-        $file = $this->makeCsv("identifier,organization\n,My Org\nFO1/2023,\n");
+        $file = $this->makeCsv("identifier,organization\n,org-uuid\nFO1/2023,\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file]);
@@ -223,7 +223,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
 
         $this->organizationRepository
-            ->method('findOneByName')
+            ->method('findOneByUuid')
             ->willReturn($organization);
         $this->regulationOrderRecordRepository
             ->method('findOneByIdentifierInOrganization')
@@ -233,7 +233,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
             ->method('handle')
             ->willThrowException(new \RuntimeException('boom'));
 
-        $file = $this->makeCsv("identifier,organization\nFO1/2023,My Org\n");
+        $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file]);
@@ -245,9 +245,9 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
 
     public function testMissingColumns(): void
     {
-        $this->organizationRepository->expects(self::never())->method('findOneByName');
+        $this->organizationRepository->expects(self::never())->method('findOneByUuid');
 
-        $file = $this->makeCsv("foo,bar\nFO1/2023,My Org\n");
+        $file = $this->makeCsv("foo,bar\nFO1/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();
         $commandTester->execute(['file' => $file]);

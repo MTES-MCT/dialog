@@ -31,13 +31,13 @@ final class DeleteRegulationsFromCsvCommandTest extends KernelTestCase
         $organizationRepository = $container->get(OrganizationRepositoryInterface::class);
         $regulationOrderRecordRepository = $container->get(RegulationOrderRecordRepositoryInterface::class);
 
-        $organization = $organizationRepository->findOneByName(OrganizationFixture::SEINE_SAINT_DENIS_NAME);
+        $organization = $organizationRepository->findOneByUuid(OrganizationFixture::SEINE_SAINT_DENIS_ID);
         self::assertNotNull($regulationOrderRecordRepository->findOneByIdentifierInOrganization(RegulationOrderFixture::TYPICAL_IDENTIFIER, $organization));
 
         $file = $this->makeCsv(\sprintf(
             "identifier,organization\n%s,%s\n",
             RegulationOrderFixture::TYPICAL_IDENTIFIER,
-            OrganizationFixture::SEINE_SAINT_DENIS_NAME,
+            OrganizationFixture::SEINE_SAINT_DENIS_ID,
         ));
 
         $command = $container->get(DeleteRegulationsFromCsvCommand::class);
@@ -62,7 +62,7 @@ final class DeleteRegulationsFromCsvCommandTest extends KernelTestCase
         $file = $this->makeCsv(\sprintf(
             "identifier,organization\n%s,%s\n",
             RegulationOrderFixture::TYPICAL_IDENTIFIER,
-            OrganizationFixture::SEINE_SAINT_DENIS_NAME,
+            OrganizationFixture::SEINE_SAINT_DENIS_ID,
         ));
 
         $command = $container->get(DeleteRegulationsFromCsvCommand::class);
@@ -72,7 +72,7 @@ final class DeleteRegulationsFromCsvCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         self::assertStringContainsString('would be deleted', $commandTester->getDisplay());
 
-        $organization = $organizationRepository->findOneByName(OrganizationFixture::SEINE_SAINT_DENIS_NAME);
+        $organization = $organizationRepository->findOneByUuid(OrganizationFixture::SEINE_SAINT_DENIS_ID);
         self::assertNotNull($regulationOrderRecordRepository->findOneByIdentifierInOrganization(RegulationOrderFixture::TYPICAL_IDENTIFIER, $organization));
 
         unlink($file);
@@ -84,9 +84,10 @@ final class DeleteRegulationsFromCsvCommandTest extends KernelTestCase
 
         $container = static::getContainer();
 
-        $file = $this->makeCsv(
-            "identifier,organization\nUNKNOWN/2023,Département de Seine-Saint-Denis\nFO1/2023,Unknown Org\n",
-        );
+        $file = $this->makeCsv(\sprintf(
+            "identifier,organization\nUNKNOWN/2023,%s\nFO1/2023,00000000-0000-0000-0000-000000000000\n",
+            OrganizationFixture::SEINE_SAINT_DENIS_ID,
+        ));
 
         $command = $container->get(DeleteRegulationsFromCsvCommand::class);
         $commandTester = new CommandTester($command);
