@@ -600,6 +600,18 @@
                 <source>regulation.general_info.regulation_order_template.placeholder</source>
                 <target>Sélectionner un modèle d'arrêté</target>
             </trans-unit>
+            <trans-unit id="regulation.general_info.regulation_order_template.help">
+                <source>regulation.general_info.regulation_order_template.help</source>
+                <target>Sélectionnez un modèle d'arrêté pour l'export Word (optionnel).</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.regulation_order_template.info">
+                <source>regulation.general_info.regulation_order_template.info</source>
+                <target>Les modèles d'arrêtés sont définis dans les paramètres de</target>
+            </trans-unit>
+            <trans-unit id="regulation.general_info.regulation_order_template.info.organization_link">
+                <source>regulation.general_info.regulation_order_template.info.organization_link</source>
+                <target>votre organisation</target>
+            </trans-unit>
             <trans-unit id="regulation.general_info.identifier">
                 <source>regulation.general_info.identifier</source>
                 <target>Identifiant</target>
@@ -1630,6 +1642,18 @@
             <trans-unit id="contact.email.description2">
                 <source>contact.email.description2</source>
                 <target>L'équipe DiaLog vous répondra dans les meilleurs délais. </target>
+            </trans-unit>
+            <trans-unit id="contact.webinar.title">
+                <source>contact.webinar.title</source>
+                <target>Rejoignez-nous au webinaire de découverte DiaLog, tous les lundi à 15h !</target>
+            </trans-unit>
+            <trans-unit id="contact.webinar.description">
+                <source>contact.webinar.description</source>
+                <target>Venez découvrir DiaLog ou poser vos questions à l’équipe en visio :</target>
+            </trans-unit>
+            <trans-unit id="contact.webinar.link">
+                <source>contact.webinar.link</source>
+                <target>Lien visio du webinaire DiaLog</target>
             </trans-unit>
             <trans-unit id="landing.diagram.authorities">
                 <source>landing.diagram.authorities</source>

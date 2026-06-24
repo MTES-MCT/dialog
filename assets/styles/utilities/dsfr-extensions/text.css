@@ -28,6 +28,10 @@
     color: var(--blue-france-sun-113-625);
 }
 
+.fr-x-text--blue-france-light {
+    color: var(--text-default-info);
+}
+
 .fr-x-text--uppercase {
     text-transform: uppercase;
 }

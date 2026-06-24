@@ -22,5 +22,17 @@
         </li>
     </ul>
     <p>{{ 'welcome.email.feedback'|trans }}</p>
+    <div class="fr-notice fr-notice--info fr-mt-3w">
+        <div class="fr-container">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title fr-icon-calendar-event-line">{{ 'welcome.email.webinar.title'|trans }}</span>
+                    <br>
+                    <span class="fr-notice__desc">{{ 'welcome.email.webinar.description'|trans }}</span>
+                    <a title="{{ 'welcome.email.webinar.link'|trans }}" href="https://visio.numerique.gouv.fr/ogx-uujt-vsi" target="_blank" rel="noopener external" class="fr-notice__link">{{ 'welcome.email.webinar.link'|trans }}</a>
+                </p>
+            </div>
+        </div>
+    </div>
     <p>{{ 'welcome.email.signature'|trans }}</p>
 {% endblock %}
