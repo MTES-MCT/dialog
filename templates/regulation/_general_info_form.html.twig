@@ -55,6 +55,11 @@
                             group_class: 'fr-select-group',
                             widget_class: 'fr-select',
                         }) }}
+                        <p class="fr-text--sm fr-x-text--blue-france-light">
+                            <span class="fr-icon-info-fill fr-icon--sm" aria-hidden="true"></span>
+                            {{ 'regulation.general_info.regulation_order_template.info'|trans }}
+                            <a class='fr-link fr-text--sm fr-x-text--blue-france-light' href="{{ path('app_my_organizations') }}" target='_blank' rel='noopener external'>{{ 'regulation.general_info.regulation_order_template.info.organization_link'|trans }}</a>.
+                        </p>
                     </div>
                 </div>
                 <a href="{{ cancelUrl }}" class="fr-btn fr-btn--tertiary fr-mr-3w">

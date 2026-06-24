@@ -164,6 +164,7 @@ final class GeneralInfoFormType extends AbstractType
         return [
             'choices' => $choices,
             'label' => 'regulation.general_info.regulation_order_template',
+            'help' => 'regulation.general_info.regulation_order_template.help',
             'required' => false,
         ];
     }
