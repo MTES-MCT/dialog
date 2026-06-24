@@ -135,6 +135,8 @@ export default class extends Controller {
             return;
         }
 
+        // L'aperçu affiche la ville entière ; les exceptions sont soustraites côté serveur à
+        // l'enregistrement (un aperçu live exact nécessiterait de recalculer chaque exception).
         this.#fetchAndDisplay(new URLSearchParams({ roadType: 'wholeCity', cityCode }));
     }
 

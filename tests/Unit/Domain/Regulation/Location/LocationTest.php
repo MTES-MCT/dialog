@@ -11,6 +11,7 @@ use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Location\StorageArea;
+use App\Domain\Regulation\Location\WholeCityException;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
 
@@ -104,5 +105,48 @@ final class LocationTest extends TestCase
         $this->assertSame($numberedRoad2, $numberedRoadLocation->getNumberedRoad());
         $this->assertSame($namedStreet2, $namedStreetLocation->getNamedStreet());
         $this->assertSame($rawGeoJSON2, $rawGeoJSONLocation->getRawGeoJSON());
+    }
+
+    public function testWholeCity(): void
+    {
+        $location = new Location(
+            uuid: 'b3c3c8a2-0000-0000-0000-000000000000',
+            measure: $this->createMock(Measure::class),
+            roadType: 'wholeCity',
+            geometry: null,
+            cityCode: '59350',
+            cityLabel: 'Lille',
+        );
+
+        $this->assertSame('59350', $location->getCityCode());
+        $this->assertSame('Lille', $location->getCityLabel());
+        $this->assertSame('Lille', $location->getCifsStreetLabel());
+        $this->assertSame([], $location->getExceptions());
+
+        // setWholeCity met à jour les champs
+        $location->setWholeCity('59009', 'Avesnelles');
+        $this->assertSame('59009', $location->getCityCode());
+        $this->assertSame('Avesnelles', $location->getCityLabel());
+
+        // exceptions : ajout / lecture (réindexée) / suppression
+        $exception = $this->createMock(WholeCityException::class);
+        $location->addException($exception);
+        $this->assertSame([$exception], $location->getExceptions());
+        $location->addException($exception); // pas de doublon
+        $this->assertCount(1, $location->getExceptions());
+        $location->removeException($exception);
+        $this->assertSame([], $location->getExceptions());
+
+        // update() vers un autre type remet à null les champs ville
+        $location->setWholeCity('59350', 'Lille');
+        $location->update('lane', '<geom>');
+        $this->assertNull($location->getCityCode());
+        $this->assertNull($location->getCityLabel());
+
+        // update() en wholeCity préserve les champs ville
+        $location->setWholeCity('59350', 'Lille');
+        $location->update('wholeCity', '<geom>');
+        $this->assertSame('59350', $location->getCityCode());
+        $this->assertSame('Lille', $location->getCityLabel());
     }
 }

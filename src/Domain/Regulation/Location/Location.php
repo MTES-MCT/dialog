@@ -6,9 +6,14 @@ namespace App\Domain\Regulation\Location;
 
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Measure;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class Location
 {
+    /** @var Collection<int, WholeCityException> */
+    private Collection $exceptions;
+
     public function __construct(
         private string $uuid,
         private Measure $measure,
@@ -18,11 +23,12 @@ class Location
         private ?NumberedRoad $numberedRoad = null,
         private ?RawGeoJSON $rawGeoJSON = null,
         private ?StorageArea $storageArea = null,
-        // Used only by the "ville entière" (wholeCity) road type, which has no dedicated
-        // sub-entity: the whole-city geometry lives directly on the location.
+        // Utilisé uniquement par le type « Ville entière » (wholeCity), qui n'a pas de
+        // sous-entité dédiée : la géométrie de la ville vit directement sur la localisation.
         private ?string $cityCode = null,
         private ?string $cityLabel = null,
     ) {
+        $this->exceptions = new ArrayCollection();
     }
 
     public function getUuid(): string
@@ -73,6 +79,28 @@ class Location
     public function getCityLabel(): ?string
     {
         return $this->cityLabel;
+    }
+
+    /**
+     * Voies/tracés exclus d'une restriction « Ville entière ».
+     *
+     * @return WholeCityException[]
+     */
+    public function getExceptions(): array
+    {
+        return array_values($this->exceptions->toArray());
+    }
+
+    public function addException(WholeCityException $exception): void
+    {
+        if (!$this->exceptions->contains($exception)) {
+            $this->exceptions->add($exception);
+        }
+    }
+
+    public function removeException(WholeCityException $exception): void
+    {
+        $this->exceptions->removeElement($exception);
     }
 
     public function getCifsStreetLabel(): string

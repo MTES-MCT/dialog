@@ -31,5 +31,10 @@
     <many-to-one field="storageArea" target-entity="App\Domain\Regulation\Location\StorageArea">
       <join-column name="storage_area_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>
+    <one-to-many field="exceptions" target-entity="App\Domain\Regulation\Location\WholeCityException" mapped-by="location" orphan-removal="true">
+        <cascade>
+            <cascade-all/>
+        </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>
