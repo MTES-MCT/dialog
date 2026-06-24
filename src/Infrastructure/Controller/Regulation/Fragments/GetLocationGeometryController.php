@@ -57,6 +57,7 @@ final class GetLocationGeometryController
                 RoadTypeEnum::LANE => $this->getNamedStreetGeometry($roadBanId, $fromHouseNumber, $toHouseNumber, $fromRoadBanId, $toRoadBanId, $roadName ?? '', $cityCode ?? '', $direction ?? DirectionEnum::BOTH->value),
                 RoadTypeEnum::DEPARTMENTAL_ROAD,
                 RoadTypeEnum::NATIONAL_ROAD => $this->getNumberedRoadGeometry($roadType, $administrator, $roadNumber, $fromPointNumber, $toPointNumber, $fromSide, $toSide, $fromAbscissa, $toAbscissa, $direction ?? DirectionEnum::BOTH->value),
+                RoadTypeEnum::WHOLE_CITY => $this->getWholeCityGeometry($cityCode ?? ''),
                 default => throw new BadRequestHttpException(\sprintf('Unsupported roadType: %s', $roadType->value)),
             };
         } catch (GeocodingAddressNotFoundException) {
@@ -109,6 +110,21 @@ final class GetLocationGeometryController
             $this->logger->error('Failed to compute lane section', ['roadBanId' => $roadBanId, 'exception' => $e]);
 
             throw $e;
+        }
+    }
+
+    private function getWholeCityGeometry(string $cityCode): ?string
+    {
+        if (!$cityCode) {
+            return null;
+        }
+
+        try {
+            return $this->roadGeocoder->computeCityGeometry($cityCode);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to compute city geometry', ['cityCode' => $cityCode, 'exception' => $e]);
+
+            return null;
         }
     }
 

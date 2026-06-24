@@ -48,6 +48,27 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingFailureException($message);
     }
 
+    public function computeCityGeometry(string $cityCode): string
+    {
+        try {
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
+                FROM voie_nommee
+                WHERE insee_commune = :city_code',
+                ['city_code' => $cityCode],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('City geometry query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if ($rows && $rows[0]['geometry']) {
+            return $rows[0]['geometry'];
+        }
+
+        $message = \sprintf("no result found for cityCode='%s'", $cityCode);
+        throw new GeocodingFailureException($message);
+    }
+
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string
     {
         $roadBanId = $this->bdtopo2025Connection->fetchOne(
@@ -439,9 +460,9 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         // Coordinates can be a POINT [1, 2] or a MULTIPOINT [[1, 2], [3, 4]]
         if (\is_array($coordinates[0])) {
             return Coordinates::fromLonLat($coordinates[0][0], $coordinates[0][1]);
-        } else {
-            return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
         }
+
+        return Coordinates::fromLonLat($coordinates[0], $coordinates[1]);
     }
 
     public function findSides(string $administrator, string $roadNumber, ?string $departmentCode, string $pointNumber): array

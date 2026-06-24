@@ -41,7 +41,7 @@ final class SaveLocationCommandHandler
             }
 
             $location->update($command->roadType, $geometry);
-            $this->commandBus->handle($roadCommand);
+            $this->applyRoadCommand($roadCommand, $location);
 
             if ($deleteCommand = $command->getRoadDeleteCommand()) {
                 $this->commandBus->handle($deleteCommand);
@@ -67,9 +67,22 @@ final class SaveLocationCommandHandler
             ),
         );
         $roadCommand->setLocation($location);
-        $this->commandBus->handle($roadCommand);
+        $this->applyRoadCommand($roadCommand, $location);
         $command->measure->addLocation($location);
 
         return $location;
+    }
+
+    private function applyRoadCommand(RoadCommandInterface $roadCommand, Location $location): void
+    {
+        // "Ville entière" has no dedicated sub-entity: its data lives on the location itself,
+        // so there is nothing to persist through a sub-handler.
+        if ($roadCommand instanceof SaveWholeCityCommand) {
+            $location->setWholeCity($roadCommand->cityCode, $roadCommand->cityLabel);
+
+            return;
+        }
+
+        $this->commandBus->handle($roadCommand);
     }
 }

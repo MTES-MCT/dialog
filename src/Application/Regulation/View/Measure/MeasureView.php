@@ -8,6 +8,7 @@ use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Measure;
 
 readonly class MeasureView
@@ -88,6 +89,16 @@ readonly class MeasureView
                     roadType: $location->getRoadType(),
                     rawGeoJSON: new RawGeoJSONView(
                         label: $rawGeoJSON->getLabel(),
+                    ),
+                    geometry: $location->getGeometry(),
+                );
+            } elseif ($location->getRoadType() === RoadTypeEnum::WHOLE_CITY->value) {
+                $locations[] = new LocationView(
+                    uuid: $location->getUuid(),
+                    roadType: $location->getRoadType(),
+                    wholeCity: new WholeCityView(
+                        cityCode: $location->getCityCode(),
+                        cityLabel: $location->getCityLabel(),
                     ),
                     geometry: $location->getGeometry(),
                 );

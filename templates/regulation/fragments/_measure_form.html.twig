@@ -768,6 +768,84 @@
                         }) }}
                     </div>
                 </div>
+
+                {% set isWholeCity = form.roadType.vars.value == 'wholeCity' %}
+                <div
+                    data-controller="reset"
+                    data-form-reveal-target="section"
+                    data-value="wholeCity"
+                    {% if not isWholeCity %}hidden{% endif %}
+                >
+                    {{ form_row(form.wholeCity.roadType, {
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'wholeCity',
+                            'disabled': not isWholeCity,
+                        }
+                    }) }}
+
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-min-length-value="3"
+                        data-autocomplete-delay-value="500"
+                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+                    >
+                        {{ form_row(form.wholeCity.cityCode, {
+                            attr: {
+                                'data-autocomplete-target': 'hidden',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'wholeCity',
+                                'disabled': not isWholeCity,
+                            }
+                        }) }}
+
+                        {{ form_row(form.wholeCity.cityLabel, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: {
+                                'data-autocomplete-target': 'input',
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'wholeCity',
+                                'disabled': not isWholeCity,
+                            },
+                        }) }}
+                        <ul
+                            id="{{ form.wholeCity.cityLabel.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        >
+                            <li role="status" data-autocomplete-target="status"></li>
+                        </ul>
+                    </div>
+
+                    {% set wholeCityPreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-wholeCity' %}
+                    <section class="fr-mt-2w app-preview-map-toggle">
+                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ wholeCityPreviewMapAccordionId }}">
+                            <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
+                            <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
+                        </button>
+                        <div class="fr-collapse" id="{{ wholeCityPreviewMapAccordionId }}">
+                            <div
+                                data-controller="location-preview-map"
+                                data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                                data-location-preview-map-road-type-value="wholeCity"
+                                data-location-preview-map-city-code-field-value="{{ form.wholeCity.cityCode.vars.id }}"
+                                data-location-preview-map-measure-type-value="{{ measureType }}"
+                            >
+                                <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
+                                    <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
+                                    <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     </li>

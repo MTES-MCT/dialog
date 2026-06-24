@@ -20,6 +20,8 @@
         <option name="srid">4326</option>
       </options>
     </field>
+    <field name="cityCode" type="string" column="city_code" nullable="true" length="5" />
+    <field name="cityLabel" type="string" column="city_label" nullable="true" length="255" />
     <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="locations">
         <join-column name="measure_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </many-to-one>

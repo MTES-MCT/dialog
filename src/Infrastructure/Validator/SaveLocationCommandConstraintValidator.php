@@ -29,11 +29,13 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
         $hasDepartmentalRoad = $command->departmentalRoad?->roadNumber !== null;
         $hasNationalRoad = $command->nationalRoad?->roadNumber !== null;
         $hasRawGeoJSON = $command->rawGeoJSON?->label !== null;
+        $hasWholeCity = $command->wholeCity?->cityCode !== null;
 
         $filledCount = ($hasNamedStreet ? 1 : 0)
             + ($hasDepartmentalRoad ? 1 : 0)
             + ($hasNationalRoad ? 1 : 0)
-            + ($hasRawGeoJSON ? 1 : 0);
+            + ($hasRawGeoJSON ? 1 : 0)
+            + ($hasWholeCity ? 1 : 0);
 
         if ($filledCount !== 1) {
             $this->context->buildViolation($this->translator->trans('regulation.location.type.error.exclusive', [], 'messages'))
@@ -46,6 +48,7 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
             'departmentalRoad' => 'departmentalRoad',
             'nationalRoad' => 'nationalRoad',
             'rawGeoJSON' => 'rawGeoJSON',
+            'wholeCity' => 'wholeCity',
         ];
 
         $roadType = $command->roadType;

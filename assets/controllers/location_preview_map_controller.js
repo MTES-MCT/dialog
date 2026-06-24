@@ -122,7 +122,20 @@ export default class extends Controller {
             this.#loadForNumberedRoad();
         } else if (roadType === 'rawGeoJSON') {
             this.#loadForRawGeoJSON();
+        } else if (roadType === 'wholeCity') {
+            this.#loadForWholeCity();
         }
+    }
+
+    #loadForWholeCity() {
+        const cityCode = this.#getFieldValue('cityCode');
+
+        if (!cityCode) {
+            this.#hideMap();
+            return;
+        }
+
+        this.#fetchAndDisplay(new URLSearchParams({ roadType: 'wholeCity', cityCode }));
     }
 
     #loadForNamedStreet() {
