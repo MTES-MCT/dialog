@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query\Location;
 
+use App\Application\QueryBusInterface;
 use App\Application\QueryInterface;
 use App\Application\RoadGeocoderInterface;
 
@@ -11,6 +12,7 @@ final class GetWholeCityGeometryQueryHandler implements QueryInterface
 {
     public function __construct(
         private RoadGeocoderInterface $roadGeocoder,
+        private QueryBusInterface $queryBus,
     ) {
     }
 
@@ -24,15 +26,64 @@ final class GetWholeCityGeometryQueryHandler implements QueryInterface
             return $query->location->getGeometry();
         }
 
-        return $this->roadGeocoder->computeCityGeometry($query->command->cityCode);
+        $command = $query->command;
+
+        // Les exceptions « voie entière » sont exclues exactement par leur identifiant BAN ;
+        // les tronçons et tracés libres sont soustraits géométriquement (géométrie calculée via
+        // les requêtes de géométrie habituelles).
+        $subtractGeometries = [];
+        foreach ($command->exceptions as $exception) {
+            if ($exception->getExcludedRoadBanId() !== null) {
+                continue;
+            }
+
+            $geometryQuery = $exception->getGeometryQuery();
+            if ($geometryQuery) {
+                $subtractGeometries[] = $this->queryBus->handle($geometryQuery);
+            }
+        }
+
+        return $this->roadGeocoder->computeCityGeometry(
+            $command->cityCode,
+            $command->getExcludedRoadBanIds(),
+            array_values(array_filter($subtractGeometries)),
+        );
     }
 
     private function shouldRecomputeGeometry(GetWholeCityGeometryQuery $query): bool
     {
-        if (!$query->location) {
+        $location = $query->location;
+
+        if (!$location) {
             return true;
         }
 
-        return $query->command->cityCode !== $query->location->getCityCode();
+        if ($query->command->cityCode !== $location->getCityCode()) {
+            return true;
+        }
+
+        return $this->exceptionsSignature($query) !== $this->persistedExceptionsSignature($location);
+    }
+
+    private function exceptionsSignature(GetWholeCityGeometryQuery $query): array
+    {
+        $signature = array_map(
+            fn ($exception) => json_encode([$exception->roadType, $exception->toData()]),
+            $query->command->exceptions,
+        );
+        sort($signature);
+
+        return $signature;
+    }
+
+    private function persistedExceptionsSignature($location): array
+    {
+        $signature = array_map(
+            fn ($exception) => json_encode([$exception->getRoadType(), $exception->getData()]),
+            $location->getExceptions(),
+        );
+        sort($signature);
+
+        return $signature;
     }
 }

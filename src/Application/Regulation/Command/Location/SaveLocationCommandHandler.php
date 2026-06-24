@@ -9,6 +9,7 @@ use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\WholeCityException;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationInterveneOnGeometry;
 
@@ -75,14 +76,39 @@ final class SaveLocationCommandHandler
 
     private function applyRoadCommand(RoadCommandInterface $roadCommand, Location $location): void
     {
-        // "Ville entière" has no dedicated sub-entity: its data lives on the location itself,
-        // so there is nothing to persist through a sub-handler.
+        // « Ville entière » n'a pas de sous-entité dédiée : ses données (ville + voies exclues)
+        // vivent sur la localisation elle-même, donc rien à persister via un sous-handler.
         if ($roadCommand instanceof SaveWholeCityCommand) {
             $location->setWholeCity($roadCommand->cityCode, $roadCommand->cityLabel);
+            $this->syncWholeCityExceptions($roadCommand, $location);
 
             return;
         }
 
         $this->commandBus->handle($roadCommand);
+    }
+
+    private function syncWholeCityExceptions(SaveWholeCityCommand $command, Location $location): void
+    {
+        // On remplace l'ensemble des exceptions (l'orphan removal supprime les anciennes).
+        foreach ($location->getExceptions() as $existingException) {
+            $location->removeException($existingException);
+        }
+
+        foreach ($command->exceptions as $exceptionCommand) {
+            $geometryQuery = $exceptionCommand->getGeometryQuery();
+            $geometry = $geometryQuery ? $this->queryBus->handle($geometryQuery) : null;
+
+            $location->addException(
+                new WholeCityException(
+                    uuid: $this->idFactory->make(),
+                    location: $location,
+                    roadType: $exceptionCommand->roadType,
+                    label: $exceptionCommand->getLabel(),
+                    geometry: $geometry,
+                    data: $exceptionCommand->toData(),
+                ),
+            );
+        }
     }
 }
