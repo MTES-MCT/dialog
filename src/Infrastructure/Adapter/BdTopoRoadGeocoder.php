@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Adapter;
 
 use App\Application\Exception\AbscissaOutOfRangeException;
+use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
@@ -44,8 +45,28 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             return $rows[0]['geometry'];
         }
 
+        try {
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                '
+                    SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(vn.geometrie)))) AS geometry
+                    FROM voie_nommee vn
+                    WHERE vn.identifiant_voie_ban IN (:road_ban_id_lower, :road_ban_id_upper)
+                ',
+                [
+                    'road_ban_id_lower' => strtolower($roadBanId),
+                    'road_ban_id_upper' => strtoupper($roadBanId),
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Road line query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if ($rows && $rows[0]['geometry']) {
+            return $rows[0]['geometry'];
+        }
+
         $message = \sprintf("no result found for roadBanId='%s'", $roadBanId);
-        throw new GeocodingFailureException($message);
+        throw new GeocodingAddressNotFoundException($message);
     }
 
     public function computeCityGeometry(string $cityCode): string
@@ -66,7 +87,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         $message = \sprintf("no result found for cityCode='%s'", $cityCode);
-        throw new GeocodingFailureException($message);
+        throw new GeocodingAddressNotFoundException($message);
     }
 
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string
@@ -90,7 +111,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         $message = \sprintf("no result found for roadName='%s' and inseeCode='%s'", $roadName, $inseeCode);
-        throw new GeocodingFailureException($message);
+        throw new GeocodingAddressNotFoundException($message);
     }
 
     public function findNamedStreets(string $search, string $cityCode): array
@@ -447,7 +468,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         if (!$row) {
-            throw new GeocodingFailureException(\sprintf('no result found for roadNumber="%s", administrator="%s", departmentCode="%s", pointNumber=%s', $roadNumber, $administrator, $departmentCode, $pointNumber));
+            throw new GeocodingAddressNotFoundException(\sprintf('no result found for roadNumber="%s", administrator="%s", departmentCode="%s", pointNumber=%s', $roadNumber, $administrator, $departmentCode, $pointNumber));
         }
 
         if (empty($row['geom'])) {

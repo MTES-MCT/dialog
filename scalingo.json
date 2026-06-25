@@ -1,9 +1,3 @@
 {
-    "stack": "scalingo-22",
-    "env": {
-        "SCALINGO_API_TOKEN": {
-            "description": "Token Scalingo avec accès lecture sur l'app dialog (prod), utilisé par tools/restore_from_prod.py pour copier la base lors de la création d'une review app. À définir au niveau du parent app pour héritage par les review apps.",
-            "required": false
-        }
-    }
+    "stack": "scalingo-22"
 }
