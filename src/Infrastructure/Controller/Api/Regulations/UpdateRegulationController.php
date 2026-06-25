@@ -36,10 +36,9 @@ final class UpdateRegulationController
     }
 
     #[Route(
-        '/api/regulations/{identifier}',
+        '/api/regulations',
         name: 'api_regulations_update',
         methods: ['PUT'],
-        requirements: ['identifier' => '.+'],
     )]
     #[IsGranted('ROLE_API')]
     #[OA\Tag(name: 'Private')]
@@ -67,20 +66,7 @@ final class UpdateRegulationController
             Cette route est privée : elle nécessite l'envoi des entêtes `X-Client-Id` et `X-Client-Secret`
             (clés API rattachées à une organisation). Seuls les arrêtés appartenant à cette organisation
             peuvent être modifiés.
-
-            ### Paramètres
-            - `identifier` (chemin) : identifiant métier actuel de l'arrêté tel que défini par l'organisation
-              (par ex. `F2025/001`). Les `/` sont autorisés. L'identifiant peut être modifié en fournissant
-              une nouvelle valeur dans le champ `identifier` du payload.
             DESCRIPTION,
-    )]
-    #[OA\Parameter(
-        name: 'identifier',
-        in: 'path',
-        required: true,
-        description: "Identifiant métier actuel de l'arrêté tel que saisi par l'organisation émettrice "
-            . '(par ex. `F2025/001`). Les caractères `/` sont autorisés.',
-        schema: new OA\Schema(type: 'string', example: 'F2025/001'),
     )]
     #[OA\RequestBody(
         required: true,
@@ -305,7 +291,6 @@ final class UpdateRegulationController
         ),
     )]
     public function __invoke(
-        string $identifier,
         #[MapRequestPayload] RegulationGeneralInfoDTO $dto,
     ): JsonResponse {
         /** @var OrganizationAwareUserInterface $user */
@@ -315,12 +300,12 @@ final class UpdateRegulationController
         try {
             /** @var RegulationOrderRecord $regulationOrderRecord */
             $regulationOrderRecord = $this->queryBus->handle(
-                new GetRegulationOrderRecordByIdentifierQuery($identifier, $organization),
+                new GetRegulationOrderRecordByIdentifierQuery($dto->identifier, $organization),
             );
         } catch (RegulationOrderRecordNotFoundException) {
             return new JsonResponse([
                 'status' => Response::HTTP_NOT_FOUND,
-                'detail' => \sprintf('Aucun arrêté de circulation trouvé pour l\'identifiant %s au sein de l\'organisation %s.', $identifier, $organization->getName()),
+                'detail' => \sprintf('Aucun arrêté de circulation trouvé pour l\'identifiant %s au sein de l\'organisation %s.', $dto->identifier, $organization->getName()),
             ], Response::HTTP_NOT_FOUND);
         }
 

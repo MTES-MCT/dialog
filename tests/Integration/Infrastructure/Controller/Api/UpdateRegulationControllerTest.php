@@ -48,7 +48,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
         // FO1/2023 appartient à seineSaintDenisOrg et est un draft avec mesures
         $client->request(
             'PUT',
-            '/api/regulations/FO1/2023',
+            '/api/regulations',
             [],
             [],
             [
@@ -98,7 +98,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            '/api/regulations/FO1/2023',
+            '/api/regulations',
             [],
             [],
             [
@@ -125,7 +125,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            '/api/regulations/FO2/2023',
+            '/api/regulations',
             [],
             [],
             [
@@ -147,9 +147,12 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
         $client = static::createClient();
 
         // L'arrêté '2025-01' appartient à dialogOrg, pas à seineSaintDenisOrg
+        $payload = $this->getPayload();
+        $payload['identifier'] = '2025-01';
+
         $client->request(
             'PUT',
-            '/api/regulations/2025-01',
+            '/api/regulations',
             [],
             [],
             [
@@ -157,7 +160,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
                 'HTTP_X_CLIENT_ID' => 'clientId',
                 'HTTP_X_CLIENT_SECRET' => 'clientSecret',
             ],
-            json_encode($this->getPayload()),
+            json_encode($payload),
         );
 
         $this->assertResponseStatusCodeSame(404);
@@ -170,9 +173,12 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
     {
         $client = static::createClient();
 
+        $payload = $this->getPayload();
+        $payload['identifier'] = 'DOES-NOT-EXIST';
+
         $client->request(
             'PUT',
-            '/api/regulations/DOES-NOT-EXIST',
+            '/api/regulations',
             [],
             [],
             [
@@ -180,7 +186,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
                 'HTTP_X_CLIENT_ID' => 'clientId',
                 'HTTP_X_CLIENT_SECRET' => 'clientSecret',
             ],
-            json_encode($this->getPayload()),
+            json_encode($payload),
         );
 
         $this->assertResponseStatusCodeSame(404);
@@ -195,7 +201,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            '/api/regulations/FO1/2023',
+            '/api/regulations',
             [],
             [],
             [
@@ -216,7 +222,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
         $client = static::createClient();
 
         $payload = [
-            'identifier' => '',
+            'identifier' => 'FO1/2023',
             'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
             'category' => 'invalidCategory',
             'subject' => RegulationSubjectEnum::OTHER->value,
@@ -226,7 +232,7 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
 
         $client->request(
             'PUT',
-            '/api/regulations/FO1/2023',
+            '/api/regulations',
             [],
             [],
             [
