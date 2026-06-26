@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class NamedStreetFormType extends AbstractType
@@ -26,13 +27,27 @@ final class NamedStreetFormType extends AbstractType
                 'cityCode',
                 HiddenType::class,
             )
-            ->add(
+        ;
+
+        // Le sous-formulaire d'exception hérite la ville de la « Ville entière » parente :
+        // on masque l'autocomplétion de ville et on garde cityLabel en champ caché
+        // (synchronisé côté client), pour que la validation cityLabel reste satisfaite.
+        if ($options['with_city']) {
+            $builder->add(
                 'cityLabel',
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.city',
                 ],
-            )
+            );
+        } else {
+            $builder->add(
+                'cityLabel',
+                HiddenType::class,
+            );
+        }
+
+        $builder
             ->add(
                 'roadBanId',
                 HiddenType::class,
@@ -161,14 +176,25 @@ final class NamedStreetFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'with_city' => true,
             'validation_groups' => ['Default', 'html_form'],
             'data_class' => SaveNamedStreetCommand::class,
-            'error_mapping' => [
-                'cityCode' => 'cityLabel',
+        ]);
+        $resolver->setAllowedTypes('with_city', 'bool');
+
+        // cityCode errors are mapped onto the cityLabel field only when it is rendered.
+        $resolver->setDefault('error_mapping', function (Options $options): array {
+            $mapping = [
                 'roadBanId' => 'roadName',
                 'fromRoadBanId' => 'fromRoadName',
                 'toRoadBanId' => 'toRoadName',
-            ],
-        ]);
+            ];
+
+            if ($options['with_city']) {
+                $mapping['cityCode'] = 'cityLabel';
+            }
+
+            return $mapping;
+        });
     }
 }

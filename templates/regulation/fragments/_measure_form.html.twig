@@ -771,7 +771,7 @@
 
                 {% set isWholeCity = form.roadType.vars.value == 'wholeCity' %}
                 <div
-                    data-controller="reset"
+                    data-controller="reset mirror-value"
                     data-form-reveal-target="section"
                     data-value="wholeCity"
                     {% if not isWholeCity %}hidden{% endif %}
@@ -797,6 +797,8 @@
                         {{ form_row(form.wholeCity.cityCode, {
                             attr: {
                                 'data-autocomplete-target': 'hidden',
+                                'data-mirror-value-target': 'source',
+                                'data-mirror-value-name': 'cityCode',
                                 'data-form-reveal-target': 'formControl',
                                 'data-value': 'wholeCity',
                                 'disabled': not isWholeCity,
@@ -808,6 +810,8 @@
                             widget_class: 'fr-input',
                             attr: {
                                 'data-autocomplete-target': 'input',
+                                'data-mirror-value-target': 'source',
+                                'data-mirror-value-name': 'cityLabel',
                                 'data-form-reveal-target': 'formControl',
                                 'data-value': 'wholeCity',
                                 'disabled': not isWholeCity,
@@ -823,6 +827,49 @@
                             <li role="status" data-autocomplete-target="status"></li>
                         </ul>
                     </div>
+
+                    <fieldset
+                        aria-labelledby="{{ form.wholeCity.vars.id }}-exceptions-legend"
+                        data-form-reveal-target="formControl"
+                        data-value="wholeCity"
+                        {% if not isWholeCity %}disabled{% endif %}
+                    >
+                        <legend id="{{ form.wholeCity.vars.id }}-exceptions-legend" class="fr-text--bold">
+                            {{ 'regulation.location.wholeCity.exceptions'|trans }}
+                        </legend>
+                        <div class="fr-hint-text help-text fr-mb-1w">
+                            {{ 'regulation.location.wholeCity.exceptions.description'|trans }}
+                        </div>
+
+                        <div
+                            data-controller="form-collection"
+                            data-form-collection-prototype-key-value="exception"
+                            data-form-collection-trigger-conditionals-value="true"
+                            data-form-collection-next-index-value="{{ form.wholeCity.exceptions|length > 0 ? form.wholeCity.exceptions|last.vars.name + 1 : 0 }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType)|e('html_attr') }}"
+                        >
+                            <ul
+                                class="fr-raw-list fr-mb-1w"
+                                data-form-collection-target="collectionContainer"
+                                {% if form.wholeCity.exceptions|length == 0 %}data-empty{% endif %}
+                                aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
+                            >
+                                {%- for item in form.wholeCity.exceptions -%}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType) }}
+                                {%- else -%}
+                                    {%- do form.wholeCity.exceptions.setRendered -%}
+                                {%- endfor -%}
+                            </ul>
+
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                                data-action="form-collection#addCollectionElement"
+                            >
+                                {{ 'regulation.location.wholeCity.exceptions.add'|trans }}
+                            </button>
+                        </div>
+                    </fieldset>
 
                     {% set wholeCityPreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-wholeCity' %}
                     <section class="fr-mt-2w app-preview-map-toggle">
@@ -845,6 +892,193 @@
                             </div>
                         </div>
                     </section>
+                </div>
+            </div>
+        </div>
+    </li>
+{% endmacro %}
+
+{% macro whole_city_exception_item(form, index, measureType) %}
+    {% set isLane = form.roadType.vars.value == 'lane' %}
+    {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
+    <li
+        class="app-card app-card--no-header app-whole-city-exception fr-mb-2w"
+        data-controller="remove"
+        data-remove-target="this"
+        data-form-collection-target="collectionItem"
+    >
+        <div class="app-card__actions">
+            <button
+                type="button"
+                aria-label="{{ 'regulation.location.wholeCity.exceptions.remove'|trans }}"
+                class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-delete-bin-line"
+                data-action="remove#removeElement"
+            >
+            </button>
+        </div>
+        <div class="app-card__content" data-controller="form-reveal">
+            {{ form_row(form.roadType, {
+                group_class: 'fr-select-group',
+                widget_class: 'fr-select',
+                row_attr: { 'data-action': 'change->form-reveal#openByValue' },
+            }) }}
+
+            {# --- Voie --- #}
+            <div
+                data-controller="reset"
+                data-form-reveal-target="section"
+                data-value="lane"
+                {% if not isLane %}hidden{% endif %}
+            >
+                {{ form_row(form.namedStreet.roadType, { attr: { 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                {{ form_row(form.namedStreet.cityCode, { attr: { 'data-mirror-value-target': 'destination', 'data-mirror-value-name': 'cityCode', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                {{ form_row(form.namedStreet.cityLabel, { attr: { 'data-mirror-value-target': 'destination', 'data-mirror-value-name': 'cityLabel', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+
+                <div
+                    class="fr-x-autocomplete-wrapper"
+                    data-controller="autocomplete fetch"
+                    data-autocomplete-url-value="{{ path('fragment_namedStreet_completion') }}"
+                    data-autocomplete-query-param-value="search"
+                    data-autocomplete-extra-query-params-value="{{ {cityCode: '#' ~ form.namedStreet.cityCode.vars.id}|json_encode }}"
+                    data-autocomplete-min-length-value="3"
+                    data-autocomplete-delay-value="500"
+                    data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                    data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+                    data-reset-key-param="roadName"
+                    data-fetch-url-value="{{ url('fragment_intersection_options') }}"
+                    data-fetch-extra-query-params-value="{{ {
+                        roadBanId: '#' ~ form.namedStreet.roadBanId.vars.id,
+                        cityCode: '#' ~ form.namedStreet.cityCode.vars.id,
+                        currentOptions: [form.namedStreet.fromRoadBanId.vars.value, form.namedStreet.toRoadBanId.vars.value]|json_encode,
+                        targetIds: [form.namedStreet.fromRoadName.vars.id, form.namedStreet.toRoadName.vars.id]|json_encode,
+                    }|json_encode }}"
+                    data-fetch-required-params-value="{{ ['roadBanId']|json_encode }}"
+                    data-fetch-prefetch-value="true"
+                    data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
+                >
+                    {{ form_row(form.namedStreet.roadBanId, { attr: { 'data-autocomplete-target': 'hidden', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                    {{ form_row(form.namedStreet.roadName, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input',
+                        attr: { 'data-autocomplete-target': 'input', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane },
+                    }) }}
+                    <ul
+                        id="{{ form.namedStreet.roadName.vars.id }}-results"
+                        role="listbox"
+                        aria-label="{{ 'regulation.location.roadName.results_label'|trans }}"
+                        class="fr-x-autocomplete"
+                        data-autocomplete-target="results"
+                    >
+                        <li role="status" data-autocomplete-target="status"></li>
+                    </ul>
+                </div>
+
+                <fieldset data-form-reveal-target="formControl" data-value="lane" {% if not isLane %}disabled{% endif %}>
+                    <div data-controller="form-reveal">
+                        {{ form_row(form.namedStreet.isEntireStreet, {
+                            group_class: 'fr-checkbox-group',
+                            attr: {
+                                'data-controller': 'condition',
+                                'data-condition-equals-value': true,
+                                'data-action': 'change->condition#dispatchFromCheckboxChange condition:yes->form-reveal#close condition:no->form-reveal#open'
+                            }
+                        }) }}
+
+                        <fieldset
+                            aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
+                            data-form-reveal-target="section formControl"
+                            {% if form.namedStreet.isEntireStreet.vars.checked %}hidden disabled{% endif %}
+                        >
+                            <legend id="{{ form.namedStreet.vars.id }}-points-legend">
+                                {{ 'regulation.location.named_street.points'|trans }}
+                            </legend>
+                            {% include 'regulation/_named_street_point_fields.html.twig' with {
+                                legend: 'regulation.location.named_street.from_point'|trans,
+                                pointType: form.namedStreet.fromPointType,
+                                pointHouseNumber: form.namedStreet.fromHouseNumber,
+                                pointRoadBanId: form.namedStreet.fromRoadBanId,
+                                pointRoadName: form.namedStreet.fromRoadName,
+                            } only %}
+                            {% include 'regulation/_named_street_point_fields.html.twig' with {
+                                legend: 'regulation.location.named_street.to_point'|trans,
+                                pointType: form.namedStreet.toPointType,
+                                pointHouseNumber: form.namedStreet.toHouseNumber,
+                                pointRoadBanId: form.namedStreet.toRoadBanId,
+                                pointRoadName: form.namedStreet.toRoadName,
+                            } only %}
+                            {{ form_row(form.namedStreet.direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
+                        </fieldset>
+                    </div>
+                </fieldset>
+            </div>
+
+            {# --- Tracé libre --- #}
+            <div
+                data-controller="reset"
+                data-form-reveal-target="section"
+                data-value="rawGeoJSON"
+                {% if not isRawGeoJSON %}hidden{% endif %}
+            >
+                {{ form_row(form.rawGeoJSON.roadType, { attr: { 'data-form-reveal-target': 'formControl', 'data-value': 'rawGeoJSON', 'disabled': not isRawGeoJSON } }) }}
+                {{ form_row(form.rawGeoJSON.label, {
+                    group_class: 'fr-input-group',
+                    widget_class: 'fr-input',
+                    attr: { 'data-form-reveal-target': 'formControl', 'data-value': 'rawGeoJSON', 'disabled': not isRawGeoJSON },
+                }) }}
+
+                <div
+                    data-controller="draw-line-map"
+                    data-draw-line-map-center-json-value='[2.725, 47.16]'
+                    data-draw-line-map-zoom-value="5"
+                    data-draw-line-map-measure-type-value="{{ measureType }}"
+                    data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
+                    data-draw-line-map-start-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.start"|trans, "icon": "fr-icon-x-draw-line" }|json_encode }}'
+                    data-draw-line-map-finish-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.finish"|trans, "icon": "fr-icon-checkbox-line" }|json_encode }}'
+                    data-draw-line-map-edit-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.edit"|trans, "icon": "fr-icon-edit-line" }|json_encode }}'
+                    class="draw-line-map-wrapper fr-mb-3w"
+                >
+                    <div data-draw-line-map-target="warning" class="draw-line-map-warning fr-mb-1w" hidden>
+                        {{ 'regulation.location.raw_geojson.draw_line_map.warning'|trans }}
+                    </div>
+                    <div class="draw-line-map-canvas">
+                        <div class="draw-line-map-search">
+                            <div class="draw-line-map-search__input-wrapper">
+                                <span class="draw-line-map-search__icon fr-icon-search-line" aria-hidden="true"></span>
+                                <input
+                                    type="search"
+                                    class="fr-input fr-input--sm draw-line-map-search__input"
+                                    placeholder="{{ 'regulation.location.raw_geojson.draw_line_map.search.placeholder'|trans }}"
+                                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.search.aria_label'|trans }}"
+                                    autocomplete="off"
+                                    data-draw-line-map-target="searchInput"
+                                    data-action="input->draw-line-map#onSearchInput keydown->draw-line-map#onSearchKeydown focus->draw-line-map#onSearchFocus blur->draw-line-map#onSearchBlur"
+                                >
+                            </div>
+                            <ul class="draw-line-map-search__results" role="listbox" data-draw-line-map-target="searchResults" hidden></ul>
+                        </div>
+                        <div class="draw-line-map-controls draw-line-map-controls--top">
+                            <button type="button" class="fr-btn fr-btn--secondary fr-icon-x-draw-line fr-btn--icon-left" data-draw-line-map-target="drawBtn" data-action="click->draw-line-map#toggleDraw" aria-pressed="false">
+                                {{ 'regulation.location.raw_geojson.draw_line_map.draw.start'|trans }}
+                            </button>
+                        </div>
+                        <div class="draw-line-map-controls draw-line-map-controls--bottom">
+                            <button type="button" class="fr-btn fr-btn--md fr-btn--secondary fr-icon-arrow-go-back-line" data-draw-line-map-target="undoBtn" data-action="click->draw-line-map#undo" title="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}" aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"></button>
+                            <button type="button" class="fr-btn fr-btn--md fr-btn--secondary fr-icon-delete-bin-line" data-draw-line-map-target="clearBtn" data-action="click->draw-line-map#clear" title="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}" aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"></button>
+                        </div>
+                        <div data-draw-line-map-target="container" class="draw-line-map-container"></div>
+                    </div>
+
+                    {{ form_row(form.rawGeoJSON.geometry, {
+                        group_class: 'fr-input-group',
+                        widget_class: 'fr-input draw-line-map-geometry-field',
+                        attr: {
+                            'data-form-reveal-target': 'formControl',
+                            'data-value': 'rawGeoJSON',
+                            'disabled': not isRawGeoJSON,
+                            'data-draw-line-map-target': 'geometryField',
+                            'rows': 12,
+                        },
+                    }) }}
                 </div>
             </div>
         </div>

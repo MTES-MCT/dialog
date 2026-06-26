@@ -51,13 +51,14 @@ final class GetLocationGeometryController
         #[MapQueryParameter] ?string $toSide = null,
         #[MapQueryParameter] int $fromAbscissa = 0,
         #[MapQueryParameter] int $toAbscissa = 0,
+        #[MapQueryParameter] ?string $excludedRoadBanIds = null,
     ): Response {
         try {
             $geometry = match ($roadType) {
                 RoadTypeEnum::LANE => $this->getNamedStreetGeometry($roadBanId, $fromHouseNumber, $toHouseNumber, $fromRoadBanId, $toRoadBanId, $roadName ?? '', $cityCode ?? '', $direction ?? DirectionEnum::BOTH->value),
                 RoadTypeEnum::DEPARTMENTAL_ROAD,
                 RoadTypeEnum::NATIONAL_ROAD => $this->getNumberedRoadGeometry($roadType, $administrator, $roadNumber, $fromPointNumber, $toPointNumber, $fromSide, $toSide, $fromAbscissa, $toAbscissa, $direction ?? DirectionEnum::BOTH->value),
-                RoadTypeEnum::WHOLE_CITY => $this->getWholeCityGeometry($cityCode ?? ''),
+                RoadTypeEnum::WHOLE_CITY => $this->getWholeCityGeometry($cityCode ?? '', $excludedRoadBanIds),
                 default => throw new BadRequestHttpException(\sprintf('Unsupported roadType: %s', $roadType->value)),
             };
         } catch (GeocodingAddressNotFoundException) {
@@ -113,14 +114,16 @@ final class GetLocationGeometryController
         }
     }
 
-    private function getWholeCityGeometry(string $cityCode): ?string
+    private function getWholeCityGeometry(string $cityCode, ?string $excludedRoadBanIds): ?string
     {
         if (!$cityCode) {
             return null;
         }
 
+        $excluded = array_values(array_filter(array_map('trim', explode(',', (string) $excludedRoadBanIds))));
+
         try {
-            return $this->roadGeocoder->computeCityGeometry($cityCode);
+            return $this->roadGeocoder->computeCityGeometry($cityCode, $excluded);
         } catch (\Exception $e) {
             $this->logger->error('Failed to compute city geometry', ['cityCode' => $cityCode, 'exception' => $e]);
 

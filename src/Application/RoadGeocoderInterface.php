@@ -13,9 +13,12 @@ interface RoadGeocoderInterface
     public function computeRoadLine(string $roadBanId): string;
 
     /**
-     * Compute the geometry of all named streets of a city (INSEE code).
+     * Calcule la géométrie de toutes les voies nommées d'une commune (code INSEE).
+     *
+     * @param string[] $excludedRoadBanIds Voies entières exclues exactement par leur identifiant BAN (NOT IN)
+     * @param string[] $subtractGeometries Géométries GeoJSON soustraites géométriquement (ST_Difference avec un petit buffer)
      */
-    public function computeCityGeometry(string $cityCode): string;
+    public function computeCityGeometry(string $cityCode, array $excludedRoadBanIds = [], array $subtractGeometries = []): string;
 
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string;
 
