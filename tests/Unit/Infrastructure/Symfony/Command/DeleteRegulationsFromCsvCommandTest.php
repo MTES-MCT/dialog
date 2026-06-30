@@ -104,6 +104,10 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
+        $this->commandBus
+            ->expects(self::once())
+            ->method('dispatchAsync')
+            ->with(self::isInstanceOf(\App\Application\Regulation\Command\GenerateDatexCommand::class));
         $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();
