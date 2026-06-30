@@ -155,6 +155,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
             ->willReturn($regulationOrderRecord);
 
         $this->commandBus->expects(self::never())->method('handle');
+        $this->commandBus->expects(self::never())->method('dispatchAsync');
         $this->entityManager->expects(self::never())->method('flush');
 
         $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
