@@ -40,16 +40,17 @@ final class DeleteRegulationsFromCsvCommandTest extends KernelTestCase
             OrganizationFixture::SEINE_SAINT_DENIS_ID,
         ));
 
-        $command = $container->get(DeleteRegulationsFromCsvCommand::class);
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(['file' => $file]);
+        try {
+            $command = $container->get(DeleteRegulationsFromCsvCommand::class);
+            $commandTester = new CommandTester($command);
+            $commandTester->execute(['file' => $file]);
 
-        $commandTester->assertCommandIsSuccessful();
-        self::assertStringContainsString('1 regulation order(s) deleted.', $commandTester->getDisplay());
-        self::assertNull($regulationOrderRecordRepository->findOneByIdentifierInOrganization(RegulationOrderFixture::TYPICAL_IDENTIFIER, $organization));
-
-        unlink($file);
-    }
+            $commandTester->assertCommandIsSuccessful();
+            self::assertStringContainsString('1 regulation order(s) deleted.', $commandTester->getDisplay());
+            self::assertNull($regulationOrderRecordRepository->findOneByIdentifierInOrganization(RegulationOrderFixture::TYPICAL_IDENTIFIER, $organization));
+        } finally {
+            unlink($file);
+        }
 
     public function testDryRunDoesNotDelete(): void
     {
