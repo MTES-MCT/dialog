@@ -62,9 +62,12 @@ class DeleteRegulationsFromCsvCommand extends Command
         $content = file_get_contents($file);
 
         if ($content === false) {
+            // @codeCoverageIgnoreStart
+            // Unreachable in practice: the file already passed is_file()/is_readable() checks above.
             $io->error(\sprintf('Unable to read file: %s', $file));
 
             return Command::FAILURE;
+            // @codeCoverageIgnoreEnd
         }
 
         try {

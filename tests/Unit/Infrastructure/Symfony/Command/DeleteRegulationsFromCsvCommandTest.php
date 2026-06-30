@@ -15,6 +15,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Serializer\Encoder\CsvEncoder;
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 
 final class DeleteRegulationsFromCsvCommandTest extends TestCase
 {
@@ -50,13 +52,14 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         return $path;
     }
 
-    private function createCommandTester(): CommandTester
+    private function createCommandTester(?CsvEncoder $csvEncoder = null): CommandTester
     {
         $command = new DeleteRegulationsFromCsvCommand(
             $this->organizationRepository,
             $this->regulationOrderRecordRepository,
             $this->commandBus,
             $this->entityManager,
+            $csvEncoder ?? new CsvEncoder(),
         );
 
         return new CommandTester($command);
@@ -279,5 +282,21 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
 
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
         $this->assertStringContainsString('File not found or not readable', $commandTester->getDisplay());
+    }
+
+    public function testUnableToParseCsv(): void
+    {
+        $csvEncoder = $this->createMock(CsvEncoder::class);
+        $csvEncoder
+            ->method('decode')
+            ->willThrowException(new UnexpectedValueException('bad csv'));
+
+        $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
+
+        $commandTester = $this->createCommandTester($csvEncoder);
+        $commandTester->execute(['file' => $file]);
+
+        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('Unable to parse CSV file: bad csv', $commandTester->getDisplay());
     }
 }

@@ -51,6 +51,7 @@ final class DeleteRegulationsFromCsvCommandTest extends KernelTestCase
         } finally {
             unlink($file);
         }
+    }
 
     public function testDryRunDoesNotDelete(): void
     {
