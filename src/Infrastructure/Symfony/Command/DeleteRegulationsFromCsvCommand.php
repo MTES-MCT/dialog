@@ -117,7 +117,7 @@ class DeleteRegulationsFromCsvCommand extends Command
             $regulationOrderRecord = $this->regulationOrderRecordRepository->findOneByIdentifierInOrganization($identifier, $organization);
 
             if ($regulationOrderRecord === null) {
-                $errors[] = \sprintf('Line %d: regulation order "%s" not found in organization "%s".', $line, $identifier, $organization->getName());
+                $errors[] = \sprintf('Line %d: regulation order "%s" not found in organization "%s" (%s).', $line, $identifier, $organization->getName(), $organizationUuid);
                 continue;
             }
 
