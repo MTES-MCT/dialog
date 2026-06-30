@@ -143,7 +143,10 @@ class DeleteRegulationsFromCsvCommand extends Command
             $io->writeln(\sprintf('<info>%d regulation order(s) would be deleted.</info>', $deleted));
         } else {
             $io->writeln(\sprintf('<info>%d regulation order(s) deleted.</info>', $deleted));
-            $this->commandBus->dispatchAsync(new GenerateDatexCommand());
+
+            if ($deleted > 0) {
+                $this->commandBus->dispatchAsync(new GenerateDatexCommand());
+            }
         }
 
         if ($errors !== []) {
