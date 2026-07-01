@@ -111,6 +111,8 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | `APP_JOP_ORG_ID` | UUID de l'organisation où intégrer les données JOP | _Vide_ | |
 | `APP_SECRET` | Correspond au paramètre Symfony [`secret`](https://symfony.com/doc/current/reference/configuration/framework.html#secret) | _(Obligatoire)_ | Longueur recommandée : 32 caractères. Exemple : générer avec `python3 -c 'import secrets; print(secrets.token_hex(16))'` |
 | `APP_CIFS_FILTERS` | Filtre les données exportées vers CIFS | `{}` | Format JSON, champs acceptés : `allowed_sources`, `excluded_identifiers`, `allowed_location_isd`. L'objet vide `{}` a pour effet de continuer de toute exporter. |
+| `APP_DOC_PROXY_HOST` | Nom du sous-domaine servi en reverse proxy vers la documentation GitBook (voir [Sous-domaine de documentation](#sous-domaine-de-documentation-reverse-proxy-gitbook)). Laisser vide pour désactiver. | _Vide_ | Ex. : `doc.dialog.beta.gouv.fr` |
+| `APP_DOC_PROXY_TARGET` | URL de l'espace GitBook à servir sous `APP_DOC_PROXY_HOST` | `https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr` | Inclut le chemin de l'espace ; les liens internes sont réécrits vers la racine du sous-domaine. |
 | `METABASE_SECRET_KEY` | Clé secrète pour la signature JWT des graphiques Metabase | _(Obligatoire)_ | À récupérer dans [l'administration Metabase](https://dialog-metabase.osc-fr1.scalingo.io/admin/settings/embedding-in-other-applications/standalone) |
 | `DATABASE_URL` | URL vers le serveur PostgreSQL | _(Obligatoire)_ `$SCALINGO_POSTGRESQL_URL` | La variable `$SCALINGO_POSTGRESQL_URL` est configurée automatiquement par Scalingo |
 | `MATOMO_ENABLED` | `true` (ou autre valeur truthy) pour activer les [analytics](../tools/analytics.md), `false` pour ne pas les activer | `false` | |
@@ -119,7 +121,19 @@ Chaque application peut être configurée avec les variables d'environnement sui
 | `SENTRY_DSN` | URL de collecte Sentry | | À récupérer sur l'instance Sentry. Voir : [Monitoring](../tools/monitoring.md) |
 | `WEB_CONCURRENCY` | Nombre de processus enfants créés par PHP-FPM (`pm.max_children`). | Dépend de la `memory_limit` et de la RAM de la machine. | Utiliser `2`. Peut être ajusté pour optimiser le fonctionnement du serveur. Voir : [PHP-FPM Concurrency (Scalingo docs)](https://www.php.net/manual/fr/install.fpm.configuration.php) |
 
-## Retirer un environnement
+## Sous-domaine de documentation (reverse proxy GitBook)
+
+La documentation en ligne est hébergée sur un espace [GitBook](https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr) et servie sous le sous-domaine `doc.dialog.beta.gouv.fr` via un reverse proxy intégré à l'application (subscriber `DocProxySubscriber`).
+
+Quand l'en-tête `Host` de la requête correspond à `APP_DOC_PROXY_HOST`, l'application récupère la page correspondante sur GitBook et la renvoie telle quelle, en réécrivant les liens internes pour qu'ils restent sur le sous-domaine. Le reste de l'application n'est pas affecté.
+
+Pour activer ou déplacer ce sous-domaine :
+
+1. **DNS** : créer un enregistrement `CNAME` pointant le sous-domaine vers l'application Scalingo (ex. `dialog.osc-fr1.scalingo.io`), dans la zone DNS de BetaGouv.
+2. **Scalingo** : ajouter le sous-domaine dans `Settings > Domains` de l'app `dialog` (Scalingo provisionne automatiquement le certificat TLS).
+3. **Variables d'environnement** : définir `APP_DOC_PROXY_HOST` (ex. `doc.dialog.beta.gouv.fr`) et, si besoin, `APP_DOC_PROXY_TARGET`.
+
+
 
 Lorsqu'un environnement décrit ci-dessus n'est plus utile, il devrait être retiré pour libérer les ressources informatiques associées.
 
