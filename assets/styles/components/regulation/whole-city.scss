@@ -1,0 +1,13 @@
+// Fond gris très clair (#F8F8F8, cf. maquette Figma) sur les exceptions d'une
+// « Ville entière », pour les distinguer du reste du formulaire de localisation.
+// Sélecteur composé pour l'emporter sur la spécificité de `.app-card`.
+.app-card.app-whole-city-exception {
+    background-color: #f8f8f8;
+}
+
+// Liste à puces indentée des exceptions dans le récapitulatif (DSFR réinitialise
+// les <ul> : ni puce ni indentation par défaut).
+.app-whole-city-exceptions {
+    list-style-type: disc;
+    padding-left: 2rem;
+}

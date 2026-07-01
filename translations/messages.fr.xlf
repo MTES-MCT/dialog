@@ -761,6 +761,30 @@
                 <source>regulation.location.road.type.wholeCity</source>
                 <target>Ville entière</target>
             </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions">
+                <source>regulation.location.wholeCity.exceptions</source>
+                <target>Sauf...</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.description">
+                <source>regulation.location.wholeCity.exceptions.description</source>
+                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à toute la commune sauf ces voies.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.add">
+                <source>regulation.location.wholeCity.exceptions.add</source>
+                <target>Ajouter une exception</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.remove">
+                <source>regulation.location.wholeCity.exceptions.remove</source>
+                <target>Supprimer l'exception</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.except">
+                <source>regulation.location.wholeCity.except</source>
+                <target>sauf</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.wholeCity.exceptions.summary">
+                <source>regulation.location.wholeCity.exceptions.summary</source>
+                <target>Sauf :</target>
+            </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
                 <target>Gestionnaire</target>

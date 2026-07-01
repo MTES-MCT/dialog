@@ -615,4 +615,33 @@ final class GetLocationGeometryControllerTest extends TestCase
 
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
     }
+
+    public function testWholeCityNoCityCode(): void
+    {
+        $this->roadGeocoder->expects(self::never())->method('computeCityGeometry');
+
+        $response = ($this->controller)(roadType: RoadTypeEnum::WHOLE_CITY, cityCode: null);
+
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+    }
+
+    public function testWholeCityComputesGeometryWithExcludedRoadBanIds(): void
+    {
+        $geometry = '{"type":"GeometryCollection","geometries":[]}';
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeCityGeometry')
+            ->with('59350', ['ban1', 'ban2'])
+            ->willReturn($geometry);
+
+        $response = ($this->controller)(
+            roadType: RoadTypeEnum::WHOLE_CITY,
+            cityCode: '59350',
+            excludedRoadBanIds: 'ban1, ban2',
+        );
+
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertSame($geometry, $response->getContent());
+    }
 }
