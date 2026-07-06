@@ -22,10 +22,15 @@ final class LitteralisPeriodParser
     // * 'de 8 heures à 15 heures 30'
     private const HOURS_REGEX = '/^(?:la nuit |de nuit )?(?:de )?(?P<startHour>\d{1,2}) ?(?:h|heures?) ?(?P<startMinute>\d{1,2})? (?:à|À|0|[aA]) ?(?P<endHour>\d{1,2}) ?(?:h|heures?) ?(?P<endMinute>\d{1,2})?\.?$/i';
     private const ALL_HOURS_VALUES = [
+        'jour et nuit',
         // <<< Litteralis Corrèze (aka CD19)
         '24/24 7j/7j',
         'TOUS',
         // >>>
+        // Montpellier
+        'la journée',
+        // Savoie
+        'chaque jour de la période, 24h/24',
     ];
 
     private $tz;
