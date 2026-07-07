@@ -6,6 +6,7 @@ namespace App\Infrastructure\DTO\Regulation;
 
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Application\Regulation\View\RegulationOrderForApiView;
 
 /**
  * Représentation de réponse d'un arrêté pour l'API.
@@ -53,6 +54,25 @@ final readonly class RegulationApiView
                 name: $generalInfo->organizationName,
             ),
             measures: array_map(MeasureApiView::fromView(...), $measures),
+        );
+    }
+
+    public static function fromApiView(RegulationOrderForApiView $view): self
+    {
+        return new self(
+            identifier: $view->identifier,
+            status: $view->status,
+            category: $view->category,
+            subject: $view->subject,
+            otherCategoryText: $view->otherCategoryText,
+            title: $view->title,
+            startDate: $view->startDate,
+            endDate: $view->endDate,
+            organization: new OrganizationApiView(
+                uuid: $view->organizationUuid,
+                name: $view->organizationName,
+            ),
+            measures: array_map(MeasureApiView::fromView(...), $view->measures),
         );
     }
 }

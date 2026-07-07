@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -377,6 +378,118 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ->leftJoin('p.timeSlots', 't')
                 ->where('roc.uuid IN (:uuids)')
                 ->andWhere('loc.geometry IS NOT NULL')
+                ->orderBy('roc.uuid')
+                ->setParameter('uuids', $chunk, ArrayParameterType::STRING)
+                ->getQuery()
+                ->getResult();
+
+            foreach ($records as $record) {
+                yield $record;
+            }
+
+            $this->getEntityManager()->clear();
+        }
+    }
+
+    public function findUuidsForApi(
+        Organization $organization,
+        string $vigueurStatus,
+        ?string $inseeCode,
+        ?\DateTimeInterface $dateStart,
+        ?\DateTimeInterface $dateEnd,
+        ?string $category,
+        ?string $measureType,
+        \DateTimeInterface $now,
+    ): array {
+        $overallStartDateExpr = \sprintf('(%s)', str_replace('%%n', '20', self::OVERALL_START_DATE_QUERY_TEMPLATE));
+        $overallEndDateExpr = \sprintf('(%s)', str_replace('%%n', '21', self::OVERALL_END_DATE_QUERY_TEMPLATE));
+
+        $qb = $this->createQueryBuilder('roc')
+            ->select('DISTINCT roc.uuid')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->innerJoin('ro.measures', 'm')
+            ->where('roc.status = :status')
+            ->andWhere('roc.organization = :organization')
+            ->orderBy('roc.uuid');
+
+        $parameters = [
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'organization' => $organization,
+        ];
+
+        $permanentCategory = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+
+        if ($category !== null) {
+            $qb->andWhere('ro.category = :category');
+            $parameters['category'] = $category;
+        }
+
+        if ($measureType !== null) {
+            $qb->andWhere('m.type = :measureType');
+            $parameters['measureType'] = $measureType;
+        }
+
+        if ($inseeCode !== null) {
+            $qb->innerJoin('m.locations', 'loc')
+                ->leftJoin('loc.namedStreet', 'ns')
+                ->andWhere('ns.cityCode = :inseeCode OR loc.cityCode = :inseeCode');
+            $parameters['inseeCode'] = $inseeCode;
+        }
+
+        if ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_CURRENT) {
+            $qb->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr, $overallEndDateExpr));
+            $parameters['permanentCategory'] = $permanentCategory;
+            $parameters['now'] = $now;
+        } elseif ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_EXPIRED) {
+            $qb->andWhere(\sprintf('ro.category != :permanentCategory AND %s < :now', $overallEndDateExpr));
+            $parameters['permanentCategory'] = $permanentCategory;
+            $parameters['now'] = $now;
+        } elseif ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_UPCOMING) {
+            $qb->andWhere(\sprintf('%s > :now', $overallStartDateExpr));
+            $parameters['now'] = $now;
+        }
+
+        if ($dateStart !== null) {
+            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR %s >= :dateStart', $overallEndDateExpr));
+            $parameters['permanentCategory'] ??= $permanentCategory;
+            $parameters['dateStart'] = $dateStart;
+        }
+
+        if ($dateEnd !== null) {
+            $qb->andWhere(\sprintf('%s <= :dateEnd', $overallStartDateExpr));
+            $parameters['dateEnd'] = $dateEnd;
+        }
+
+        $rows = $qb
+            ->setParameters($parameters)
+            ->getQuery()
+            ->getResult();
+
+        return array_column($rows, 'uuid');
+    }
+
+    public function iterateRegulationOrdersForApiByUuids(array $uuids): iterable
+    {
+        if ($uuids === []) {
+            return;
+        }
+
+        foreach (array_chunk($uuids, self::DATEX_HYDRATION_BATCH_SIZE) as $chunk) {
+            $records = $this->createQueryBuilder('roc')
+                ->addSelect('org', 'ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg', 'sa')
+                ->innerJoin('roc.organization', 'org')
+                ->innerJoin('roc.regulationOrder', 'ro')
+                ->innerJoin('ro.measures', 'm')
+                ->leftJoin('m.locations', 'loc')
+                ->leftJoin('loc.namedStreet', 'ns')
+                ->leftJoin('loc.numberedRoad', 'nr')
+                ->leftJoin('loc.rawGeoJSON', 'rg')
+                ->leftJoin('loc.storageArea', 'sa')
+                ->leftJoin('m.vehicleSet', 'v')
+                ->leftJoin('m.periods', 'p')
+                ->leftJoin('p.dailyRange', 'd')
+                ->leftJoin('p.timeSlots', 't')
+                ->where('roc.uuid IN (:uuids)')
                 ->orderBy('roc.uuid')
                 ->setParameter('uuids', $chunk, ArrayParameterType::STRING)
                 ->getQuery()
