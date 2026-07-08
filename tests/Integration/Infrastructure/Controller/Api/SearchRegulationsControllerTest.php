@@ -77,6 +77,70 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $data['metadata']['totalItems']);
     }
 
+    public function testSearchFilterByInseeCode(): void
+    {
+        [$status, $data] = $this->search(['status' => 'all', 'inseeCode' => '93070']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+
+        // Code INSEE ne concernant aucune emprise publiée de l'organisation.
+        [$status, $data] = $this->search(['status' => 'all', 'inseeCode' => '00000']);
+        $this->assertSame(200, $status);
+        $this->assertSame(0, $data['metadata']['totalItems']);
+    }
+
+    public function testSearchStatusExpired(): void
+    {
+        // À la date de test (2023-06-09), seul FO2/2023 (mars 2023) est expiré.
+        [$status, $data] = $this->search(['status' => 'expired']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertNotContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+    }
+
+    public function testSearchStatusUpcoming(): void
+    {
+        // À la date de test (2023-06-09), seul 117374#24-A-0473 (juillet 2023) est à venir.
+        [$status, $data] = $this->search(['status' => 'upcoming']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('117374#24-A-0473', $identifiers);
+        $this->assertNotContains('FO2/2023', $identifiers);
+        $this->assertNotContains('F/CIFS/2023', $identifiers);
+    }
+
+    public function testSearchFilterByDateStart(): void
+    {
+        // Seul 117374#24-A-0473 est encore valide au 1er juillet 2023.
+        [$status, $data] = $this->search(['status' => 'all', 'dateStart' => '2023-07-01']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('117374#24-A-0473', $identifiers);
+        $this->assertNotContains('FO2/2023', $identifiers);
+        $this->assertNotContains('F/CIFS/2023', $identifiers);
+    }
+
+    public function testSearchFilterByDateEnd(): void
+    {
+        // Seul FO2/2023 débute avant le 1er avril 2023.
+        [$status, $data] = $this->search(['status' => 'all', 'dateEnd' => '2023-04-01']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertNotContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+    }
+
     public function testSearchExcludeHeavyGoodsVehicle(): void
     {
         [$status, $data] = $this->search(['status' => 'all', 'includeHeavyGoodsVehicle' => 'false']);
@@ -112,9 +176,24 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame(400, $status);
     }
 
-    public function testSearchInvalidDateReturns400(): void
+    public function testSearchInvalidCategoryReturns400(): void
+    {
+        [$status, $data] = $this->search(['category' => 'notACategory']);
+
+        $this->assertSame(400, $status);
+        $this->assertArrayHasKey('error', $data);
+    }
+
+    public function testSearchInvalidDateStartReturns400(): void
     {
         [$status] = $this->search(['dateStart' => 'not-a-date']);
+
+        $this->assertSame(400, $status);
+    }
+
+    public function testSearchInvalidDateEndReturns400(): void
+    {
+        [$status] = $this->search(['dateEnd' => 'not-a-date']);
 
         $this->assertSame(400, $status);
     }

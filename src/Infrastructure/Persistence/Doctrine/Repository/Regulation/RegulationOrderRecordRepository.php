@@ -470,10 +470,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
 
     public function iterateRegulationOrdersForApiByUuids(array $uuids): iterable
     {
-        if ($uuids === []) {
-            return;
-        }
-
         foreach (array_chunk($uuids, self::DATEX_HYDRATION_BATCH_SIZE) as $chunk) {
             $records = $this->createQueryBuilder('roc')
                 ->addSelect('org', 'ro', 'm', 'loc', 'v', 'p', 'd', 't', 'nr', 'ns', 'rg', 'sa')
