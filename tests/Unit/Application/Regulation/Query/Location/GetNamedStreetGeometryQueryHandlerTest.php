@@ -352,26 +352,12 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         ?string $toRoadName,
     ): void {
         // Quand le roadBanId n'est pas fourni (cas API), il est résolu à partir du nom de voie
-        // pour calculer la géométrie exacte de la voie et de ses intersections via computeRoadLine.
+        // pour calculer la géométrie exacte de la voie via computeRoadLine.
         $this->roadGeocoder
             ->expects(self::atMost(1))
             ->method('getRoadBanIdFromName')
             ->with($this->roadName, $this->cityCode)
             ->willReturn($this->roadBanId)
-        ;
-
-        $this->roadGeocoder
-            ->expects(self::atMost(1))
-            ->method('getRoadBanIdFromName')
-            ->with($this->fromRoadName, $this->cityCode)
-            ->willReturn('62108_0100')
-        ;
-
-        $this->roadGeocoder
-            ->expects(self::atMost(1))
-            ->method('getRoadBanIdFromName')
-            ->with($this->toRoadName, $this->cityCode)
-            ->willReturn('62108_0100')
         ;
 
         $this->roadGeocoder
@@ -398,6 +384,8 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->fromRoadName = $fromRoadName;
         $saveNamedStreetCommand->toRoadName = $toRoadName;
         $saveNamedStreetCommand->roadBanId = $roadBanId;
+        $saveNamedStreetCommand->fromRoadBanId = '62108_0100';
+        $saveNamedStreetCommand->toRoadBanId = '62108_0100';
 
         $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
     }
