@@ -82,6 +82,14 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             $command->roadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->roadName, $command->cityCode);
         }
 
+        if ($command->fromRoadName && !$command->fromRoadBanId) {
+            $command->fromRoadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->fromRoadName, $command->cityCode);
+        }
+
+        if ($command->toRoadName && !$command->toRoadBanId) {
+            $command->toRoadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->toRoadName, $command->cityCode);
+        }
+
         return $this->roadGeocoder->computeRoadLine($command->roadBanId);
     }
 
