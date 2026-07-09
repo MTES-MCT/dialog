@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
-use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
