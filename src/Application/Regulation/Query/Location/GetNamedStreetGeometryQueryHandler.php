@@ -41,18 +41,19 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             throw new GeocodingFailureException('not implemented: full city geocoding');
         }
 
-        if ($command->fromRoadName && !$command->fromRoadBanId) {
-            throw new EmptyRoadBanIdException();
-        }
-
-        if ($command->toRoadName && !$command->toRoadBanId) {
-            throw new EmptyRoadBanIdException();
-        }
 
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
         $fullLaneGeometry = $this->getFullGeometryLane($command);
+
+        if ($command->fromRoadName && !$command->fromRoadBanId) {
+            throw new EmptyRoadBanIdException("No banId for {$command->fromRoadName}");
+        }
+
+        if ($command->toRoadName && !$command->toRoadBanId) {
+            throw new EmptyRoadBanIdException("No banId for {$command->toRoadName}");
+        }
 
         if ($hasNoStart && $hasNoEnd) {
             return $fullLaneGeometry;
