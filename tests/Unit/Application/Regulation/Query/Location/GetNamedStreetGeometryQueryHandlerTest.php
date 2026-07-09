@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
+use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
@@ -398,5 +399,138 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
             'fromRoadName empty' => ['44195_0137', null, 'Impasse des Sapins'],
             'toRoadName empty' => ['44195_0137', 'Route du Mia', null],
         ];
+    }
+
+    public function testResolveFromAndToRoadBanIdFromName(): void
+    {
+        // Cas API : fromRoadBanId et toRoadBanId ne sont pas fournis mais les noms de voie le sont.
+        // Ils doivent être résolus depuis les noms de voie via getRoadBanIdFromName.
+        $fromRoadName = 'Route du Mia';
+        $toRoadName = 'Impasse des Sapins';
+        $fromRoadBanId = '44195_0200';
+        $toRoadBanId = '44195_0300';
+
+        $this->roadGeocoder
+            ->expects(self::exactly(2))
+            ->method('getRoadBanIdFromName')
+            ->willReturnMap([
+                [$fromRoadName, $this->cityCode, $fromRoadBanId],
+                [$toRoadName, $this->cityCode, $toRoadBanId],
+            ]);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->with($this->roadBanId)
+            ->willReturn('fullLaneGeometry');
+
+        $this->laneSectionMaker
+            ->expects(self::once())
+            ->method('computeSection')
+            ->with(
+                'fullLaneGeometry',
+                $this->roadBanId,
+                $this->roadName,
+                $this->cityCode,
+                $this->direction,
+                null,
+                null,
+                $fromRoadBanId,
+                null,
+                null,
+                $toRoadBanId,
+            )
+            ->willReturn($this->geometry);
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
+        $saveNamedStreetCommand->roadName = $this->roadName;
+        $saveNamedStreetCommand->fromRoadName = $fromRoadName;
+        $saveNamedStreetCommand->fromRoadBanId = null;
+        $saveNamedStreetCommand->toRoadName = $toRoadName;
+        $saveNamedStreetCommand->toRoadBanId = null;
+
+        $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+
+        $this->assertSame($this->geometry, $result);
+    }
+
+    public function testThrowWhenFromRoadBanIdCannotBeResolved(): void
+    {
+        $fromRoadName = 'Route du Mia';
+
+        $this->expectException(EmptyRoadBanIdException::class);
+        $this->expectExceptionMessage("No banId for $fromRoadName");
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('getRoadBanIdFromName')
+            ->with($fromRoadName, $this->cityCode)
+            ->willReturn('');
+
+        $this->laneSectionMaker
+            ->expects(self::never())
+            ->method('computeSection');
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
+        $saveNamedStreetCommand->roadName = $this->roadName;
+        $saveNamedStreetCommand->fromRoadName = $fromRoadName;
+        $saveNamedStreetCommand->fromRoadBanId = null;
+
+        $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+    }
+
+    public function testThrowWhenToRoadBanIdCannotBeResolved(): void
+    {
+        $toRoadName = 'Impasse des Sapins';
+
+        $this->expectException(EmptyRoadBanIdException::class);
+        $this->expectExceptionMessage("No banId for $toRoadName");
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('getRoadBanIdFromName')
+            ->with($toRoadName, $this->cityCode)
+            ->willReturn('');
+
+        $this->laneSectionMaker
+            ->expects(self::never())
+            ->method('computeSection');
+
+        $handler = new GetNamedStreetGeometryQueryHandler(
+            $this->roadGeocoder,
+            $this->laneSectionMaker,
+        );
+
+        $saveNamedStreetCommand = new SaveNamedStreetCommand();
+        $saveNamedStreetCommand->roadType = RoadTypeEnum::LANE->value;
+        $saveNamedStreetCommand->direction = $this->direction;
+        $saveNamedStreetCommand->cityCode = $this->cityCode;
+        $saveNamedStreetCommand->cityLabel = $this->cityLabel;
+        $saveNamedStreetCommand->roadBanId = $this->roadBanId;
+        $saveNamedStreetCommand->roadName = $this->roadName;
+        $saveNamedStreetCommand->toRoadName = $toRoadName;
+        $saveNamedStreetCommand->toRoadBanId = null;
+
+        $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
     }
 }
