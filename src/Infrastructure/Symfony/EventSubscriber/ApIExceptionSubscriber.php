@@ -58,10 +58,10 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
     {
         if ($exception instanceof EmptyRoadBanIdException) {
             $this->logger->error(
-                'Empty roadBanId in the command GetNamedStreetGeometryQuery : '.$exception->getMessage(), 
+                'Empty roadBanId in the command GetNamedStreetGeometryQuery : ' . $exception->getMessage(),
                 [
-                'exception' => $exception->getMessage(),
-                ]
+                    'exception' => $exception->getMessage(),
+                ],
             );
 
             return null;
