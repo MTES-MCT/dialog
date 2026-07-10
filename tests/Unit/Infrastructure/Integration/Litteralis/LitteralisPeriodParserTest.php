@@ -70,6 +70,10 @@ final class LitteralisPeriodParserTest extends TestCase
                 'value' => 'de 7 heures 30 à 17 heures 30',
                 'timeSlots' => [$timeSlot2],
             ],
+            'hours-colon' => [
+                'value' => '08:00 à 18:00',
+                'timeSlots' => [$timeSlot1],
+            ],
         ];
     }
 
