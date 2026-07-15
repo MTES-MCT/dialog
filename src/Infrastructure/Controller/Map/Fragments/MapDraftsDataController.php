@@ -68,6 +68,7 @@ final class MapDraftsDataController
             $dto->endDate,
             RegulationOrderRecordStatusEnum::DRAFT,
             $organizationUuids,
+            $dto->displayHeavyGoodsVehicles,
         );
 
         return $this->jsonResponse($locationsAsGeoJson);
