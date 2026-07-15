@@ -63,7 +63,7 @@
                             {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
                             <p class="fr-text--bold fr-mb-0 fr-mt-2w">{{ 'regulation.source'|trans }}</p>
                             <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v fr-mb-0">{{ ('regulation.source.' ~ generalInfo.source.value)|trans }}</p>
-                            {% if latestHistory %}
+                            {% if latestHistory and is_granted('ROLE_USER') %}
                                 <p class="fr-text--bold fr-mb-0 fr-mt-2w">{{ 'regulation.date'|trans }}</p>
                                 {% include 'regulation/_regulation_order_history.html.twig' with { latestHistory: latestHistory } %}
                             {% endif %}

@@ -10,6 +10,7 @@ export default class extends Controller {
         // Déclenche les affichages conditionnels (form-reveal/condition) sur l'élément ajouté,
         // utile quand un champ a une valeur par défaut (ex. type « Voie » présélectionné).
         triggerConditionals: Boolean,
+        prefillFields: Array,
     };
 
     connect() {
@@ -17,13 +18,46 @@ export default class extends Controller {
     }
 
     addCollectionElement(_event) {
+        const sourceItem = this.collectionItemTargets[this.collectionItemTargets.length - 1] || null;
         const newItem = this._createItemFromPrototype();
         this.collectionContainerTarget.appendChild(newItem);
+
+        if (sourceItem && this.prefillFieldsValue.length > 0) {
+            this._prefillFields(sourceItem, newItem, this.prefillFieldsValue);
+        }
+
         this._incrementIndices();
         this.collectionContainerTarget.removeAttribute('data-empty');
 
         if (this.triggerConditionalsValue) {
             this._triggerConditionalDisplays(newItem);
+        }
+    }
+
+    _prefillFields(sourceItem, newItem, fieldNames) {
+        const copiedInputs = [];
+
+        this._getDirectInputs(sourceItem).forEach(sourceInput => {
+            const fieldName = this._extractFieldName(sourceInput.name);
+            if (!fieldName || !fieldNames.includes(fieldName)) {
+                return;
+            }
+
+            const newInput = this._findMatchingInput(newItem, sourceInput);
+            if (newInput) {
+                this._copyInputValue(sourceInput, newInput);
+                copiedInputs.push(newInput);
+            }
+        });
+
+        // Defer change events so Stimulus controllers (e.g. form-reveal) are
+        // connected to the freshly added DOM before reacting.
+        if (copiedInputs.length > 0) {
+            setTimeout(() => {
+                copiedInputs.forEach(input => {
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            }, 50);
         }
     }
 
