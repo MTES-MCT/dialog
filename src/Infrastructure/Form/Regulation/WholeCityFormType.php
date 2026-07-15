@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,6 +32,23 @@ final class WholeCityFormType extends AbstractType
                     'label' => 'regulation.location.city',
                 ],
             )
+            ->add(
+                'exceptions',
+                CollectionType::class,
+                options: [
+                    'entry_type' => WholeCityExceptionFormType::class,
+                    'entry_options' => ['label' => false],
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'by_reference' => false,
+                    'prototype' => true,
+                    'prototype_name' => '__exception_name__',
+                    // Pré-sélectionne « Voie » dans le prototype pour qu'une exception ajoutée
+                    // affiche directement son sous-formulaire.
+                    'prototype_data' => new SaveWholeCityExceptionCommand(),
+                    'label' => false,
+                ],
+            )
             ->add('roadType', HiddenType::class)
         ;
 
@@ -37,6 +57,24 @@ final class WholeCityFormType extends AbstractType
             $data = $event->getData();
             $data['roadType'] = $event->getForm()->getParent()->get('roadType')->getData();
             $event->setData($data);
+        });
+
+        // Les exceptions de type voie héritent la ville de la « Ville entière » : on injecte
+        // cityCode/cityLabel côté serveur (sans dépendre du JS) pour la validation et le calcul
+        // de géométrie de chaque exception.
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $command = $event->getData();
+
+            if (!$command instanceof SaveWholeCityCommand) {
+                return;
+            }
+
+            foreach ($command->exceptions as $exception) {
+                if ($exception->roadType === RoadTypeEnum::LANE->value && $exception->namedStreet) {
+                    $exception->namedStreet->cityCode = $command->cityCode;
+                    $exception->namedStreet->cityLabel = $command->cityLabel;
+                }
+            }
         });
     }
 

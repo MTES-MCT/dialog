@@ -194,6 +194,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $values['measure_form']['locations'][0]['wholeCity']['roadType'] = 'wholeCity';
         $values['measure_form']['locations'][0]['wholeCity']['cityCode'] = '93070';
         $values['measure_form']['locations'][0]['wholeCity']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['namedStreet']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['namedStreet']['roadBanId'] = '93070_0074';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 

@@ -69,14 +69,56 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingAddressNotFoundException($message);
     }
 
-    public function computeCityGeometry(string $cityCode): string
+    // ~3 mètres en degrés (SRID 4326) : tolérance pour soustraire les géométries d'exception
+    // qui proviennent d'une source différente (troncon_de_route) de la ville (voie_nommee).
+    private const CITY_SUBTRACT_BUFFER_DEG = 0.00003;
+
+    public function computeCityGeometry(string $cityCode, array $excludedRoadBanIds = [], array $subtractGeometries = []): string
     {
+        $params = ['city_code' => $cityCode];
+        $types = [];
+
+        // /!\ Le "IS NULL OR" est requis : certains tronçons n'ont pas d'identifiant_voie_ban,
+        // et un "NOT IN" seul les exclurait silencieusement (logique SQL tri-valuée avec NULL).
+        $excludeClause = '';
+        if (\count($excludedRoadBanIds) > 0) {
+            $excludeClause = 'AND (identifiant_voie_ban IS NULL OR identifiant_voie_ban NOT IN (:excluded_road_ban_ids))';
+            $params['excluded_road_ban_ids'] = $excludedRoadBanIds;
+            $types['excluded_road_ban_ids'] = ArrayParameterType::STRING;
+        }
+
+        $hasSubtract = \count($subtractGeometries) > 0;
+
+        if (!$hasSubtract) {
+            // Chemin rapide : ST_Collect regroupe les lignes sans les fusionner (pas de soustraction géométrique).
+            $cityExpr = 'ST_Collect(geometrie)';
+        } else {
+            // ST_Union fusionne les lignes dupliquées/superposées pour que ST_Difference se comporte correctement.
+            $subtractExprs = [];
+            foreach ($subtractGeometries as $i => $geometry) {
+                $key = 'subtract_' . $i;
+                $subtractExprs[] = \sprintf('ST_GeomFromGeoJSON(:%s)', $key);
+                $params[$key] = $geometry;
+            }
+            $params['buffer'] = self::CITY_SUBTRACT_BUFFER_DEG;
+            $cityExpr = \sprintf(
+                'ST_Difference(ST_Union(geometrie), ST_Buffer(ST_Union(ARRAY[%s]), :buffer))',
+                implode(', ', $subtractExprs),
+            );
+        }
+
         try {
             $rows = $this->bdtopo2025Connection->fetchAllAssociative(
-                'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(geometrie)))) AS geometry
-                FROM voie_nommee
-                WHERE insee_commune = :city_code',
-                ['city_code' => $cityCode],
+                \sprintf(
+                    'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(%s))) AS geometry
+                    FROM voie_nommee
+                    WHERE insee_commune = :city_code
+                    %s',
+                    $cityExpr,
+                    $excludeClause,
+                ),
+                $params,
+                $types,
             );
         } catch (\Exception $exc) {
             throw new GeocodingFailureException(\sprintf('City geometry query has failed: %s', $exc->getMessage()), previous: $exc);

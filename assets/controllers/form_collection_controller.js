@@ -7,6 +7,9 @@ export default class extends Controller {
         nextIndex: Number,
         prototype: String,
         prototypeKey: String,
+        // Déclenche les affichages conditionnels (form-reveal/condition) sur l'élément ajouté,
+        // utile quand un champ a une valeur par défaut (ex. type « Voie » présélectionné).
+        triggerConditionals: Boolean,
         prefillFields: Array,
     };
 
@@ -25,6 +28,10 @@ export default class extends Controller {
 
         this._incrementIndices();
         this.collectionContainerTarget.removeAttribute('data-empty');
+
+        if (this.triggerConditionalsValue) {
+            this._triggerConditionalDisplays(newItem);
+        }
     }
 
     _prefillFields(sourceItem, newItem, fieldNames) {
