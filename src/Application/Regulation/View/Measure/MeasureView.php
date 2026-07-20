@@ -93,12 +93,29 @@ readonly class MeasureView
                     geometry: $location->getGeometry(),
                 );
             } elseif ($location->getRoadType() === RoadTypeEnum::WHOLE_CITY->value) {
+                $exceptions = array_map(
+                    function ($exception) {
+                        $data = $exception->getData();
+
+                        return new WholeCityExceptionView(
+                            roadType: $exception->getRoadType(),
+                            label: $exception->getLabel(),
+                            fromHouseNumber: $data['fromHouseNumber'] ?? null,
+                            fromRoadName: $data['fromRoadName'] ?? null,
+                            toHouseNumber: $data['toHouseNumber'] ?? null,
+                            toRoadName: $data['toRoadName'] ?? null,
+                        );
+                    },
+                    $location->getExceptions(),
+                );
+
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
                     wholeCity: new WholeCityView(
                         cityCode: $location->getCityCode(),
                         cityLabel: $location->getCityLabel(),
+                        exceptions: $exceptions,
                     ),
                     geometry: $location->getGeometry(),
                 );

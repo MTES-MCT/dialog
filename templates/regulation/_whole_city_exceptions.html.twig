@@ -1,0 +1,15 @@
+{%- if exceptions is not empty -%}
+    <div class="fr-grid-row fr-mt-1w">
+        <span class="fr-col">
+            {{ 'regulation.location.wholeCity.exceptions.summary'|trans }}
+            <ul class="app-whole-city-exceptions">
+                {%- for exception in exceptions -%}
+                    <li>
+                        {{- exception.label -}}
+                        {%- if exception.roadType == 'lane' %} {% include 'location/named_street/points.html.twig' with { location: exception } only %}{% endif -%}
+                    </li>
+                {%- endfor -%}
+            </ul>
+        </span>
+    </div>
+{%- endif -%}

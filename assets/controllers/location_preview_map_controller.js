@@ -135,7 +135,28 @@ export default class extends Controller {
             return;
         }
 
-        this.#fetchAndDisplay(new URLSearchParams({ roadType: 'wholeCity', cityCode }));
+        const params = new URLSearchParams({ roadType: 'wholeCity', cityCode });
+
+        // Les voies en exception (identifiant BAN) sont exclues dans l'aperçu. Les sections sont
+        // approximées par l'exclusion de la voie entière ; la soustraction exacte (sections,
+        // tracé libre) reste faite côté serveur à l'enregistrement.
+        const excluded = this.#collectExceptionRoadBanIds();
+        if (excluded.length) {
+            params.set('excludedRoadBanIds', excluded.join(','));
+        }
+
+        this.#fetchAndDisplay(params);
+    }
+
+    #collectExceptionRoadBanIds() {
+        const section = this.element.closest('[data-form-reveal-target="section"]')
+            || this.element.closest('[data-controller~="reset"]');
+
+        if (!section) return [];
+
+        return Array.from(section.querySelectorAll('[data-whole-city-exception-road-ban-id]'))
+            .map(el => el.value)
+            .filter(Boolean);
     }
 
     #loadForNamedStreet() {
