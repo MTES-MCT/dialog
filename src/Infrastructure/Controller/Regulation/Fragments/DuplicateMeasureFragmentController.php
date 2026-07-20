@@ -12,6 +12,7 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
+use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -48,16 +49,15 @@ final class DuplicateMeasureFragmentController extends AbstractRegulationControl
     public function __invoke(Request $request, string $regulationOrderRecordUuid, string $uuid): Response
     {
         /* On récupère le regulationOrderRecord pour vérifier que l'utilisateur a bien accès à l'organisation */
-
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
 
+        /** @var Measure|null */
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
-
-        $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));
-
-        if (!$measure) {
+        if (!$measure || $measure->getRegulationOrder()->getRegulationOrderRecord()?->getUuid() !== $regulationOrderRecordUuid) {
             throw new NotFoundHttpException();
         }
+
+        $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($regulationOrderRecordUuid));
 
         $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 

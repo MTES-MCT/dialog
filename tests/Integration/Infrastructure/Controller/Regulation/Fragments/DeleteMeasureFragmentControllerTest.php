@@ -67,6 +67,15 @@ final class DeleteMeasureFragmentControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(404);
     }
 
+    public function testMeasureDoesNotBelongToRegulationOrder(): void
+    {
+        $client = $this->login();
+        $client->request('DELETE', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/' . MeasureFixture::UUID_TYPICAL . '/delete', [
+            '_token' => $this->generateCsrfToken($client, 'delete-measure'),
+        ]);
+        $this->assertResponseStatusCodeSame(404);
+    }
+
     public function testBadRegulationOrderUuid(): void
     {
         $client = $this->login();
