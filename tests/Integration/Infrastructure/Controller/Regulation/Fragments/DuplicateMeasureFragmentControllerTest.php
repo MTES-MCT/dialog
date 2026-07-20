@@ -28,6 +28,24 @@ final class DuplicateMeasureFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame($streams->eq(0)->attr('target'), 'measure_list');
     }
 
+    public function testMeasureNotFound(): void
+    {
+        $client = $this->login();
+        $client->request('POST', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_DOES_NOT_EXIST . '/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-measure'),
+        ]);
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testMeasureDoesNotBelongToRegulationOrder(): void
+    {
+        $client = $this->login();
+        $client->request('POST', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/' . MeasureFixture::UUID_TYPICAL . '/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-measure'),
+        ]);
+        $this->assertResponseStatusCodeSame(404);
+    }
+
     public function testWithoutAuthenticatedUser(): void
     {
         $client = static::createClient();
