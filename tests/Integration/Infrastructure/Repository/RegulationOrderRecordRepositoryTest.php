@@ -70,4 +70,11 @@ class RegulationOrderRecordRepositoryTest extends KernelTestCase
         $regulationOrderRecords = $this->repository->findRegulationOrdersForCifsIncidentFormat(excludedOrgUuids: [OrganizationFixture::SEINE_SAINT_DENIS_ID]);
         $this->assertEquals([], $regulationOrderRecords);
     }
+
+    public function testIterateRegulationOrdersForApiByUuidsEmpty(): void
+    {
+        $records = iterator_to_array($this->repository->iterateRegulationOrdersForApiByUuids([]));
+
+        $this->assertSame([], $records);
+    }
 }
