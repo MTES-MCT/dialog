@@ -38,5 +38,6 @@
                 </option>
             </constraint>
         </property>
+        <constraint name="App\Infrastructure\Validator\SaveRegulationOrderStorageCommandConstraint" />
     </class>
 </constraint-mapping>

@@ -14,6 +14,10 @@
                 <source>regulation.location.error.geocoding_failed</source>
                 <target>Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.</target>
             </trans-unit>
+            <trans-unit id="regulation.storage.error.file_or_url_required">
+                <source>regulation.storage.error.file_or_url_required</source>
+                <target>Veuillez importer un fichier ou renseigner un lien URL.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.cityCode.error.blank">
                 <source>regulation.location.cityCode.error.blank</source>
                 <target>Veuillez choisir une ville ou un code postal parmi la liste.</target>
