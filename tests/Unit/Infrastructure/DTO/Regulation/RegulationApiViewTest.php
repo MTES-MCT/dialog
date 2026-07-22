@@ -13,6 +13,7 @@ use App\Application\Regulation\View\Measure\NumberedRoadView;
 use App\Application\Regulation\View\Measure\RawGeoJSONView;
 use App\Application\Regulation\View\Measure\StorageAreaView;
 use App\Application\Regulation\View\PeriodView;
+use App\Application\Regulation\View\RegulationOrderForApiView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
@@ -52,6 +53,47 @@ final class RegulationApiViewTest extends TestCase
         $this->assertSame('Ma collectivité', $view->organization->name);
 
         $this->assertSame([], $view->measures);
+    }
+
+    public function testFromApiViewMapsRegulationOrderForApiView(): void
+    {
+        $measure = new MeasureView(
+            uuid: 'measure-uuid',
+            type: 'noEntry',
+            periods: [],
+            vehicleSet: null,
+            maxSpeed: null,
+            locations: [],
+        );
+
+        $apiView = new RegulationOrderForApiView(
+            identifier: 'F2025/002',
+            status: 'published',
+            category: 'temporaryRegulation',
+            subject: 'roadMaintenance',
+            otherCategoryText: null,
+            title: 'Arrêté temporaire',
+            startDate: new \DateTimeImmutable('2025-10-09T08:00:00+00:00'),
+            endDate: new \DateTimeImmutable('2025-10-15T18:00:00+00:00'),
+            organizationUuid: 'org-uuid',
+            organizationName: 'Ma collectivité',
+            measures: [$measure],
+        );
+
+        $view = RegulationApiView::fromApiView($apiView);
+
+        $this->assertSame('F2025/002', $view->identifier);
+        $this->assertSame('published', $view->status);
+        $this->assertSame('temporaryRegulation', $view->category);
+        $this->assertSame('roadMaintenance', $view->subject);
+        $this->assertSame('Arrêté temporaire', $view->title);
+        $this->assertEquals(new \DateTimeImmutable('2025-10-09T08:00:00+00:00'), $view->startDate);
+        $this->assertInstanceOf(OrganizationApiView::class, $view->organization);
+        $this->assertSame('org-uuid', $view->organization->uuid);
+        $this->assertSame('Ma collectivité', $view->organization->name);
+        $this->assertCount(1, $view->measures);
+        $this->assertInstanceOf(MeasureApiView::class, $view->measures[0]);
+        $this->assertSame('measure-uuid', $view->measures[0]->uuid);
     }
 
     public function testFromViewsMapsMeasureTree(): void
