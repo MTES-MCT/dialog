@@ -2570,6 +2570,22 @@
                 <source>map.filter.drafts</source>
                 <target>Arrêtés en brouillon</target>
             </trans-unit>
+            <trans-unit id="map.filters.title.vehicles">
+                <source>map.filters.title.vehicles</source>
+                <target>Types de véhicules</target>
+            </trans-unit>
+            <trans-unit id="map.filter.heavy_goods_vehicles">
+                <source>map.filter.heavy_goods_vehicles</source>
+                <target>Afficher les poids-lourds</target>
+            </trans-unit>
+            <trans-unit id="map.toggle.enabled">
+                <source>map.toggle.enabled</source>
+                <target>Activé</target>
+            </trans-unit>
+            <trans-unit id="map.toggle.disabled">
+                <source>map.toggle.disabled</source>
+                <target>Désactivé</target>
+            </trans-unit>
             <trans-unit id="map.filter.type.alternateRoad">
                 <source>map.filter.type.alternateRoad</source>
                 <target>Circulation alternée</target>

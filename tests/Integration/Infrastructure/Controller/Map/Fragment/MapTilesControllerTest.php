@@ -11,6 +11,10 @@ final class MapTilesControllerTest extends AbstractWebTestCase
     // Tile z=10/x=518/y=352 covers Paris where most location fixtures lie.
     private const PARIS_TILE = '10/518/352';
 
+    // Tile z=10/x=525/y=348 covers Charleville-Mézières, where the only fixture restriction is
+    // "publishedMeasure", whose vehicle set targets heavy goods vehicles (poids-lourds).
+    private const HEAVY_GOODS_VEHICLE_TILE = '10/525/348';
+
     public function testReturnsMvtTileForParis(): void
     {
         $client = static::createClient();
@@ -55,6 +59,27 @@ final class MapTilesControllerTest extends AbstractWebTestCase
     {
         $client = static::createClient();
         $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('Content-Type', 'application/vnd.mapbox-vector-tile');
+        $this->assertNotSame('', $client->getResponse()->getContent());
+    }
+
+    public function testHidesHeavyGoodsVehicleRestrictionsByDefault(): void
+    {
+        $client = static::createClient();
+        // As soon as a filter param is present the form is submitted, so the heavy-goods-vehicle
+        // toggle defaults to "off" (absent from the query string) and HGV restrictions are hidden.
+        $client->request('GET', '/carte/tiles/' . self::HEAVY_GOODS_VEHICLE_TILE . '.mvt?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes');
+
+        // The only restriction on this tile targets heavy goods vehicles, so it is filtered out.
+        $this->assertResponseStatusCodeSame(204);
+    }
+
+    public function testShowsHeavyGoodsVehicleRestrictionsWhenToggled(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/carte/tiles/' . self::HEAVY_GOODS_VEHICLE_TILE . '.mvt?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[displayHeavyGoodsVehicles]=yes');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertResponseHeaderSame('Content-Type', 'application/vnd.mapbox-vector-tile');

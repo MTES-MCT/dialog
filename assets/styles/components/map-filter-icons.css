@@ -42,3 +42,15 @@
 .map-filter-label--noOvertaking::after {
     color: #DA70D6;
 }
+
+/* Filtre "Types de véhicules" : pictogramme camion (poids-lourds), réutilise l'artwork DSFR du projet. */
+.map-vehicle-artwork {
+    flex-shrink: 0;
+}
+
+/* Aligne le pictogramme avec le texte du libellé du toggle. */
+.map-vehicle-toggle__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}

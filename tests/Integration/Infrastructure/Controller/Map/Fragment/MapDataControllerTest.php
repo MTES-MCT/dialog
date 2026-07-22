@@ -35,7 +35,8 @@ final class MapDataControllerTest extends AbstractWebTestCase
     public function testMeasureTypesFilter(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes');
+        // On affiche les poids-lourds pour tester le filtre de type de mesure indépendamment du filtre véhicules.
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[displayHeavyGoodsVehicles]=yes');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -49,6 +50,32 @@ final class MapDataControllerTest extends AbstractWebTestCase
         foreach ($dataArray['features'] as $feature) {
             $this->assertSame(MeasureTypeEnum::NO_ENTRY->value, $feature['properties']['measure_type']);
         }
+    }
+
+    public function testHeavyGoodsVehiclesFilter(): void
+    {
+        $baseUrl = '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes';
+
+        // Par défaut (toggle désactivé), les restrictions poids-lourds (publishedMeasure) sont masquées.
+        $client = static::createClient();
+        $client->request('GET', $baseUrl);
+        $this->assertResponseStatusCodeSame(200);
+        $hiddenUuids = array_map(
+            fn ($f) => $f['properties']['location_uuid'],
+            json_decode($client->getResponse()->getContent(), true)['features'],
+        );
+        $this->assertNotContains(LocationFixture::UUID_PUBLISHED, $hiddenUuids);
+        $this->assertNotContains(LocationFixture::UUID_PUBLISHED2, $hiddenUuids);
+
+        // Toggle activé : les restrictions poids-lourds réapparaissent.
+        $client->request('GET', $baseUrl . '&map_filter_form[displayHeavyGoodsVehicles]=yes');
+        $this->assertResponseStatusCodeSame(200);
+        $shownUuids = array_map(
+            fn ($f) => $f['properties']['location_uuid'],
+            json_decode($client->getResponse()->getContent(), true)['features'],
+        );
+        $this->assertContains(LocationFixture::UUID_PUBLISHED, $shownUuids);
+        $this->assertContains(LocationFixture::UUID_PUBLISHED2, $shownUuids);
     }
 
     public function testRegulationTypeFilterNone(): void
@@ -83,7 +110,8 @@ final class MapDataControllerTest extends AbstractWebTestCase
     public function testRegulationTypeFilterTemporaryOnly(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayTemporaryRegulations]=yes');
+        // On affiche les poids-lourds pour tester le filtre de type de réglementation indépendamment du filtre véhicules.
+        $client->request('GET', '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[displayHeavyGoodsVehicles]=yes');
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -187,7 +215,8 @@ final class MapDataControllerTest extends AbstractWebTestCase
     {
         $client = static::createClient();
 
-        $url = \sprintf('/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayTemporaryRegulations]=yes%s', $queryString);
+        // On affiche les poids-lourds pour tester le filtre de dates indépendamment du filtre véhicules.
+        $url = \sprintf('/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[displayHeavyGoodsVehicles]=yes%s', $queryString);
         $client->request('GET', $url);
 
         $this->assertResponseStatusCodeSame(200);

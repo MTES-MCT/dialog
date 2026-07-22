@@ -59,6 +59,7 @@ final class MapTilesController
             $dto->measureTypes,
             $dto->startDate,
             $dto->endDate,
+            $dto->displayHeavyGoodsVehicles,
         );
 
         if ($mvt === '') {
