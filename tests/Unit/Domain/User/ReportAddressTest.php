@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\User;
 
-use App\Domain\User\reportAddress;
+use App\Domain\User\ReportAddress;
 use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +14,7 @@ final class ReportAddressTest extends TestCase
     {
         $user = $this->createMock(User::class);
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-        $reportAddress = new reportAddress('9cebe00d-04d8-48da-89b1-059f6b7bfe44', 'Ceci est un signalement', 'lane', $user);
+        $reportAddress = new ReportAddress('9cebe00d-04d8-48da-89b1-059f6b7bfe44', 'Ceci est un signalement', 'lane', $user);
         $reportAddress->setCreatedAt($date);
 
         $this->assertSame('9cebe00d-04d8-48da-89b1-059f6b7bfe44', $reportAddress->getUuid());
@@ -26,5 +26,9 @@ final class ReportAddressTest extends TestCase
 
         $reportAddress->setHasBeenContacted(true);
         $this->assertTrue($reportAddress->getHasBeenContacted());
+
+        $this->assertNull($reportAddress->getIgnGeometry());
+        $reportAddress->setIgnGeometry('POINT(2.5 46.5)');
+        $this->assertSame('POINT(2.5 46.5)', $reportAddress->getIgnGeometry());
     }
 }
