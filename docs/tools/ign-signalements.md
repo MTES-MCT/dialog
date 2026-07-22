@@ -1,14 +1,12 @@
 # Signalements adresse vers l'IGN (Espace collaboratif / GCMS)
 
-Les signalements d'adresses non reconnues par les utilisateurs de DiaLog sont envoyés à l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) (API GCMS). DiaLog enregistre l'identifiant et le statut renvoyés par l'API, synchronise quotidiennement les statuts via un cron et notifie l'équipe support par email en cas de changement.
+Les signalements d'adresses non reconnues par les utilisateurs de DiaLog peuvent être remontés à l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) (API GCMS). DiaLog enregistre l'identifiant et le statut renvoyés par l'API, synchronise quotidiennement les statuts via un cron et notifie l'équipe support par email en cas de changement.
 
 ## Contexte
 
-Lorsqu'un utilisateur signale une adresse ou une voie qu'il n'a pas trouvée (formulaire « Signaler un problème avec une adresse »), DiaLog :
+Lorsqu'un utilisateur signale une adresse ou une voie qu'il n'a pas trouvée (formulaire « Signaler un problème avec une adresse »), DiaLog enregistre le signalement en base et envoie un email à l'équipe support.
 
-1. Enregistre le signalement en base et envoie un email à l'équipe support.
-2. Envoie le signalement à l'API IGN (géométrie + commentaire) si une géométrie est disponible (centroïde de la voie ou de l'organisation).
-3. Enregistre l'identifiant et le statut renvoyés par l'IGN (affichés dans le backoffice).
+
 
 Les signalements sont visibles côté IGN sur [Espace collaboratif – Liste des signalements](https://espacecollaboratif.ign.fr/georem/). Chaque signalement DiaLog peut être ouvert via le lien « ID signalement IGN » dans l'admin (lien vers `https://espacecollaboratif.ign.fr/georem/{id}`).
 
