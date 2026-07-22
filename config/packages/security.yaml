@@ -49,6 +49,7 @@ security:
                 path: app_logout
 
     access_control:
+        - { path: '^/api/regulations/search', roles: ROLE_API, methods: [GET] }
         - { path: '^/api/regulations$', roles: ROLE_API, methods: [POST] }
         - { path: '^/api/organization', roles: ROLE_API, methods: [POST, GET] }
         - { path: ^/api, roles: PUBLIC_ACCESS }
