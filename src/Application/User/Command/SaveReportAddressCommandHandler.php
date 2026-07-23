@@ -14,7 +14,6 @@ use App\Domain\Mail;
 use App\Domain\User\ReportAddress;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\ReportAddressRepositoryInterface;
-use App\Infrastructure\Adapter\IgnReportClient;
 use Psr\Log\LoggerInterface;
 
 final readonly class SaveReportAddressCommandHandler
@@ -23,7 +22,6 @@ final readonly class SaveReportAddressCommandHandler
         private IdFactoryInterface $idFactory,
         private ReportAddressRepositoryInterface $reportAddressRepository,
         private DateUtilsInterface $dateUtils,
-        private IgnReportClient $ignReportClient,
         private OrganizationRepositoryInterface $organizationRepository,
         private RoadGeocoderInterface $roadGeocoder,
         private LoggerInterface $logger,
@@ -42,9 +40,10 @@ final readonly class SaveReportAddressCommandHandler
         );
         $reportAddress->setCreatedAt($this->dateUtils->getNow());
 
+        $reportAddress->setIgnGeometry($this->computeReportGeometry($command));
+
         $this->reportAddressRepository->add($reportAddress);
 
-        $this->sendReportToIgn($command, $reportAddress);
         $this->sendReportByEmail($command);
     }
 
@@ -67,18 +66,15 @@ final readonly class SaveReportAddressCommandHandler
         }
     }
 
-    private function sendReportToIgn(SaveReportAddressCommand $command, ReportAddress $reportAddress): void
+    private function computeReportGeometry(SaveReportAddressCommand $command): ?string
     {
-        $comment = $command->content;
-        $userId = $command->user->getUuid();
-
         // Try to get geometry from roadBanId first (for entire road), fallback to organization geometry
         $roadBanIdGeometry = $command->roadBanId ? $this->getGeometryFromRoadBanId($command->roadBanId) : null;
         $geometry = $roadBanIdGeometry ?? $this->getOrganizationPointGeometry($command);
 
         if (!$geometry) {
             $context = [
-                'userId' => $userId,
+                'userId' => $command->user->getUuid(),
                 'organizationUuid' => $command->organizationUuid,
             ];
 
@@ -89,18 +85,12 @@ final readonly class SaveReportAddressCommandHandler
                 $context['reason'] = 'no roadBanId provided and organization geometry not found or invalid';
             }
 
-            $this->logger->warning('Cannot send report to IGN API: geometry not found', $context);
+            $this->logger->warning('Cannot compute report geometry for IGN submission', $context);
 
-            return;
+            return null;
         }
 
-        $result = $this->ignReportClient->submitReport($comment, $geometry);
-
-        if ($result) {
-            $reportAddress->setIgnReportId($result->id);
-            $reportAddress->setIgnReportStatus($result->status);
-            $reportAddress->setIgnStatusUpdatedAt($this->dateUtils->getNow());
-        }
+        return $geometry;
     }
 
     private function getGeometryFromRoadBanId(string $roadBanId): ?string
