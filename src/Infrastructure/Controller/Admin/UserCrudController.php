@@ -57,7 +57,7 @@ final class UserCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Utilisateur')
             ->setEntityLabelInPlural('Utilisateurs')
-            ->setDefaultSort(['uuid' => 'ASC'])
+            ->setDefaultSort(['registrationDate' => 'DESC'])
         ;
     }
 

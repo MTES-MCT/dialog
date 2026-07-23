@@ -1,4 +1,7 @@
-/* Icônes de filtres de la carte */
+/* Pastilles de légende des filtres de la carte : chaque type de restriction
+   reprend la couleur ET le motif du tracé affiché sur la carte
+   (cf. assets/maps/measure_type_styles.js), afin que l'information ne soit
+   pas véhiculée uniquement par la couleur (accessibilité, issue #1862). */
 .map-filter-label {
     gap: 0.5rem;
 }
@@ -11,34 +14,62 @@
     align-items: start;
 }
 
-#measureTypes.fr-fieldset input[type="checkbox"] + label{
+#measureTypes.fr-fieldset input[type="checkbox"] + label {
     flex-wrap: nowrap;
     white-space: nowrap;
 }
 
+/* La case à cocher DSFR est dessinée par le ::before du label (en position
+   absolue, hors du flux flex) : le ::after est donc disponible pour la
+   pastille, et `order: -1` la place avant le texte du label. */
 .map-filter-label::after {
-    content: '●';
-    font-size: 2rem;
-    line-height: 1;
-    margin-left: 0.25rem;
+    content: '';
+    order: -1;
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: var(--background-contrast-grey);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 
-.map-filter-label--alternateRoad::after {
-    color: #6A6AF4;
-}
-
+/* Interdiction de circulation : segment rouge (hachures rouges sur la carte) */
 .map-filter-label--noEntry::after {
-    color: #CE0500;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect x='7' y='11' width='14' height='6' rx='2' fill='%23CE0500'/></svg>");
 }
 
+/* Limitation de vitesse : trait plein jaune aux extrémités arrondies */
 .map-filter-label--speedLimitation::after {
-    color: #f6c43c;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect x='5' y='11' width='18' height='6' rx='3' fill='%23f6c43c'/></svg>");
 }
 
+/* Circulation alternée : petits pointillés violets */
+.map-filter-label--alternateRoad::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><circle cx='9.5' cy='14' r='3' fill='%236A6AF4'/><circle cx='18.5' cy='14' r='3' fill='%236A6AF4'/></svg>");
+}
+
+/* Stationnement interdit : trait blanc bordé d'orange */
 .map-filter-label--parkingProhibited::after {
-    color: #FA7A35;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect x='6.25' y='10.25' width='15.5' height='7.5' rx='3.75' fill='%23FFFFFF' stroke='%23FA7A35' stroke-width='2.5'/></svg>");
 }
 
+/* Interdiction de dépasser : gros pointillés roses */
 .map-filter-label--noOvertaking::after {
-    color: #DA70D6;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><circle cx='9' cy='14' r='4' fill='%23DA70D6'/><circle cx='19' cy='14' r='4' fill='%23DA70D6'/></svg>");
+}
+
+/* Filtre "Types de véhicules" : pictogramme camion (poids-lourds), réutilise l'artwork DSFR du projet. */
+.map-vehicle-artwork {
+    flex-shrink: 0;
+}
+
+/* Regroupe le pictogramme et le texte dans un seul élément flex, sinon le
+   "justify-content: space-between" du toggle DSFR (fr-toggle--label-left)
+   insère l'espace libre entre le pictogramme et le texte. */
+.map-vehicle-toggle__content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }

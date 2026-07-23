@@ -41,18 +41,18 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             throw new GeocodingFailureException('not implemented: full city geocoding');
         }
 
-        if ($command->fromRoadName && !$command->fromRoadBanId) {
-            throw new EmptyRoadBanIdException();
-        }
-
-        if ($command->toRoadName && !$command->toRoadBanId) {
-            throw new EmptyRoadBanIdException();
-        }
-
         $hasNoStart = !$command->fromCoords && !$command->fromHouseNumber && !$command->fromRoadName;
         $hasNoEnd = !$command->toCoords && !$command->toHouseNumber && !$command->toRoadName;
 
         $fullLaneGeometry = $this->getFullGeometryLane($command);
+
+        if ($command->fromRoadName && !$command->fromRoadBanId) {
+            throw new EmptyRoadBanIdException("No banId for {$command->fromRoadName}");
+        }
+
+        if ($command->toRoadName && !$command->toRoadBanId) {
+            throw new EmptyRoadBanIdException("No banId for {$command->toRoadName}");
+        }
 
         if ($hasNoStart && $hasNoEnd) {
             return $fullLaneGeometry;
@@ -80,6 +80,14 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
         // sur une recherche par intersection géométrique qui incluait les tronçons des voies adjacentes.
         if (!$command->roadBanId) {
             $command->roadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->roadName, $command->cityCode);
+        }
+
+        if ($command->fromRoadName && !$command->fromRoadBanId) {
+            $command->fromRoadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->fromRoadName, $command->cityCode);
+        }
+
+        if ($command->toRoadName && !$command->toRoadBanId) {
+            $command->toRoadBanId = $this->roadGeocoder->getRoadBanIdFromName($command->toRoadName, $command->cityCode);
         }
 
         return $this->roadGeocoder->computeRoadLine($command->roadBanId);

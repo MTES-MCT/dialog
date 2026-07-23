@@ -76,6 +76,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ?\DateTimeInterface $endDate = null,
         RegulationOrderRecordStatusEnum $status = RegulationOrderRecordStatusEnum::PUBLISHED,
         array $organizationUuids = [],
+        bool $includeHeavyGoodsVehicles = true,
     ): string {
         [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
             $includePermanentRegulations,
@@ -85,6 +86,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $endDate,
             $status,
             $organizationUuids,
+            $includeHeavyGoodsVehicles,
         );
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
@@ -151,6 +153,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
+        bool $includeHeavyGoodsVehicles = true,
     ): string {
         [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
             $includePermanentRegulations,
@@ -160,6 +163,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $endDate,
             RegulationOrderRecordStatusEnum::PUBLISHED,
             [],
+            $includeHeavyGoodsVehicles,
         );
 
         $extraWhere = \sprintf(
@@ -262,6 +266,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ?\DateTimeInterface $endDate,
         RegulationOrderRecordStatusEnum $status,
         array $organizationUuids,
+        bool $includeHeavyGoodsVehicles = true,
     ): array {
         $parameters = [
             'status' => $status->value,
@@ -290,6 +295,20 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $regulationTypeWhereClause .= ' AND roc.organization_uuid IN (:organizationUuids)';
             $parameters['organizationUuids'] = $organizationUuids;
             $types['organizationUuids'] = ArrayParameterType::STRING;
+        }
+
+        // Filtre "Types de véhicules" (#1523) : par défaut, on masque les restrictions spécifiques
+        // aux poids-lourds pour qu'une ville couverte d'interdictions poids-lourds n'apparaisse pas
+        // comme entièrement fermée. Une mesure cible les poids-lourds lorsque son vehicle_set
+        // restreint le type `heavyGoodsVehicle`. `restricted_types` est un tableau sérialisé PHP
+        // (type Doctrine `array`), stocké par ex. `a:1:{i:0;s:17:"heavyGoodsVehicle";}` — d'où le
+        // LIKE sur la valeur sérialisée entre guillemets.
+        if (!$includeHeavyGoodsVehicles) {
+            $regulationTypeWhereClause .= ' AND NOT EXISTS (
+                SELECT 1 FROM vehicle_set AS vs
+                WHERE vs.measure_uuid = m.uuid
+                AND vs.restricted_types LIKE \'%"heavyGoodsVehicle"%\'
+            )';
         }
 
         $measureDatesCondition = '';

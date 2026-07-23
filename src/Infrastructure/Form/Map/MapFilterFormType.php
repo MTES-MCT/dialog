@@ -64,6 +64,15 @@ final class MapFilterFormType extends AbstractType
                 ],
             )
             ->add(
+                'displayHeavyGoodsVehicles',
+                CheckboxType::class,
+                options: [
+                    'label' => 'map.filter.heavy_goods_vehicles',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
                 'startDate',
                 DateType::class,
                 options: [
@@ -94,8 +103,8 @@ final class MapFilterFormType extends AbstractType
         $displayOrder = [
             MeasureTypeEnum::NO_ENTRY,
             MeasureTypeEnum::SPEED_LIMITATION,
-            MeasureTypeEnum::PARKING_PROHIBITED,
             MeasureTypeEnum::ALTERNATE_ROAD,
+            MeasureTypeEnum::PARKING_PROHIBITED,
             MeasureTypeEnum::NO_OVERTAKING,
         ];
 

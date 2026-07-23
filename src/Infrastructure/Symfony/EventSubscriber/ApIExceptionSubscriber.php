@@ -57,9 +57,12 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
     private function createApiErrorResponse(\Throwable $exception): ?JsonResponse
     {
         if ($exception instanceof EmptyRoadBanIdException) {
-            $this->logger->error('Empty roadBanId in the command GetNamedStreetGeometryQuery', [
-                'exception' => $exception->getMessage(),
-            ]);
+            $this->logger->error(
+                'Empty roadBanId in the command GetNamedStreetGeometryQuery',
+                [
+                    'exception' => $exception->getMessage(),
+                ],
+            );
 
             return null;
         }
