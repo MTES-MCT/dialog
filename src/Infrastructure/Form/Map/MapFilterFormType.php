@@ -64,6 +64,15 @@ final class MapFilterFormType extends AbstractType
                 ],
             )
             ->add(
+                'displayHeavyGoodsVehicles',
+                CheckboxType::class,
+                options: [
+                    'label' => 'map.filter.heavy_goods_vehicles',
+                    'value' => 'yes',
+                    'required' => false,
+                ],
+            )
+            ->add(
                 'startDate',
                 DateType::class,
                 options: [

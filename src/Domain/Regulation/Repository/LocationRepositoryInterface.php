@@ -28,6 +28,7 @@ interface LocationRepositoryInterface
         ?\DateTimeInterface $endDate = null,
         RegulationOrderRecordStatusEnum $status = RegulationOrderRecordStatusEnum::PUBLISHED,
         array $organizationUuids = [],
+        bool $includeHeavyGoodsVehicles = true,
     ): string;
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array;
@@ -46,6 +47,7 @@ interface LocationRepositoryInterface
         array $measureTypes = [],
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
+        bool $includeHeavyGoodsVehicles = true,
     ): string;
 
     /**
