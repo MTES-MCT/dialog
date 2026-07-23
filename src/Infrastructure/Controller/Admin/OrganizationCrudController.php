@@ -46,6 +46,7 @@ final class OrganizationCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Organisation')
             ->setEntityLabelInPlural('Organisations')
+            ->setDefaultSort(['createdAt' => 'DESC'])
         ;
     }
 
