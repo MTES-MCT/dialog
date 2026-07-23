@@ -103,8 +103,8 @@ final class MapFilterFormType extends AbstractType
         $displayOrder = [
             MeasureTypeEnum::NO_ENTRY,
             MeasureTypeEnum::SPEED_LIMITATION,
-            MeasureTypeEnum::PARKING_PROHIBITED,
             MeasureTypeEnum::ALTERNATE_ROAD,
+            MeasureTypeEnum::PARKING_PROHIBITED,
             MeasureTypeEnum::NO_OVERTAKING,
         ];
 
