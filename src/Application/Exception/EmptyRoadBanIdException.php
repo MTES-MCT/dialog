@@ -6,7 +6,4 @@ namespace App\Application\Exception;
 
 class EmptyRoadBanIdException extends \Exception
 {
-    public function __construct()
-    {
-    }
 }
