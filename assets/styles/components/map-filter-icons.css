@@ -48,8 +48,10 @@
     flex-shrink: 0;
 }
 
-/* Aligne le pictogramme avec le texte du libellé du toggle. */
-.map-vehicle-toggle__label {
+/* Regroupe le pictogramme et le texte dans un seul élément flex, sinon le
+   "justify-content: space-between" du toggle DSFR (fr-toggle--label-left)
+   insère l'espace libre entre le pictogramme et le texte. */
+.map-vehicle-toggle__content {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
