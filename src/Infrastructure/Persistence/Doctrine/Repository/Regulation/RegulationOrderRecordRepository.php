@@ -401,8 +401,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ?string $measureType,
         \DateTimeInterface $now,
     ): array {
-        $overallStartDateExpr = \sprintf('(%s)', str_replace('%%n', '20', self::OVERALL_START_DATE_QUERY_TEMPLATE));
-        $overallEndDateExpr = \sprintf('(%s)', str_replace('%%n', '21', self::OVERALL_END_DATE_QUERY_TEMPLATE));
+        $overallStartDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_START_DATE_QUERY_TEMPLATE));
+        $overallEndDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_END_DATE_QUERY_TEMPLATE));
 
         $qb = $this->createQueryBuilder('roc')
             ->select('DISTINCT roc.uuid')
@@ -437,26 +437,26 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         }
 
         if ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_CURRENT) {
-            $qb->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr, $overallEndDateExpr));
+            $qb->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr(20), $overallEndDateExpr(21)));
             $parameters['permanentCategory'] = $permanentCategory;
             $parameters['now'] = $now;
         } elseif ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_EXPIRED) {
-            $qb->andWhere(\sprintf('ro.category != :permanentCategory AND %s < :now', $overallEndDateExpr));
+            $qb->andWhere(\sprintf('ro.category != :permanentCategory AND %s < :now', $overallEndDateExpr(22)));
             $parameters['permanentCategory'] = $permanentCategory;
             $parameters['now'] = $now;
         } elseif ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_UPCOMING) {
-            $qb->andWhere(\sprintf('%s > :now', $overallStartDateExpr));
+            $qb->andWhere(\sprintf('%s > :now', $overallStartDateExpr(23)));
             $parameters['now'] = $now;
         }
 
         if ($dateStart !== null) {
-            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR %s >= :dateStart', $overallEndDateExpr));
+            $qb->andWhere(\sprintf('ro.category = :permanentCategory OR %s >= :dateStart', $overallEndDateExpr(24)));
             $parameters['permanentCategory'] ??= $permanentCategory;
             $parameters['dateStart'] = $dateStart;
         }
 
         if ($dateEnd !== null) {
-            $qb->andWhere(\sprintf('%s <= :dateEnd', $overallStartDateExpr));
+            $qb->andWhere(\sprintf('%s <= :dateEnd', $overallStartDateExpr(25)));
             $parameters['dateEnd'] = $dateEnd;
         }
 
