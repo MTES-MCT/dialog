@@ -11,6 +11,7 @@ use App\Application\Regulation\Command\DeleteMeasureCommand;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Exception\MeasureCannotBeDeletedException;
+use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
@@ -50,8 +51,9 @@ final class DeleteMeasureFragmentController extends AbstractRegulationController
     {
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
 
+        /** @var Measure|null */
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
-        if (!$measure) {
+        if (!$measure || $measure->getRegulationOrder()->getRegulationOrderRecord()?->getUuid() !== $regulationOrderRecordUuid) {
             throw new NotFoundHttpException();
         }
 
