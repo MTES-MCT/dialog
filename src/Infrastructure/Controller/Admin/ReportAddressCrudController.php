@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Admin;
 
 use App\Application\DateUtilsInterface;
+use App\Application\MailerInterface;
+use App\Domain\Mail;
 use App\Domain\User\ReportAddress;
 use App\Infrastructure\Adapter\IgnReportClient;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,6 +30,8 @@ final class ReportAddressCrudController extends AbstractCrudController
         private readonly EntityManagerInterface $entityManager,
         private readonly DateUtilsInterface $dateUtils,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly MailerInterface $mailer,
+        private readonly string $emailSupport,
     ) {
     }
 
@@ -83,9 +87,28 @@ final class ReportAddressCrudController extends AbstractCrudController
         $report->setIgnStatusUpdatedAt($this->dateUtils->getNow());
         $this->entityManager->flush();
 
+        $this->notifySupport($report, $result->id);
+
         $this->addFlash('success', \sprintf('Signalement envoyé à l\'IGN avec succès (ID : %s).', $result->id));
 
         return $this->redirect($fallbackUrl);
+    }
+
+    private function notifySupport(ReportAddress $report, string $ignReportId): void
+    {
+        $user = $report->getUser();
+        $this->mailer->send(new Mail(
+            address: $this->emailSupport,
+            subject: 'contact.email.user_report_sent_to_ign_subject',
+            template: 'email/user/user_report_sent_to_ign.html.twig',
+            payload: [
+                'content' => $report->getContent(),
+                'location' => $report->getLocation(),
+                'fullName' => $user->getFullName(),
+                'contactEmail' => $user->getEmail(),
+                'ignReportUrl' => $this->ignReportClient->getReportUrl($ignReportId),
+            ],
+        ));
     }
 
     public function configureFields(string $pageName): iterable
@@ -97,11 +120,11 @@ final class ReportAddressCrudController extends AbstractCrudController
             TextareaField::new('content', 'Signalement adresse'),
             TextField::new('ignReportId', 'ID signalement IGN')
                 ->hideOnForm()
-                ->formatValue(static function (?string $id): string {
+                ->formatValue(function (?string $id): string {
                     if ($id === null || $id === '') {
                         return '—';
                     }
-                    $url = 'https://espacecollaboratif.ign.fr/georem/' . rawurlencode($id);
+                    $url = $this->ignReportClient->getReportUrl($id);
                     $escaped = htmlspecialchars($id, \ENT_QUOTES, 'UTF-8');
 
                     return \sprintf('<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>', $url, $escaped);
