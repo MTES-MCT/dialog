@@ -24,7 +24,6 @@ final class GetRegulationOrdersForApiQueryHandler
     public function __invoke(GetRegulationOrdersForApiQuery $query): Pagination
     {
         $uuids = $this->repository->findUuidsForApi(
-            organization: $query->organization,
             vigueurStatus: $query->vigueurStatus,
             inseeCode: $query->inseeCode,
             dateStart: $query->dateStart,

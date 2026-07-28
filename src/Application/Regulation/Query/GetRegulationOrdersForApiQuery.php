@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\QueryInterface;
-use App\Domain\User\Organization;
 
 /**
  * Requête de recherche des arrêtés (regulation orders) exposés en lecture par l'API publique.
  *
  * Un arrêté = plusieurs mesures = plusieurs emprises (locations).
- * Seuls les arrêtés publiés de l'organisation authentifiée sont retournés.
+ * Seuls les arrêtés publiés de toutes les organisations sont retournés.
  */
 final readonly class GetRegulationOrdersForApiQuery implements QueryInterface
 {
@@ -31,7 +30,6 @@ final readonly class GetRegulationOrdersForApiQuery implements QueryInterface
      *                                              restreint les poids lourds.
      */
     public function __construct(
-        public Organization $organization,
         public string $vigueurStatus = self::STATUS_CURRENT,
         public ?string $inseeCode = null,
         public ?\DateTimeInterface $dateStart = null,

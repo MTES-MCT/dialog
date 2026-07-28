@@ -24,7 +24,6 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
     private RegulationOrderRecordRepositoryInterface&MockObject $repository;
     private DateUtilsInterface&MockObject $dateUtils;
     private GetRegulationOrdersForApiQueryHandler $handler;
-    private Organization $organization;
 
     protected function setUp(): void
     {
@@ -32,7 +31,6 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2025-01-01'));
         $this->handler = new GetRegulationOrdersForApiQueryHandler($this->repository, $this->dateUtils);
-        $this->organization = $this->createMock(Organization::class);
     }
 
     private function makeRecord(string $uuid, string $identifier, ?array $restrictedTypes = null): RegulationOrderRecord
@@ -57,7 +55,7 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->repository->method('findUuidsForApi')->willReturn([]);
         $this->repository->expects(self::never())->method('iterateRegulationOrdersForApiByUuids');
 
-        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery($this->organization));
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery());
 
         $this->assertInstanceOf(Pagination::class, $result);
         $this->assertSame(0, $result->totalItems);
@@ -77,7 +75,7 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         ]);
         $this->repository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
 
-        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery($this->organization));
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery());
 
         $this->assertSame(1, $result->totalItems);
         /** @var RegulationOrderForApiView $view */
@@ -97,7 +95,7 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->repository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->repository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$withHgv, $withoutHgv]);
 
-        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery($this->organization, includeHeavyGoodsVehicle: false));
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery(includeHeavyGoodsVehicle: false));
 
         $this->assertSame(1, $result->totalItems);
         $this->assertSame('F/OTHER', $result->items[0]->identifier);
@@ -111,7 +109,7 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->repository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->repository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$withHgv]);
 
-        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery($this->organization));
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery());
 
         $this->assertSame(1, $result->totalItems);
     }
@@ -128,7 +126,7 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->repository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->repository->method('iterateRegulationOrdersForApiByUuids')->willReturn($records);
 
-        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery($this->organization, page: 2, pageSize: 2));
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery(page: 2, pageSize: 2));
 
         $this->assertSame(3, $result->totalItems);
         $this->assertCount(1, $result->items);

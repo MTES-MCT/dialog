@@ -4,56 +4,35 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Controller\Api\Regulations;
 
-use App\Application\CommandBusInterface;
-use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\View\RegulationOrderForApiView;
 use App\Domain\Pagination;
-use App\Domain\User\Organization;
 use App\Infrastructure\Controller\Api\Regulations\SearchRegulationsController;
-use App\Infrastructure\Security\User\ApiClientUser;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class SearchRegulationsControllerTest extends TestCase
 {
     private QueryBusInterface&MockObject $queryBus;
-    private CommandBusInterface&MockObject $commandBus;
-    private Security&MockObject $security;
     private NormalizerInterface&MockObject $normalizer;
     private SearchRegulationsController $controller;
 
     protected function setUp(): void
     {
         $this->queryBus = $this->createMock(QueryBusInterface::class);
-        $this->commandBus = $this->createMock(CommandBusInterface::class);
-        $this->security = $this->createMock(Security::class);
         $this->normalizer = $this->createMock(NormalizerInterface::class);
 
         $this->controller = new SearchRegulationsController(
             $this->queryBus,
-            $this->commandBus,
-            $this->security,
             $this->normalizer,
         );
     }
 
-    private function authenticate(): void
-    {
-        $user = $this->createMock(ApiClientUser::class);
-        $user->method('getOrganization')->willReturn($this->createMock(Organization::class));
-        $user->method('getUserIdentifier')->willReturn('clientId');
-        $this->security->method('getUser')->willReturn($user);
-    }
-
     public function testReturnsPaginatedEnvelope(): void
     {
-        $this->authenticate();
-
         $view = new RegulationOrderForApiView(
             identifier: 'F/1',
             status: 'published',
@@ -73,11 +52,6 @@ final class SearchRegulationsControllerTest extends TestCase
             ->method('handle')
             ->with(self::isInstanceOf(GetRegulationOrdersForApiQuery::class))
             ->willReturn(new Pagination([$view], 5, 1, 20));
-
-        $this->commandBus
-            ->expects(self::once())
-            ->method('handle')
-            ->with(self::isInstanceOf(UpdateApiClientLastUsedAtCommand::class));
 
         $this->normalizer
             ->expects(self::once())
@@ -136,8 +110,6 @@ final class SearchRegulationsControllerTest extends TestCase
 
     public function testClampsPageAndPageSize(): void
     {
-        $this->authenticate();
-
         $captured = null;
         $this->queryBus
             ->method('handle')
