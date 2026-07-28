@@ -45,6 +45,7 @@ final class ReportAddressCrudController extends AbstractCrudController
                 ->renderAsHtml(),
             TextField::new('ignReportStatus', 'Statut IGN')->hideOnForm(),
             DateTimeField::new('ignStatusUpdatedAt', 'Dernière MAJ statut IGN')->hideOnForm(),
+            TextField::new('ignGeometry', 'Géométrie (WKT)')->hideOnForm()->hideOnIndex(),
             BooleanField::new('hasBeenContacted', 'A été contacté'),
             DateTimeField::new('createdAt')->setLabel('Date de création')->hideOnForm(),
         ];

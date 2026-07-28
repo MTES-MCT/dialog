@@ -17,6 +17,7 @@ class ReportAddress
         private ?string $ignReportId = null,
         private ?string $ignReportStatus = null,
         private ?\DateTimeInterface $ignStatusUpdatedAt = null,
+        private ?string $ignGeometry = null,
     ) {
     }
 
@@ -96,6 +97,18 @@ class ReportAddress
     public function setIgnStatusUpdatedAt(?\DateTimeInterface $ignStatusUpdatedAt): self
     {
         $this->ignStatusUpdatedAt = $ignStatusUpdatedAt;
+
+        return $this;
+    }
+
+    public function getIgnGeometry(): ?string
+    {
+        return $this->ignGeometry;
+    }
+
+    public function setIgnGeometry(?string $ignGeometry): self
+    {
+        $this->ignGeometry = $ignGeometry;
 
         return $this;
     }

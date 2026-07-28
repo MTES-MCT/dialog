@@ -8,17 +8,16 @@ use App\Application\DateUtilsInterface;
 use App\Application\Exception\EmailSendingException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\IdFactoryInterface;
-use App\Application\Ign\IgnReportSubmissionResult;
 use App\Application\MailerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Application\User\Command\SaveReportAddressCommand;
 use App\Application\User\Command\SaveReportAddressCommandHandler;
+use App\Domain\Mail;
 use App\Domain\User\Organization;
 use App\Domain\User\ReportAddress;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Domain\User\Repository\ReportAddressRepositoryInterface;
 use App\Domain\User\User;
-use App\Infrastructure\Adapter\IgnReportClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -28,7 +27,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
     private MockObject&IdFactoryInterface $idFactory;
     private MockObject&ReportAddressRepositoryInterface $reportAddressRepository;
     private MockObject&DateUtilsInterface $dateUtils;
-    private MockObject&IgnReportClient $ignReportClient;
     private MockObject&OrganizationRepositoryInterface $organizationRepository;
     private MockObject&RoadGeocoderInterface $roadGeocoder;
     private MockObject&LoggerInterface $logger;
@@ -41,7 +39,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->reportAddressRepository = $this->createMock(ReportAddressRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->ignReportClient = $this->createMock(IgnReportClient::class);
         $this->organizationRepository = $this->createMock(OrganizationRepositoryInterface::class);
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -50,17 +47,32 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
         $this->organization = $this->createMock(Organization::class);
     }
 
-    public function testHandle(): void
+    private function createHandler(): SaveReportAddressCommandHandler
+    {
+        return new SaveReportAddressCommandHandler(
+            $this->idFactory,
+            $this->reportAddressRepository,
+            $this->dateUtils,
+            $this->organizationRepository,
+            $this->roadGeocoder,
+            $this->logger,
+            $this->mailer,
+            'support@example.com',
+        );
+    }
+
+    private function expectEmailSent(): void
+    {
+        $this->user->method('getFullName')->willReturn('Jean Dupont');
+        $this->user->method('getEmail')->willReturn('jean@example.com');
+    }
+
+    public function testHandleComputesGeometryFromOrganization(): void
     {
         $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
 
         $this->idFactory
             ->expects(self::once())
@@ -68,22 +80,9 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
         $this->dateUtils
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getNow')
             ->willReturn($date);
-
-        $reportAddress = new ReportAddress(
-            uuid: '0de5692b-cab1-494c-804d-765dc14df674',
-            content: 'Il y a un problème avec cette adresse.',
-            location: 'Route départementale - D12',
-            user: $this->user,
-        );
-        $reportAddress->setCreatedAt($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($reportAddress));
 
         $this->organization
             ->expects(self::exactly(2))
@@ -102,40 +101,46 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->with('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}')
             ->willReturn('{"type":"Point","coordinates":[2.5,46.5]}');
 
-        $this->ignReportClient
-            ->expects(self::once())
-            ->method('submitReport')
-            ->with(
-                'Il y a un problème avec cette adresse.',
-                'POINT(2.5 46.5)',
-            )
-            ->willReturn(new IgnReportSubmissionResult('42', 'submit'));
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
+        $expectedReportAddress = new ReportAddress(
+            uuid: '0de5692b-cab1-494c-804d-765dc14df674',
+            content: 'Il y a un problème avec cette adresse.',
+            location: 'Route départementale - D12',
+            user: $this->user,
         );
+        $expectedReportAddress->setCreatedAt($date);
+        $expectedReportAddress->setIgnGeometry('POINT(2.5 46.5)');
+
+        $this->reportAddressRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with($this->equalTo($expectedReportAddress));
+
+        $this->expectEmailSent();
+        $this->mailer
+            ->expects(self::once())
+            ->method('send')
+            ->with($this->equalTo(new Mail(
+                address: 'support@example.com',
+                subject: 'contact.email.user_report_subject',
+                template: 'email/user/user_report.html.twig',
+                payload: [
+                    'content' => 'Il y a un problème avec cette adresse.',
+                    'location' => 'Route départementale - D12',
+                    'fullName' => 'Jean Dupont',
+                    'contactEmail' => 'jean@example.com',
+                ],
+            )));
+
+        $handler = $this->createHandler();
         $handler($command);
     }
 
-    public function testHandleWithRoadBanId(): void
+    public function testHandleComputesGeometryFromRoadBanId(): void
     {
         $command = new SaveReportAddressCommand($this->user, null, null, null, null, 'road-ban-id-123', 'org-uuid');
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Ville (75001) - Rue de la Paix';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
 
         $this->idFactory
             ->expects(self::once())
@@ -143,22 +148,9 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
 
         $this->dateUtils
-            ->expects(self::exactly(2))
+            ->expects(self::once())
             ->method('getNow')
             ->willReturn($date);
-
-        $expectedReportAddress = new ReportAddress(
-            uuid: '0de5692b-cab1-494c-804d-765dc14df674',
-            content: 'Il y a un problème avec cette adresse.',
-            location: 'Ville (75001) - Rue de la Paix',
-            user: $this->user,
-        );
-        $expectedReportAddress->setCreatedAt($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($expectedReportAddress));
 
         $geoJson = '{"type":"LineString","coordinates":[[2.0,46.0],[3.0,47.0]]}';
         $this->roadGeocoder
@@ -173,51 +165,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->with($geoJson)
             ->willReturn('{"type":"Point","coordinates":[2.5,46.5]}');
 
-        $this->ignReportClient
-            ->expects(self::once())
-            ->method('submitReport')
-            ->with(
-                'Il y a un problème avec cette adresse.',
-                'POINT(2.5 46.5)',
-            )
-            ->willReturn(new IgnReportSubmissionResult('99', 'submit'));
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-        $handler($command);
-    }
-
-    public function testHandleWithRoadBanIdFailure(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, 'road-ban-id-123', 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Ville (75001) - Rue de la Paix';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::exactly(2))
-            ->method('getNow')
-            ->willReturn($date);
-
         $expectedReportAddress = new ReportAddress(
             uuid: '0de5692b-cab1-494c-804d-765dc14df674',
             content: 'Il y a un problème avec cette adresse.',
@@ -225,17 +172,35 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             user: $this->user,
         );
         $expectedReportAddress->setCreatedAt($date);
+        $expectedReportAddress->setIgnGeometry('POINT(2.5 46.5)');
 
         $this->reportAddressRepository
             ->expects(self::once())
             ->method('add')
             ->with($this->equalTo($expectedReportAddress));
 
+        $this->expectEmailSent();
+        $this->mailer->expects(self::once())->method('send');
+
+        $handler = $this->createHandler();
+        $handler($command);
+    }
+
+    public function testHandleWithRoadBanIdFailureFallsBackToOrganization(): void
+    {
+        $command = new SaveReportAddressCommand($this->user, null, null, null, null, 'road-ban-id-123', 'org-uuid');
+        $command->content = 'Il y a un problème avec cette adresse.';
+        $command->location = 'Ville (75001) - Rue de la Paix';
+        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
+
+        $this->idFactory->expects(self::once())->method('make')->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
+        $this->dateUtils->expects(self::once())->method('getNow')->willReturn($date);
+
         $this->roadGeocoder
             ->expects(self::once())
             ->method('computeRoadLine')
             ->with('road-ban-id-123')
-            ->willThrowException(new GeocodingFailureException("no result found for roadBanId='road-ban-id-123'"));
+            ->willThrowException(new GeocodingFailureException('geocoding failed'));
 
         $this->organization
             ->expects(self::exactly(2))
@@ -254,51 +219,6 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->with('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}')
             ->willReturn('{"type":"Point","coordinates":[2.5,46.5]}');
 
-        $this->ignReportClient
-            ->expects(self::once())
-            ->method('submitReport')
-            ->with(
-                'Il y a un problème avec cette adresse.',
-                'POINT(2.5 46.5)',
-            )
-            ->willReturn(new IgnReportSubmissionResult('42', 'submit'));
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-        $handler($command);
-    }
-
-    public function testHandleWithRoadBanIdAndOrganizationGeometryBothFail(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, 'road-ban-id-123', 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Ville (75001) - Rue de la Paix';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
         $expectedReportAddress = new ReportAddress(
             uuid: '0de5692b-cab1-494c-804d-765dc14df674',
             content: 'Il y a un problème avec cette adresse.',
@@ -306,85 +226,37 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             user: $this->user,
         );
         $expectedReportAddress->setCreatedAt($date);
+        $expectedReportAddress->setIgnGeometry('POINT(2.5 46.5)');
 
         $this->reportAddressRepository
             ->expects(self::once())
             ->method('add')
             ->with($this->equalTo($expectedReportAddress));
 
-        $this->roadGeocoder
-            ->expects(self::once())
-            ->method('computeRoadLine')
-            ->with('road-ban-id-123')
-            ->willThrowException(new GeocodingFailureException("no result found for roadBanId='road-ban-id-123'"));
+        $this->expectEmailSent();
+        $this->mailer->expects(self::once())->method('send');
 
-        $this->organization
-            ->expects(self::once())
-            ->method('getGeometry')
-            ->willReturn(null);
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        $this->organizationRepository
-            ->expects(self::never())
-            ->method('computeCentroidFromGeoJson');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with(
-                'Cannot send report to IGN API: geometry not found',
-                $this->callback(function (array $context) {
-                    return $context['userId'] === 'user-uuid'
-                        && $context['organizationUuid'] === 'org-uuid'
-                        && $context['roadBanId'] === 'road-ban-id-123'
-                        && $context['reason'] === 'roadBanId geocoding failed and organization geometry not found or invalid';
-                }),
-            );
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
+        $handler = $this->createHandler();
         $handler($command);
     }
 
-    public function testHandleWhenIgnApiReturnsNull(): void
+    public function testHandleWithoutGeometryStoresNull(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
+        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, null);
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
 
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
+        $this->user->expects(self::once())->method('getUuid')->willReturn('user-uuid');
+        $this->idFactory->expects(self::once())->method('make')->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
+        $this->dateUtils->expects(self::once())->method('getNow')->willReturn($date);
 
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
+        $this->organizationRepository->expects(self::never())->method('findOneByUuid');
 
-        $this->dateUtils
+        $this->logger
             ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
+            ->method('warning')
+            ->with('Cannot compute report geometry for IGN submission');
 
         $expectedReportAddress = new ReportAddress(
             uuid: '0de5692b-cab1-494c-804d-765dc14df674',
@@ -399,557 +271,33 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->method('add')
             ->with($this->equalTo($expectedReportAddress));
 
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}');
+        $this->expectEmailSent();
+        $this->mailer->expects(self::once())->method('send');
 
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->with('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}')
-            ->willReturn('{"type":"Point","coordinates":[2.5,46.5]}');
-
-        $this->ignReportClient
-            ->expects(self::once())
-            ->method('submitReport')
-            ->with(
-                'Il y a un problème avec cette adresse.',
-                'POINT(2.5 46.5)',
-            )
-            ->willReturn(null);
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
-        $handler($command);
-    }
-
-    public function testHandleWithInvalidGeoJsonReturnsNull(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Route départementale - D12';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $expectedReportAddress = new ReportAddress(
-            uuid: '0de5692b-cab1-494c-804d-765dc14df674',
-            content: 'Il y a un problème avec cette adresse.',
-            location: 'Route départementale - D12',
-            user: $this->user,
-        );
-        $expectedReportAddress->setCreatedAt($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($expectedReportAddress));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->with('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}')
-            ->willReturn('');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with(
-                'Cannot send report to IGN API: geometry not found',
-                $this->callback(function (array $context) {
-                    return $context['userId'] === 'user-uuid'
-                        && $context['organizationUuid'] === 'org-uuid'
-                        && $context['reason'] === 'no roadBanId provided and organization geometry not found or invalid';
-                }),
-            );
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
-        $handler($command);
-    }
-
-    public function testHandleWithMalformedGeoJsonReturnsNull(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Route départementale - D12';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->isInstanceOf(ReportAddress::class));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        // computeCentroidFromGeoJson retourne un JSON malformé
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->willReturn('not a valid json');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with('Cannot send report to IGN API: geometry not found', $this->anything());
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
-        $handler($command);
-    }
-
-    public function testHandleWithGeoJsonMissingCoordinates(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Route départementale - D12';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->isInstanceOf(ReportAddress::class));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        // GeoJSON sans coordonnées
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->willReturn('{"type":"Point"}');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with('Cannot send report to IGN API: geometry not found', $this->anything());
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
-        $handler($command);
-    }
-
-    public function testHandleWithGeoJsonInvalidCoordinatesArray(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Route départementale - D12';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->isInstanceOf(ReportAddress::class));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        // GeoJSON avec seulement 1 coordonnée
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->willReturn('{"type":"Point","coordinates":[2.5]}');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with('Cannot send report to IGN API: geometry not found', $this->anything());
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
-        $handler($command);
-    }
-
-    public function testHandleWithGeoJsonNullCoordinates(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Route départementale - D12';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->isInstanceOf(ReportAddress::class));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        // GeoJSON avec coordonnées null
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->willReturn('{"type":"Point","coordinates":[null,null]}');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with('Cannot send report to IGN API: geometry not found', $this->anything());
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
-        $handler($command);
-    }
-
-    public function testHandleWithGeoJsonEmptyStringCoordinates(): void
-    {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
-        $command->content = 'Il y a un problème avec cette adresse.';
-        $command->location = 'Route départementale - D12';
-        $date = new \DateTimeImmutable('2023-01-01 00:00:00');
-
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::once())
-            ->method('getNow')
-            ->willReturn($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->isInstanceOf(ReportAddress::class));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        // GeoJSON avec coordonnées vides
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->willReturn('{"type":"Point","coordinates":["",""]}');
-
-        $this->ignReportClient
-            ->expects(self::never())
-            ->method('submitReport');
-
-        $this->logger
-            ->expects(self::once())
-            ->method('warning')
-            ->with('Cannot send report to IGN API: geometry not found', $this->anything());
-
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
-
+        $handler = $this->createHandler();
         $handler($command);
     }
 
     public function testHandleWhenEmailSendingFails(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
+        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, null);
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
 
-        $this->user
-            ->expects(self::once())
-            ->method('getUuid')
-            ->willReturn('user-uuid');
+        $this->user->method('getUuid')->willReturn('user-uuid');
+        $this->idFactory->expects(self::once())->method('make')->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
+        $this->dateUtils->expects(self::once())->method('getNow')->willReturn($date);
 
-        $this->user
-            ->expects(self::once())
-            ->method('getFullName')
-            ->willReturn('Jean Dupont');
+        $this->reportAddressRepository->expects(self::once())->method('add');
 
-        $this->user
-            ->expects(self::once())
-            ->method('getEmail')
-            ->willReturn('jean@example.com');
-
-        $this->idFactory
-            ->expects(self::once())
-            ->method('make')
-            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
-
-        $this->dateUtils
-            ->expects(self::exactly(2))
-            ->method('getNow')
-            ->willReturn($date);
-
-        $expectedReportAddress = new ReportAddress(
-            uuid: '0de5692b-cab1-494c-804d-765dc14df674',
-            content: 'Il y a un problème avec cette adresse.',
-            location: 'Route départementale - D12',
-            user: $this->user,
-        );
-        $expectedReportAddress->setCreatedAt($date);
-
-        $this->reportAddressRepository
-            ->expects(self::once())
-            ->method('add')
-            ->with($this->equalTo($expectedReportAddress));
-
-        $this->organization
-            ->expects(self::exactly(2))
-            ->method('getGeometry')
-            ->willReturn('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}');
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('findOneByUuid')
-            ->with('org-uuid')
-            ->willReturn($this->organization);
-
-        $this->organizationRepository
-            ->expects(self::once())
-            ->method('computeCentroidFromGeoJson')
-            ->with('{"type":"Polygon","coordinates":[[[2.0,46.0],[3.0,46.0],[3.0,47.0],[2.0,47.0],[2.0,46.0]]]}')
-            ->willReturn('{"type":"Point","coordinates":[2.5,46.5]}');
-
-        $this->ignReportClient
-            ->expects(self::once())
-            ->method('submitReport')
-            ->with(
-                'Il y a un problème avec cette adresse.',
-                'POINT(2.5 46.5)',
-            )
-            ->willReturn(new IgnReportSubmissionResult('42', 'submit'));
-
+        $this->expectEmailSent();
         $this->mailer
             ->expects(self::once())
             ->method('send')
             ->willThrowException(new \Exception('Email service unavailable'));
 
-        $handler = new SaveReportAddressCommandHandler(
-            $this->idFactory,
-            $this->reportAddressRepository,
-            $this->dateUtils,
-            $this->ignReportClient,
-            $this->organizationRepository,
-            $this->roadGeocoder,
-            $this->logger,
-            $this->mailer,
-            'support@example.com',
-        );
+        $handler = $this->createHandler();
 
         $this->expectException(EmailSendingException::class);
         $this->expectExceptionMessage('Failed to send feedback by email : Email service unavailable');
