@@ -35,12 +35,11 @@ interface RegulationOrderRecordRepositoryInterface
     public function iterateRegulationOrdersForDatexFormatByUuids(array $uuids): iterable;
 
     /**
-     * Retourne les UUID des arrêtés publiés de l'organisation correspondant aux filtres de l'API publique.
+     * Retourne les UUID des arrêtés publiés de toutes les organisations correspondant aux filtres de l'API publique.
      *
      * @return string[]
      */
     public function findUuidsForApi(
-        Organization $organization,
         string $vigueurStatus,
         ?string $inseeCode,
         ?\DateTimeInterface $dateStart,

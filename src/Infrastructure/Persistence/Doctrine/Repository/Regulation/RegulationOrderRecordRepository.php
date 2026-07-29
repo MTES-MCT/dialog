@@ -392,7 +392,6 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
     }
 
     public function findUuidsForApi(
-        Organization $organization,
         string $vigueurStatus,
         ?string $inseeCode,
         ?\DateTimeInterface $dateStart,
@@ -409,12 +408,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->innerJoin('roc.regulationOrder', 'ro')
             ->innerJoin('ro.measures', 'm')
             ->where('roc.status = :status')
-            ->andWhere('roc.organization = :organization')
             ->orderBy('roc.uuid');
 
         $parameters = [
             'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-            'organization' => $organization,
         ];
 
         $permanentCategory = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;

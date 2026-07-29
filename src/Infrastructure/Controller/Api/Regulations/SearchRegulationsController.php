@@ -4,22 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Api\Regulations;
 
-use App\Application\CommandBusInterface;
-use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Infrastructure\DTO\Regulation\RegulationApiView;
-use App\Infrastructure\Security\User\OrganizationAwareUserInterface;
 use OpenApi\Attributes as OA;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -36,8 +31,6 @@ final class SearchRegulationsController
 
     public function __construct(
         private readonly QueryBusInterface $queryBus,
-        private readonly CommandBusInterface $commandBus,
-        private readonly Security $security,
         private readonly NormalizerInterface $normalizer,
     ) {
     }
@@ -50,14 +43,12 @@ final class SearchRegulationsController
         // la contrainte `.+` capturerait sinon le segment `search`.
         priority: 10,
     )]
-    #[IsGranted('ROLE_API')]
-    #[OA\Tag(name: 'Private')]
+    #[OA\Tag(name: 'Public')]
     #[OA\Get(
         summary: 'Rechercher les arrêtés de circulation et leurs restrictions',
         description: <<<'DESCRIPTION'
-            Retourne la liste des arrêtés de circulation « regulation orders » **publiés** appartenant à
-            l'organisation du client API authentifié, accompagnés de leurs mesures (restrictions) et de
-            leurs emprises.
+            Retourne la liste des arrêtés de circulation « regulation orders » **publiés** de toutes les
+            organisations, accompagnés de leurs mesures (restrictions) et de leurs emprises.
 
             Un arrêté est constitué de plusieurs **mesures** (ce qui est réglementé), chaque mesure
             portant une ou plusieurs **emprises** (`locations`, où la mesure s'applique) et une ou
@@ -67,7 +58,7 @@ final class SearchRegulationsController
             Sans aucun filtre, seuls les arrêtés **en vigueur** (`status=current`) sont retournés.
 
             ### Authentification
-            Cette route est privée : elle nécessite les entêtes `X-Client-Id` et `X-Client-Secret`.
+            Cette route est publique : aucune authentification n'est requise.
 
             ### Format de la réponse
             Un objet JSON contenant un tableau `regulations` (chaque arrêté ayant la même structure que
@@ -89,22 +80,22 @@ final class SearchRegulationsController
         required: false,
         description: "Code INSEE exact d'une commune. Ne retourne que les arrêtés dont au moins une "
             . 'emprise concerne cette commune (voie nommée ou ville entière).',
-        schema: new OA\Schema(type: 'string', example: '59350'),
+        schema: new OA\Schema(type: 'string'),
     )]
     #[OA\Parameter(
         name: 'dateStart',
         in: 'query',
         required: false,
-        description: 'Début de la plage de dates de vigueur (ISO 8601). Ne retourne que les arrêtés '
+        description: 'Début de la plage des arrêtés en vigueur à cette date (ISO 8601). Ne retourne que les arrêtés '
             . 'dont la validité chevauche cette plage.',
-        schema: new OA\Schema(type: 'string', format: 'date', example: '2025-01-01'),
+        schema: new OA\Schema(type: 'string', format: 'date', example: '2026-01-01'),
     )]
     #[OA\Parameter(
         name: 'dateEnd',
         in: 'query',
         required: false,
         description: 'Fin de la plage de dates de vigueur (ISO 8601).',
-        schema: new OA\Schema(type: 'string', format: 'date', example: '2025-12-31'),
+        schema: new OA\Schema(type: 'string', format: 'date', example: '2026-12-31'),
     )]
     #[OA\Parameter(
         name: 'category',
@@ -181,17 +172,6 @@ final class SearchRegulationsController
             ],
         ),
     )]
-    #[OA\Response(
-        response: 401,
-        description: 'Authentification manquante ou invalide. '
-            . 'Vérifier les entêtes `X-Client-Id` et `X-Client-Secret`.',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'message', type: 'string', example: 'Unauthorized'),
-            ],
-        ),
-    )]
     public function __invoke(
         #[MapQueryParameter]
         string $status = GetRegulationOrdersForApiQuery::STATUS_CURRENT,
@@ -237,13 +217,9 @@ final class SearchRegulationsController
         $page = max(1, $page);
         $pageSize = min(max(1, $pageSize), self::MAX_PAGE_SIZE);
 
-        /** @var OrganizationAwareUserInterface $user */
-        $user = $this->security->getUser();
-
         /** @var Pagination $pagination */
         $pagination = $this->queryBus->handle(
             new GetRegulationOrdersForApiQuery(
-                organization: $user->getOrganization(),
                 vigueurStatus: $status,
                 inseeCode: $inseeCode,
                 dateStart: $parsedDateStart,
@@ -255,8 +231,6 @@ final class SearchRegulationsController
                 pageSize: $pageSize,
             ),
         );
-
-        $this->commandBus->handle(new UpdateApiClientLastUsedAtCommand($user->getUserIdentifier()));
 
         $regulations = $this->normalizer->normalize(
             array_map(RegulationApiView::fromApiView(...), $pagination->items),
