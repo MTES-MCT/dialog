@@ -23,6 +23,7 @@ class Location
         private ?NumberedRoad $numberedRoad = null,
         private ?RawGeoJSON $rawGeoJSON = null,
         private ?StorageArea $storageArea = null,
+        private ?Zone $zone = null,
         // Utilisé uniquement par le type « Ville entière » (wholeCity), qui n'a pas de
         // sous-entité dédiée : la géométrie de la ville vit directement sur la localisation.
         private ?string $cityCode = null,
@@ -71,6 +72,11 @@ class Location
         return $this->storageArea;
     }
 
+    public function getZone(): ?Zone
+    {
+        return $this->zone;
+    }
+
     public function getCityCode(): ?string
     {
         return $this->cityCode;
@@ -117,6 +123,10 @@ class Location
             return $this->cityLabel;
         }
 
+        if ($this->zone) {
+            return $this->zone->getLabel();
+        }
+
         return $this->rawGeoJSON->getLabel();
     }
 
@@ -150,6 +160,11 @@ class Location
     public function setStorageArea(?StorageArea $storageArea): void
     {
         $this->storageArea = $storageArea;
+    }
+
+    public function setZone(Zone $zone): void
+    {
+        $this->zone = $zone;
     }
 
     public function setWholeCity(?string $cityCode, ?string $cityLabel): void

@@ -45,6 +45,9 @@ final class LocationFormType extends AbstractType
             ->add('wholeCity', WholeCityFormType::class, [
                 'label' => false,
             ])
+            ->add('zone', ZoneFormType::class, [
+                'label' => false,
+            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {

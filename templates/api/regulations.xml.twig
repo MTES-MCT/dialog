@@ -151,6 +151,12 @@
                                                             <com:value>{{ location.wholeCityLabel }}</com:value>
                                                         </com:values>
                                                     </loc:locationDescription>
+                                                {% elseif location.roadType == 'zone' %}
+                                                    <loc:locationDescription>
+                                                        <com:values>
+                                                            <com:value>{{ location.zoneLabel }}</com:value>
+                                                        </com:values>
+                                                    </loc:locationDescription>
                                                 {% endif %}
                                             </loc:supplementaryPositionalDescription>
                                             <loc:_linearLocationExtension>

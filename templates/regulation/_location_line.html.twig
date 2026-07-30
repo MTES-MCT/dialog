@@ -6,4 +6,6 @@
     {{ location.rawGeoJSON.label }} - {{ 'regulation.location.road.type.rawGeoJSON'|trans|lower }}
 {%- elseif location.roadType == 'wholeCity' -%}
     {{ location.wholeCity.cityLabel }} - {{ 'regulation.location.road.type.wholeCity'|trans|lower }}
+{%- elseif location.roadType == 'zone' -%}
+    {{ location.zone.label }} - {{ 'regulation.location.road.type.zone'|trans|lower }}
 {%- endif -%}

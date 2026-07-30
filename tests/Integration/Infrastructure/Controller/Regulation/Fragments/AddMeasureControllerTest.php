@@ -209,6 +209,37 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertContains(['append', 'measure_list'], $streams);
     }
 
+    public function testAddZone(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['zone']['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['zone']['label'] = 'Quartier de la Rue Ardoin';
+        // Périmètre autour de la Rue Ardoin à Saint-Ouen-sur-Seine (93070)
+        $values['measure_form']['locations'][0]['zone']['geometry'] = '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertContains(['append', 'measure_list'], $streams);
+    }
+
     public function testLocationOutOfOrganization(): void
     {
         $client = $this->login();
