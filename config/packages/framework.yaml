@@ -53,6 +53,21 @@ framework:
                 base_uri: '%env(GRIST_BASE_URL)%'
                 headers:
                     Authorization: 'Bearer %env(GRIST_API_KEY)%'
+                # L'upsert Grist peut dépasser le timeout par défaut de 60s (voir #2000).
+                # Le PUT d'upsert (avec "require") est idempotent, donc rejouable sans risque.
+                timeout: 180
+                retry_failed:
+                    http_codes:
+                        - { code: 0, methods: ['GET', 'PUT'] }
+                        - { code: 429, methods: ['GET', 'PUT'] }
+                        - { code: 500, methods: ['GET', 'PUT'] }
+                        - { code: 502, methods: ['GET', 'PUT'] }
+                        - { code: 503, methods: ['GET', 'PUT'] }
+                        - { code: 504, methods: ['GET', 'PUT'] }
+                    max_retries: 3
+                    delay: 2000
+                    multiplier: 3
+                    max_delay: 30000
 
 when@test:
     framework:
