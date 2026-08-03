@@ -190,6 +190,42 @@
                 <source>welcome.email.webinar.link</source>
                 <target>Lien visio du webinaire DiaLog</target>
             </trans-unit>
+            <trans-unit id="inactivity.email.subject">
+                <source>inactivity.email.subject</source>
+                <target>DiaLog - Prêt à créer votre premier arrêté ?</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.hello">
+                <source>inactivity.email.hello</source>
+                <target>Bonjour,</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.description">
+                <source>inactivity.email.description</source>
+                <target>Vous avez créé un compte DiaLog il y a quelques jours, mais aucun arrêté n’a encore été publié au sein de votre organisation. Voici quelques ressources pour vous aider à vous lancer :</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.how.create.regulation.order.video">
+                <source>inactivity.email.how.create.regulation.order.video</source>
+                <target>Regardez <![CDATA[<strong>]]>comment créer un arrêté <![CDATA[</strong>]]>sur DiaLog : </target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.how.create.regulation.order.video.link">
+                <source>inactivity.email.how.create.regulation.order.video.link</source>
+                <target>Voir la vidéo</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.help">
+                <source>inactivity.email.help</source>
+                <target>Retrouvez <![CDATA[<strong>]]>l’aide en ligne <![CDATA[</strong>]]>de DiaLog ici : </target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.help.link">
+                <source>inactivity.email.help.link</source>
+                <target>Ouvrir l’aide en ligne</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.contact">
+                <source>inactivity.email.contact</source>
+                <target>Une question ou une difficulté ? Écrivez-nous à : support@dialog.beta.gouv.fr</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.signature">
+                <source>inactivity.email.signature</source>
+                <target>L’équipe DiaLog</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
