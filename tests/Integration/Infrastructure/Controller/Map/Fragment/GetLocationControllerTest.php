@@ -31,6 +31,18 @@ final class GetLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('_blank', $detailsLink->attr('target'));
     }
 
+    public function testGetRawGeoJSONLocationDoesNotShowRoadType(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/map/fragments/location/' . LocationFixture::UUID_LITTERALIS);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // Le libellé du tracé libre est affiché seul, sans le suffixe "tracé libre (geojson)"
+        $li = $crawler->filter('ul > li');
+        $this->assertSame('ROUTE 147 (NOYELLES-LÈS-SECLIN) DU PR7 +779 AU PR8 +413', $li->eq(1)->text());
+    }
+
     public function testLocationNotFound(): void
     {
         $client = static::createClient();
