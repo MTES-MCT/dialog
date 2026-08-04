@@ -74,7 +74,7 @@
 
                                 <turbo-frame id="block_export">
                                     {% if canPublish %}
-                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid, regulationOrderTemplateUuid: generalInfo.regulationOrderTemplateUuid } only %}
+                                        {% include 'regulation/fragments/_export_section.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid, regulationOrderTemplateUuid: generalInfo.regulationOrderTemplateUuid, regulationOrderIdentifier: generalInfo.identifier } only %}
                                     {% endif %}
                                 </turbo-frame>
 
