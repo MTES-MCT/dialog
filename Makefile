@@ -342,7 +342,7 @@ ci_metabase_export: ## Export data to Metabase
 ci_grist_sync: ## Run CI steps for Grist Sync workflow
 	make composer CMD="install -n --prefer-dist"
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
-	./tools/scalingodbtunnel dialog --host-url --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000
+	./tools/scalingodbtunnel dialog --host-url --no-docker --port 10000 & ./tools/wait-for-it.sh 127.0.0.1:10000 -t 60
 	make console CMD="app:grist:sync-organizations"
 	make console CMD="app:grist:sync-users"
 

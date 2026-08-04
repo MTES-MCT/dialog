@@ -6,7 +6,7 @@ import socket
 import subprocess
 import sys
 import threading
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from urllib.parse import urlparse, urlunparse
 
 
@@ -130,6 +130,7 @@ def main(
     app: str,
     port: int,
     host_url: bool = False,
+    no_docker: bool = False,
 ):
     # Ensure Scalingo CLI is authenticated
     result = subprocess.run(["scalingo", "whoami"], capture_output=True)
@@ -156,15 +157,23 @@ def main(
         "DATABASE_URL",
     ]
 
+    # Le stderr de `scalingo db-tunnel` reste visible : sans lui, un échec du
+    # tunnel (ex : "Host key verification failed") est indiagnosticable en CI.
     with _popen_terminate_on_exit(
-        db_tunnel_command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
+        db_tunnel_command, stdout=subprocess.PIPE
     ) as db_tunnel_proc:
         # 2) Forward host -> Docker.
         # This allows PHP/Doctrine container to access the Scalingo database.
 
         displayed_port = port
 
-        if platform.system().lower() == "darwin":
+        if no_docker:
+            # En CI, rien ne passe par Docker : inutile de relayer le tunnel
+            # vers le bridge (le `ssh localhost` échoue d'ailleurs sur un
+            # runner GitHub avec un "Host key verification failed" trompeur).
+            docker_tunnel_origin = f"127.0.0.1:{port}"
+            docker_tunnel_context = nullcontext()
+        elif platform.system().lower() == "darwin":
             # Docker Desktop n'expose pas l'IP du bridge Linux sur l'hôte macOS.
             # On republie donc le tunnel sur un second port accessible via
             # `host.docker.internal`, pour éviter une boucle de forwarding sur
@@ -235,7 +244,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Show URL of the tunnel on the host, not Docker",
     )
+    parser.add_argument(
+        "--no-docker",
+        action="store_true",
+        help="Do not forward the tunnel to Docker (useful in CI)",
+    )
 
     args = parser.parse_args()
 
-    sys.exit(main(args.app, args.port, host_url=args.host_url))
+    sys.exit(main(args.app, args.port, host_url=args.host_url, no_docker=args.no_docker))
