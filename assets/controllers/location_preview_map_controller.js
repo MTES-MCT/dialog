@@ -2,13 +2,15 @@ import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
-import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
+import { addHouseNumbersLayer, addMeasureLineLayer, addReferencePointsLayer } from '../maps/layers';
 import { boundsFromGeoJSON, extractFirstGeometry, toFeatureCollection } from '../maps/geojson';
 
 export default class extends Controller {
     static targets = ['container', 'loader', 'message'];
     static values = {
         url: String,
+        referencePointsUrl: String,
+        referencePointRoads: Array,
         roadType: String,
         roadBanIdField: String,
         roadNameField: String,
@@ -34,6 +36,9 @@ export default class extends Controller {
 
     #map = null;
     #abortController = null;
+    #referencePointsAbortController = null;
+    #referencePointsData = null;
+    #referencePointsKey = null;
     #debounceTimer = null;
     #boundDebouncedLoad = null;
 
@@ -45,6 +50,7 @@ export default class extends Controller {
 
     disconnect() {
         this.#abortController?.abort();
+        this.#referencePointsAbortController?.abort();
         clearTimeout(this.#debounceTimer);
         this.#stopListeningForm();
         this.#map?.remove();
@@ -192,7 +198,94 @@ export default class extends Controller {
 
         this.#setParamIfPresent(params, ['fromPointNumber', 'fromSide', 'fromAbscissa', 'toPointNumber', 'toSide', 'toAbscissa', 'direction']);
 
+        this.#loadReferencePoints(administrator, roadNumber);
         this.#fetchAndDisplay(params);
+    }
+
+    async #loadReferencePoints(administrator, roadNumber) {
+        await this.#loadReferencePointsForRoads([{ administrator, roadNumber }]);
+    }
+
+    async #loadReferencePointsForRoads(roads) {
+        if (!this.referencePointsUrlValue) {
+            return;
+        }
+
+        const seen = new Set();
+        const uniqueRoads = [];
+
+        for (const road of roads || []) {
+            if (!road?.administrator || !road?.roadNumber) continue;
+            const roadKey = `${road.administrator}|${road.roadNumber}`;
+            if (seen.has(roadKey)) continue;
+            seen.add(roadKey);
+            uniqueRoads.push(road);
+        }
+
+        const key = [...seen].sort().join(',');
+
+        if (key === this.#referencePointsKey) {
+            return;
+        }
+
+        this.#referencePointsKey = key;
+        this.#referencePointsAbortController?.abort();
+
+        if (uniqueRoads.length === 0) {
+            this.#referencePointsData = null;
+            this.#applyReferencePoints();
+            return;
+        }
+
+        this.#referencePointsAbortController = new AbortController();
+        const signal = this.#referencePointsAbortController.signal;
+
+        try {
+            const featureLists = await Promise.all(uniqueRoads.map(async ({ administrator, roadNumber }) => {
+                const params = new URLSearchParams({ administrator, roadNumber });
+                const response = await fetch(`${this.referencePointsUrlValue}?${params.toString()}`, { signal });
+
+                if (!response.ok || response.status === 204) {
+                    return [];
+                }
+
+                const geojson = await response.json();
+                return geojson?.features ?? [];
+            }));
+
+            this.#referencePointsData = { type: 'FeatureCollection', features: featureLists.flat() };
+            this.#applyReferencePoints();
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                this.#referencePointsData = null;
+                this.#applyReferencePoints();
+            }
+        }
+    }
+
+    #applyReferencePoints() {
+        if (!this.#map) {
+            return;
+        }
+
+        if (!this.#map.isStyleLoaded()) {
+            this.#map.once('idle', () => this.#applyReferencePoints());
+            return;
+        }
+
+        const data = toFeatureCollection(this.#referencePointsData);
+        const source = this.#map.getSource('reference-points');
+
+        if (source) {
+            source.setData(data);
+        } else {
+            addReferencePointsLayer(this.#map, {
+                sourceId: 'reference-points',
+                circleLayerId: 'reference-points-circle',
+                labelLayerId: 'reference-points-label',
+                data,
+            });
+        }
     }
 
     #getFieldValue(name) {
@@ -246,6 +339,10 @@ export default class extends Controller {
         const geojson = geometries.length === 1
             ? geometries[0]
             : { type: 'GeometryCollection', geometries };
+
+        if (this.referencePointRoadsValue?.length) {
+            this.#loadReferencePointsForRoads(this.referencePointRoadsValue);
+        }
 
         this.#displayGeometry(geojson);
     }
@@ -336,6 +433,7 @@ export default class extends Controller {
         this.#map.on('load', () => {
             addHouseNumbersLayer(this.#map);
             this.#addSourceAndLayers(geojson);
+            this.#applyReferencePoints();
             this.#fitBounds(geojson);
         });
 

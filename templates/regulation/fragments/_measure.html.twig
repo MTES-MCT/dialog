@@ -75,6 +75,12 @@
                         {% set geometryFieldIds = geometryFieldIds|merge([geometryFieldId]) %}
                         <input type="hidden" id="{{ geometryFieldId }}" value="{{ location.geometry }}" />
                     {% endfor %}
+                    {% set referencePointRoads = [] %}
+                    {% for location in locationsWithGeometry %}
+                        {% if location.roadType in ['departmentalRoad', 'nationalRoad'] and location.numberedRoad.administrator and location.numberedRoad.roadNumber %}
+                            {% set referencePointRoads = referencePointRoads|merge([{ administrator: location.numberedRoad.administrator, roadNumber: location.numberedRoad.roadNumber }]) %}
+                        {% endif %}
+                    {% endfor %}
                     <section class="fr-mt-2w app-preview-map-toggle">
                         <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ previewMapAccordionId }}">
                             <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
@@ -85,6 +91,8 @@
                                 data-controller="location-preview-map"
                                 data-location-preview-map-road-type-value="rawGeoJSON"
                                 data-location-preview-map-geometry-fields-value="{{ geometryFieldIds|json_encode }}"
+                                data-location-preview-map-reference-points-url-value="{{ path('fragment_reference_points') }}"
+                                data-location-preview-map-reference-point-roads-value="{{ referencePointRoads|json_encode }}"
                                 data-location-preview-map-measure-type-value="{{ measure.type }}"
                             >
                                 <div data-location-preview-map-target='container' hidden class='location-preview-map-container'></div>
