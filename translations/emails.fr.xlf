@@ -38,6 +38,22 @@
                 <source>user_report_status.new_status</source>
                 <target>Nouveau statut :</target>
             </trans-unit>
+            <trans-unit id="contact.email.user_report_sent_to_ign">
+                <source>contact.email.user_report_sent_to_ign</source>
+                <target>Signalement d'adresse envoyé à l'IGN</target>
+            </trans-unit>
+            <trans-unit id="contact.email.user_report_sent_to_ign_subject">
+                <source>contact.email.user_report_sent_to_ign_subject</source>
+                <target>Un signalement d'adresse DiaLog a été envoyé à l'IGN</target>
+            </trans-unit>
+            <trans-unit id="user_report_sent_to_ign.intro">
+                <source>user_report_sent_to_ign.intro</source>
+                <target>Le signalement suivant vient d'être transmis à l'IGN :</target>
+            </trans-unit>
+            <trans-unit id="user_report_sent_to_ign.link_label">
+                <source>user_report_sent_to_ign.link_label</source>
+                <target>Lien vers le signalement sur l'Espace collaboratif IGN :</target>
+            </trans-unit>
             <trans-unit id="contact.email.user_feedback">
                 <source>contact.email.user_feedback</source>
                 <target>Avis</target>

@@ -69,7 +69,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
 
     public function testHandleComputesGeometryFromOrganization(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, 'org-uuid');
+        $command = new SaveReportAddressCommand($this->user, organizationUuid: 'org-uuid');
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
@@ -137,7 +137,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
 
     public function testHandleComputesGeometryFromRoadBanId(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, 'road-ban-id-123', 'org-uuid');
+        $command = new SaveReportAddressCommand($this->user, roadBanId: 'road-ban-id-123', organizationUuid: 'org-uuid');
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Ville (75001) - Rue de la Paix';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
@@ -188,7 +188,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
 
     public function testHandleWithRoadBanIdFailureFallsBackToOrganization(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, 'road-ban-id-123', 'org-uuid');
+        $command = new SaveReportAddressCommand($this->user, roadBanId: 'road-ban-id-123', organizationUuid: 'org-uuid');
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Ville (75001) - Rue de la Paix';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
@@ -242,7 +242,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
 
     public function testHandleWithoutGeometryStoresNull(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, null);
+        $command = new SaveReportAddressCommand($this->user);
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
@@ -280,7 +280,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
 
     public function testHandleWhenEmailSendingFails(): void
     {
-        $command = new SaveReportAddressCommand($this->user, null, null, null, null, null, null);
+        $command = new SaveReportAddressCommand($this->user);
         $command->content = 'Il y a un problème avec cette adresse.';
         $command->location = 'Route départementale - D12';
         $date = new \DateTimeImmutable('2023-01-01 00:00:00');
