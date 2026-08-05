@@ -144,6 +144,10 @@
                 <source>common.cancel</source>
                 <target>Annuler</target>
             </trans-unit>
+            <trans-unit id="common.unsaved_changes.warning">
+                <source>common.unsaved_changes.warning</source>
+                <target>Vous avez des modifications non sauvegardées. Êtes-vous sûr·e de vouloir quitter la page ?</target>
+            </trans-unit>
             <trans-unit id="common.privacy">
                 <source>common.privacy</source>
                 <target>Politique de confidentialité</target>
