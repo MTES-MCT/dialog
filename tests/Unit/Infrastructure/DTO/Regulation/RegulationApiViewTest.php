@@ -12,6 +12,7 @@ use App\Application\Regulation\View\Measure\NamedStreetView;
 use App\Application\Regulation\View\Measure\NumberedRoadView;
 use App\Application\Regulation\View\Measure\RawGeoJSONView;
 use App\Application\Regulation\View\Measure\StorageAreaView;
+use App\Application\Regulation\View\Measure\ZoneView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\RegulationOrderForApiView;
 use App\Application\Regulation\View\TimeSlotView;
@@ -29,6 +30,7 @@ use App\Infrastructure\DTO\Regulation\RegulationApiView;
 use App\Infrastructure\DTO\Regulation\StorageAreaApiView;
 use App\Infrastructure\DTO\Regulation\TimeSlotApiView;
 use App\Infrastructure\DTO\Regulation\VehicleSetApiView;
+use App\Infrastructure\DTO\Regulation\ZoneApiView;
 use PHPUnit\Framework\TestCase;
 
 final class RegulationApiViewTest extends TestCase
@@ -138,6 +140,11 @@ final class RegulationApiViewTest extends TestCase
                     roadType: 'rawGeoJSON',
                     rawGeoJSON: new RawGeoJSONView('Zone'),
                 ),
+                new LocationView(
+                    uuid: 'loc-4',
+                    roadType: 'zone',
+                    zone: new ZoneView('Centre-ville'),
+                ),
             ],
         );
 
@@ -162,7 +169,7 @@ final class RegulationApiViewTest extends TestCase
         $this->assertCount(1, $period->timeSlots);
         $this->assertInstanceOf(TimeSlotApiView::class, $period->timeSlots[0]);
 
-        $this->assertCount(3, $measureView->locations);
+        $this->assertCount(4, $measureView->locations);
         $this->assertInstanceOf(LocationApiView::class, $measureView->locations[0]);
         $this->assertInstanceOf(NamedStreetApiView::class, $measureView->locations[0]->namedStreet);
         $this->assertNull($measureView->locations[0]->numberedRoad);
@@ -174,6 +181,9 @@ final class RegulationApiViewTest extends TestCase
 
         $this->assertInstanceOf(RawGeoJSONApiView::class, $measureView->locations[2]->rawGeoJSON);
         $this->assertSame('Zone', $measureView->locations[2]->rawGeoJSON->label);
+
+        $this->assertInstanceOf(ZoneApiView::class, $measureView->locations[3]->zone);
+        $this->assertSame('Centre-ville', $measureView->locations[3]->zone->label);
     }
 
     public function testFromViewWithoutVehicleSetAndPeriods(): void

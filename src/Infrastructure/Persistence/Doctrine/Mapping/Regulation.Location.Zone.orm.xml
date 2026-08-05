@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Regulation\Location\Zone"
+    table="zone">
+    <id name="uuid" type="guid" column="uuid" />
+    <field name="label" type="string" column="label" nullable="false" length="255"/>
+    <!-- Périmètre dessiné (polygone), conservé pour la ré-édition. Les tronçons couverts vivent sur location.geometry. -->
+    <field name="geometry" type="geojson_geometry" column="geometry" nullable="false">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
+    <one-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="zone">
+        <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

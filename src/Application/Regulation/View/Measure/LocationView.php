@@ -15,6 +15,7 @@ final readonly class LocationView
         public ?StorageAreaView $storageArea = null,
         public ?string $geometry = null,
         public ?WholeCityView $wholeCity = null,
+        public ?ZoneView $zone = null,
     ) {
     }
 }

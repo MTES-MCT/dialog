@@ -9,6 +9,7 @@ import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
 const LINE_LAYER = 'draw-line-layer';
+const FILL_LAYER = 'draw-fill-layer';
 const POINTS_SOURCE = 'draw-points-source';
 const POINTS_LAYER = 'draw-points-layer';
 const EMPTY_FC = { type: 'FeatureCollection', features: [] };
@@ -40,6 +41,8 @@ export default class extends Controller {
     zoom: { type: Number, default: 15 },
     measureType: { type: String, default: '' },
     searchApiUrl: { type: String, default: '' },
+    // 'LineString' (tracé libre) ou 'Polygon' (périmètre d'une zone, anneau fermé automatiquement)
+    geometryType: { type: String, default: 'LineString' },
     start: {
       type: Object,
       default: {
@@ -444,6 +447,23 @@ export default class extends Controller {
 
     this.#map.addSource(POINTS_SOURCE, { type: 'geojson', data: EMPTY_FC });
     const style = getMeasureTypeStyle(this.measureTypeValue);
+
+    if (this.#isPolygon()) {
+      // Remplissage translucide du périmètre, sous la ligne de contour
+      this.#map.addLayer(
+        {
+          id: FILL_LAYER,
+          type: 'fill',
+          source: LINE_SOURCE,
+          filter: ['==', '$type', 'Polygon'],
+          paint: {
+            'fill-color': style.color,
+            'fill-opacity': 0.12,
+          },
+        },
+        LINE_LAYER,
+      );
+    }
     this.#map.addLayer({
       id: POINTS_LAYER,
       type: 'circle',
@@ -608,11 +628,27 @@ export default class extends Controller {
       features: [
         {
           type: 'Feature',
-          geometry: { type: 'LineString', coordinates: this.#coordinates },
+          geometry: this.#buildGeometry(),
           properties: {},
         },
       ],
     });
+  }
+
+  #isPolygon() {
+    return this.geometryTypeValue === 'Polygon';
+  }
+
+  #buildGeometry() {
+    if (this.#isPolygon() && this.#coordinates.length >= 3) {
+      // Un anneau GeoJSON doit être fermé (dernier point = premier point)
+      return {
+        type: 'Polygon',
+        coordinates: [[...this.#coordinates, this.#coordinates[0]]],
+      };
+    }
+
+    return { type: 'LineString', coordinates: this.#coordinates };
   }
 
   #renderPoints() {
@@ -680,7 +716,7 @@ export default class extends Controller {
 
     this.#prettifyField(raw);
 
-    const coords = this.#extractLineStringCoordinates(raw);
+    const coords = this.#extractCoordinates(raw);
 
     if (coords === null) {
       this.#unsupportedGeometry = true;
@@ -736,7 +772,7 @@ export default class extends Controller {
       return;
     }
 
-    const coords = this.#extractLineStringCoordinates(raw);
+    const coords = this.#extractCoordinates(raw);
 
     if (coords === null) {
       return;
@@ -754,13 +790,10 @@ export default class extends Controller {
       return;
     }
 
+    const minPoints = this.#isPolygon() ? 3 : 2;
     const value =
-      this.#coordinates.length >= 2
-        ? JSON.stringify(
-            { type: 'LineString', coordinates: this.#coordinates },
-            null,
-            2,
-          )
+      this.#coordinates.length >= minPoints
+        ? JSON.stringify(this.#buildGeometry(), null, 2)
         : '';
 
     if (this.geometryFieldTarget.value === value) {
@@ -777,11 +810,13 @@ export default class extends Controller {
 
   /**
    * Returns an array of [lng, lat] if the raw GeoJSON string represents a
-   * single LineString (directly, wrapped in a Feature, or inside a
-   * FeatureCollection with exactly one LineString). Returns null otherwise
-   * (invalid JSON or unsupported shape that we refuse to overwrite).
+   * single geometry matching the configured geometry type (directly, wrapped
+   * in a Feature, or inside a FeatureCollection with exactly one feature).
+   * In 'Polygon' mode, only a single-ring polygon (no holes) is supported and
+   * the closing point is removed for point-by-point editing. Returns null
+   * otherwise (invalid JSON or unsupported shape that we refuse to overwrite).
    */
-  #extractLineStringCoordinates(raw) {
+  #extractCoordinates(raw) {
     let parsed;
 
     try {
@@ -792,15 +827,46 @@ export default class extends Controller {
 
     const geometry = extractSingleGeometry(parsed);
 
+    if (!geometry) {
+      return null;
+    }
+
+    if (this.#isPolygon()) {
+      if (
+        geometry.type !== 'Polygon' ||
+        !Array.isArray(geometry.coordinates) ||
+        geometry.coordinates.length !== 1
+      ) {
+        return null;
+      }
+
+      const ring = this.#sanitizeCoordinates(geometry.coordinates[0]);
+
+      // Retire le point de fermeture de l'anneau (dernier = premier) pour l'édition
+      if (ring.length >= 2) {
+        const [firstLng, firstLat] = ring[0];
+        const [lastLng, lastLat] = ring[ring.length - 1];
+
+        if (firstLng === lastLng && firstLat === lastLat) {
+          ring.pop();
+        }
+      }
+
+      return ring;
+    }
+
     if (
-      !geometry ||
       geometry.type !== 'LineString' ||
       !Array.isArray(geometry.coordinates)
     ) {
       return null;
     }
 
-    const coords = geometry.coordinates
+    return this.#sanitizeCoordinates(geometry.coordinates);
+  }
+
+  #sanitizeCoordinates(coordinates) {
+    return coordinates
       .filter(
         (c) =>
           Array.isArray(c) &&
@@ -809,8 +875,6 @@ export default class extends Controller {
           Number.isFinite(c[1]),
       )
       .map((c) => [c[0], c[1]]);
-
-    return coords;
   }
 
   #updateDrawButton() {

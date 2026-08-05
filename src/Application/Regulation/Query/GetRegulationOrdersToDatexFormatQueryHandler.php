@@ -108,6 +108,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                         rawGeoJSONLabel: $location->getRawGeoJSON()?->getLabel(),
                         geometry: $location->getGeometry(),
                         wholeCityLabel: $location->getCityLabel(),
+                        zoneLabel: $location->getZone()?->getLabel(),
                     );
 
                     $storageArea = $location->getStorageArea();

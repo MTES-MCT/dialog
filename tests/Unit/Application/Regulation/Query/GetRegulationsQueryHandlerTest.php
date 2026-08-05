@@ -10,6 +10,7 @@ use App\Application\Regulation\View\NamedStreetView;
 use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
+use App\Application\Regulation\View\ZoneView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
@@ -66,6 +67,22 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                 'organizationName' => 'DiaLog',
                 'organizationUuid' => 'dcab837f-4460-4355-99d5-bf4891c35f8f',
             ],
+            [
+                'uuid' => '0658c9b2-611b-7e35-8000-a29db4dbd687',
+                'identifier' => 'F02/2024',
+                'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+                'source' => RegulationOrderRecordSourceEnum::DIALOG->value,
+                'overallStartDate' => $startDate2,
+                'overallEndDate' => null,
+                'nbLocations' => 1,
+                'namedStreet' => null,
+                'numberedRoad' => null,
+                'rawGeoJSON' => null,
+                'wholeCity' => null,
+                'zone' => 'Centre-ville',
+                'organizationName' => 'DiaLog',
+                'organizationUuid' => 'dcab837f-4460-4355-99d5-bf4891c35f8f',
+            ],
         ];
 
         $dto = new RegulationListFiltersDTO();
@@ -83,7 +100,7 @@ final class GetRegulationsQueryHandlerTest extends TestCase
             ->method('findAllRegulations')
             ->with($dto)
             ->willReturn([
-                'count' => 3,
+                'count' => 4,
                 'items' => $rows,
             ]);
 
@@ -135,8 +152,20 @@ final class GetRegulationsQueryHandlerTest extends TestCase
                     new \DateTimeImmutable($startDate2),
                     null,
                 ),
+                new RegulationOrderListItemView(
+                    '0658c9b2-611b-7e35-8000-a29db4dbd687',
+                    'F02/2024',
+                    RegulationOrderRecordStatusEnum::DRAFT->value,
+                    RegulationOrderRecordSourceEnum::DIALOG,
+                    1,
+                    'DiaLog',
+                    'dcab837f-4460-4355-99d5-bf4891c35f8f',
+                    new ZoneView(label: 'Centre-ville'),
+                    new \DateTimeImmutable($startDate2),
+                    null,
+                ),
             ],
-            3,
+            4,
             2,
             12,
         );

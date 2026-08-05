@@ -9,6 +9,7 @@ use App\Application\Regulation\View\NumberedRoadView;
 use App\Application\Regulation\View\RawGeoJSONView;
 use App\Application\Regulation\View\RegulationOrderListItemView;
 use App\Application\Regulation\View\WholeCityView;
+use App\Application\Regulation\View\ZoneView;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
@@ -40,6 +41,8 @@ final class GetRegulationsQueryHandler
                 $locationView = new RawGeoJSONView($label);
             } elseif ($row['wholeCity']) {
                 $locationView = new WholeCityView(cityLabel: $row['wholeCity']);
+            } elseif ($row['zone']) {
+                $locationView = new ZoneView(label: $row['zone']);
             }
 
             $startDate = $row['overallStartDate'] ? new \DateTimeImmutable($row['overallStartDate']) : null;
