@@ -77,4 +77,67 @@ final class GristClientTest extends TestCase
 
         $this->gristClient->syncData($records, $tableId);
     }
+
+    public function testSyncDataInBatches(): void
+    {
+        $tableId = 'test-table-id';
+
+        // 1200 enregistrements : doivent être envoyés en 3 lots (500 + 500 + 200)
+        $records = [];
+        for ($i = 0; $i < 1200; ++$i) {
+            $records[] = [
+                'require' => ['email' => \sprintf('user%d@example.com', $i)],
+                'fields' => ['email' => \sprintf('user%d@example.com', $i)],
+            ];
+        }
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response
+            ->method('getStatusCode')
+            ->willReturn(200);
+
+        $batchSizes = [];
+        $this->httpClient
+            ->expects(self::exactly(3))
+            ->method('request')
+            ->willReturnCallback(function (string $method, string $url, array $options) use (&$batchSizes, $response) {
+                $batchSizes[] = \count($options['json']['records']);
+
+                return $response;
+            });
+
+        $this->gristClient->syncData($records, $tableId);
+
+        $this->assertSame([500, 500, 200], $batchSizes);
+    }
+
+    public function testSyncDataThrowsOnError(): void
+    {
+        $tableId = 'test-table-id';
+        $records = [
+            [
+                'require' => ['email' => 'mathieu@fairness.coop'],
+                'fields' => ['email' => 'mathieu@fairness.coop'],
+            ],
+        ];
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response
+            ->method('getStatusCode')
+            ->willReturn(500);
+        $response
+            ->method('getContent')
+            ->with(false)
+            ->willReturn('Internal Server Error');
+
+        $this->httpClient
+            ->expects(self::once())
+            ->method('request')
+            ->willReturn($response);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Error syncing records to Grist: Internal Server Error');
+
+        $this->gristClient->syncData($records, $tableId);
+    }
 }

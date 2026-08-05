@@ -9,6 +9,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByUuidQuery;
 use App\Application\User\Command\SaveReportAddressCommand;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\User\ReportAddressLocation;
 use App\Infrastructure\Form\User\ReportAddressFormType;
 use App\Infrastructure\Security\AuthenticatedUser;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -63,12 +64,10 @@ final class ReportAddressController
             throw new NotFoundHttpException();
         }
 
+        $location = ReportAddressLocation::fromAddressParts($administrator, $roadNumber, $cityLabel, $roadName);
         $command = new SaveReportAddressCommand(
             $user,
-            $administrator,
-            $roadNumber,
-            $cityLabel,
-            $roadName,
+            $location?->label,
             $roadBanId,
             $organizationUuid,
         );

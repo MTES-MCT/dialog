@@ -1,0 +1,19 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <h1>{{ 'contact.email.user_report_sent_to_ign'|trans }}</h1>
+    <p>{{ 'user_report_sent_to_ign.intro'|trans }}</p>
+    <address>
+        {{ 'contact'|trans ~ fullName }}</br>
+        {{ 'email'|trans ~ contactEmail }}</br>
+        {{ 'user_report.location'|trans ~ location }}</br>
+    </address>
+    <blockquote>
+        <p>{{ content }}</p>
+    </blockquote>
+    <p>
+        {{ 'user_report_sent_to_ign.link_label'|trans }}
+        <a href="{{ ignReportUrl }}" target="_blank" rel="noopener noreferrer">{{ ignReportUrl }}</a>
+    </p>
+{% endblock %}
