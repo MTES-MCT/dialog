@@ -16,14 +16,14 @@ use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 final class GetRegulationOrdersForApiQueryHandler
 {
     public function __construct(
-        private RegulationOrderRecordRepositoryInterface $repository,
+        private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
         private DateUtilsInterface $dateUtils,
     ) {
     }
 
     public function __invoke(GetRegulationOrdersForApiQuery $query): Pagination
     {
-        $uuids = $this->repository->findUuidsForApi(
+        $uuids = $this->regulationOrderRecordRepository->findUuidsForApi(
             vigueurStatus: $query->vigueurStatus,
             inseeCode: $query->inseeCode,
             dateStart: $query->dateStart,
@@ -37,12 +37,12 @@ final class GetRegulationOrdersForApiQueryHandler
             return new Pagination([], 0, $query->page, $query->pageSize);
         }
 
-        $overallDates = $this->repository->getOverallDatesByRegulationUuids($uuids);
+        $overallDates = $this->regulationOrderRecordRepository->getOverallDatesByRegulationUuids($uuids);
 
         $views = [];
 
         /** @var RegulationOrderRecord $record */
-        foreach ($this->repository->iterateRegulationOrdersForApiByUuids($uuids) as $record) {
+        foreach ($this->regulationOrderRecordRepository->iterateRegulationOrdersForApiByUuids($uuids) as $record) {
             // Le filtre poids lourds s'appuie sur les types restreints, stockés en tableau
             // sérialisé : il ne peut donc pas être appliqué de manière fiable en SQL.
             if (!$query->includeHeavyGoodsVehicle && $this->restrictsHeavyGoodsVehicle($record)) {
