@@ -1,0 +1,9 @@
+{% for targetId in targetIds %}
+    <turbo-stream action="update" target="{{ targetId }}">
+        <template>
+            {% for houseNumber in houseNumbers %}
+                <option value="{{ houseNumber }}"></option>
+            {% endfor %}
+        </template>
+    </turbo-stream>
+{% endfor %}
