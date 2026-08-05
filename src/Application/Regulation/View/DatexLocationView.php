@@ -13,6 +13,7 @@ final class DatexLocationView
         public readonly ?string $rawGeoJSONLabel,
         public readonly string $geometry,
         public readonly ?string $wholeCityLabel = null,
+        public readonly ?string $zoneLabel = null,
     ) {
     }
 }

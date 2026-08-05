@@ -41,7 +41,23 @@ jobs:
 
       - name: Add Scalingo as a known host
         run: |
-          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+          # ssh-keyscan échoue parfois partiellement (connexions droppées par le
+          # frontal SSH de Scalingo) : un known_hosts incomplet fait ensuite
+          # échouer le db-tunnel avec "Host key verification failed" (cf #2000).
+          # On réessaie donc jusqu'à obtenir les deux types de clés attendus.
+          for i in 1 2 3 4 5; do
+            ssh-keyscan -T 10 -H ssh.osc-fr1.scalingo.com > /tmp/scalingo_known_hosts || true
+            if grep -q ssh-ed25519 /tmp/scalingo_known_hosts && grep -q ssh-rsa /tmp/scalingo_known_hosts; then
+              break
+            fi
+            echo "ssh-keyscan incomplet (tentative $i), nouvel essai dans 3s..."
+            sleep 3
+          done
+          if ! grep -q ssh- /tmp/scalingo_known_hosts; then
+            echo "Impossible de récupérer les clés d'hôte de Scalingo"
+            exit 1
+          fi
+          cat /tmp/scalingo_known_hosts >> ~/.ssh/known_hosts
 
       - name: Init environment variables
         run: |

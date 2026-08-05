@@ -94,6 +94,16 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             AND _loc5.roadType = 'wholeCity'
         )";
 
+    private const GET_ZONE_QUERY = '
+        FIRST(
+            SELECT _z6.label
+            FROM App\Domain\Regulation\Location\Location _loc6
+            INNER JOIN _loc6.zone _z6
+            INNER JOIN _loc6.measure _m6
+            INNER JOIN _m6.regulationOrder _ro6
+            WHERE _ro6.uuid = ro.uuid
+        )';
+
     public function findAllRegulations(
         RegulationListFiltersDTO $dto,
     ): array {
@@ -105,7 +115,8 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(\sprintf('(%s) as namedStreet', self::GET_NAMED_STREET_QUERY))
             ->addSelect(\sprintf('(%s) as numberedRoad', self::GET_NUMBERED_ROAD_QUERY))
             ->addSelect(\sprintf('(%s) as rawGeoJSON', self::GET_RAW_GEOJSON_QUERY))
-            ->addSelect(\sprintf('(%s) as wholeCity', self::GET_WHOLE_CITY_QUERY));
+            ->addSelect(\sprintf('(%s) as wholeCity', self::GET_WHOLE_CITY_QUERY))
+            ->addSelect(\sprintf('(%s) as zone', self::GET_ZONE_QUERY));
 
         $parameters = [];
 

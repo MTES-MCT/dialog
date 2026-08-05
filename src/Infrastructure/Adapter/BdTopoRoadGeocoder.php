@@ -655,14 +655,16 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         }
 
         try {
+            // ST_GeomFromGeoJSON garantit un SRID 4326 même quand le GeoJSON n'a pas de membre
+            // « crs » (un cast direct en geometry donnerait un SRID 0, incompatible avec la BD TOPO).
             $row = $this->bdtopo2025Connection->fetchAssociative(
                 \sprintf(
                     'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(ST_Collect(%s)))) AS geom
                     FROM troncon_de_route AS t
-                    WHERE ST_Intersects(t.geometrie, :areaGeometry)
+                    WHERE ST_Intersects(t.geometrie, ST_GeomFromGeoJSON(:areaGeometry))
                     %s
                     ',
-                    $clipToArea ? 'ST_Intersection(t.geometrie, :areaGeometry)' : 't.geometrie',
+                    $clipToArea ? 'ST_Intersection(t.geometrie, ST_GeomFromGeoJSON(:areaGeometry))' : 't.geometrie',
                     \count($bdTopoExcludeTypes) > 0 ? 'AND t.nature NOT IN (:types)' : '',
                 ),
                 [

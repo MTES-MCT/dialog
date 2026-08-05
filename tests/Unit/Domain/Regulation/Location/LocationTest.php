@@ -12,6 +12,7 @@ use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Location\StorageArea;
 use App\Domain\Regulation\Location\WholeCityException;
+use App\Domain\Regulation\Location\Zone;
 use App\Domain\Regulation\Measure;
 use PHPUnit\Framework\TestCase;
 
@@ -148,5 +149,27 @@ final class LocationTest extends TestCase
         $location->update('wholeCity', '<geom>');
         $this->assertSame('59350', $location->getCityCode());
         $this->assertSame('Lille', $location->getCityLabel());
+    }
+
+    public function testZone(): void
+    {
+        $location = new Location(
+            uuid: '0658c85f-0000-0000-0000-000000000000',
+            measure: $this->createMock(Measure::class),
+            roadType: 'zone',
+            geometry: '<geom>',
+        );
+
+        $this->assertNull($location->getZone()); // Renseigné par Doctrine ou setZone()
+
+        $zone = $this->createMock(Zone::class);
+        $zone
+            ->expects(self::once())
+            ->method('getLabel')
+            ->willReturn('Centre-ville');
+
+        $location->setZone($zone);
+        $this->assertSame($zone, $location->getZone());
+        $this->assertSame('Centre-ville', $location->getCifsStreetLabel());
     }
 }

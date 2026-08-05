@@ -11,4 +11,5 @@ enum RoadTypeEnum: string
     case NATIONAL_ROAD = 'nationalRoad';
     case RAW_GEOJSON = 'rawGeoJSON';
     case WHOLE_CITY = 'wholeCity';
+    case ZONE = 'zone';
 }

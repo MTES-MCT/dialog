@@ -785,6 +785,42 @@
                 <source>regulation.location.wholeCity.exceptions.summary</source>
                 <target>Sauf :</target>
             </trans-unit>
+            <trans-unit id="regulation.location.road.type.zone">
+                <source>regulation.location.road.type.zone</source>
+                <target>Zone</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.label">
+                <source>regulation.location.zone.label</source>
+                <target>Nom de la zone</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.label.help">
+                <source>regulation.location.zone.label.help</source>
+                <target>Par exemple : Centre-ville, Quartier de la gare...</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.geometry">
+                <source>regulation.location.zone.geometry</source>
+                <target>Périmètre de la zone (GeoJSON)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.geometry.help">
+                <source>regulation.location.zone.geometry.help</source>
+                <target>Dessinez le périmètre sur la carte : la restriction s'appliquera aux rues situées à l'intérieur de la zone (autoroutes exclues).</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.draw_polygon_map.draw.start">
+                <source>regulation.location.zone.draw_polygon_map.draw.start</source>
+                <target>Tracer le périmètre</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.draw_polygon_map.draw.finish">
+                <source>regulation.location.zone.draw_polygon_map.draw.finish</source>
+                <target>Terminer le tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.draw_polygon_map.draw.edit">
+                <source>regulation.location.zone.draw_polygon_map.draw.edit</source>
+                <target>Modifier le tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.draw_polygon_map.warning">
+                <source>regulation.location.zone.draw_polygon_map.warning</source>
+                <target>La géométrie actuelle n'est pas un simple polygone point par point. Le tracé sur la carte est désactivé. Cliquez sur « Effacer » pour repartir d'un tracé vierge.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.administrator">
                 <source>regulation.location.administrator</source>
                 <target>Gestionnaire</target>

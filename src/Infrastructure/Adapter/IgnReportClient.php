@@ -19,7 +19,17 @@ final class IgnReportClient
         private string $credentials,
         #[Autowire(env: 'IGN_REPORT_STATUS')]
         private string $status,
+        #[Autowire(env: 'API_IGN_REPORT_BASE_URL')]
+        private string $baseUrl,
     ) {
+    }
+
+    /**
+     * Construit l'URL publique d'un signalement sur l'Espace collaboratif IGN.
+     */
+    public function getReportUrl(string $ignReportId): string
+    {
+        return rtrim($this->baseUrl, '/') . '/georem/' . rawurlencode($ignReportId);
     }
 
     /**

@@ -20,6 +20,7 @@ final class SaveLocationCommand implements CommandInterface
     public ?SaveNamedStreetCommand $namedStreet = null;
     public ?SaveRawGeoJSONCommand $rawGeoJSON = null;
     public ?SaveWholeCityCommand $wholeCity = null;
+    public ?SaveZoneCommand $zone = null;
     public array $permissions = []; // For validation
 
     public function __construct(
@@ -48,6 +49,10 @@ final class SaveLocationCommand implements CommandInterface
         if ($location && $this->roadType === RoadTypeEnum::WHOLE_CITY->value) {
             $this->wholeCity = new SaveWholeCityCommand($location);
         }
+
+        if ($location?->getZone()) {
+            $this->zone = new SaveZoneCommand($location->getZone());
+        }
     }
 
     public function assignNumberedRoad(SaveNumberedRoadCommand $numberedRoad): void
@@ -74,6 +79,7 @@ final class SaveLocationCommand implements CommandInterface
             $this->nationalRoad = null;
             $this->rawGeoJSON = null;
             $this->wholeCity = null;
+            $this->zone = null;
         }
 
         if ($this->roadType === RoadTypeEnum::NATIONAL_ROAD->value) {
@@ -86,6 +92,7 @@ final class SaveLocationCommand implements CommandInterface
             $this->departmentalRoad = null;
             $this->rawGeoJSON = null;
             $this->wholeCity = null;
+            $this->zone = null;
         }
 
         if ($this->roadType === RoadTypeEnum::LANE->value) {
@@ -93,6 +100,7 @@ final class SaveLocationCommand implements CommandInterface
             $this->nationalRoad = null;
             $this->rawGeoJSON = null;
             $this->wholeCity = null;
+            $this->zone = null;
         }
 
         if ($this->roadType == RoadTypeEnum::RAW_GEOJSON->value) {
@@ -100,6 +108,7 @@ final class SaveLocationCommand implements CommandInterface
             $this->departmentalRoad = null;
             $this->nationalRoad = null;
             $this->wholeCity = null;
+            $this->zone = null;
         }
 
         if ($this->roadType === RoadTypeEnum::WHOLE_CITY->value) {
@@ -107,6 +116,15 @@ final class SaveLocationCommand implements CommandInterface
             $this->departmentalRoad = null;
             $this->nationalRoad = null;
             $this->rawGeoJSON = null;
+            $this->zone = null;
+        }
+
+        if ($this->roadType === RoadTypeEnum::ZONE->value) {
+            $this->namedStreet = null;
+            $this->departmentalRoad = null;
+            $this->nationalRoad = null;
+            $this->rawGeoJSON = null;
+            $this->wholeCity = null;
         }
     }
 
@@ -118,6 +136,7 @@ final class SaveLocationCommand implements CommandInterface
             RoadTypeEnum::NATIONAL_ROAD->value => $this->nationalRoad,
             RoadTypeEnum::RAW_GEOJSON->value => $this->rawGeoJSON,
             RoadTypeEnum::WHOLE_CITY->value => $this->wholeCity,
+            RoadTypeEnum::ZONE->value => $this->zone,
             default => throw new \LogicException('No road command'),
         };
     }
@@ -134,6 +153,10 @@ final class SaveLocationCommand implements CommandInterface
 
         if (!$this->rawGeoJSON && $rawGeoJSON = $this->location->getRawGeoJSON()) {
             return new DeleteRawGeoJSONCommand($rawGeoJSON);
+        }
+
+        if (!$this->zone && $zone = $this->location->getZone()) {
+            return new DeleteZoneCommand($zone);
         }
 
         // "Ville entière" has no sub-entity to delete: its city fields are cleared by Location::update().

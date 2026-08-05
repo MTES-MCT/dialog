@@ -30,6 +30,7 @@ final class IgnReportClientTest extends TestCase
             $this->logger,
             'username:password', // credentials
             'test', // defaultStatus depuis variable d'environnement
+            'https://espacecollaboratif.ign.fr', // baseUrl
         );
     }
 
@@ -289,6 +290,7 @@ final class IgnReportClientTest extends TestCase
             $this->logger,
             'username:password',
             'submit',
+            'https://espacecollaboratif.ign.fr',
         );
 
         $this->mockResponse
@@ -394,5 +396,80 @@ final class IgnReportClientTest extends TestCase
 
         $status = $this->client->getReportStatus('456');
         $this->assertNull($status);
+    }
+
+    public function testSubmitReportReturnsNullOnHttpErrorStatusCode(): void
+    {
+        $this->mockResponse
+            ->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(500);
+        $this->mockResponse
+            ->expects($this->never())
+            ->method('toArray');
+
+        $this->ignReportClient
+            ->expects($this->once())
+            ->method('request')
+            ->willReturn($this->mockResponse);
+
+        $this->logger
+            ->expects($this->once())
+            ->method('info');
+
+        $result = $this->client->submitReport('Comment', 'POINT(0 0)');
+        $this->assertNull($result);
+    }
+
+    public function testGetReportStatusReturnsNullOnHttpErrorStatusCode(): void
+    {
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(404);
+        $mockResponse->expects($this->never())->method('toArray');
+
+        $this->ignReportClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('GET', '/gcms/api/reports/789', $this->anything())
+            ->willReturn($mockResponse);
+
+        $status = $this->client->getReportStatus('789');
+        $this->assertNull($status);
+    }
+
+    public function testGetReportStatusReturnsNullWhenApiHasNoStatus(): void
+    {
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(200);
+        $mockResponse->method('toArray')->with(false)->willReturn([]);
+
+        $this->ignReportClient
+            ->expects($this->once())
+            ->method('request')
+            ->with('GET', '/gcms/api/reports/321', $this->anything())
+            ->willReturn($mockResponse);
+
+        $status = $this->client->getReportStatus('321');
+        $this->assertNull($status);
+    }
+
+    public function testGetReportUrlBuildsPublicUrl(): void
+    {
+        $url = $this->client->getReportUrl('abc 123');
+        $this->assertSame('https://espacecollaboratif.ign.fr/georem/abc%20123', $url);
+    }
+
+    public function testGetReportUrlTrimsTrailingSlashFromBaseUrl(): void
+    {
+        $client = new IgnReportClient(
+            $this->ignReportClient,
+            $this->logger,
+            'username:password',
+            'test',
+            'https://espacecollaboratif.ign.fr/',
+        );
+
+        $url = $client->getReportUrl('42');
+        $this->assertSame('https://espacecollaboratif.ign.fr/georem/42', $url);
     }
 }
