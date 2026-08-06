@@ -43,6 +43,7 @@ final readonly class SendRegulationOrderToMailingListCommandHandler
         foreach ($recipients as $recipient) {
             $this->mailer->send(
                 new Mail(
+                    from: null,
                     address: $recipient['email'],
                     subject: 'mailing_list.email.subject',
                     template: 'email/mailing_list/mailing_list_email.html.twig',

@@ -35,6 +35,7 @@ final readonly class SendConfirmationMailCommandHandler
 
             $this->mailer->send(
                 new Mail(
+                    from: null,
                     address: $email,
                     subject: 'confirm_user_account.subject',
                     template: 'email/user/confirm_user_account.html.twig',

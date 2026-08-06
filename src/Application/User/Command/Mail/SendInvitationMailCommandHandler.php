@@ -20,6 +20,7 @@ final readonly class SendInvitationMailCommandHandler
 
         $this->mailer->send(
             new Mail(
+                from: null,
                 address: $invitation->getEmail(),
                 subject: 'organization_invitation.subject',
                 template: 'email/user/organization_invitation.html.twig',
