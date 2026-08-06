@@ -132,7 +132,7 @@ final class SendInactivityRemindersCommandTest extends TestCase
         $this->assertSame(['antoine.smagghe@fairness.coop', 'john@example.com'], $dispatchedEmails);
         $this->assertSame($now, $user1->getInactivityEmailSentAt());
         $this->assertSame($now, $user2->getInactivityEmailSentAt());
-        $this->assertStringContainsString('2 mail(s) de relance envoyé(s) sur 2 utilisateur(s) éligible(s).', $commandTester->getDisplay());
+        $this->assertStringContainsString('2 email(s) de relance envoyé(s) sur 2 utilisateur(s) éligible(s).', $commandTester->getDisplay());
     }
 
     public function testExecuteLogsErrorAndContinuesOnFailure(): void
@@ -173,7 +173,7 @@ final class SendInactivityRemindersCommandTest extends TestCase
             ->expects(self::once())
             ->method('error')
             ->with(
-                'Échec de l\'envoi du mail de relance d\'inactivité',
+                'Échec de l\'envoi de l\'email de relance d\'inactivité',
                 [
                     'userUuid' => '58273e3b-07e1-4d14-8fb5-1e24c32382e2',
                     'error' => 'Transport failure',
@@ -191,6 +191,6 @@ final class SendInactivityRemindersCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
         $this->assertNull($failingUser->getInactivityEmailSentAt());
         $this->assertSame($now, $okUser->getInactivityEmailSentAt());
-        $this->assertStringContainsString('1 mail(s) de relance envoyé(s) sur 2 utilisateur(s) éligible(s).', $commandTester->getDisplay());
+        $this->assertStringContainsString('1 email(s) de relance envoyé(s) sur 2 utilisateur(s) éligible(s).', $commandTester->getDisplay());
     }
 }

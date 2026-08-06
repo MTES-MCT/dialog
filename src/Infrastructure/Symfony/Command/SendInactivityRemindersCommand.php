@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
     name: 'app:user:send-inactivity-reminders',
-    description: 'Envoie un unique mail de relance aux utilisateurs inscrits depuis X jours dont aucun arrêté n\'a été publié dans leurs organisations',
+    description: 'Envoie un unique email de relance aux utilisateurs inscrits depuis X jours dont aucun arrêté n\'a été publié dans leurs organisations',
 )]
 class SendInactivityRemindersCommand extends Command
 {
@@ -40,8 +40,14 @@ class SendInactivityRemindersCommand extends Command
             'days',
             null,
             InputOption::VALUE_REQUIRED,
-            'Nombre de jours d\'inactivité après l\'inscription avant l\'envoi du mail',
+            'Nombre de jours d\'inactivité après l\'inscription avant l\'envoi de l\'email',
             self::DEFAULT_DAYS,
+        );
+        $this->addOption(
+            'dry-run',
+            null,
+            InputOption::VALUE_NONE,
+            'Exécuter la commande en mode dry-run (ne pas envoyer d\'emails, juste afficher le nombre d\'utilisateurs éligibles)',
         );
     }
 
@@ -62,11 +68,14 @@ class SendInactivityRemindersCommand extends Command
 
         foreach ($users as $user) {
             try {
-                $this->commandBus->dispatchAsync(new SendInactivityReminderEmailCommand($user->getEmail()));
-                $user->setInactivityEmailSentAt($this->dateUtils->getNow());
+                if (!$input->getOption('dry-run')) {
+                    $this->commandBus->dispatchAsync(new SendInactivityReminderEmailCommand($user->getEmail()));
+                    $user->setInactivityEmailSentAt($this->dateUtils->getNow());
+                }
+                $output->writeln(\sprintf('Email de relance envoyé à %s', $user->getEmail()));
                 ++$sentCount;
             } catch (\Throwable $e) {
-                $this->logger->error('Échec de l\'envoi du mail de relance d\'inactivité', [
+                $this->logger->error('Échec de l\'envoi de l\'email de relance d\'inactivité', [
                     'userUuid' => $user->getUuid(),
                     'error' => $e->getMessage(),
                 ]);
@@ -75,7 +84,7 @@ class SendInactivityRemindersCommand extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln(\sprintf('%d mail(s) de relance envoyé(s) sur %d utilisateur(s) éligible(s).', $sentCount, \count($users)));
+        $output->writeln(\sprintf('%d email(s) de relance envoyé(s) sur %d utilisateur(s) éligible(s).', $sentCount, \count($users)));
 
         return Command::SUCCESS;
     }
