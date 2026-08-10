@@ -7,6 +7,7 @@ export default class extends Controller {
     static values = {
         loadingLabel: String,
         errorLabel: String,
+        identifier: String,
     };
 
     #busy = false;
@@ -16,6 +17,8 @@ export default class extends Controller {
 
         if (this.#busy) return;
         this.#busy = true;
+
+        this.#trackEvent('Arrêté', 'Export Word - clic', this.identifierValue);
 
         const originalText = this.element.textContent;
         this.element.setAttribute('aria-busy', 'true');
@@ -32,8 +35,11 @@ export default class extends Controller {
             const blob = await response.blob();
             const filename = this.#extractFilename(response, 'export.docx');
             this.#triggerBrowserDownload(blob, filename);
+            // Track successful downloads to measure completed exports.
+            this.#trackEvent('Arrêté', 'Export Word - succès', this.identifierValue);
         } catch (err) {
             console.error('Export download failed:', err);
+            this.#trackEvent('Arrêté', 'Export Word - échec', this.identifierValue);
             alert(this.errorLabelValue || 'Erreur lors du téléchargement.');
         } finally {
             this.element.textContent = originalText;
@@ -60,5 +66,11 @@ export default class extends Controller {
         const cd = response.headers.get('Content-Disposition') || '';
         const match = /filename\*?=(?:UTF-8'')?["']?([^"';]+)/i.exec(cd);
         return match ? decodeURIComponent(match[1]) : fallback;
+    }
+
+    #trackEvent(category, action, name) {
+        if (window._paq) {
+            window._paq.push(['trackEvent', category, action, name || undefined]);
+        }
     }
 }

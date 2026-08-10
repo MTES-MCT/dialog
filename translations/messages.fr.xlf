@@ -973,6 +973,10 @@
                 <source>regulation.location.named_street.house_number</source>
                 <target>Numéro</target>
             </trans-unit>
+            <trans-unit id="regulation.location.named_street.house_number.invalid">
+                <source>regulation.location.named_street.house_number.invalid</source>
+                <target>Ce numéro n'existe pas sur cette voie.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.named_street.intersection">
                 <source>regulation.location.named_street.intersection</source>
                 <target>Voie d'intersection</target>

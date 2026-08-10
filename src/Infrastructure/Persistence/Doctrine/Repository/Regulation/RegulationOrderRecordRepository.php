@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
@@ -440,8 +441,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         if ($inseeCode !== null) {
             $qb->innerJoin('m.locations', 'loc')
                 ->leftJoin('loc.namedStreet', 'ns')
-                ->andWhere('ns.cityCode = :inseeCode OR loc.cityCode = :inseeCode');
+                ->andWhere('(ns.cityCode = :inseeCode OR loc.cityCode = :inseeCode OR roc.organization IN (
+                    SELECT _org.uuid
+                    FROM App\Domain\User\Organization _org
+                    WHERE _org.code = :inseeCode AND _org.codeType = :inseeCodeType
+                ))');
             $parameters['inseeCode'] = $inseeCode;
+            $parameters['inseeCodeType'] = OrganizationCodeTypeEnum::INSEE->value;
         }
 
         if ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_CURRENT) {

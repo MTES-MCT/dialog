@@ -9,7 +9,8 @@
                    data-controller="export-download"
                    data-action="click->export-download#download"
                    data-export-download-loading-label-value="{{ 'regulation.export.doc.loading'|trans }}"
-                   data-export-download-error-label-value="{{ 'regulation.export.doc.error'|trans }}">
+                   data-export-download-error-label-value="{{ 'regulation.export.doc.error'|trans }}"
+                   data-export-download-identifier-value="{{ regulationOrderIdentifier|default('') }}">
                     {{ 'regulation.export.doc'|trans }}
                 </a>
                 <div class="fr-mt-1v fr-text--sm fr-x-text--mention-grey">
