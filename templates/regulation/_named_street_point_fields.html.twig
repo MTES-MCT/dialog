@@ -33,6 +33,9 @@
                 'hidden': pointType.vars.value != 'houseNumber',
             },
             attr: {
+                'data-controller': 'house-number-input',
+                'data-house-number-input-invalid-message-value': 'regulation.location.named_street.house_number.invalid'|trans,
+                'list': pointHouseNumber.vars.id ~ '-options',
                 'data-form-reveal-target': 'formControl',
                 'data-value': 'houseNumber',
                 'data-reset-target': 'element',
@@ -40,6 +43,7 @@
                 'disabled': pointType.vars.value != 'houseNumber',
             },
         }) }}
+        <datalist id="{{ pointHouseNumber.vars.id }}-options"></datalist>
 
         <div
             class="fr-col-12 fr-col-sm-6 fr-mb-0"
