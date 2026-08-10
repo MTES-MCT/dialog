@@ -115,9 +115,12 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
 
     public function findUsersToNotifyForInactivity(\DateTimeInterface $registeredBefore): array
     {
+        $avoidUsersBeforeDate = new \DateTimeImmutable('2026-07-10');
+
         return $this->createQueryBuilder('u')
             ->where('u.isVerified = true')
             ->andWhere('u.registrationDate <= :registeredBefore')
+            ->andWhere('u.registrationDate > :registeredAfter')
             ->andWhere('u.inactivityEmailSentAt IS NULL')
             ->andWhere('EXISTS (
                 SELECT 1
@@ -132,6 +135,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
                     AND ror.status = :publishedStatus
             )')
             ->setParameter('registeredBefore', $registeredBefore)
+            ->setParameter('registeredAfter', $avoidUsersBeforeDate)
             ->setParameter('publishedStatus', RegulationOrderRecordStatusEnum::PUBLISHED->value)
             ->getQuery()
             ->getResult();
