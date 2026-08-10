@@ -31,20 +31,17 @@
                 <div class="fr-header__tools" data-testid="user-links">
                     <div class="fr-header__tools-links">
                         <ul class="fr-btns-group">
+                            <li>
+                                <a class="fr-btn fr-icon-megaphone-line" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version" target="_blank" rel="noopener external">
+                                    {{ 'landing.menu.button.news'|trans }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="fr-btn fr-icon-question-line" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr" target="_blank" rel="noopener external">
+                                    {{ 'landing.menu.button.help'|trans }}
+                                </a>
+                            </li>
                             {% if app.user %}
-                                <li>
-                                    <a class="fr-btn fr-icon-edit-line" href="{{ path('app_feedback') }}">
-                                        {{ 'common.feedback'|trans }}
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="fr-btn fr-icon-x-government fr-x-icon--sm" href="{{ path('app_my_organizations') }}">
-                                        {{ 'user.myorganizations'|trans }}
-                                        {% if not app.user.isOrganizationsCompleted %}
-                                            <span class="notification-dot" data-controller="notice" data-notice-id-value="org-incomplete" data-action="notice#dismiss" title="{{ 'user.organizations_incomplete'|trans }}"></span>
-                                        {% endif %}
-                                    </a>
-                                </li>
                                 <li class="user-dropdown" data-controller="user-dropdown">
                                     <button
                                         class="user-dropdown-btn fr-btn fr-btn--tertiary-no-outline"
@@ -66,6 +63,12 @@
                                         <hr class="user-dropdown-separator">
                                         <a class="fr-link fr-icon-account-circle-line fr-link--icon-left" href="{{ path('app_profile') }}">
                                             {{ 'profile.title'|trans }}
+                                        </a>
+                                        <a class="fr-link fr-icon-x-government fr-x-icon--sm fr-link--icon-left" href="{{ path('app_my_organizations') }}">
+                                            {{ 'user.myorganizations'|trans }}
+                                            {% if not app.user.isOrganizationsCompleted %}
+                                                <span class="notification-dot" data-controller="notice" data-notice-id-value="org-incomplete" data-action="notice#dismiss" title="{{ 'user.organizations_incomplete'|trans }}"></span>
+                                            {% endif %}
                                         </a>
                                         {% if is_granted('ROLE_SUPER_ADMIN') %}
                                             <a class="fr-link fr-icon-settings-5-line fr-link--icon-left" href="{{ path('app_admin') }}">
