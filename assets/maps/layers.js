@@ -103,3 +103,69 @@ export function addMeasureLineLayer(map, { sourceId, layerId, measureType, data,
         });
     }
 }
+
+/**
+ * Adds an informative layer displaying reference points (PR) along a numbered
+ * road. Each feature is a `Point` whose `label` property holds the PR number
+ * (optionally suffixed with its department). A small circle marks the PR
+ * location and a label rendered as `PR <label>` is shown next to it.
+ *
+ * @param {import('maplibre-gl').Map} map
+ * @param {Object} options
+ * @param {string} options.sourceId
+ * @param {string} options.circleLayerId
+ * @param {string} options.labelLayerId
+ * @param {import('geojson').GeoJSON} [options.data] - Initial GeoJSON data (defaults to empty FeatureCollection).
+ */
+export function addReferencePointsLayer(map, { sourceId, circleLayerId, labelLayerId, data }) {
+    map.addSource(sourceId, {
+        type: 'geojson',
+        data: data !== undefined ? toFeatureCollection(data) : { type: 'FeatureCollection', features: [] },
+    });
+
+    map.addLayer({
+        id: circleLayerId,
+        type: 'circle',
+        source: sourceId,
+        filter: ['==', '$type', 'Point'],
+        paint: {
+            'circle-radius': [
+                'interpolate', ['linear'], ['zoom'],
+                8, 2.5,
+                12, 3.5,
+                18, 5,
+            ],
+            'circle-color': '#000091',
+            'circle-stroke-width': 1.5,
+            'circle-stroke-color': '#FFFFFF',
+        },
+    });
+
+    map.addLayer({
+        id: labelLayerId,
+        type: 'symbol',
+        source: sourceId,
+        filter: ['==', '$type', 'Point'],
+        minzoom: 10,
+        layout: {
+            'symbol-placement': 'point',
+            'text-field': ['concat', 'PR ', ['get', 'label']],
+            'text-size': [
+                'interpolate', ['linear'], ['zoom'],
+                10, 10,
+                16, 12,
+                18, 14,
+            ],
+            'text-font': ['Noto Sans Regular'],
+            'text-anchor': 'left',
+            'text-offset': [0.8, 0],
+            'text-allow-overlap': false,
+            'text-ignore-placement': false,
+        },
+        paint: {
+            'text-color': '#000091',
+            'text-halo-width': 1.5,
+            'text-halo-color': '#FFFFFF',
+        },
+    });
+}

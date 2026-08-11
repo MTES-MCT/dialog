@@ -369,6 +369,7 @@
                 <div
                     data-controller="location-preview-map"
                     data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                    data-location-preview-map-reference-points-url-value="{{ path('fragment_reference_points') }}"
                     data-location-preview-map-road-type-value="{{ roadType }}"
                     data-location-preview-map-administrator-field-value="{{ form[roadType].administrator.vars.id }}"
                     data-location-preview-map-road-number-field-value="{{ form[roadType].roadNumber.vars.id }}"
@@ -1246,7 +1247,12 @@
             style="--card-padding: 0.5rem 1.5rem 1.5rem 1.5rem"
         >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
-            {{ form_start(form, {attr: {id: 'measure-form'}}) }}
+            {{ form_start(form, {attr: {
+                id: 'measure-form',
+                'data-controller': 'unsaved-changes',
+                'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
+                'data-unsaved-changes-tracking-name-value': 'mesure',
+            }}) }}
                 {{ form_row(form._token) }}
                 <div class="app-card">
                     <div class="app-card__header">

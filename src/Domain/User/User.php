@@ -11,6 +11,7 @@ class User
     private array $roles = [];
     private \DateTimeInterface $registrationDate;
     private ?\DateTimeInterface $lastActiveAt = null;
+    private ?\DateTimeInterface $inactivityEmailSentAt = null;
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
     private bool $isVerified = false;
@@ -81,6 +82,18 @@ class User
     public function setLastActiveAt(\DateTimeInterface $date): self
     {
         $this->lastActiveAt = $date;
+
+        return $this;
+    }
+
+    public function getInactivityEmailSentAt(): ?\DateTimeInterface
+    {
+        return $this->inactivityEmailSentAt;
+    }
+
+    public function setInactivityEmailSentAt(?\DateTimeInterface $date): self
+    {
+        $this->inactivityEmailSentAt = $date;
 
         return $this;
     }

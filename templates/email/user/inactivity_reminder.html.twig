@@ -1,0 +1,19 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <p>{{ 'inactivity.email.hello'|trans }}</p>
+    <p>{{ 'inactivity.email.need_help'|trans }}</p>
+    <p>{{ 'inactivity.email.observation'|trans }}</p>
+    <p>{{ 'inactivity.email.solicit'|trans }}</p>
+    <p>
+        {{ 'inactivity.email.webinar'|trans }}
+        <a href="https://visio.numerique.gouv.fr/ogx-uujt-vsi" target="_blank" rel="noopener external">{{ 'inactivity.email.webinar.link'|trans }}</a>
+    </p>
+    <p>
+        {{ 'inactivity.email.questionnaire'|trans }}
+        <a href="https://tally.so/r/3j1YAE" target="_blank" rel="noopener external">{{ 'inactivity.email.questionnaire.link'|trans }}</a>
+    </p>
+    <p>{{ 'inactivity.email.closing'|trans }}</p>
+    <p>{{ 'inactivity.email.signature'|trans }}</p>
+{% endblock %}
