@@ -136,6 +136,35 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
     }
 
+    public function testGetWithRegulationOrderRecordUuidUsesRestrictionsBbox(): void
+    {
+        $client = static::createClient();
+        // The "typical" regulation order record has geolocated restrictions in Paris
+        // (lon ~2.34, lat ~48.90) — the map zooms onto their overall extent.
+        $crawler = $client->request('GET', '/carte?regulationOrderRecordUuid=e413a47e-5928-4353-a8b2-8b7dda27f9a5');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $initialBbox = $crawler->filter('d-map')->attr('initialbbox');
+        $this->assertNotNull($initialBbox);
+        $decoded = json_decode($initialBbox, true);
+        $this->assertLessThan($decoded['maxLon'], $decoded['minLon']);
+        $this->assertLessThan($decoded['maxLat'], $decoded['minLat']);
+        $this->assertGreaterThan(2.0, $decoded['minLon']);
+        $this->assertLessThan(3.0, $decoded['maxLon']);
+        $this->assertGreaterThan(48.0, $decoded['minLat']);
+        $this->assertLessThan(49.5, $decoded['maxLat']);
+    }
+
+    public function testGetWithUnknownRegulationOrderRecordUuidReturnsNoBbox(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?regulationOrderRecordUuid=00000000-0000-0000-0000-000000000000');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+    }
+
     public function testGetEmbedHidesHeaderAndFooter(): void
     {
         $client = static::createClient();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Map;
 
 use App\Application\DateUtilsInterface;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
@@ -23,6 +24,7 @@ final class MapController
         private DateUtilsInterface $dateUtils,
         private Security $security,
         private OrganizationRepositoryInterface $organizationRepository,
+        private LocationRepositoryInterface $locationRepository,
     ) {
     }
 
@@ -54,7 +56,10 @@ final class MapController
         $userUuid = $user instanceof AbstractAuthenticatedUser ? $user->getUuid() : null;
 
         $organizationUuid = $request->query->get('organizationUuid');
-        if (\is_string($organizationUuid) && $organizationUuid !== '') {
+        $regulationOrderRecordUuid = $request->query->get('regulationOrderRecordUuid');
+        if (\is_string($regulationOrderRecordUuid) && $regulationOrderRecordUuid !== '') {
+            $initialBbox = $this->locationRepository->findMapBboxByRegulationOrderRecordUuid($regulationOrderRecordUuid);
+        } elseif (\is_string($organizationUuid) && $organizationUuid !== '') {
             $initialBbox = $this->organizationRepository->findMapBboxByOrganizationUuid($organizationUuid);
         } else {
             $initialBbox = $this->organizationRepository->findInitialMapBbox($userUuid);
