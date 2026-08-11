@@ -115,7 +115,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
 
     public function findUsersToNotifyForInactivity(\DateTimeInterface $registeredBefore): array
     {
-        $avoidUsersBeforeDate = new \DateTimeImmutable('2026-07-10');
+        $avoidUsersBeforeDate = new \DateTimeImmutable('2026-08-11');
 
         return $this->createQueryBuilder('u')
             ->where('u.isVerified = true')

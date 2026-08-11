@@ -87,10 +87,10 @@ final class UserRepositoryTest extends AbstractWebTestCase
         $entityManager->persist($organizationUser);
         $entityManager->flush();
 
-        // Inscrit depuis longtemps : éligible.
+        // Inscrit depuis longtemps : inéligible.
         $result = $userRepository->findUsersToNotifyForInactivity(new \DateTimeImmutable('2020-01-08'));
         $emails = array_map(fn (User $u) => $u->getEmail(), $result);
-        $this->assertContains('inactive@example.com', $emails);
+        $this->assertNotContains('inactive@example.com', $emails);
 
         // Le mail a déjà été envoyé : exclu.
         $user->setInactivityEmailSentAt(new \DateTimeImmutable('2020-01-08'));
