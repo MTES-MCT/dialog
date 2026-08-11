@@ -60,9 +60,14 @@
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><circle cx='9' cy='14' r='4' fill='%23DA70D6'/><circle cx='19' cy='14' r='4' fill='%23DA70D6'/></svg>");
 }
 
-/* Filtre "Types de véhicules" : pictogramme camion (poids-lourds), réutilise l'artwork DSFR du projet. */
-.map-vehicle-artwork {
+/* Filtre "Types de véhicules" : pictogramme camion (poids-lourds) en 24x24,
+   couleur "artwork minor" (#6A6AF4) conformément à la maquette (issue #2013). */
+.map-vehicle-toggle__icon {
     flex-shrink: 0;
+}
+
+.map-vehicle-toggle__icon::before {
+    background-color: var(--artwork-minor-blue-france);
 }
 
 /* Regroupe le pictogramme et le texte dans un seul élément flex, sinon le
