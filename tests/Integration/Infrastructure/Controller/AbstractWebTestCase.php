@@ -69,7 +69,7 @@ abstract class AbstractWebTestCase extends WebTestCase
     protected function assertPageStructure(array $expectedStructure, Crawler $crawler): void
     {
         $actualStructure = $crawler
-            ->filter('h1, h2, h3, h4, h5, h6, main > :not(noscript) a, main button')
+            ->filter('main h1, main h2, main h3, main h4, main h5, main h6, main > :not(noscript) a, main button')
             ->each(function (Crawler $node, int $i): array {
                 switch ($node->nodeName()) {
                     case 'a':

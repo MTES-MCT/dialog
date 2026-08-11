@@ -83,6 +83,72 @@ final class BdTopoRoadGeocoderTest extends TestCase
         $this->roadGeocoder->findReferencePoints('1', 'DIR Ouest', 'N12');
     }
 
+    public function testComputeReferencePointsUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->computeReferencePoints('DIR Ouest', 'N12');
+    }
+
+    public function testComputeReferencePoints(): void
+    {
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAllAssociative')
+            ->willReturn([
+                [
+                    'point_number' => '1',
+                    'department_code' => '35',
+                    'geometry' => '{"type":"Point","coordinates":[-2.1,48.2]}',
+                    'num_departments' => 1,
+                ],
+                [
+                    'point_number' => '2',
+                    'department_code' => '22',
+                    'geometry' => '{"type":"Point","coordinates":[-2.2,48.3]}',
+                    'num_departments' => 2,
+                ],
+                [
+                    // Géométrie invalide : la Feature est ignorée.
+                    'point_number' => '3',
+                    'department_code' => '22',
+                    'geometry' => 'null',
+                    'num_departments' => 2,
+                ],
+            ]);
+
+        $result = $this->roadGeocoder->computeReferencePoints('DIR Ouest', 'N12');
+
+        $this->assertSame([
+            'type' => 'FeatureCollection',
+            'features' => [
+                [
+                    'type' => 'Feature',
+                    'geometry' => ['type' => 'Point', 'coordinates' => [-2.1, 48.2]],
+                    'properties' => [
+                        'pointNumber' => '1',
+                        'departmentCode' => '35',
+                        'label' => '1',
+                    ],
+                ],
+                [
+                    'type' => 'Feature',
+                    'geometry' => ['type' => 'Point', 'coordinates' => [-2.2, 48.3]],
+                    'properties' => [
+                        'pointNumber' => '2',
+                        'departmentCode' => '22',
+                        'label' => '2 (dép 22)',
+                    ],
+                ],
+            ],
+        ], json_decode($result, associative: true));
+    }
+
     public function testFindIntersectingNamedStreetsUnexpectedError(): void
     {
         $this->expectException(GeocodingFailureException::class);
