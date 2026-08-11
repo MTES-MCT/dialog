@@ -1133,6 +1133,8 @@
                             }
                         }) }}
 
+                        <hr class="fr-mt-3w" />
+
                         <fieldset
                             aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
                             data-form-reveal-target="section formControl"
@@ -1141,6 +1143,9 @@
                             <legend id="{{ form.namedStreet.vars.id }}-points-legend">
                                 {{ 'regulation.location.named_street.points'|trans }}
                             </legend>
+                            <div class="fr-hint-text help-text">
+                                {{ 'regulation.location.named_street.points.description'|trans }}
+                            </div>
                             {% include 'regulation/_named_street_point_fields.html.twig' with {
                                 legend: 'regulation.location.named_street.from_point'|trans,
                                 pointType: form.namedStreet.fromPointType,
