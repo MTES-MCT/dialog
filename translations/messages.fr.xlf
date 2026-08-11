@@ -50,11 +50,6 @@
                 <source>common.cgu</source>
                 <target>Conditions générales d’utilisation</target>
             </trans-unit>
-            <trans-unit id="common.feedback">
-                <source>common.feedback</source>
-                <target>Votre avis</target>
-            </trans-unit>
-
             <trans-unit id="common.login">
                 <source>common.login</source>
                 <target>Se connecter</target>
@@ -271,6 +266,42 @@
             <trans-unit id="footer.description">
                 <source>footer.description</source>
                 <target>DiaLog est un service porté par <![CDATA[<a href="https://beta.gouv.fr/incubateurs/mtes.html">]]>La Fabrique Numérique de l'Ecologie (MTE-MCT)<![CDATA[</a>]]> et sponsorisé par la <![CDATA[<strong>]]>Direction générale des infrastructures, des transports et des mobilités<![CDATA[</strong>]]>.</target>
+            </trans-unit>
+            <trans-unit id="footer.top.site_links">
+                <source>footer.top.site_links</source>
+                <target>Liens du site</target>
+            </trans-unit>
+            <trans-unit id="footer.top.resources">
+                <source>footer.top.resources</source>
+                <target>Ressources</target>
+            </trans-unit>
+            <trans-unit id="footer.top.data">
+                <source>footer.top.data</source>
+                <target>Données</target>
+            </trans-unit>
+            <trans-unit id="footer.top.contact_support">
+                <source>footer.top.contact_support</source>
+                <target>Contact et support</target>
+            </trans-unit>
+            <trans-unit id="footer.top.input_data">
+                <source>footer.top.input_data</source>
+                <target>Saisir des arrêtés ou intégrer vos données dans DiaLog</target>
+            </trans-unit>
+            <trans-unit id="footer.top.videos">
+                <source>footer.top.videos</source>
+                <target>Vidéos</target>
+            </trans-unit>
+            <trans-unit id="footer.top.api_doc">
+                <source>footer.top.api_doc</source>
+                <target>Documentation API</target>
+            </trans-unit>
+            <trans-unit id="footer.top.feedback">
+                <source>footer.top.feedback</source>
+                <target>Donnez-nous votre avis</target>
+            </trans-unit>
+            <trans-unit id="footer.top.contact">
+                <source>footer.top.contact</source>
+                <target>Contactez-nous</target>
             </trans-unit>
             <trans-unit id="accessibility.status">
                 <source>accessibility.status</source>
