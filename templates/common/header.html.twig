@@ -33,11 +33,6 @@
                         <ul class="fr-btns-group">
                             {% if app.user %}
                                 <li>
-                                    <a class="fr-btn fr-icon-edit-line" href="{{ path('app_feedback') }}">
-                                        {{ 'common.feedback'|trans }}
-                                    </a>
-                                </li>
-                                <li>
                                     <a class="fr-btn fr-icon-x-government fr-x-icon--sm" href="{{ path('app_my_organizations') }}">
                                         {{ 'user.myorganizations'|trans }}
                                         {% if not app.user.isOrganizationsCompleted %}

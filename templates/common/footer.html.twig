@@ -1,5 +1,70 @@
 
 <footer class="fr-footer" role="contentinfo" id="footer">
+    <div class="fr-footer__top">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--start fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
+                    <h3 class="fr-footer__top-cat">{{ 'footer.top.site_links'|trans }}</h3>
+                    <ul class="fr-footer__top-list">
+                        <li>
+                            <a class="fr-footer__top-link" href="{{ path('app_landing') }}">{{ 'landing.menu.button.home'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" href="{{ path('app_carto') }}">{{ 'landing.menu.button.map'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" href="{{ path('app_regulations_list') }}">{{ 'landing.menu.button.regulations'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" href="{{ path('app_landing_details') }}">{{ 'footer.top.input_data'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
+                    <h3 class="fr-footer__top-cat">{{ 'footer.top.resources'|trans }}</h3>
+                    <ul class="fr-footer__top-list">
+                        <li>
+                            <a class="fr-footer__top-link" target="_blank" rel="noopener external" title="{{ 'landing.menu.button.help'|trans }} - nouvelle fenêtre" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr">{{ 'landing.menu.button.help'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" target="_blank" rel="noopener external" title="{{ 'landing.menu.button.news'|trans }} - nouvelle fenêtre" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version">{{ 'landing.menu.button.news'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" target="_blank" rel="noopener" title="{{ 'common.blog'|trans }} - nouvelle fenêtre" href="/blog/fr/">{{ 'common.blog'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" target="_blank" rel="noopener external" title="{{ 'footer.top.videos'|trans }} - nouvelle fenêtre" href="https://tube.numerique.gouv.fr/c/dialog/videos">{{ 'footer.top.videos'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
+                    <h3 class="fr-footer__top-cat">{{ 'footer.top.data'|trans }}</h3>
+                    <ul class="fr-footer__top-list">
+                        <li>
+                            <a class="fr-footer__top-link" href="{{ path('app_stats') }}">{{ 'statistics.title'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" target="_blank" rel="noopener" title="{{ 'footer.top.api_doc'|trans }} - nouvelle fenêtre" href="{{ path('app.swagger_ui') }}">{{ 'footer.top.api_doc'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link" target="_blank" rel="noopener external" title="{{ 'source_code.title'|trans }} - nouvelle fenêtre" href="https://github.com/MTES-MCT/dialog">{{ 'source_code.title'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="fr-col-12 fr-col-sm-6 fr-col-md-3">
+                    <h3 class="fr-footer__top-cat">{{ 'footer.top.contact_support'|trans }}</h3>
+                    <ul class="fr-footer__top-list">
+                        <li>
+                            <a class="fr-footer__top-link fr-icon-discuss-line fr-link--icon-left" href="{{ path('app_feedback') }}">{{ 'footer.top.feedback'|trans }}</a>
+                        </li>
+                        <li>
+                            <a class="fr-footer__top-link fr-icon-mail-line fr-link--icon-left" href="{{ path('app_contact') }}">{{ 'footer.top.contact'|trans }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="fr-container">
         <div class="fr-footer__body">
             <div class="fr-footer__brand fr-enlarge-link">
@@ -33,9 +98,6 @@
                     <a href="{{ path('app_accessibility_statement') }}" class="fr-footer__bottom-link">{{ 'accessibility.status'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
-                    <a href="{{ path('app_ecodesign_statement') }}" class="fr-footer__bottom-link">{{ 'ecodesign_statement.link'|trans }}</a>
-                </li>
-                <li class="fr-footer__bottom-item">
                     <a class="fr-footer__bottom-link" href="{{ path('app_legal') }}">{{ 'legal.title'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
@@ -45,13 +107,10 @@
                     <a class="fr-footer__bottom-link" href="{{ path('app_cgu') }}">{{ 'common.cgu'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="{{ path('app_stats') }}">{{ 'statistics.title'|trans }}</a>
+                    <a href="{{ path('app_ecodesign_statement') }}" class="fr-footer__bottom-link">{{ 'ecodesign_statement.link'|trans }}</a>
                 </li>
                 <li class="fr-footer__bottom-item">
                     <a class="fr-footer__bottom-link" href="{{ path('app_contact') }}">{{ 'contact.title'|trans }}</a>
-                </li>
-                <li class="fr-footer__bottom-item">
-                    <a class="fr-footer__bottom-link" href="https://github.com/MTES-MCT/dialog" target="_blank" rel="noreferrer">{{ 'source_code.title'|trans }}</a>
                 </li>
             </ul>
             <div class="fr-footer__bottom-copy">
