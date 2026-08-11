@@ -1246,7 +1246,12 @@
             style="--card-padding: 0.5rem 1.5rem 1.5rem 1.5rem"
         >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
-            {{ form_start(form, {attr: {id: 'measure-form'}}) }}
+            {{ form_start(form, {attr: {
+                id: 'measure-form',
+                'data-controller': 'unsaved-changes',
+                'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
+                'data-unsaved-changes-tracking-name-value': 'mesure',
+            }}) }}
                 {{ form_row(form._token) }}
                 <div class="app-card">
                     <div class="app-card__header">
