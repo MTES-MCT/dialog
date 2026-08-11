@@ -42,6 +42,7 @@ final class SendForgotPasswordMailCommandHandlerTest extends TestCase
             ->with(
                 $this->equalTo(
                     new Mail(
+                        from: null,
                         address: 'mathieu@fairness.coop',
                         subject: 'forgot_password.subject',
                         template: 'email/user/forgot_password.html.twig',

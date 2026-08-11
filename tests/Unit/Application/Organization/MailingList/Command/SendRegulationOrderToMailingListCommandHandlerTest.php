@@ -54,6 +54,7 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
             ->with(
                 $this->equalTo(
                     new Mail(
+                        from: null,
                         address: 'mathieu@fairness.coop',
                         subject: 'mailing_list.email.subject',
                         template: 'email/mailing_list/mailing_list_email.html.twig',
@@ -113,6 +114,7 @@ final class SendRegulationOrderToMailingListCommandHandlerTest extends TestCase
             ->with(
                 $this->equalTo(
                     new Mail(
+                        from: null,
                         address: 'mathieu@fairness.coop',
                         subject: 'mailing_list.email.subject',
                         template: 'email/mailing_list/mailing_list_email.html.twig',

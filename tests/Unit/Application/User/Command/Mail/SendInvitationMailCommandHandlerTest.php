@@ -55,6 +55,7 @@ final class SendInvitationMailCommandHandlerTest extends TestCase
             ->with(
                 $this->equalTo(
                     new Mail(
+                        from: null,
                         address: 'mathieu@fairness.coop',
                         subject: 'organization_invitation.subject',
                         template: 'email/user/organization_invitation.html.twig',
