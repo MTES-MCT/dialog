@@ -190,6 +190,50 @@
                 <source>welcome.email.webinar.link</source>
                 <target>Lien visio du webinaire DiaLog</target>
             </trans-unit>
+            <trans-unit id="inactivity.email.subject">
+                <source>inactivity.email.subject</source>
+                <target>Avez-vous besoin d'aide avec DiaLog ?</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.hello">
+                <source>inactivity.email.hello</source>
+                <target>Bonjour,</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.need_help">
+                <source>inactivity.email.need_help</source>
+                <target>Avez-vous besoin d'aide pour la publication de vos arrêtés sur DiaLog ?</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.observation">
+                <source>inactivity.email.observation</source>
+                <target>Nous avons constaté que vous aviez créé un compte sur la plateforme, sans avoir déposé de restrictions.</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.solicit">
+                <source>inactivity.email.solicit</source>
+                <target>N'hésitez pas à nous solliciter si besoin !</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.webinar">
+                <source>inactivity.email.webinar</source>
+                <target>Vous pouvez également nous rejoindre lors de notre webinaire de présentation tous les lundis à 15h</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.webinar.link">
+                <source>inactivity.email.webinar.link</source>
+                <target>Lien visio du webinaire DiaLog</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.questionnaire">
+                <source>inactivity.email.questionnaire</source>
+                <target>Si DiaLog ne répond pas à vos besoins ou si vous avez des retours à nous partager pour améliorer la plateforme, nous vous invitons à répondre à ce court questionnaire :</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.questionnaire.link">
+                <source>inactivity.email.questionnaire.link</source>
+                <target>Questionnaire sur l'utilisation de DiaLog</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.closing">
+                <source>inactivity.email.closing</source>
+                <target>Bien cordialement,</target>
+            </trans-unit>
+            <trans-unit id="inactivity.email.signature">
+                <source>inactivity.email.signature</source>
+                <target>L’équipe DiaLog</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
