@@ -28,6 +28,14 @@ interface RoadGeocoderInterface
 
     public function findReferencePoints(string $search, string $administrator, string $roadNumber): array;
 
+    /**
+     * Calcule la géométrie (FeatureCollection GeoJSON) de tous les points de repère (PR)
+     * d'une route numérotée, pour affichage informatif sur une carte.
+     *
+     * Chaque Feature est un point avec les propriétés `pointNumber`, `departmentCode` et `label`.
+     */
+    public function computeReferencePoints(string $administrator, string $roadNumber): string;
+
     public function computeReferencePoint(
         string $roadType,
         string $administrator,

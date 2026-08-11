@@ -1,7 +1,7 @@
 // @ts-check
 
 import { describe, it, expect, vi } from 'vitest';
-import { addHouseNumbersLayer, addMeasureLineLayer } from './layers';
+import { addHouseNumbersLayer, addMeasureLineLayer, addReferencePointsLayer } from './layers';
 
 /**
  * Minimal MapLibre map mock — only the methods exercised by the helpers.
@@ -204,3 +204,62 @@ describe('addMeasureLineLayer', () => {
         expect(layer.paint['line-dasharray']).toEqual([1, 0]);
     });
 });
+
+describe('addReferencePointsLayer', () => {
+    it('adds a GeoJSON source plus a circle layer and a label layer', () => {
+        const map = createMapMock();
+        const data = /** @type {import('geojson').FeatureCollection} */ ({ type: 'FeatureCollection', features: [] });
+
+        addReferencePointsLayer(/** @type {any} */ (map), {
+            sourceId: 'reference-points',
+            circleLayerId: 'reference-points-circle',
+            labelLayerId: 'reference-points-label',
+            data,
+        });
+
+        expect(map.addSource).toHaveBeenCalledWith('reference-points', { type: 'geojson', data });
+        expect(map.addLayer).toHaveBeenCalledTimes(2);
+
+        const circle = map.addLayer.mock.calls[0][0];
+        expect(circle.id).toBe('reference-points-circle');
+        expect(circle.type).toBe('circle');
+        expect(circle.source).toBe('reference-points');
+        expect(circle.filter).toEqual(['==', '$type', 'Point']);
+
+        const label = map.addLayer.mock.calls[1][0];
+        expect(label.id).toBe('reference-points-label');
+        expect(label.type).toBe('symbol');
+        expect(label.source).toBe('reference-points');
+        expect(label.layout['text-field']).toEqual(['concat', 'PR ', ['get', 'label']]);
+    });
+
+    it('falls back to an empty FeatureCollection when no data is given', () => {
+        const map = createMapMock();
+
+        addReferencePointsLayer(/** @type {any} */ (map), {
+            sourceId: 'reference-points',
+            circleLayerId: 'reference-points-circle',
+            labelLayerId: 'reference-points-label',
+        });
+
+        expect(map.addSource.mock.calls[0][1].data).toEqual({ type: 'FeatureCollection', features: [] });
+    });
+
+    it('wraps a bare FeatureCollection through toFeatureCollection', () => {
+        const map = createMapMock();
+        const fc = /** @type {import('geojson').FeatureCollection} */ ({
+            type: 'FeatureCollection',
+            features: [{ type: 'Feature', properties: { label: '5' }, geometry: { type: 'Point', coordinates: [1, 2] } }],
+        });
+
+        addReferencePointsLayer(/** @type {any} */ (map), {
+            sourceId: 'reference-points',
+            circleLayerId: 'reference-points-circle',
+            labelLayerId: 'reference-points-label',
+            data: fc,
+        });
+
+        expect(map.addSource.mock.calls[0][1].data).toBe(fc);
+    });
+});
+
