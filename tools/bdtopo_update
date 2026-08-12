@@ -119,6 +119,12 @@ class S3Source:
     entries: list[dict]
 
 
+@dataclass
+class LocalArchive:
+    archive_path: Path
+    entries: list[dict]
+
+
 def _build_local_items(directory: Path, tables_by_name: dict) -> list[dict]:
     """Build the list of geopackages to import from a locally extracted directory."""
     items = []
@@ -173,6 +179,39 @@ def _build_s3_items(s3: "S3Source", tables_by_name: dict) -> list[dict]:
     return items
 
 
+def _build_local_archive_items(
+    archive: "LocalArchive", tables_by_name: dict
+) -> list[dict]:
+    """Build the list of geopackages to import from a local single-volume .7z archive.
+
+    Each source uses GDAL's /vsi7z/ virtual filesystem to read the target geopackage
+    directly inside the concatenated 7z archive, without any local extraction. The
+    archive's directory is mounted into the container as /home/data.
+    """
+    container_archive = f"/home/data/{archive.archive_path.name}"
+    items = []
+
+    for entry in archive.entries:
+        table = tables_by_name.get(entry["table"])
+
+        if table is None:
+            continue
+
+        source = f"/vsi7z/{container_archive}/{entry['path']}"
+        items.append(
+            {
+                "table": table,
+                "source": source,
+                "volume": (str(archive.archive_path.parent), "/home/data"),
+                "env": None,
+                "size": entry.get("size"),
+                "display": source,
+            }
+        )
+
+    return items
+
+
 def main(
     config: Config,
     directory: Path | None,
@@ -180,12 +219,16 @@ def main(
     overwrite: bool,
     yes: bool,
     s3: "S3Source | None" = None,
+    archive: "LocalArchive | None" = None,
 ) -> int:
     tables_by_name = {table.name: table for table in config.tables}
 
     if s3 is not None:
         geopackages = _build_s3_items(s3, tables_by_name)
         source_label = f"s3://{s3.bucket}/{s3.key}"
+    elif archive is not None:
+        geopackages = _build_local_archive_items(archive, tables_by_name)
+        source_label = str(archive.archive_path)
     else:
         if directory is None or not directory.exists():
             print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
@@ -435,6 +478,15 @@ if __name__ == "__main__":
         default=None,
         help="S3 region (e.g. cloudgouv-eu-west-1)",
     )
+    parser.add_argument(
+        "--archive",
+        type=_path_check_exists,
+        default=None,
+        help=(
+            "Import directly from a local single-volume .7z archive via GDAL /vsi7z/ "
+            "(no local extraction). Requires --manifest."
+        ),
+    )
     args = parser.parse_args()
 
     if args.url is None and not args.prod:
@@ -452,6 +504,7 @@ if __name__ == "__main__":
     )
 
     s3_source = None
+    local_archive = None
     directory = None
 
     if args.s3_archive:
@@ -480,6 +533,20 @@ if __name__ == "__main__":
             region=args.s3_region,
             entries=manifest_data["entries"],
         )
+    elif args.archive:
+        if not args.manifest:
+            print(
+                "ERROR: --archive requires --manifest",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        manifest_data = json.loads(args.manifest.read_text())
+
+        local_archive = LocalArchive(
+            archive_path=args.archive.absolute(),
+            entries=manifest_data["entries"],
+        )
     else:
         if args.directory is None:
             print(
@@ -499,5 +566,6 @@ if __name__ == "__main__":
             overwrite=args.overwrite,
             yes=args.yes,
             s3=s3_source,
+            archive=local_archive,
         )
     )
