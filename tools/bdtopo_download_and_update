@@ -620,15 +620,15 @@ def _sizeof_fmt(num: float, suffix: str = "B") -> str:
     return f"{num:.1f} Yi{suffix}"
 
 
-def _run_s3_import(
-    args: argparse.Namespace,
-    bucket: str,
-    key: str,
-    endpoint: str,
-    region: str,
-    manifest_path: Path,
+def _run_bdtopo_update(
+    args: argparse.Namespace, source_cmd: list[str]
 ) -> int:
-    """Import the tables by streaming the archive from S3 (no local extraction)."""
+    """Run tools/bdtopo_update with the given source-specific arguments.
+
+    Handles the Scalingo tunnel (--prod) or the direct --url, the --overwrite/-y
+    flags and the post-import index migrations, so that both the S3 and the local
+    archive pipelines share the same import/tunnel/migration logic.
+    """
     bdtopo_update_script = Path(__file__).parent / "bdtopo_update"
 
     if not bdtopo_update_script.exists():
@@ -638,17 +638,7 @@ def _run_s3_import(
         )
         return 1
 
-    cmd = [
-        str(bdtopo_update_script),
-        "--s3-archive",
-        f"s3://{bucket}/{key}",
-        "--manifest",
-        str(manifest_path),
-        "--s3-endpoint",
-        endpoint,
-        "--s3-region",
-        region,
-    ]
+    cmd = [str(bdtopo_update_script), *source_cmd]
 
     tunnel_proc = None
     database_url_for_migrations = None
@@ -800,7 +790,100 @@ def _run_s3_pipeline(
         print("⏭ Import ignoré (--skip-import)")
         return 0
 
-    return _run_s3_import(args, bucket, key, endpoint, region, manifest_path)
+    return _run_bdtopo_update(
+        args,
+        [
+            "--s3-archive",
+            f"s3://{bucket}/{key}",
+            "--manifest",
+            str(manifest_path),
+            "--s3-endpoint",
+            endpoint,
+            "--s3-region",
+            region,
+        ],
+    )
+
+
+def _run_local_archive_pipeline(
+    args: argparse.Namespace, download_dir: Path, archives_dir: Path
+) -> int:
+    """Local pipeline without S3: download the parts, concatenate them into a single
+    .7z inside the download directory (dump/), then import each geopackage directly
+    from that archive via GDAL /vsi7z/ (no ~140 GB extraction).
+    """
+    print("=" * 60)
+    print("MODE ARCHIVE LOCALE: téléchargement, concaténation, import via /vsi7z/")
+    print("=" * 60)
+
+    # 1. Téléchargement des parties (sauf --skip-download)
+    if not args.skip_download:
+        archives_dir.mkdir(parents=True, exist_ok=True)
+        download_urls = args.urls or _get_download_urls_from_page()
+        parts = []
+        for url in download_urls:
+            filename = Path(urlparse(url).path).name
+            dest_path = archives_dir / filename
+            _download_file(url, dest_path)
+            parts.append(dest_path)
+    else:
+        parts = list(archives_dir.glob("*.7z.*"))
+        if not parts:
+            print(
+                f"ERROR: aucune partie .7z trouvée dans {archives_dir}",
+                file=sys.stderr,
+            )
+            return 1
+
+    parts = sorted(parts, key=_part_sort_key)
+
+    # 2. Concaténation en une archive mono-volume dans dump/
+    download_dir.mkdir(parents=True, exist_ok=True)
+    archive_path = download_dir / "bdtopo-latest.7z"
+    _merge_7z_parts(parts, archive_path)
+
+    if not args.keep_archives:
+        for part in parts:
+            part.unlink()
+
+    # 3. Énumération des geopackages cibles dans l'archive
+    config_path = Path(__file__).parent / "bdtopo_update.config.json"
+    table_names = _load_table_names(config_path)
+    entries = _list_archive_gpkgs(archive_path, table_names)
+
+    if not entries:
+        print(
+            "ERROR: aucun geopackage cible trouvé dans l'archive",
+            file=sys.stderr,
+        )
+        return 1
+
+    print(f"✓ {len(entries)} table(s) repérée(s) dans l'archive:")
+    for entry in entries:
+        print(f"   - {entry['table']}: {entry['path']}")
+
+    # 4. Écriture du manifest
+    manifest_path = download_dir / "bdtopo_manifest.json"
+    manifest_path.write_text(
+        json.dumps({"entries": entries}, indent=2), encoding="utf-8"
+    )
+    print(f"✓ Manifest écrit: {manifest_path}")
+
+    # 5. Import via /vsi7z/ (sauf --skip-import)
+    if args.skip_import:
+        print("⏭ Import ignoré (--skip-import)")
+        return 0
+
+    return _run_bdtopo_update(
+        args,
+        [
+            "--archive",
+            str(archive_path),
+            "--manifest",
+            str(manifest_path),
+        ],
+    )
+
 
 
 def main() -> int:
@@ -874,6 +957,15 @@ def main() -> int:
         ),
     )
     parser.add_argument(
+        "--local-archive",
+        action="store_true",
+        help=(
+            "Mode archive locale: télécharger, concaténer les parties en un seul .7z "
+            "dans dump/, puis importer chaque geopackage directement via GDAL /vsi7z/ "
+            "(sans S3 ni extraction des ~140 Go). Recommandé pour tester en local."
+        ),
+    )
+    parser.add_argument(
         "--s3-bucket",
         default=None,
         help="Bucket S3 cible (défaut: variable d'environnement S3_BUCKET)",
@@ -935,6 +1027,10 @@ def main() -> int:
     # Mode S3: pipeline dédié (upload archive + import en flux, sans extraction)
     if args.s3:
         return _run_s3_pipeline(args, download_dir, archives_dir)
+
+    # Mode archive locale: concaténation dans dump/ + import via /vsi7z/ (sans S3)
+    if args.local_archive:
+        return _run_local_archive_pipeline(args, download_dir, archives_dir)
 
     # Étape 1: Téléchargement
     if not args.skip_download:
