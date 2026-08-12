@@ -53,9 +53,9 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
         $userLinks = $crawler->filter(selector: '[data-testid="user-links"]')->filter('li');
-        $this->assertCount(2, $userLinks);
-        $this->assertSame('Mes organisations', $userLinks->eq(0)->text());
-
+        $this->assertCount(3, $userLinks);
+        $this->assertSame('Nouveautés', $userLinks->eq(0)->text());
+        $this->assertSame('Aide', $userLinks->eq(1)->text());
         $joinLink = $crawler->selectLink("Découvrir l'équipe");
         $this->assertSame('https://beta.gouv.fr/startups/dialogue.html', $joinLink->attr('href'));
     }
@@ -68,8 +68,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertNavStructure([
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
-            ['Aide', ['href' => 'https://doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-            ['Nouveautés', ['href' => 'https://doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/regulations');
@@ -77,8 +75,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertNavStructure([
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => 'page']],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
-            ['Aide', ['href' => 'https://doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-            ['Nouveautés', ['href' => 'https://doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
 
         $crawler = $client->request('GET', '/carte');
@@ -86,8 +82,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertNavStructure([
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => 'page']],
-            ['Aide', ['href' => 'https://doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-            ['Nouveautés', ['href' => 'https://doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
     }
 
@@ -100,8 +94,6 @@ final class LandingControllerTest extends AbstractWebTestCase
             ['Accueil', ['href' => '/', 'aria-current' => 'page']],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => null]],
-            ['Aide', ['href' => 'https://doc.dialog.beta.gouv.fr', 'aria-current' => null]],
-            ['Nouveautés', ['href' => 'https://doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version', 'aria-current' => null]],
         ], $crawler);
     }
 }
