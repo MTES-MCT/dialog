@@ -66,7 +66,18 @@ Une fois la PR mergée, les migrations seront exécutées par GitHub Actions gr�
 
 ### Mettre à jour les données
 
-La BD TOPO EXPRESS est millésimée. Une nouvelle version sort **tous les 15 jours**. Le workflow GitHub Actions vérifie automatiquement tous les 15 jours si une nouvelle version est disponible et la télécharge/importe automatiquement.
+La BD TOPO EXPRESS est millésimée. Une nouvelle version sort **tous les 15 jours**. Le workflow GitHub Actions `bdtopo_update` s'exécute automatiquement tous les 15 jours (les 1er et 16 de chaque mois) et récupère/importe la dernière version disponible.
+
+#### Fonctionnement de la mise à jour automatique (streaming S3)
+
+En production (et dans la CI), la mise à jour **ne dézippe pas** l'archive localement (ce qui représenterait ~124 Go). À la place :
+
+1. Les 6 parties de l'archive multi-volume `.7z.001` … `.7z.006` (~24 Go au total) sont téléchargées.
+2. Ces parties étant un simple découpage binaire d'un unique conteneur `.7z`, elles sont **concaténées à la volée** et envoyées vers notre bucket S3 (Outscale) en un seul objet, via un upload multipart (`aws s3 cp -`), sans jamais matérialiser les ~24 Go sur le disque.
+3. L'import lit ensuite **directement** chaque geopackage cible à l'intérieur de l'archive stockée sur S3, grâce aux systèmes de fichiers virtuels de GDAL `/vsi7z//vsis3/`. Aucune extraction locale n'est nécessaire.
+
+La configuration S3 réutilise celle de Flysystem/Outscale (`config/packages/flysystem.yaml`). Les variables `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` et `S3_ENDPOINT` sont traduites en variables `AWS_*` attendues par GDAL (`/vsis3/`), avec l'adressage *path-style* d'Outscale (`AWS_VIRTUAL_HOSTING=FALSE`).
+
 
 #### 🧪 Mise à jour en local (pour tester)
 
@@ -106,7 +117,7 @@ Cette section explique comment mettre à jour une base BDTOPO locale pour tester
      -y
    ```
 
-   :information_source: **Note** : Le téléchargement peut prendre du temps (~40 Go compressé, ~130 Go décompressé). Le script affiche une barre de progression.
+   :information_source: **Note** : Le téléchargement peut prendre du temps (~24 Go compressé, ~130 Go décompressé). Le script affiche une barre de progression.
 
 3. **Vérifier que les données ont été importées** :
 
@@ -148,9 +159,10 @@ Le workflow GitHub Actions `bdtopo_update` automatise tout le processus et est l
    - Sélectionnez le workflow "BD TOPO Update"
    - Cliquez sur "Run workflow"
    - Optionnellement, configurez les options :
-     - `skip_download` : Ignorer le téléchargement (utiliser fichiers existants)
-     - `skip_import` : Ignorer l'import (seulement télécharger/dézipper)
-     - `keep_archives` : Conserver les archives .7z après dézippage
+     - `target` : Base BDTOPO cible (`2025` ou `2025_2`)
+     - `skip_download` : Ignorer le téléchargement (réutiliser les fichiers existants)
+     - `skip_import` : Uploader l'archive sur S3 sans lancer l'import
+     - `keep_archives` : Conserver les parties .7z après l'upload S3
 
 2. **Planification automatique** :
    - Le workflow est configuré pour s'exécuter automatiquement tous les 15 jours à 2h00 UTC
@@ -161,7 +173,8 @@ Le workflow GitHub Actions `bdtopo_update` automatise tout le processus et est l
    - Les logs et artefacts sont disponibles dans l'onglet "Actions" de GitHub
 
 **Prérequis GitHub Actions** :
-- Les secrets `BDTOPO_DATABASE_URL`, `BDTOPO_2025_DATABASE_URL` et `BDTOPO_2025_2_DATABASE_URL` doivent être configurés dans les secrets GitHub Actions
+- Les secrets `BDTOPO_2025_DATABASE_URL` et `BDTOPO_2025_2_DATABASE_URL` doivent être configurés dans les secrets GitHub Actions
+- Les secrets S3 (Outscale) `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` et `S3_ENDPOINT` doivent être configurés
 - Le secret `GH_SCALINGO_SSH_PRIVATE_KEY` doit être configuré (déjà fait pour les autres workflows)
 
 **Méthode alternative : Script en local**
@@ -172,26 +185,37 @@ Si vous préférez exécuter le script depuis votre machine locale vers la produ
 # S'assurer d'être authentifié sur Scalingo
 scalingo login --ssh
 
-# Lancer la mise à jour
+# Renseigner la configuration S3 (Outscale) dans .env.local :
+# S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET, S3_ENDPOINT
+
+# Lancer la mise à jour en mode streaming S3
 ./tools/bdtopo_download_and_update \
-  --prod \
+  --s3 \
+  --prod=2025 \
   --overwrite \
   -y
 ```
 
-:information_source: **Note** : Cette méthode nécessite que votre machine locale ait accès à Scalingo et suffisamment d'espace disque pour télécharger les données (~40 Go compressé).
+:information_source: **Note** : Le mode `--s3` évite l'extraction locale (~140 Go). Il faut néanmoins de l'espace disque pour télécharger les parties (~24 Go compressé) avant leur envoi en flux sur S3.
 
 **Options du script** :
 - `--download-dir DIR` : Répertoire où télécharger et dézipper
   - Défaut : `./dump` en local (évite les problèmes de RAM sur Linux où `/tmp` est monté en RAM)
   - Dans la CI GitHub Actions : `/tmp/bdtopo_download` (plus d'espace disponible)
-- `--keep-archives` : Conserver les archives .7z après dézippage
+- `--keep-archives` : Conserver les parties .7z après l'upload S3 / le dézippage
 - `--skip-download` : Ignorer le téléchargement (utiliser fichiers existants)
-- `--skip-import` : Ignorer l'import (seulement télécharger/dézipper)
-- `--prod` : Déployer vers l'environnement de production (`dialog-bdtopo-2025`)
+- `--skip-import` : Ignorer l'import (uniquement télécharger, et uploader sur S3 en mode `--s3`)
+- `--prod [2025|2025_2]` : Déployer vers l'environnement de production (`dialog-bdtopo-2025` ou `dialog-bdtopo-2025-2`)
 - `--overwrite` : Réécrire les tables au lieu d'ajouter
 - `--skip-migrate` : Ignorer l'exécution des migrations d'index après l'import
 - `-y, --yes` : Accepter toutes les confirmations
+
+**Options du mode streaming S3** :
+- `--s3` : Activer le pipeline S3 (upload de l'archive concaténée + import en flux via `/vsi7z//vsis3/`, sans extraction locale)
+- `--s3-bucket` : Bucket S3 cible (défaut : variable d'environnement `S3_BUCKET`)
+- `--s3-key` : Clé de l'objet S3 (défaut : `bdtopo/bdtopo-latest.7z`)
+- `--s3-endpoint` : Endpoint S3 (défaut : variable d'environnement `S3_ENDPOINT`)
+- `--s3-region` : Région S3 (défaut : déduite de l'endpoint Outscale, ex. `cloudgouv-eu-west-1`)
 
 **Note importante** :
 Après un `--overwrite`, les migrations d'index sont **automatiquement exécutées** pour recréer tous les index (sauf si `--skip-migrate` est spécifié).
