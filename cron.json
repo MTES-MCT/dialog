@@ -5,6 +5,9 @@
       },
       {
         "command": "30 2 * * * php bin/console app:map:refresh-top-published-organizations"
+      },
+      {
+        "command": "0 8 * * * php bin/console app:user:send-inactivity-reminders"
       }
     ]
   }

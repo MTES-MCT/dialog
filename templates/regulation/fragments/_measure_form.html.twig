@@ -369,6 +369,7 @@
                 <div
                     data-controller="location-preview-map"
                     data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                    data-location-preview-map-reference-points-url-value="{{ path('fragment_reference_points') }}"
                     data-location-preview-map-road-type-value="{{ roadType }}"
                     data-location-preview-map-administrator-field-value="{{ form[roadType].administrator.vars.id }}"
                     data-location-preview-map-road-number-field-value="{{ form[roadType].roadNumber.vars.id }}"
@@ -1133,6 +1134,8 @@
                             }
                         }) }}
 
+                        <hr class="fr-mt-3w" />
+
                         <fieldset
                             aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"
                             data-form-reveal-target="section formControl"
@@ -1141,6 +1144,9 @@
                             <legend id="{{ form.namedStreet.vars.id }}-points-legend">
                                 {{ 'regulation.location.named_street.points'|trans }}
                             </legend>
+                            <div class="fr-hint-text help-text">
+                                {{ 'regulation.location.named_street.points.description'|trans }}
+                            </div>
                             {% include 'regulation/_named_street_point_fields.html.twig' with {
                                 legend: 'regulation.location.named_street.from_point'|trans,
                                 pointType: form.namedStreet.fromPointType,
@@ -1246,7 +1252,12 @@
             style="--card-padding: 0.5rem 1.5rem 1.5rem 1.5rem"
         >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
-            {{ form_start(form, {attr: {id: 'measure-form'}}) }}
+            {{ form_start(form, {attr: {
+                id: 'measure-form',
+                'data-controller': 'unsaved-changes',
+                'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
+                'data-unsaved-changes-tracking-name-value': 'mesure',
+            }}) }}
                 {{ form_row(form._token) }}
                 <div class="app-card">
                     <div class="app-card__header">

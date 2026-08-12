@@ -56,7 +56,6 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertCount(3, $userLinks);
         $this->assertSame('Nouveautés', $userLinks->eq(0)->text());
         $this->assertSame('Aide', $userLinks->eq(1)->text());
-
         $joinLink = $crawler->selectLink("Découvrir l'équipe");
         $this->assertSame('https://beta.gouv.fr/startups/dialogue.html', $joinLink->attr('href'));
     }

@@ -30,4 +30,13 @@ interface UserRepositoryInterface
      * @return User[]
      */
     public function findAllByRole(string $role): array;
+
+    /**
+     * Retourne les utilisateurs à notifier de leur inactivité : comptes vérifiés,
+     * inscrits avant $registeredBefore, n'ayant pas encore reçu le mail d'inactivité,
+     * membres d'au moins une organisation, et dont aucune organisation n'a publié d'arrêté.
+     *
+     * @return User[]
+     */
+    public function findUsersToNotifyForInactivity(\DateTimeInterface $registeredBefore): array;
 }
