@@ -34,6 +34,7 @@ Prérequis:
       * ou: pip3 install --user py7zr (mais ne gère pas les archives multi-volumes)
 """
 import argparse
+import json
 import os
 import platform
 import re
@@ -383,6 +384,425 @@ def _extract_millesime(extracted_dir: Path) -> str | None:
     return None
 
 
+def _run_index_migrations(
+    database_url_for_migrations: str | None,
+    millesime: str | None = None,
+) -> None:
+    """Recreate BD TOPO indexes/functions after an --overwrite import."""
+    print("\n" + "=" * 60)
+    print("ÉTAPE 4: Exécution des migrations d'index")
+    print("=" * 60)
+
+    # Trouver le répertoire racine du projet (où se trouve le Makefile)
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    makefile_path = project_root / "Makefile"
+
+    if not makefile_path.exists() or not _check_command_exists("make"):
+        reason = (
+            f"Makefile introuvable à {makefile_path}"
+            if not makefile_path.exists()
+            else "make n'est pas disponible"
+        )
+        print(
+            f"WARNING: {reason}. La création des indexes ne sera pas exécutée.",
+            file=sys.stderr,
+        )
+        print(
+            "Vous pouvez l'exécuter manuellement avec: make bdtopo_setup_indexes",
+            file=sys.stderr,
+        )
+        return
+
+    # Détecter si on est dans un environnement CI (GitHub Actions)
+    is_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+
+    # Utiliser la même URL de base de données que pour l'import
+    env = os.environ.copy()
+    if database_url_for_migrations:
+        env["BDTOPO_DATABASE_URL"] = database_url_for_migrations
+
+    if millesime:
+        print(f"Millésime BD TOPO détecté: {millesime}")
+    else:
+        print(
+            "WARNING: millésime BD TOPO introuvable, "
+            "la table 'version' ne sera pas mise à jour",
+            file=sys.stderr,
+        )
+
+    if is_ci:
+        console_path = project_root / "bin" / "console"
+        if _check_command_exists("php") and console_path.exists():
+            setup_cmd = ["php", str(console_path), "app:bdtopo:setup_indexes"]
+            if millesime:
+                setup_cmd.append(f"--millesime={millesime}")
+            print(f"Exécution de: {' '.join(setup_cmd)}")
+            print("(Environnement CI détecté, utilisation directe de PHP)")
+        else:
+            env["BIN_CONSOLE"] = "php bin/console"
+            setup_cmd = ["make", "bdtopo_setup_indexes"]
+            if millesime:
+                setup_cmd.append(f"ARGS=--millesime={millesime}")
+            print(f"Exécution de: {' '.join(setup_cmd)}")
+            print("(Environnement CI détecté, utilisation du Makefile avec BIN_CONSOLE)")
+    else:
+        setup_cmd = ["make", "bdtopo_setup_indexes"]
+        if millesime:
+            setup_cmd.append(f"ARGS=--millesime={millesime}")
+        print(f"Exécution de: {' '.join(setup_cmd)}")
+        print("(Le Makefile utilisera Docker si PHP n'est pas disponible localement)")
+
+    result = subprocess.run(setup_cmd, env=env, cwd=project_root)
+
+    if result.returncode != 0:
+        print(
+            "WARNING: La création des indexes a échoué. "
+            "Vous pouvez l'exécuter manuellement avec: make bdtopo_setup_indexes",
+            file=sys.stderr,
+        )
+    else:
+        print("\n✓ Indexes et fonctions créés avec succès")
+
+
+def _part_sort_key(path: Path) -> int:
+    """Sort multi-volume 7z parts by their .NNN suffix."""
+    match = re.search(r"\.(\d+)$", path.name)
+    return int(match.group(1)) if match else 0
+
+
+def _region_from_endpoint(endpoint: str | None) -> str | None:
+    """Derive the Outscale region from an endpoint, e.g.
+    https://oos.cloudgouv-eu-west-1.outscale.com -> cloudgouv-eu-west-1
+    """
+    if not endpoint:
+        return None
+
+    host = urlparse(endpoint if "://" in endpoint else f"https://{endpoint}").netloc
+    match = re.search(r"oos\.([a-z0-9-]+)\.outscale\.com", host)
+    return match.group(1) if match else None
+
+
+def _load_table_names(config_path: Path) -> list[str]:
+    """Read the target table names from the bdtopo_update config file."""
+    data = json.loads(config_path.read_text(encoding="utf-8"))
+    return [table["name"] for table in data["tables"]]
+
+
+def _list_archive_gpkgs(first_part: Path, table_names: list[str]) -> list[dict]:
+    """List the target geopackages inside a (multi-volume) .7z archive.
+
+    Uses `7z l -slt` (technical listing) which prints one `Path = ...` /
+    `Size = ...` block per entry. 7z reads the whole multi-volume set from the
+    first part (.001), so no concatenation is required here.
+    """
+    if not _check_command_exists("7z"):
+        print(
+            "ERROR: 7z est requis pour lister le contenu de l'archive",
+            file=sys.stderr,
+        )
+        return []
+
+    result = subprocess.run(
+        ["7z", "l", "-slt", str(first_part)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+
+    if result.returncode != 0:
+        print(f"ERROR: `7z l` a échoué:\n{result.stderr or ''}", file=sys.stderr)
+        return []
+
+    wanted = {f"{name}.gpkg": name for name in table_names}
+    entries: list[dict] = []
+    seen: set[str] = set()
+    current_path: str | None = None
+    current_size: int | None = None
+
+    for line in result.stdout.splitlines():
+        if line.startswith("Path = "):
+            current_path = line[len("Path = ") :].strip()
+            current_size = None
+        elif line.startswith("Size = ") and current_path is not None:
+            raw = line[len("Size = ") :].strip()
+            current_size = int(raw) if raw.isdigit() else None
+        elif not line.strip() and current_path is not None:
+            normalized = current_path.replace("\\", "/")
+            basename = normalized.split("/")[-1]
+            table = wanted.get(basename)
+
+            if (
+                table is not None
+                and table not in seen
+                and any(theme in normalized for theme in ("TRANSPORT", "ADRESSES"))
+            ):
+                entries.append(
+                    {"table": table, "path": normalized, "size": current_size}
+                )
+                seen.add(table)
+
+            current_path = None
+            current_size = None
+
+    return entries
+
+
+def _stream_upload_to_s3(
+    parts: list[Path],
+    bucket: str,
+    key: str,
+    endpoint: str,
+    region: str,
+    total_size: int,
+    remove_after: bool,
+) -> int:
+    """Stream the concatenation of the multi-volume parts into a single S3 object.
+
+    The 6 IGN parts are a plain byte-split of one .7z container, so streaming them
+    in order reconstructs the original single-volume archive. Using `aws s3 cp -`
+    performs a multipart upload without ever materializing the ~40 GB archive on
+    disk (and frees each part as it is consumed).
+    """
+    if not _check_command_exists("aws"):
+        print("ERROR: l'AWS CLI est requis pour l'upload S3", file=sys.stderr)
+        return 1
+
+    env = os.environ.copy()
+    env["AWS_ACCESS_KEY_ID"] = os.environ["S3_ACCESS_KEY"]
+    env["AWS_SECRET_ACCESS_KEY"] = os.environ["S3_SECRET_KEY"]
+    env["AWS_DEFAULT_REGION"] = region
+    env["AWS_REGION"] = region
+
+    # Outscale is configured with path-style addressing (pathStyleEndpoint: true).
+    subprocess.run(
+        ["aws", "configure", "set", "default.s3.addressing_style", "path"],
+        env=env,
+        check=False,
+    )
+
+    endpoint_url = endpoint if "://" in endpoint else f"https://{endpoint}"
+    cmd = [
+        "aws",
+        "s3",
+        "cp",
+        "-",
+        f"s3://{bucket}/{key}",
+        "--endpoint-url",
+        endpoint_url,
+        "--expected-size",
+        str(total_size),
+    ]
+
+    print(f"Upload S3 en flux vers s3://{bucket}/{key} ({_sizeof_fmt(total_size)})")
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, env=env)
+
+    try:
+        for part in parts:
+            print(f"  -> flux: {part.name}")
+            with open(part, "rb") as f:
+                shutil.copyfileobj(f, proc.stdin)
+            if remove_after:
+                part.unlink()
+    finally:
+        if proc.stdin is not None:
+            proc.stdin.close()
+
+    return proc.wait()
+
+
+def _sizeof_fmt(num: float, suffix: str = "B") -> str:
+    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi"):
+        if abs(num) < 1024.0:
+            return f"{num:3.1f} {unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f} Yi{suffix}"
+
+
+def _run_s3_import(
+    args: argparse.Namespace,
+    bucket: str,
+    key: str,
+    endpoint: str,
+    region: str,
+    manifest_path: Path,
+) -> int:
+    """Import the tables by streaming the archive from S3 (no local extraction)."""
+    bdtopo_update_script = Path(__file__).parent / "bdtopo_update"
+
+    if not bdtopo_update_script.exists():
+        print(
+            f"ERROR: Script bdtopo_update introuvable: {bdtopo_update_script}",
+            file=sys.stderr,
+        )
+        return 1
+
+    cmd = [
+        str(bdtopo_update_script),
+        "--s3-archive",
+        f"s3://{bucket}/{key}",
+        "--manifest",
+        str(manifest_path),
+        "--s3-endpoint",
+        endpoint,
+        "--s3-region",
+        region,
+    ]
+
+    tunnel_proc = None
+    database_url_for_migrations = None
+
+    if args.prod:
+        tunnel_proc, tunnel_url = _open_prod_tunnel(args.prod)
+        if tunnel_proc is None:
+            return 1
+
+        cmd.extend(["--url", tunnel_url])
+        database_url_for_migrations = tunnel_url
+    elif args.url:
+        cmd.extend(["--url", args.url])
+        database_url_for_migrations = args.url
+    else:
+        print(
+            "ERROR: veuillez fournir --url ou --prod [2025|2025_2]",
+            file=sys.stderr,
+        )
+        return 1
+
+    if args.overwrite:
+        cmd.append("--overwrite")
+    if args.yes:
+        cmd.append("-y")
+
+    print(f"Exécution de: {' '.join(cmd)}")
+    try:
+        result = subprocess.run(cmd)
+    finally:
+        if tunnel_proc is not None:
+            print("Fermeture du tunnel...")
+            tunnel_proc.send_signal(signal.SIGINT)
+            tunnel_proc.wait()
+
+    if result.returncode != 0:
+        print("ERROR: L'import a échoué", file=sys.stderr)
+        return result.returncode
+
+    print("\n✓ Import terminé avec succès")
+
+    if args.overwrite and not args.skip_migrate:
+        _run_index_migrations(database_url_for_migrations)
+
+    return 0
+
+
+def _run_s3_pipeline(
+    args: argparse.Namespace, download_dir: Path, archives_dir: Path
+) -> int:
+    """S3 streaming pipeline: download -> upload single archive -> stream import.
+
+    Avoids the ~140 GB local extraction entirely: the import reads each target
+    geopackage directly inside the .7z archive stored on S3 via GDAL's
+    /vsi7z//vsis3/ virtual filesystems.
+    """
+    print("=" * 60)
+    print("MODE S3: téléchargement, upload de l'archive, import en flux")
+    print("=" * 60)
+
+    # 1. Téléchargement des parties (sauf --skip-download)
+    if not args.skip_download:
+        archives_dir.mkdir(parents=True, exist_ok=True)
+        download_urls = args.urls or _get_download_urls_from_page()
+        parts = []
+        for url in download_urls:
+            filename = Path(urlparse(url).path).name
+            dest_path = archives_dir / filename
+            _download_file(url, dest_path)
+            parts.append(dest_path)
+    else:
+        parts = list(archives_dir.glob("*.7z.*"))
+        if not parts:
+            print(
+                f"ERROR: aucune partie .7z trouvée dans {archives_dir}",
+                file=sys.stderr,
+            )
+            return 1
+
+    parts = sorted(parts, key=_part_sort_key)
+    first_part = parts[0]
+
+    # 2. Résolution de la configuration S3
+    bucket = args.s3_bucket or os.environ.get("S3_BUCKET")
+    endpoint = args.s3_endpoint or os.environ.get("S3_ENDPOINT")
+    region = args.s3_region or _region_from_endpoint(endpoint)
+    key = args.s3_key
+
+    missing = [
+        name
+        for name, value in [
+            ("bucket S3 (--s3-bucket / S3_BUCKET)", bucket),
+            ("endpoint S3 (--s3-endpoint / S3_ENDPOINT)", endpoint),
+            ("région S3 (--s3-region)", region),
+            ("S3_ACCESS_KEY", os.environ.get("S3_ACCESS_KEY")),
+            ("S3_SECRET_KEY", os.environ.get("S3_SECRET_KEY")),
+        ]
+        if not value
+    ]
+    if missing:
+        print(
+            f"ERROR: configuration S3 incomplète: {', '.join(missing)}",
+            file=sys.stderr,
+        )
+        return 1
+
+    # 3. Énumération des geopackages cibles dans l'archive
+    config_path = Path(__file__).parent / "bdtopo_update.config.json"
+    table_names = _load_table_names(config_path)
+    entries = _list_archive_gpkgs(first_part, table_names)
+
+    if not entries:
+        print(
+            "ERROR: aucun geopackage cible trouvé dans l'archive",
+            file=sys.stderr,
+        )
+        return 1
+
+    print(f"✓ {len(entries)} table(s) repérée(s) dans l'archive:")
+    for entry in entries:
+        print(f"   - {entry['table']}: {entry['path']}")
+
+    # 4. Upload de la concaténation (mono-archive) vers S3
+    total_size = sum(part.stat().st_size for part in parts)
+    upload_ret = _stream_upload_to_s3(
+        parts,
+        bucket,
+        key,
+        endpoint,
+        region,
+        total_size,
+        remove_after=not args.keep_archives,
+    )
+    if upload_ret != 0:
+        print("ERROR: échec de l'upload S3", file=sys.stderr)
+        return upload_ret
+
+    print(f"✓ Archive uploadée: s3://{bucket}/{key}")
+
+    # 5. Écriture du manifest
+    manifest_path = download_dir / "bdtopo_manifest.json"
+    manifest_path.write_text(
+        json.dumps({"entries": entries}, indent=2), encoding="utf-8"
+    )
+    print(f"✓ Manifest écrit: {manifest_path}")
+
+    # 6. Import en flux (sauf --skip-import)
+    if args.skip_import:
+        print("⏭ Import ignoré (--skip-import)")
+        return 0
+
+    return _run_s3_import(args, bucket, key, endpoint, region, manifest_path)
+
+
 def main() -> int:
     _load_project_env()
 
@@ -445,6 +865,37 @@ def main() -> int:
         action="store_true",
         help="Ignorer l'exécution des migrations d'index après l'import",
     )
+    parser.add_argument(
+        "--s3",
+        action="store_true",
+        help=(
+            "Mode S3: uploader l'archive concaténée sur S3 (Outscale) puis importer "
+            "en flux via GDAL /vsi7z//vsis3/ sans extraction locale (~140 Go évités)"
+        ),
+    )
+    parser.add_argument(
+        "--s3-bucket",
+        default=None,
+        help="Bucket S3 cible (défaut: variable d'environnement S3_BUCKET)",
+    )
+    parser.add_argument(
+        "--s3-key",
+        default="bdtopo/bdtopo-latest.7z",
+        help="Clé de l'objet S3 (défaut: bdtopo/bdtopo-latest.7z)",
+    )
+    parser.add_argument(
+        "--s3-endpoint",
+        default=None,
+        help="Endpoint S3 (défaut: variable d'environnement S3_ENDPOINT)",
+    )
+    parser.add_argument(
+        "--s3-region",
+        default=None,
+        help=(
+            "Région S3 (défaut: déduite de l'endpoint Outscale, "
+            "ex. cloudgouv-eu-west-1)"
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -480,6 +931,10 @@ def main() -> int:
         return 1
     archives_dir = download_dir / "archives"
     extracted_dir = download_dir / "extracted"
+
+    # Mode S3: pipeline dédié (upload archive + import en flux, sans extraction)
+    if args.s3:
+        return _run_s3_pipeline(args, download_dir, archives_dir)
 
     # Étape 1: Téléchargement
     if not args.skip_download:
@@ -641,100 +1096,10 @@ def main() -> int:
 
         # Étape 4: Migrations d'index (si --overwrite et pas --skip-migrate)
         if args.overwrite and not args.skip_migrate:
-            print("\n" + "=" * 60)
-            print("ÉTAPE 4: Exécution des migrations d'index")
-            print("=" * 60)
-
-            # Trouver le répertoire racine du projet (où se trouve le Makefile)
-            script_dir = Path(__file__).parent
-            project_root = script_dir.parent
-            makefile_path = project_root / "Makefile"
-
-            if not makefile_path.exists():
-                print(
-                    f"WARNING: Makefile introuvable à {makefile_path}. "
-                    "La création des indexes ne sera pas exécutée.",
-                    file=sys.stderr,
-                )
-                print(
-                    "Vous pouvez l'exécuter manuellement avec: "
-                    "make bdtopo_setup_indexes",
-                    file=sys.stderr,
-                )
-            else:
-                # Vérifier si make est disponible
-                if not _check_command_exists("make"):
-                    print(
-                        "WARNING: make n'est pas disponible. "
-                        "La création des indexes ne sera pas exécutée.",
-                        file=sys.stderr,
-                    )
-                    print(
-                        "Vous pouvez l'exécuter manuellement avec: "
-                        "make bdtopo_setup_indexes",
-                        file=sys.stderr,
-                    )
-                else:
-                    # Utiliser le Makefile pour créer les indexes
-                    # Détecter si on est dans un environnement CI (GitHub Actions)
-                    is_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
-
-                    # Utiliser la même URL de base de données que pour l'import
-                    env = os.environ.copy()
-                    if database_url_for_migrations:
-                        env["BDTOPO_DATABASE_URL"] = database_url_for_migrations
-
-                    millesime = _extract_millesime(extracted_dir)
-                    if millesime:
-                        print(f"Millésime BD TOPO détecté: {millesime}")
-                    else:
-                        print(
-                            "WARNING: millésime BD TOPO introuvable, "
-                            "la table 'version' ne sera pas mise à jour",
-                            file=sys.stderr,
-                        )
-
-                    if is_ci:
-                        # Dans la CI, utiliser directement php bin/console si disponible
-                        # Sinon utiliser le Makefile avec BIN_CONSOLE défini
-                        console_path = project_root / "bin" / "console"
-                        if _check_command_exists("php") and console_path.exists():
-                            setup_cmd = [
-                                "php",
-                                str(console_path),
-                                "app:bdtopo:setup_indexes",
-                            ]
-                            if millesime:
-                                setup_cmd.append(f"--millesime={millesime}")
-                            print(f"Exécution de: {' '.join(setup_cmd)}")
-                            print("(Environnement CI détecté, utilisation directe de PHP)")
-                        else:
-                            # Utiliser le Makefile avec BIN_CONSOLE défini pour la CI
-                            env["BIN_CONSOLE"] = "php bin/console"
-                            setup_cmd = ["make", "bdtopo_setup_indexes"]
-                            if millesime:
-                                setup_cmd.append(f"ARGS=--millesime={millesime}")
-                            print(f"Exécution de: {' '.join(setup_cmd)}")
-                            print("(Environnement CI détecté, utilisation du Makefile avec BIN_CONSOLE)")
-                    else:
-                        # En local, utiliser le Makefile qui gère Docker automatiquement
-                        setup_cmd = ["make", "bdtopo_setup_indexes"]
-                        if millesime:
-                            setup_cmd.append(f"ARGS=--millesime={millesime}")
-                        print(f"Exécution de: {' '.join(setup_cmd)}")
-                        print("(Le Makefile utilisera Docker si PHP n'est pas disponible localement)")
-
-                    result = subprocess.run(setup_cmd, env=env, cwd=project_root)
-
-                    if result.returncode != 0:
-                        print(
-                            "WARNING: La création des indexes a échoué. "
-                            "Vous pouvez l'exécuter manuellement avec: "
-                            "make bdtopo_setup_indexes",
-                            file=sys.stderr,
-                        )
-                    else:
-                        print("\n✓ Indexes et fonctions créés avec succès")
+            _run_index_migrations(
+                database_url_for_migrations,
+                millesime=_extract_millesime(extracted_dir),
+            )
     else:
         print("⏭ Import ignoré (--skip-import)")
 
