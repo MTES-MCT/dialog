@@ -18,6 +18,7 @@ final readonly class SendInactivityReminderEmailCommandHandler
     {
         $this->mailer->send(
             new Mail(
+                from: null,
                 address: $command->email,
                 subject: 'inactivity.email.subject',
                 template: 'email/user/inactivity_reminder.html.twig',
