@@ -18,6 +18,7 @@ final readonly class SendWelcomeEmailCommandHandler
     {
         $this->mailer->send(
             new Mail(
+                from: null,
                 address: $command->email,
                 subject: 'welcome.email.help.subject',
                 template: 'email/user/welcome_user.html.twig',

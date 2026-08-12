@@ -21,6 +21,7 @@ final class SendInactivityReminderEmailCommandHandlerTest extends TestCase
             ->with(
                 $this->equalTo(
                     new Mail(
+                        from: null,
                         address: 'antoine@fairness.coop',
                         subject: 'inactivity.email.subject',
                         template: 'email/user/inactivity_reminder.html.twig',

@@ -41,6 +41,7 @@ final readonly class SaveFeedbackCommandHandler
     {
         try {
             $this->mailer->send(new Mail(
+                from: $command->user->getEmail(),
                 address: $this->emailSupport,
                 subject: 'contact.email.user_feedback_subject',
                 template: 'email/user/user_feedback.html.twig',

@@ -35,6 +35,7 @@ final readonly class SendForgotPasswordMailCommandHandler
 
             $this->mailer->send(
                 new Mail(
+                    from: null,
                     address: $email,
                     subject: 'forgot_password.subject',
                     template: 'email/user/forgot_password.html.twig',
