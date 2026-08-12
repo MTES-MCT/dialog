@@ -70,7 +70,7 @@ La BD TOPO EXPRESS est millésimée. Une nouvelle version sort **tous les 15 jou
 
 #### Fonctionnement de la mise à jour automatique (streaming S3)
 
-En production (et dans la CI), la mise à jour **ne dézippe pas** l'archive localement (ce qui représenterait ~124 Go). À la place :
+En production (et dans la CI), la mise à jour **ne dézippe pas** l'archive localement (ce qui représenterait ~140 Go). À la place :
 
 1. Les 6 parties de l'archive multi-volume `.7z.001` … `.7z.006` (~24 Go au total) sont téléchargées.
 2. Ces parties étant un simple découpage binaire d'un unique conteneur `.7z`, elles sont **concaténées à la volée** et envoyées vers notre bucket S3 (Outscale) en un seul objet, via un upload multipart (`aws s3 cp -`), sans jamais matérialiser les ~24 Go sur le disque.
@@ -108,7 +108,24 @@ Cette section explique comment mettre à jour une base BDTOPO locale pour tester
    docker compose exec database psql -U dialog -d dialog_bdtopo -c "CREATE EXTENSION IF NOT EXISTS postgis;"
    ```
 
-2. **Télécharger, dézipper et importer les données** :
+2. **Télécharger, concaténer et importer les données** :
+
+   ```bash
+   ./tools/bdtopo_download_and_update \
+     --local-archive \
+     --url postgresql://dialog:dialog@localhost:5432/dialog_bdtopo \
+     --overwrite \
+     -y
+   ```
+
+   Le mode `--local-archive` télécharge les 6 parties de l'archive, les **concatène en un seul `.7z` dans `dump/`**, puis importe chaque geopackage **directement depuis l'archive** via GDAL `/vsi7z/`, sans dézipper les ~140 Go. C'est la méthode recommandée pour tester en local (pas de S3 requis).
+
+   :information_source: **Note** : Le téléchargement peut prendre du temps (~40 Go compressé). Il faut prévoir l'espace disque pour l'archive concaténée dans `dump/`. Le script affiche une barre de progression.
+
+   <details>
+   <summary>Ancienne méthode : extraction complète sur disque</summary>
+
+   Sans `--local-archive`, le script dézippe l'intégralité de l'archive (~130 Go décompressé) dans `dump/` avant l'import :
 
    ```bash
    ./tools/bdtopo_download_and_update \
@@ -117,7 +134,7 @@ Cette section explique comment mettre à jour une base BDTOPO locale pour tester
      -y
    ```
 
-   :information_source: **Note** : Le téléchargement peut prendre du temps (~24 Go compressé, ~130 Go décompressé). Le script affiche une barre de progression.
+   </details>
 
 3. **Vérifier que les données ont été importées** :
 
@@ -216,6 +233,9 @@ scalingo login --ssh
 - `--s3-key` : Clé de l'objet S3 (défaut : `bdtopo/bdtopo-latest.7z`)
 - `--s3-endpoint` : Endpoint S3 (défaut : variable d'environnement `S3_ENDPOINT`)
 - `--s3-region` : Région S3 (défaut : déduite de l'endpoint Outscale, ex. `cloudgouv-eu-west-1`)
+
+**Option du mode archive locale** :
+- `--local-archive` : Concaténer les parties en un seul `.7z` dans `dump/` et importer chaque geopackage directement via GDAL `/vsi7z/` (sans S3 ni extraction des ~140 Go). Recommandé pour tester en local.
 
 **Note importante** :
 Après un `--overwrite`, les migrations d'index sont **automatiquement exécutées** pour recréer tous les index (sauf si `--skip-migrate` est spécifié).
