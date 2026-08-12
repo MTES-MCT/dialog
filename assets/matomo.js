@@ -2,6 +2,9 @@ var _paq = window._paq = window._paq || [];
 /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
 _paq.push(["setDoNotTrack", true]);
 _paq.push(["disableCookies"]);
+// sendBeacon permet aux événements envoyés pendant beforeunload (alerte
+// "modifications non sauvegardées") d'aboutir même si la page se ferme.
+_paq.push(["alwaysUseSendBeacon"]);
 _paq.push(['trackPageView']);
 _paq.push(['enableLinkTracking']);
 (function () {

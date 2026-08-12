@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 
 use App\Application\StringUtilsInterface;
+use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
@@ -107,6 +109,34 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
         return $this->createQueryBuilder('u')
             ->where('u.roles LIKE :roleNeedle')
             ->setParameter('roleNeedle', '%"' . $role . '"%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findUsersToNotifyForInactivity(\DateTimeInterface $registeredBefore): array
+    {
+        $avoidUsersBeforeDate = new \DateTimeImmutable('2026-08-11');
+
+        return $this->createQueryBuilder('u')
+            ->where('u.isVerified = true')
+            ->andWhere('u.registrationDate <= :registeredBefore')
+            ->andWhere('u.registrationDate > :registeredAfter')
+            ->andWhere('u.inactivityEmailSentAt IS NULL')
+            ->andWhere('EXISTS (
+                SELECT 1
+                FROM ' . OrganizationUser::class . ' ou
+                WHERE ou.user = u.uuid
+            )')
+            ->andWhere('NOT EXISTS (
+                SELECT 1
+                FROM ' . OrganizationUser::class . ' oup
+                INNER JOIN ' . RegulationOrderRecord::class . ' ror WITH ror.organization = oup.organization
+                WHERE oup.user = u.uuid
+                    AND ror.status = :publishedStatus
+            )')
+            ->setParameter('registeredBefore', $registeredBefore)
+            ->setParameter('registeredAfter', $avoidUsersBeforeDate)
+            ->setParameter('publishedStatus', RegulationOrderRecordStatusEnum::PUBLISHED->value)
             ->getQuery()
             ->getResult();
     }

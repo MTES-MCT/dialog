@@ -1,6 +1,10 @@
 <div class="app-card app-card--raised">
     <div class="app-card__content">
-        {{ form_start(form) }}
+        {{ form_start(form, {attr: {
+            'data-controller': 'unsaved-changes',
+            'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
+            'data-unsaved-changes-tracking-name-value': 'arrete-infos-generales',
+        }}) }}
             <div
                 data-controller="fetch"
                 data-fetch-extra-query-params-value="{{ {

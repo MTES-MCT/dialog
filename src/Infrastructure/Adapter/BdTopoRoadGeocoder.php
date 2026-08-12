@@ -329,6 +329,74 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         return $results;
     }
 
+    public function computeReferencePoints(string $administrator, string $roadNumber): string
+    {
+        $administrator = ucfirst($administrator);
+
+        try {
+            // On récupère un marqueur par (département, numéro de PR). Une même route peut
+            // traverser plusieurs départements dans lesquels la numérotation des PR redémarre,
+            // d'où la clé (département, numéro). On garde un seul côté (DISTINCT ON) car
+            // l'affichage est purement informatif.
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                'SELECT DISTINCT ON (p.code_insee_du_departement, p.numero::integer)
+                    p.numero AS point_number,
+                    p.code_insee_du_departement AS department_code,
+                    ST_AsGeoJSON(p.geometrie) AS geometry,
+                    (
+                        SELECT COUNT(DISTINCT pp.code_insee_du_departement)
+                        FROM point_de_repere AS pp
+                        WHERE pp.gestionnaire = p.gestionnaire
+                        AND pp.route = p.route
+                        AND pp.type_de_pr LIKE \'PR%\'
+                    ) AS num_departments
+                FROM point_de_repere AS p
+                WHERE p.gestionnaire = :gestionnaire
+                AND p.route = :route
+                AND p.type_de_pr LIKE \'PR%\'
+                ORDER BY p.code_insee_du_departement, p.numero::integer, p.cote
+                ',
+                [
+                    'gestionnaire' => $administrator,
+                    'route' => $roadNumber,
+                ],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Reference points geometry query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        $features = [];
+
+        foreach ($rows as $row) {
+            $geometry = json_decode($row['geometry'], associative: true);
+
+            if (!$geometry) {
+                continue;
+            }
+
+            $departmentCode = $row['department_code'];
+            $pointNumber = $row['point_number'];
+            $label = $row['num_departments'] > 1 && $departmentCode
+                ? \sprintf('%s (dép %s)', $pointNumber, $departmentCode)
+                : $pointNumber;
+
+            $features[] = [
+                'type' => 'Feature',
+                'geometry' => $geometry,
+                'properties' => [
+                    'pointNumber' => $pointNumber,
+                    'departmentCode' => $departmentCode,
+                    'label' => $label,
+                ],
+            ];
+        }
+
+        return json_encode([
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ]);
+    }
+
     public function computeReferencePoint(
         string $roadType,
         string $administrator,

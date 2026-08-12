@@ -48,16 +48,15 @@
                             </a>
                         </li>
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link fr-btn--icon-right fr-icon-road-map-line" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
+                            <a class="fr-nav__link" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.map'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
+                            <a class="fr-nav__link" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.regulations'|trans }}
                             </a>
                         </li>
-
                     {% else %}
                         <li class="fr-nav__item">
                             <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
@@ -70,21 +69,6 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="/blog/fr/" target="_blank">
-                            {{ 'common.blog'|trans }}
-                        </a>
-                    </li>
-                    <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr" target="_blank">
-                            {{ 'landing.menu.button.help'|trans }}
-                        </a>
-                    </li>
-                    <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="https://fabrique-numerique.gitbook.io/doc.dialog.beta.gouv.fr/en-savoir-plus-sur-dialog/note-de-version" target="_blank">
-                            {{ 'landing.menu.button.news'|trans }}
-                        </a>
-                    </li>
                 </ul>
             </nav>
         {% endblock %}

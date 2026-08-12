@@ -41,7 +41,6 @@ import shutil
 import signal
 import subprocess
 import sys
-import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
@@ -54,16 +53,6 @@ except ImportError:
         file=sys.stderr,
     )
     sys.exit(1)
-
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    print(
-        "ERROR: Le module 'beautifulsoup4' est requis. Installez-le avec: pip install beautifulsoup4",
-        file=sys.stderr,
-    )
-    sys.exit(1)
-
 
 def _check_command_exists(cmd: str) -> bool:
     """Vérifie si une commande système existe."""
