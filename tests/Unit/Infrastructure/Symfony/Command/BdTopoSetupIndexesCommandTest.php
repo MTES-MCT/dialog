@@ -18,7 +18,7 @@ class BdTopoSetupIndexesCommandTest extends TestCase
         $connection = $this->createMock(Connection::class);
 
         $connection
-            ->expects(self::exactly(10))
+            ->expects(self::exactly(11))
             ->method('executeStatement');
 
         $command = new BdTopoSetupIndexesCommand($connection);
@@ -71,6 +71,41 @@ class BdTopoSetupIndexesCommandTest extends TestCase
         $commandTester->execute([]);
 
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
-        $this->assertStringContainsString('10 statement(s) failed', $commandTester->getDisplay());
+        $this->assertStringContainsString('11 statement(s) failed', $commandTester->getDisplay());
+    }
+
+    public function testExecuteRecordsMillesime(): void
+    {
+        $connection = $this->createMock(Connection::class);
+
+        // 11 statements de setup + TRUNCATE + INSERT du millésime.
+        $connection
+            ->expects(self::exactly(13))
+            ->method('executeStatement');
+
+        $command = new BdTopoSetupIndexesCommand($connection);
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute(['--millesime' => '2026-08-09']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $this->assertStringContainsString('2026-08-09', $commandTester->getDisplay());
+    }
+
+    public function testExecuteRejectsInvalidMillesime(): void
+    {
+        $connection = $this->createMock(Connection::class);
+
+        $connection
+            ->expects(self::never())
+            ->method('executeStatement');
+
+        $command = new BdTopoSetupIndexesCommand($connection);
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute(['--millesime' => '09/08/2026']);
+
+        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('invalide', $commandTester->getDisplay());
     }
 }
