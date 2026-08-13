@@ -16,6 +16,7 @@ final readonly class Mailer implements MailerInterface
     public function __construct(
         private TranslatorInterface $translator,
         private SymfonyMailer $mailer,
+        private string $emailSupport,
     ) {
     }
 
@@ -23,6 +24,7 @@ final readonly class Mailer implements MailerInterface
     {
         $this->mailer->send(
             (new TemplatedEmail())
+                ->from(new Address($mail->from ?? $this->emailSupport))
                 ->to(new Address($mail->address))
                 ->subject($this->translator->trans($mail->subject, [], 'emails'))
                 ->htmlTemplate($mail->template)

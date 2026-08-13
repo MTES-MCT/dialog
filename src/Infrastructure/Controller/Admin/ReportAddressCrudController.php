@@ -98,6 +98,7 @@ final class ReportAddressCrudController extends AbstractCrudController
     {
         $user = $report->getUser();
         $this->mailer->send(new Mail(
+            from: $user->getEmail(),
             address: $this->emailSupport,
             subject: 'contact.email.user_report_sent_to_ign_subject',
             template: 'email/user/user_report_sent_to_ign.html.twig',

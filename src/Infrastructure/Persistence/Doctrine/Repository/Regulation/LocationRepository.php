@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -392,6 +393,35 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ->innerJoin('m.regulationOrder', 'ro')
             ->innerJoin('ro.regulationOrderRecord', 'roc')
             ->innerJoin('roc.organization', 'o')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAllWithPolygonGeometry(): array
+    {
+        // ST_GeometryType n'existe pas en DQL : on récupère d'abord les UUID en SQL natif,
+        // puis on hydrate les entités avec leurs sous-entités.
+        $uuids = $this->getEntityManager()->getConnection()->fetchFirstColumn(
+            "SELECT l.uuid
+            FROM location AS l
+            WHERE l.road_type <> :zoneRoadType
+            AND l.geometry IS NOT NULL
+            AND ST_GeometryType(l.geometry) IN ('ST_Polygon', 'ST_MultiPolygon')",
+            ['zoneRoadType' => RoadTypeEnum::ZONE->value],
+        );
+
+        if (!$uuids) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('l')
+            ->addSelect('rg', 'ns', 'nr')
+            ->leftJoin('l.rawGeoJSON', 'rg')
+            ->leftJoin('l.namedStreet', 'ns')
+            ->leftJoin('l.numberedRoad', 'nr')
+            ->where('l.uuid IN (:uuids)')
+            ->setParameter('uuids', $uuids)
             ->getQuery()
             ->getResult()
         ;

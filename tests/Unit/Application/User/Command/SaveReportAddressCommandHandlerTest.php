@@ -120,6 +120,7 @@ final class SaveReportAddressCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('send')
             ->with($this->equalTo(new Mail(
+                from: 'jean@example.com',
                 address: 'support@example.com',
                 subject: 'contact.email.user_report_subject',
                 template: 'email/user/user_report.html.twig',

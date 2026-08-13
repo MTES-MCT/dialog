@@ -51,6 +51,7 @@ final readonly class SaveReportAddressCommandHandler
     {
         try {
             $this->mailer->send(new Mail(
+                from: $command->user->getEmail(),
                 address: $this->emailSupport,
                 subject: 'contact.email.user_report_subject',
                 template: 'email/user/user_report.html.twig',

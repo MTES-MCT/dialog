@@ -74,6 +74,7 @@ class IgnSyncReportStatusesCommand extends Command
         try {
             $user = $report->getUser();
             $this->mailer->send(new Mail(
+                from: $user->getEmail(),
                 address: $this->emailSupport,
                 subject: 'contact.email.user_report_status_subject',
                 template: 'email/user/user_report_status_updated.html.twig',

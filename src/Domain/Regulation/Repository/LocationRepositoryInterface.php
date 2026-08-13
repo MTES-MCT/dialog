@@ -64,4 +64,6 @@ interface LocationRepositoryInterface
 
     /** @return Location[] */
     public function findAllWithoutGeometry(): array;
+
+    public function findAllWithPolygonGeometry(): array;
 }

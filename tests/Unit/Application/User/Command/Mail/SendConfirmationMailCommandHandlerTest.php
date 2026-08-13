@@ -42,6 +42,7 @@ final class SendConfirmationMailCommandHandlerTest extends TestCase
             ->with(
                 $this->equalTo(
                     new Mail(
+                        from: null,
                         address: 'mathieu@fairness.coop',
                         subject: 'confirm_user_account.subject',
                         template: 'email/user/confirm_user_account.html.twig',

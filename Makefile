@@ -97,6 +97,11 @@ dropdb: ## Remove branch db
 
 listdb: ## Show local databases
 	docker compose exec database psql -U dialog -c "\l"
+	
+bdtopo_reset: ## Reset BD TOPO database
+	docker compose exec database dropdb --if-exists -U dialog dialog_bdtopo
+	$(MAKE) bdtopo_create
+	./tools/bdtopo_download_and_update --skip-download --url "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo" --overwrite -y
 
 bdtopo_create: ## Crée la base de donnée bdtopo
 	docker compose exec database createdb -U dialog dialog_bdtopo
@@ -109,7 +114,7 @@ bdtopo_migrate: ## Run db migrations for bdtopo
 	${BIN_CONSOLE} doctrine:migrations:migrate -n --all-or-nothing --configuration ./config/packages/bdtopo/doctrine_migrations.yaml ${ARGS}
 
 bdtopo_setup_indexes: ## Create BD TOPO indexes, extensions, and functions
-	${BIN_CONSOLE} app:bdtopo:setup_indexes
+	${BIN_CONSOLE} app:bdtopo:setup_indexes ${ARGS}
 
 metabase_migration: ## Generate new migration for metabase
 	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/metabase/doctrine_migrations.yaml
