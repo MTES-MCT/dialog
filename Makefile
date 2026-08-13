@@ -260,6 +260,14 @@ test_unit: ## Run unit tests only
 test_integration: ## Run integration tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
 
+test_reset_db: ## Reset test database and run the test suite
+	$(MAKE) droptestdb
+	$(MAKE) console CMD="doctrine:database:create --env=test --if-not-exists"
+	$(MAKE) dbmigrate ARGS="--env=test"
+	$(MAKE) metabase_migrate ARGS="--env=test"
+	$(MAKE) data_install ARGS="--env=test"
+	$(MAKE) dbfixtures
+
 test_all: ## Run the test suite (with coverage)
 	make test_cov
 
