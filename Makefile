@@ -117,9 +117,9 @@ bdtopo_setup_indexes: ## Create BD TOPO indexes, extensions, and functions
 	${BIN_CONSOLE} app:bdtopo:setup_indexes ${ARGS}
 
 bdtopo_update_local: ## Télécharge, concatène et importe la BD TOPO dans la base locale (mode archive locale, sans S3)
-	${BIN_SHELL} ./tools/bdtopo_download_and_update \
+	./tools/bdtopo_download_and_update \
 		--local-archive \
-		--url "${BDTOPO_DATABASE_URL}" \
+		--url "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo" \
 		--overwrite \
 		-y \
 		$$([ "$(SKIP_DOWNLOAD)" = "true" ] && echo "--skip-download") \
