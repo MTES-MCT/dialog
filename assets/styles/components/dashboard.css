@@ -1,0 +1,100 @@
+/* Tableau de bord (accueil connecté) */
+
+.app-dashboard-onboarding {
+    position: relative;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    background: var(--background-alt-blue-france);
+    border-radius: 0.5rem;
+}
+
+.app-dashboard-onboarding__illustration {
+    width: 10rem;
+    flex-shrink: 0;
+}
+
+.app-dashboard-onboarding__steps {
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.app-dashboard-onboarding > .fr-btn--close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+@media (max-width: 48em) {
+    .app-dashboard-onboarding__illustration {
+        display: none;
+    }
+}
+
+.app-dashboard-stat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--background-default-grey);
+    border: 1px solid var(--border-default-grey);
+    border-bottom: 3px solid var(--border-active-blue-france);
+}
+
+.app-dashboard-stat__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-dashboard-stat__badge {
+    text-transform: none;
+    font-weight: 500;
+    border-radius: 0.75rem;
+}
+
+.app-dashboard-stat__icon--draft {
+    color: var(--text-label-blue-cumulus);
+}
+
+.app-dashboard-stat__icon--current {
+    color: var(--text-label-green-emeraude);
+}
+
+.app-dashboard-stat__icon--upcoming {
+    color: var(--text-label-pink-macaron);
+}
+
+.app-dashboard-stat__link {
+    background-image: none;
+    color: inherit;
+}
+
+.app-dashboard-stat__number {
+    display: inline-block;
+    margin-right: 0.25rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-title-blue-france);
+}
+
+.app-dashboard-stat__arrow {
+    margin-top: auto;
+    text-align: right;
+    color: var(--text-title-blue-france);
+}
+
+.app-dashboard-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-dashboard-block__table {
+    flex-grow: 1;
+}
+
+.app-dashboard-map {
+    display: block;
+    min-height: 380px;
+}

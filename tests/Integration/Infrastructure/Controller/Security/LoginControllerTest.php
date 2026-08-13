@@ -24,8 +24,10 @@ final class LoginControllerTest extends AbstractWebTestCase
         $form['email'] = UserFixture::DEPARTMENT_93_USER_EMAIL;
         $form['password'] = UserFixture::PASSWORD;
         $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
+        // Après connexion, l'utilisateur arrive sur le tableau de bord.
+        $this->assertResponseRedirects('/', 302);
         $crawler = $client->followRedirect();
+        $this->assertSame('Mes organisations', $crawler->filter('h1')->text());
         $this->assertSame('Nouveautés Aide Mathieu MARCHOIS Mathieu MARCHOIS mathieu.marchois@beta.gouv.fr Mon compte Mes organisations Se déconnecter', $crawler->filter('[data-testid="user-links"]')->text());
     }
 

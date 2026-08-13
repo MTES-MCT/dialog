@@ -1870,6 +1870,106 @@
                 <source>home.breadcrumb</source>
                 <target>Accueil</target>
             </trans-unit>
+            <trans-unit id="dashboard.meta.title">
+                <source>dashboard.meta.title</source>
+                <target>Accueil</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.title">
+                <source>dashboard.onboarding.title</source>
+                <target>Bienvenue sur DiaLog !</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.intro">
+                <source>dashboard.onboarding.intro</source>
+                <target>Pour commencer à diffuser votre réglementation de circulation avec DiaLog :</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.add">
+                <source>dashboard.onboarding.step.add</source>
+                <target><![CDATA[<strong>]]>Ajoutez<![CDATA[</strong>]]> un arrêté</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.fill">
+                <source>dashboard.onboarding.step.fill</source>
+                <target><![CDATA[<strong>]]>Saisissez<![CDATA[</strong>]]> les restrictions et localisations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.publish">
+                <source>dashboard.onboarding.step.publish</source>
+                <target><![CDATA[<strong>]]>Publiez<![CDATA[</strong>]]> vos restrictions</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.visualize">
+                <source>dashboard.onboarding.step.visualize</source>
+                <target><![CDATA[<strong>]]>Visualisez<![CDATA[</strong>]]> les restrictions dans la carte DiaLog et certains GPS</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.invite">
+                <source>dashboard.onboarding.step.invite</source>
+                <target><![CDATA[<strong>]]>Invitez<![CDATA[</strong>]]> des collègues et ajoutez votre logo, si vous le souhaitez !</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.more">
+                <source>dashboard.onboarding.more</source>
+                <target>Voir plus d'informations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.manage_organization">
+                <source>dashboard.manage_organization</source>
+                <target>Gérer mon organisation</target>
+            </trans-unit>
+            <trans-unit id="dashboard.manage_organizations">
+                <source>dashboard.manage_organizations</source>
+                <target>Gérer mes organisations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.title">
+                <source>dashboard.numbers.title</source>
+                <target>En quelques chiffres</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.draft">
+                <source>dashboard.numbers.draft</source>
+                <target>Brouillon</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.draft.label">
+                <source>dashboard.numbers.draft.label</source>
+                <target>arrêtés en brouillon</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.current">
+                <source>dashboard.numbers.current</source>
+                <target>En cours</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.current.label">
+                <source>dashboard.numbers.current.label</source>
+                <target>arrêtés publiés en vigueur</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.upcoming">
+                <source>dashboard.numbers.upcoming</source>
+                <target>À venir</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.upcoming.label">
+                <source>dashboard.numbers.upcoming.label</source>
+                <target>arrêtés publiés à venir</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.title">
+                <source>dashboard.map.title</source>
+                <target>Carte</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.description">
+                <source>dashboard.map.description</source>
+                <target>Visualisation des restrictions en vigueur sur la ville.</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.see_all">
+                <source>dashboard.map.see_all</source>
+                <target>Voir toute la carte</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.title">
+                <source>dashboard.regulations.title</source>
+                <target>Arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.description">
+                <source>dashboard.regulations.description</source>
+                <target>Liste des derniers arrêtés modifiés, ajoutés ou publiés.</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.see_all">
+                <source>dashboard.regulations.see_all</source>
+                <target>Voir la liste des arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.empty">
+                <source>dashboard.regulations.empty</source>
+                <target>Vous n'avez pas encore ajouté d'arrêté</target>
+            </trans-unit>
             <trans-unit id="error.home_link">
                 <source>error.home_link</source>
                 <target>Page d'accueil</target>
