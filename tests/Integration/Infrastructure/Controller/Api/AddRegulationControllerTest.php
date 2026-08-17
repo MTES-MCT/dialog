@@ -89,6 +89,64 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertArrayHasKey('uuid', $data);
     }
 
+    public function testAddRegulationTimeSlotRoundTripsInClientTimezone(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'F2025/timeslot-tz',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Créneau horaire fuseau',
+            'measures' => [[
+                'type' => 'speedLimitation',
+                'maxSpeed' => 30,
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'startTime' => '2025-10-16T13:01:02.887Z',
+                    'endDate' => '2025-10-20T13:01:02.887Z',
+                    'endTime' => '2025-10-20T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => false,
+                    'timeSlots' => [[
+                        // Wall-clock 09:00-17:00, offset is irrelevant on purpose.
+                        'startTime' => '2025-10-16T09:00:00+05:00',
+                        'endTime' => '2025-10-16T17:00:00+05:00',
+                    ]],
+                ]],
+                'locations' => [[
+                    'roadType' => 'lane',
+                    'namedStreet' => [
+                        'cityCode' => '93070',
+                        'cityLabel' => 'saint ouen sur seine',
+                        'roadName' => 'rue eugène berthoud',
+                        'direction' => 'BOTH',
+                    ],
+                ]],
+            ]],
+        ];
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_CLIENT_ID' => 'clientId',
+            'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+        ];
+
+        $client->request('POST', '/api/regulations', [], [], $headers, json_encode($payload));
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request('GET', '/api/regulations/F2025/timeslot-tz', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $timeSlot = $data['measures'][0]['periods'][0]['timeSlots'][0];
+
+        // The wall-clock times submitted must be read back identically (client timezone).
+        $this->assertSame('09:00:00', (new \DateTimeImmutable($timeSlot['startTime']))->format('H:i:s'));
+        $this->assertSame('17:00:00', (new \DateTimeImmutable($timeSlot['endTime']))->format('H:i:s'));
+    }
+
     public function testAddRegulationWithInvalidCredentials(): void
     {
         $client = static::createClient();

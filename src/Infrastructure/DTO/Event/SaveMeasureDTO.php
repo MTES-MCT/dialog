@@ -21,7 +21,7 @@ final class SaveMeasureDTO
     #[Map(target: 'createdAt', transform: [DateTimeTransformers::class, 'fromIso'])]
     public ?string $createdAt = null;
     /** @var SavePeriodDTO[] */
-    #[Map(target: 'periods', transform: [PeriodsTransformer::class, 'toCommands'])]
+    #[Map(target: 'periods', transform: PeriodsTransformer::class)]
     public array $periods = [];
     /** @var SaveLocationDTO[] */
     #[Map(target: 'locations', transform: [LocationsTransformer::class, 'toCommands'])]
