@@ -18,5 +18,15 @@ interface StorageRegulationOrderRepositoryInterface
      */
     public function getStoragesByRegulationOrderRecordUuids(array $uuids): array;
 
+    /**
+     * Retourne, pour chaque arrêté demandé, le chemin de stockage et l'URL externe
+     * de son document source (le cas échéant), indexés par UUID de regulation order.
+     *
+     * @param string[] $regulationOrderUuids
+     *
+     * @return array<string, array{path: ?string, url: ?string}>
+     */
+    public function findPdfInfoByRegulationOrderUuids(array $regulationOrderUuids): array;
+
     public function remove(StorageRegulationOrder $storageRegulationOrder): void;
 }
