@@ -46,13 +46,13 @@
     'police',
     'desserte-locale',
     'draw-line',
+    'draw-zone',
     'alternate-road-circle',
     'forbidden-circle',
     'noovertake-circle',
     'noparking-circle',
     'speed-limitation-circle',
-    'community',
-    'draw-line'
+    'community'
 ) {
     .fr-icon-x-#{$extraIcon}::before {
         mask-image: url('../../../../public/images/icons/#{$extraIcon}.svg');
