@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Map;
 
 use App\Application\DateUtilsInterface;
+use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Uid\Uuid;
 
 final class MapController
 {
@@ -23,6 +25,7 @@ final class MapController
         private DateUtilsInterface $dateUtils,
         private Security $security,
         private OrganizationRepositoryInterface $organizationRepository,
+        private LocationRepositoryInterface $locationRepository,
     ) {
     }
 
@@ -31,8 +34,10 @@ final class MapController
         name: 'app_carto',
         methods: ['GET'],
     )]
-    public function __invoke(Request $request): Response
-    {
+    public function __invoke(
+        #[MapQueryParameter] ?Uuid $organizationUuid,
+        #[MapQueryParameter] ?Uuid $regulationOrderRecordUuid,
+    ): Response {
         $dto = new MapFilterDTO($this->dateUtils->getNow());
 
         // The URL template contains literal `{z}/{x}/{y}` placeholders (with curly braces)
@@ -53,12 +58,11 @@ final class MapController
         $user = $this->security->getUser();
         $userUuid = $user instanceof AbstractAuthenticatedUser ? $user->getUuid() : null;
 
-        $organizationUuid = $request->query->get('organizationUuid');
-        if (\is_string($organizationUuid) && $organizationUuid !== '') {
-            $initialBbox = $this->organizationRepository->findMapBboxByOrganizationUuid($organizationUuid);
-        } else {
-            $initialBbox = $this->organizationRepository->findInitialMapBbox($userUuid);
-        }
+        $initialBbox = match (true) {
+            $regulationOrderRecordUuid !== null => $this->locationRepository->findMapBboxByRegulationOrderRecordUuid($regulationOrderRecordUuid->toString()),
+            $organizationUuid !== null => $this->organizationRepository->findMapBboxByOrganizationUuid($organizationUuid->toString()),
+            default => $this->organizationRepository->findInitialMapBbox($userUuid),
+        };
 
         return new Response(
             $this->twig->render(

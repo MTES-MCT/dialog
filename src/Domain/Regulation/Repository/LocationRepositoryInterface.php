@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Repository;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Location\Location;
 
@@ -32,6 +33,13 @@ interface LocationRepositoryInterface
     ): string;
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array;
+
+    /**
+     * Returns the bounding box (envelope) of all the geolocated restrictions of a
+     * single regulation order record, or null when it has no usable geometry. Used
+     * to zoom the public map onto the arrêté's overall extent.
+     */
+    public function findMapBboxByRegulationOrderRecordUuid(string $uuid): ?MapBboxView;
 
     /**
      * Returns a Mapbox Vector Tile (MVT) binary blob with the locations of the

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -382,6 +383,39 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         );
 
         return array_values($rows);
+    }
+
+    public function findMapBboxByRegulationOrderRecordUuid(string $uuid): ?MapBboxView
+    {
+        $row = $this->getEntityManager()->getConnection()->fetchAssociative(
+            'SELECT
+                ST_XMin(env) AS min_lon,
+                ST_YMin(env) AS min_lat,
+                ST_XMax(env) AS max_lon,
+                ST_YMax(env) AS max_lat
+            FROM (
+                SELECT ST_Extent(l.geometry) AS env
+                FROM location AS l
+                INNER JOIN measure AS m ON m.uuid = l.measure_uuid
+                INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
+                INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+                WHERE roc.uuid = :uuid
+                AND l.geometry IS NOT NULL
+                AND NOT ST_IsEmpty(l.geometry)
+            ) AS t',
+            ['uuid' => $uuid],
+        );
+
+        if (!$row || $row['min_lon'] === null) {
+            return null;
+        }
+
+        return new MapBboxView(
+            minLon: (float) $row['min_lon'],
+            minLat: (float) $row['min_lat'],
+            maxLon: (float) $row['max_lon'],
+            maxLat: (float) $row['max_lat'],
+        );
     }
 
     public function findAllWithoutGeometry(): array
