@@ -10,6 +10,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -25,10 +26,21 @@ class BdTopoSetupIndexesCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addOption(
+            'millesime',
+            null,
+            InputOption::VALUE_REQUIRED,
+            "Millésime (date d'édition) de la BD TOPO importée, au format YYYY-MM-DD",
+        );
+    }
+
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $statements = [
             'Extension postgis' => 'CREATE EXTENSION IF NOT EXISTS postgis',
+            'Table version' => 'CREATE TABLE IF NOT EXISTS version (millesime DATE NOT NULL, imported_at TIMESTAMPTZ NOT NULL DEFAULT now())',
             'Index route_numerotee_ou_nommee' => 'CREATE INDEX IF NOT EXISTS route_numerotee_ou_nommee_numero_gestionnaire_idx ON route_numerotee_ou_nommee (numero, gestionnaire);',
             'Index point_de_repere (route)' => 'CREATE INDEX IF NOT EXISTS point_de_repere_route_numero_gestionnaire_cote_idx ON point_de_repere (route, numero, gestionnaire, cote);',
             'Index voie_nommee (identifiant_voie_ban)' => 'CREATE INDEX IF NOT EXISTS voie_nommee_identifiant_voie_ban_idx ON voie_nommee (identifiant_voie_ban)',
@@ -66,6 +78,14 @@ class BdTopoSetupIndexesCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
+        $millesime = $input->getOption('millesime');
+
+        if (null !== $millesime && 1 !== preg_match('/^\d{4}-\d{2}-\d{2}$/', $millesime)) {
+            $io->error(\sprintf('Millésime invalide: %s (format attendu: YYYY-MM-DD)', $millesime));
+
+            return Command::FAILURE;
+        }
+
         $progressBar = new ProgressBar($output, \count($statements));
         $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% %message%');
         $progressBar->setMessage('');
@@ -97,6 +117,21 @@ class BdTopoSetupIndexesCommand extends Command
             }
 
             return Command::FAILURE;
+        }
+
+        if (null !== $millesime) {
+            try {
+                $this->bdtopo2025Connection->executeStatement('TRUNCATE version');
+                $this->bdtopo2025Connection->executeStatement(
+                    'INSERT INTO version (millesime) VALUES (:millesime)',
+                    ['millesime' => $millesime],
+                );
+                $io->success(\sprintf('Millésime BD TOPO enregistré: %s', $millesime));
+            } catch (DBALException $e) {
+                $io->error(\sprintf("Échec de l'enregistrement du millésime: %s", $e->getMessage()));
+
+                return Command::FAILURE;
+            }
         }
 
         $io->success('BD TOPO indexes, extensions, and functions created successfully.');

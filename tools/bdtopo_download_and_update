@@ -367,6 +367,22 @@ def _resolve_target_database_url(args: argparse.Namespace) -> tuple[str | None, 
     return None, None
 
 
+def _extract_millesime(extracted_dir: Path) -> str | None:
+    """Extrait le millésime (date d'édition) BD TOPO"""
+    for path in extracted_dir.glob("**/*ED[0-9][0-9][0-9][0-9]-*"):
+        match = re.search(r"ED(\d{4}-\d{2}-\d{2})", path.name)
+        if match:
+            return match.group(1)
+
+    # Repli : nom du dossier de livraison de premier niveau
+    for path in extracted_dir.iterdir():
+        match = re.search(r"(\d{4}-\d{2}-\d{2})", path.name)
+        if match:
+            return match.group(1)
+
+    return None
+
+
 def main() -> int:
     _load_project_env()
 
@@ -668,6 +684,16 @@ def main() -> int:
                     if database_url_for_migrations:
                         env["BDTOPO_DATABASE_URL"] = database_url_for_migrations
 
+                    millesime = _extract_millesime(extracted_dir)
+                    if millesime:
+                        print(f"Millésime BD TOPO détecté: {millesime}")
+                    else:
+                        print(
+                            "WARNING: millésime BD TOPO introuvable, "
+                            "la table 'version' ne sera pas mise à jour",
+                            file=sys.stderr,
+                        )
+
                     if is_ci:
                         # Dans la CI, utiliser directement php bin/console si disponible
                         # Sinon utiliser le Makefile avec BIN_CONSOLE défini
@@ -678,17 +704,23 @@ def main() -> int:
                                 str(console_path),
                                 "app:bdtopo:setup_indexes",
                             ]
+                            if millesime:
+                                setup_cmd.append(f"--millesime={millesime}")
                             print(f"Exécution de: {' '.join(setup_cmd)}")
                             print("(Environnement CI détecté, utilisation directe de PHP)")
                         else:
                             # Utiliser le Makefile avec BIN_CONSOLE défini pour la CI
                             env["BIN_CONSOLE"] = "php bin/console"
                             setup_cmd = ["make", "bdtopo_setup_indexes"]
+                            if millesime:
+                                setup_cmd.append(f"ARGS=--millesime={millesime}")
                             print(f"Exécution de: {' '.join(setup_cmd)}")
                             print("(Environnement CI détecté, utilisation du Makefile avec BIN_CONSOLE)")
                     else:
                         # En local, utiliser le Makefile qui gère Docker automatiquement
                         setup_cmd = ["make", "bdtopo_setup_indexes"]
+                        if millesime:
+                            setup_cmd.append(f"ARGS=--millesime={millesime}")
                         print(f"Exécution de: {' '.join(setup_cmd)}")
                         print("(Le Makefile utilisera Docker si PHP n'est pas disponible localement)")
 
