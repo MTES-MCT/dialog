@@ -14,10 +14,10 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
     /**
      * @return array{int, string, string|null}
      */
-    private function export(array $query = []): array
+    private function export(array $query = [], string $method = 'GET'): array
     {
         $this->client ??= static::createClient();
-        $this->client->request('GET', '/api/regulations/export.csv', $query);
+        $this->client->request($method, '/api/regulations/export.csv', $query);
         $response = $this->client->getResponse();
 
         return [
@@ -58,6 +58,48 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
         $this->assertCount(1, $lines);
     }
 
+    public function testFilteredExportIsStreamedAsCsv(): void
+    {
+        // Un filtre déclenche le calcul à la volée (StreamedResponse), pas le cache.
+        [$status, $content, $contentType] = $this->export(['status' => 'current']);
+
+        $this->assertSame(200, $status);
+        $this->assertSame('text/csv; charset=UTF-8', $contentType);
+        $this->assertStringStartsWith("\xEF\xBB\xBF", $content);
+        $this->assertStringContainsString('arrete_uuid;arrete_titre;arrete_categorie', $content);
+    }
+
+    public function testExportExcludingHeavyGoodsVehicle(): void
+    {
+        [$status, $content, $contentType] = $this->export(['includeHeavyGoodsVehicle' => 'false']);
+
+        $this->assertSame(200, $status);
+        $this->assertSame('text/csv; charset=UTF-8', $contentType);
+        $this->assertStringContainsString('arrete_uuid;arrete_titre;arrete_categorie', $content);
+    }
+
+    public function testHeadFullExportReturnsContentLength(): void
+    {
+        $this->client ??= static::createClient();
+        $this->client->request('HEAD', '/api/regulations/export.csv');
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/csv; charset=UTF-8', $response->headers->get('content-type'));
+        $this->assertNotNull($response->headers->get('content-length'));
+        $this->assertGreaterThan(0, (int) $response->headers->get('content-length'));
+    }
+
+    public function testHeadFilteredExportReturnsNoBody(): void
+    {
+        $this->client ??= static::createClient();
+        $this->client->request('HEAD', '/api/regulations/export.csv', ['status' => 'current']);
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('text/csv; charset=UTF-8', $response->headers->get('content-type'));
+    }
+
     public function testExportRejectsInvalidStatus(): void
     {
         [$status] = $this->export(['status' => 'invalid']);
@@ -68,6 +110,27 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
     public function testExportRejectsInvalidMeasureType(): void
     {
         [$status] = $this->export(['measureType' => 'invalid']);
+
+        $this->assertSame(400, $status);
+    }
+
+    public function testExportRejectsInvalidCategory(): void
+    {
+        [$status] = $this->export(['category' => 'invalid']);
+
+        $this->assertSame(400, $status);
+    }
+
+    public function testExportRejectsInvalidDateStart(): void
+    {
+        [$status] = $this->export(['dateStart' => 'not-a-date']);
+
+        $this->assertSame(400, $status);
+    }
+
+    public function testExportRejectsInvalidDateEnd(): void
+    {
+        [$status] = $this->export(['dateEnd' => 'not-a-date']);
 
         $this->assertSame(400, $status);
     }
