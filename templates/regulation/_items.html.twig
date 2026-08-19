@@ -56,8 +56,6 @@
         <tbody>
             {% for regulation in pagination.items %}
                 {% set location = regulation.location %}
-                {% set isUpcoming = regulation.startDate ? app_is_client_future_day(regulation.startDate) : null %}
-                {% set hasPassed = regulation.endDate ? app_is_client_past_day(regulation.endDate) : null %}
                 {% set belongsToOrganizationUsers = isAuthenticated and (regulation.organizationUuid in userOrganizationUuids) %}
                 <tr>
                     <td>
@@ -78,23 +76,13 @@
                             {% else %}
                                 {{ 'common.date.starting'|trans({ '%date%': app_datetime(startDate) }) }}
                             {% endif %}
-                            <br />
-                            <b>
-                                {% if isUpcoming %}
-                                    {{ 'common.date.upcoming'|trans }}
-                                {% elseif hasPassed %}
-                                    {{ 'common.date.passed'|trans }}
-                                {% else %}
-                                    {{ 'common.date.ongoing'|trans }}
-                                {% endif %}
-                            </b>
                         {% endif %}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
                         {{ ('regulation.source.' ~ regulation.source.value)|trans }}
                     </td>
                     <td class="fr-hidden fr-x-revert-sm">
-                        {% include 'regulation/_status_badge.html.twig' with { status: regulation.status } only %}
+                        {% include 'regulation/_status_badge.html.twig' with { status: regulation.status, startDate: regulation.startDate, endDate: regulation.endDate } only %}
                     </td>
                     <td>
                         <div class="fr-btns-group fr-btns-group--inline-sm">

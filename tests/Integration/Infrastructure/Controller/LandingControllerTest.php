@@ -74,6 +74,14 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('1 arrêtés publiés en vigueur', $crawler->filter('[data-testid="current-count"]')->text());
         $this->assertSame('2 arrêtés publiés à venir', $crawler->filter('[data-testid="upcoming-count"]')->text());
 
+        // Chaque carte renvoie vers la liste des arrêtés avec le filtre statut correspondant.
+        $this->assertSame('/regulations?status=draft', $crawler->filter('[data-testid="draft-count"]')->attr('href'));
+        $this->assertSame('/regulations?status=published_current', $crawler->filter('[data-testid="current-count"]')->attr('href'));
+        $this->assertSame('/regulations?status=published_upcoming', $crawler->filter('[data-testid="upcoming-count"]')->attr('href'));
+
+        // Lien vers la documentation.
+        $this->assertSame('https://doc.dialog.beta.gouv.fr/', $crawler->selectLink('Voir plus d\'informations')->attr('href'));
+
         // Derniers arrêtés.
         $this->assertCount(4, $crawler->filter('[data-testid="dashboard-regulation-table"] tbody tr'));
 
@@ -89,6 +97,20 @@ final class LandingControllerTest extends AbstractWebTestCase
         // Position de repli sur la France entière si aucune organisation n'a de périmètre.
         $this->assertSame('[2.725, 47.16]', $map->attr('mappos'));
         $this->assertSame('5', $map->attr('mapzoom'));
+
+        // Pas d'UI de filtres sur cette carte : l'URL des tuiles demande toutes les restrictions
+        // en vigueur ou à venir, y compris poids lourds.
+        [$tilesPath, $tilesQuery] = explode('?', $map->attr('tilesurl'));
+        $this->assertSame('/carte/tiles/{z}/{x}/{y}.mvt', $tilesPath);
+        parse_str($tilesQuery, $tilesParams);
+        $this->assertEqualsCanonicalizing(
+            ['noEntry', 'speedLimitation', 'alternateRoad', 'parkingProhibited', 'noOvertaking'],
+            $tilesParams['map_filter_form']['measureTypes'],
+        );
+        $this->assertSame('yes', $tilesParams['map_filter_form']['displayPermanentRegulations']);
+        $this->assertSame('yes', $tilesParams['map_filter_form']['displayTemporaryRegulations']);
+        $this->assertSame('yes', $tilesParams['map_filter_form']['displayHeavyGoodsVehicles']);
+        $this->assertSame('2023-06-09', $tilesParams['map_filter_form']['startDate']);
 
         $this->assertSame('/carte', $crawler->selectLink('Voir toute la carte')->attr('href'));
         $this->assertSame('/regulations', $crawler->selectLink('Voir la liste des arrêtés')->attr('href'));
