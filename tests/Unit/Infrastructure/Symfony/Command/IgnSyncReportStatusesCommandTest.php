@@ -93,7 +93,7 @@ final class IgnSyncReportStatusesCommandTest extends TestCase
         $tester->execute([]);
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
-        $this->assertStringContainsString('0 signalement(s) mis à jour sur 1', $tester->getDisplay());
+        $this->assertStringContainsString('0 signalement(s) mis à jour, 1 inchangé(s), 0 en échec sur 1', $tester->getDisplay());
     }
 
     public function testStatusChangedUpdatesAndSendsEmail(): void
@@ -129,7 +129,7 @@ final class IgnSyncReportStatusesCommandTest extends TestCase
         $tester->execute([]);
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
-        $this->assertStringContainsString('1 signalement(s) mis à jour sur 1', $tester->getDisplay());
+        $this->assertStringContainsString('1 signalement(s) mis à jour, 0 inchangé(s), 0 en échec sur 1', $tester->getDisplay());
         $this->assertSame('treated', $report->getIgnReportStatus());
         $this->assertSame($now, $report->getIgnStatusUpdatedAt());
     }
@@ -158,7 +158,7 @@ final class IgnSyncReportStatusesCommandTest extends TestCase
         $tester->execute([]);
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
-        $this->assertStringContainsString('0 signalement(s) mis à jour sur 1', $tester->getDisplay());
+        $this->assertStringContainsString('0 signalement(s) mis à jour, 0 inchangé(s), 1 en échec sur 1', $tester->getDisplay());
         $this->assertSame('submit', $report->getIgnReportStatus());
     }
 
@@ -203,6 +203,6 @@ final class IgnSyncReportStatusesCommandTest extends TestCase
         $tester->execute([]);
 
         $this->assertSame(Command::SUCCESS, $tester->getStatusCode());
-        $this->assertStringContainsString('2 signalement(s) mis à jour sur 2', $tester->getDisplay());
+        $this->assertStringContainsString('2 signalement(s) mis à jour, 0 inchangé(s), 0 en échec sur 2', $tester->getDisplay());
     }
 }

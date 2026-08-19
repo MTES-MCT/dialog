@@ -14,9 +14,9 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 final class IgnReportClientTest extends TestCase
 {
-    private MockObject $ignReportClient;
-    private MockObject $logger;
-    private MockObject $mockResponse;
+    private MockObject|HttpClientInterface $ignReportClient;
+    private MockObject|LoggerInterface $logger;
+    private MockObject|ResponseInterface $mockResponse;
     private IgnReportClient $client;
 
     protected function setUp(): void
@@ -425,6 +425,7 @@ final class IgnReportClientTest extends TestCase
     {
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse->method('getStatusCode')->willReturn(404);
+        $mockResponse->method('getContent')->with(false)->willReturn('Not Found');
         $mockResponse->expects($this->never())->method('toArray');
 
         $this->ignReportClient
@@ -432,6 +433,8 @@ final class IgnReportClientTest extends TestCase
             ->method('request')
             ->with('GET', '/gcms/api/reports/789', $this->anything())
             ->willReturn($mockResponse);
+
+        $this->logger->expects($this->once())->method('warning');
 
         $status = $this->client->getReportStatus('789');
         $this->assertNull($status);

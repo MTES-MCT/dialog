@@ -110,14 +110,31 @@ final class IgnReportClient
                 'auth_basic' => $this->credentials,
             ]);
 
-            if ($response->getStatusCode() < 200 || $response->getStatusCode() >= 300) {
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode < 200 || $statusCode >= 300) {
+                $this->logger->warning('Unexpected HTTP status while fetching IGN report status', [
+                    'ignReportId' => $ignReportId,
+                    'statusCode' => $statusCode,
+                    'body' => mb_substr($response->getContent(false), 0, 500),
+                ]);
+
                 return null;
             }
 
             $data = $response->toArray(false);
             $status = $data['status'] ?? null;
 
-            return $status !== null ? (string) $status : null;
+            if ($status === null) {
+                $this->logger->warning('IGN report status response has no status field', [
+                    'ignReportId' => $ignReportId,
+                    'statusCode' => $statusCode,
+                ]);
+
+                return null;
+            }
+
+            return (string) $status;
         } catch (\Throwable $e) {
             $this->logger->warning('Failed to get IGN report status', [
                 'ignReportId' => $ignReportId,

@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="contact.email.user_report_status_subject">
                 <source>contact.email.user_report_status_subject</source>
-                <target>Changement de statut IGN pour un signalement d'adresse DiaLog</target>
+                <target>%location% - Statut IGN [%status%]</target>
             </trans-unit>
             <trans-unit id="user_report_status.intro">
                 <source>user_report_status.intro</source>
