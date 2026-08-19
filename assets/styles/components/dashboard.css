@@ -53,16 +53,21 @@
     border-radius: 0.75rem;
 }
 
+/* Couleurs des pictos issues de la maquette Figma (#2011), palette "Illustration" du DSFR.
+   Valeurs en dur : ces états (ex. purple-glycine-850-hover) ne sont pas exposés en
+   variables CSS par le DSFR, et les tokens `--text-label-*` sont trop sombres en thème
+   clair (ex. pink-macaron → marron #8d533e). Teintes lisibles aussi en thème sombre. */
 .app-dashboard-stat__icon--draft {
-    color: var(--text-label-blue-cumulus);
+    color: #7ab1e8;
 }
 
 .app-dashboard-stat__icon--current {
-    color: var(--text-label-green-emeraude);
+    color: #34cb6a;
 }
 
+/* Figma : Light/Options/Illustration/$color-850/Hover/$purple-glycine-850-hover */
 .app-dashboard-stat__icon--upcoming {
-    color: var(--text-label-pink-macaron);
+    color: #fa96f2;
 }
 
 .app-dashboard-stat__link {

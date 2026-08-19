@@ -159,10 +159,33 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             $query
                 ->andWhere('roc.status = :draft');
             $parameters['draft'] = RegulationOrderRecordStatusEnum::DRAFT->value;
-        } elseif ($dto->status === RegulationOrderRecordStatusEnum::PUBLISHED->value) {
+        } elseif (\in_array($dto->status, [
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_PAST,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING,
+        ], true)) {
             $query
                 ->andWhere('roc.status = :published');
             $parameters['published'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
+
+            $overallStartDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_START_DATE_QUERY_TEMPLATE));
+            $overallEndDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_END_DATE_QUERY_TEMPLATE));
+
+            // Mêmes critères "passé" / "en vigueur" / "à venir" que findUuidsForApi()
+            // et countRegulationsByStatusForOrganizations().
+            if ($dto->status === RegulationListFiltersDTO::STATUS_PUBLISHED_PAST) {
+                $query->andWhere(\sprintf('ro.category != :permanentCategory AND %s < :now', $overallEndDateExpr(15)));
+                $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+                $parameters['now'] = $this->dateUtils->getNow();
+            } elseif ($dto->status === RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT) {
+                $query->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr(12), $overallEndDateExpr(13)));
+                $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+                $parameters['now'] = $this->dateUtils->getNow();
+            } elseif ($dto->status === RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING) {
+                $query->andWhere(\sprintf('%s > :now', $overallStartDateExpr(14)));
+                $parameters['now'] = $this->dateUtils->getNow();
+            }
         }
 
         $query->setParameters($parameters);

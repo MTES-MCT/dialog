@@ -9,6 +9,11 @@ use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 
 final class RegulationListFiltersDTO
 {
+    // Statuts "virtuels" du filtre : affinent le statut "published" selon les dates de l'arrêté
+    public const STATUS_PUBLISHED_PAST = 'published_past';
+    public const STATUS_PUBLISHED_CURRENT = 'published_current';
+    public const STATUS_PUBLISHED_UPCOMING = 'published_upcoming';
+
     public const SORT_IDENTIFIER = 'identifier';
     public const SORT_PERIOD = 'period';
     public const SORT_SOURCE = 'source';

@@ -227,18 +227,6 @@
                 <source>common.date.since</source>
                 <target>depuis le %date%</target>
             </trans-unit>
-            <trans-unit id="common.date.upcoming">
-                <source>common.date.upcoming</source>
-                <target>à venir</target>
-            </trans-unit>
-            <trans-unit id="common.date.ongoing">
-                <source>common.date.ongoing</source>
-                <target>en cours</target>
-            </trans-unit>
-            <trans-unit id="common.date.passed">
-                <source>common.date.passed</source>
-                <target>passé</target>
-            </trans-unit>
             <trans-unit id="common.unit.tons">
                 <source>common.unit.tons</source>
                 <target>tonnes</target>
@@ -383,6 +371,18 @@
                 <source>regulation.list.filters.status.published</source>
                 <target>Publié</target>
             </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_past">
+                <source>regulation.list.filters.status.published_past</source>
+                <target>Passé</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_current">
+                <source>regulation.list.filters.status.published_current</source>
+                <target>En vigueur</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_upcoming">
+                <source>regulation.list.filters.status.published_upcoming</source>
+                <target>À venir</target>
+            </trans-unit>
             <trans-unit id="regulation.list.filters.status.placeholder">
                 <source>regulation.list.filters.status.placeholder</source>
                 <target>Tous les statuts</target>
@@ -418,6 +418,18 @@
             <trans-unit id="regulation.status_badge.published.hint">
                 <source>regulation.status_badge.published.hint</source>
                 <target>Données accessibles aux réutilisateurs (GPS...)</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.past.text">
+                <source>regulation.status_badge.past.text</source>
+                <target>Passé</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.current.text">
+                <source>regulation.status_badge.current.text</source>
+                <target>En vigueur</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.upcoming.text">
+                <source>regulation.status_badge.upcoming.text</source>
+                <target>À venir</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.create">
                 <source>regulation.regulation_order_history.action.create</source>
