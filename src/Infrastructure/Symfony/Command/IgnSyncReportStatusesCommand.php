@@ -46,12 +46,25 @@ class IgnSyncReportStatusesCommand extends Command
         }
 
         $updatedCount = 0;
+        $unchangedCount = 0;
+        $failedCount = 0;
 
         foreach ($reports as $report) {
             $ignReportId = $report->getIgnReportId();
             $newStatus = $this->ignReportClient->getReportStatus($ignReportId);
 
-            if ($newStatus === null || $newStatus === $report->getIgnReportStatus()) {
+            if ($newStatus === null) {
+                ++$failedCount;
+                $this->logger->warning('Impossible de récupérer le statut IGN du signalement', [
+                    'ignReportId' => $ignReportId,
+                ]);
+
+                continue;
+            }
+
+            if ($newStatus === $report->getIgnReportStatus()) {
+                ++$unchangedCount;
+
                 continue;
             }
 
@@ -64,7 +77,13 @@ class IgnSyncReportStatusesCommand extends Command
 
         $this->entityManager->flush();
 
-        $output->writeln(\sprintf('%d signalement(s) mis à jour sur %d interrogé(s).', $updatedCount, \count($reports)));
+        $output->writeln(\sprintf(
+            '%d signalement(s) mis à jour, %d inchangé(s), %d en échec sur %d interrogé(s).',
+            $updatedCount,
+            $unchangedCount,
+            $failedCount,
+            \count($reports),
+        ));
 
         return Command::SUCCESS;
     }
@@ -84,6 +103,10 @@ class IgnSyncReportStatusesCommand extends Command
                     'fullName' => $user->getFullName(),
                     'contactEmail' => $user->getEmail(),
                     'status' => $status,
+                ],
+                subjectParams: [
+                    '%status%' => $status,
+                    '%location%' => $report->getLocation(),
                 ],
             ));
         } catch (\Throwable $e) {

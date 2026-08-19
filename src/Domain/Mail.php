@@ -12,6 +12,7 @@ final readonly class Mail
         public string $subject,
         public string $template,
         public array $payload = [],
+        public array $subjectParams = [],
     ) {
     }
 }
