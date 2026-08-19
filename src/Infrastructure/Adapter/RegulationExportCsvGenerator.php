@@ -9,6 +9,7 @@ use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\RegulationExportCsvGeneratorInterface;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use League\Flysystem\FilesystemOperator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class RegulationExportCsvGenerator implements RegulationExportCsvGeneratorInterface
 {
@@ -37,6 +38,7 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
     public function __construct(
         private QueryBusInterface $queryBus,
         private FilesystemOperator $storage,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -98,16 +100,16 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
         return [
             $row->regulationOrderUuid,
             $row->title,
-            $row->category,
-            $row->status,
+            $this->translator->trans('regulation.category.' . $row->category),
+            $this->translator->trans('regulation.status_badge.' . $row->status . '.text'),
             $row->startDate?->format('Y-m-d') ?? '',
             $row->endDate?->format('Y-m-d') ?? '',
             $row->organizationName,
             $row->linkPdf,
             $row->measureUuid,
-            $row->measureType,
+            $this->translator->trans('regulation.measure.type.' . $row->measureType),
             $row->locationUuid,
-            $row->locationType,
+            $this->translator->trans('regulation.location.road.type.' . $row->locationType),
             $row->locationLabel,
         ];
     }
