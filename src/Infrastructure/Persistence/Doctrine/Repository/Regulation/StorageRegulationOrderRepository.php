@@ -34,6 +34,31 @@ final class StorageRegulationOrderRepository extends ServiceEntityRepository imp
             ->getOneOrNullResult();
     }
 
+    public function findPdfInfoByRegulationOrderUuids(array $regulationOrderUuids): array
+    {
+        if ($regulationOrderUuids === []) {
+            return [];
+        }
+
+        $rows = $this->createQueryBuilder('sro')
+            ->select('IDENTITY(sro.regulationOrder) AS regulationOrderUuid', 'sro.path AS path', 'sro.url AS url')
+            ->where('sro.regulationOrder IN (:uuids)')
+            ->setParameter('uuids', $regulationOrderUuids)
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+
+        foreach ($rows as $row) {
+            $result[$row['regulationOrderUuid']] = [
+                'path' => $row['path'],
+                'url' => $row['url'],
+            ];
+        }
+
+        return $result;
+    }
+
     public function remove(StorageRegulationOrder $storageRegulationOrder): void
     {
         $this->getEntityManager()->remove($storageRegulationOrder);

@@ -12,5 +12,12 @@ interface StorageRegulationOrderRepositoryInterface
 
     public function findOneByRegulationOrderUuid(string $uuid): ?StorageRegulationOrder;
 
+    /**
+     * @param string[] $regulationOrderUuids
+     *
+     * @return array<string, array{path: ?string, url: ?string}>
+     */
+    public function findPdfInfoByRegulationOrderUuids(array $regulationOrderUuids): array;
+
     public function remove(StorageRegulationOrder $storageRegulationOrder): void;
 }
