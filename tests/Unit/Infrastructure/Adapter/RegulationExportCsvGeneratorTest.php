@@ -11,6 +11,7 @@ use App\Infrastructure\Adapter\RegulationExportCsvGenerator;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class RegulationExportCsvGeneratorTest extends TestCase
 {
@@ -18,13 +19,16 @@ final class RegulationExportCsvGeneratorTest extends TestCase
 
     private QueryBusInterface&MockObject $queryBus;
     private FilesystemOperator&MockObject $storage;
+    private TranslatorInterface&MockObject $translator;
     private RegulationExportCsvGenerator $generator;
 
     protected function setUp(): void
     {
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->storage = $this->createMock(FilesystemOperator::class);
-        $this->generator = new RegulationExportCsvGenerator($this->queryBus, $this->storage);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->method('trans')->willReturnArgument(0);
+        $this->generator = new RegulationExportCsvGenerator($this->queryBus, $this->storage, $this->translator);
     }
 
     private function makeRow(): RegulationCsvRowView
@@ -57,7 +61,10 @@ final class RegulationExportCsvGeneratorTest extends TestCase
 
         $this->assertStringStartsWith("\xEF\xBB\xBF", $content);
         $this->assertStringContainsString('arrete_uuid;arrete_titre;arrete_categorie', $content);
-        $this->assertStringContainsString('ro-uuid;Titre;temporaryRegulation;published;2025-01-01;2025-02-01', $content);
+        $this->assertStringContainsString(
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;2025-01-01;2025-02-01',
+            $content,
+        );
         $this->assertStringContainsString('Rue de la Paix, Paris', $content);
     }
 
@@ -86,7 +93,10 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         $content = stream_get_contents($handle);
         fclose($handle);
 
-        $this->assertStringContainsString('ro-uuid;Titre;temporaryRegulation;published;;;Org', $content);
+        $this->assertStringContainsString(
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org',
+            $content,
+        );
     }
 
     public function testGenerateWritesCsvToStorage(): void
