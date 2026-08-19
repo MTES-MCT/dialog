@@ -59,6 +59,11 @@
                         </li>
                     {% else %}
                         <li class="fr-nav__item">
+                            <a class="fr-nav__link fr-btn--icon-right fr-icon-home-4-line" href="{{ path('app_landing') }}" {% if 'app_landing' == app.current_route %}aria-current="page"{% endif %}>
+                                {{ 'landing.menu.button.home'|trans }}
+                            </a>
+                        </li>
+                        <li class="fr-nav__item">
                             <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
                                 {{ 'landing.menu.button.regulations'|trans }}
                             </a>

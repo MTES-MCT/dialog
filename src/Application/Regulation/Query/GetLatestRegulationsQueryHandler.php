@@ -5,30 +5,26 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\Regulation\View\RegulationOrderListItemView;
-use App\Domain\Pagination;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 
-final class GetRegulationsQueryHandler
+final class GetLatestRegulationsQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
     ) {
     }
 
-    public function __invoke(GetRegulationsQuery $query): Pagination
+    /** @return RegulationOrderListItemView[] */
+    public function __invoke(GetLatestRegulationsQuery $query): array
     {
-        $regulationOrderViews = [];
-        $rows = $this->repository->findAllRegulations($query->dto);
+        $rows = $this->repository->findLatestRegulations($query->organizationUuids, $query->maxResults);
 
-        foreach ($rows['items'] as $row) {
+        $regulationOrderViews = [];
+
+        foreach ($rows as $row) {
             $regulationOrderViews[] = RegulationOrderListItemView::fromRow($row);
         }
 
-        return new Pagination(
-            $regulationOrderViews,
-            $rows['count'],
-            $query->dto->page,
-            $query->dto->pageSize,
-        );
+        return $regulationOrderViews;
     }
 }

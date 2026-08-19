@@ -1,0 +1,175 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ 'dashboard.meta.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('map') }}
+{% endblock %}
+
+{% block body %}
+    {% set organizations = app.user.userOrganizations %}
+    {% set hasSeveralOrganizations = organizations|length > 1 %}
+
+    <section class="fr-container fr-py-5w" aria-labelledby="dashboard-title">
+        <div class="app-dashboard-onboarding fr-p-3w fr-mb-3w" data-controller="notice" data-notice-id-value="dashboard-onboarding" data-testid="dashboard-onboarding">
+            <img class="app-dashboard-onboarding__illustration" src="{{ asset('images/landing/illustration-steps.webp') }}" alt="" />
+            <div>
+                <h2 class="fr-h5 fr-mb-1w">{{ 'dashboard.onboarding.title'|trans }}</h2>
+                <p class="fr-mb-1w">{{ 'dashboard.onboarding.intro'|trans }}</p>
+                <ol class="fr-mb-1w app-dashboard-onboarding__steps">
+                    {% for step in ['add', 'fill', 'publish', 'visualize', 'invite'] %}
+                        <li>{{ ('dashboard.onboarding.step.' ~ step)|trans|raw }}</li>
+                    {% endfor %}
+                </ol>
+                <a class="fr-link" href="https://doc.dialog.beta.gouv.fr/" target="_blank" rel="noopener external">
+                    {{ 'dashboard.onboarding.more'|trans }}
+                </a>
+            </div>
+            <button title="{{ 'notice.news.btn.close'|trans }}" data-action="notice#dismiss" type="button" class="fr-btn--close fr-btn">{{ 'notice.news.btn.close'|trans }}</button>
+        </div>
+
+        <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
+            <h1 id="dashboard-title" class="fr-h3 fr-col fr-mb-0" data-testid="dashboard-title">
+                {{ (hasSeveralOrganizations ? 'user.myorganizations' : 'config.menu.organization')|trans }}
+            </h1>
+            <div class="fr-col-auto">
+                <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--icon-left fr-mb-0">
+                    {% if organizations|length > 0 %}
+                        <li>
+                            {% if hasSeveralOrganizations %}
+                                <a class="fr-btn fr-btn--secondary fr-icon-settings-5-line fr-btn--icon-left fr-mb-0" href="{{ path('app_my_organizations') }}">
+                                    {{ 'dashboard.manage_organizations'|trans }}
+                                </a>
+                            {% else %}
+                                <a class="fr-btn fr-btn--secondary fr-icon-settings-5-line fr-btn--icon-left fr-mb-0" href="{{ path('app_config_organization_detail', { uuid: organizations[0].uuid }) }}">
+                                    {{ 'dashboard.manage_organization'|trans }}
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                    <li>
+                        <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-mb-0" href="{{ path('app_regulation_add') }}">
+                            {{ 'regulation.list.add_button'|trans }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fr-card fr-p-3w fr-mb-3w">
+            <h2 class="fr-h5">{{ 'dashboard.numbers.title'|trans }}</h2>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {# Les classes d'icône sont écrites en toutes lettres pour rester détectables par PurgeCSS #}
+                {% set statCards = [
+                    { key: 'draft', count: regulationCounts.draftCount, icon: 'fr-icon-edit-box-line', iconClass: 'app-dashboard-stat__icon--draft', params: { status: 'draft' } },
+                    { key: 'current', count: regulationCounts.currentCount, icon: 'fr-icon-calendar-check-fill', iconClass: 'app-dashboard-stat__icon--current', params: { status: 'published_current' } },
+                    { key: 'upcoming', count: regulationCounts.upcomingCount, icon: 'fr-icon-time-line', iconClass: 'app-dashboard-stat__icon--upcoming', params: { status: 'published_upcoming' } },
+                ] %}
+                {% for card in statCards %}
+                    <div class="fr-col-12 fr-col-md-4">
+                        <div class="app-dashboard-stat fr-enlarge-link fr-p-2w">
+                            <p class="app-dashboard-stat__header fr-mb-1w">
+                                <span class="fr-badge fr-badge--sm fr-badge--no-icon app-dashboard-stat__badge">{{ ('dashboard.numbers.' ~ card.key)|trans }}</span>
+                                <span class="{{ card.icon }} app-dashboard-stat__icon {{ card.iconClass }}" aria-hidden="true"></span>
+                            </p>
+                            <p class="fr-mb-0">
+                                <a class="app-dashboard-stat__link" href="{{ path('app_regulations_list', card.params) }}" data-testid="{{ card.key }}-count">
+                                    <span class="app-dashboard-stat__number">{{ card.count }}</span>
+                                    {{ ('dashboard.numbers.' ~ card.key ~ '.label')|trans }}
+                                </a>
+                            </p>
+                            <p class="app-dashboard-stat__arrow fr-mb-0" aria-hidden="true">
+                                <span class="fr-icon-arrow-right-line fr-icon--sm"></span>
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-6">
+                <div class="fr-card fr-p-3w fr-x-h-full app-dashboard-block">
+                    <h2 class="fr-h5 fr-mb-0">{{ 'dashboard.map.title'|trans }}</h2>
+                    <p class="fr-text--sm fr-x-text--mention-grey fr-mb-2w">{{ 'dashboard.map.description'|trans }}</p>
+                    <d-map
+                        id="dashboard-map"
+                        class="app-dashboard-map fr-mb-2w"
+                        aria-hidden="true"
+                        mapHeight="100%"
+                        mapMinHeight="380px"
+                        mapPos="[2.725, 47.16]"
+                        mapZoom="5"
+                        tilesUrl="{{ tilesUrlTemplate }}"
+                        {% if initialBbox %}initialBbox="{{ initialBbox|json_encode }}"{% endif %}
+                        locationPopupUrl="{{ path('fragment_map_location') }}"
+                    >
+                        <p data-map-hidewhen="ready" class="fr-mt-5w fr-x-text--center">
+                            {{ 'map.loading'|trans }}
+                        </p>
+                    </d-map>
+                    <p class="fr-x-text--center fr-mb-0">
+                        <a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('app_carto') }}">
+                            {{ 'dashboard.map.see_all'|trans }}
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-lg-6">
+                <div class="fr-card fr-p-3w fr-x-h-full app-dashboard-block">
+                    <h2 class="fr-h5 fr-mb-0">{{ 'dashboard.regulations.title'|trans }}</h2>
+                    <p class="fr-text--sm fr-x-text--mention-grey fr-mb-0">{{ 'dashboard.regulations.description'|trans }}</p>
+                    <div class="fr-table fr-table--layout-fixed fr-table--no-caption fr-mb-2w app-dashboard-block__table">
+                        <table data-testid="dashboard-regulation-table">
+                            <caption>{{ 'dashboard.regulations.title'|trans }}</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">{{ 'regulation.locations'|trans }}</th>
+                                    <th scope="col">{{ 'regulation.status'|trans }}</th>
+                                    <th scope="col">{{ 'common.actions'|trans }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for regulation in latestRegulations %}
+                                    <tr>
+                                        <td>
+                                            {% if regulation.location %}
+                                                {% include 'regulation/_item_location.html.twig' with { location: regulation.location, numLocations: regulation.numLocations } only %}
+                                            {% else %}
+                                                {{ regulation.identifier }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% include 'regulation/_status_badge.html.twig' with { status: regulation.status, startDate: regulation.startDate, endDate: regulation.endDate } only %}
+                                        </td>
+                                        <td>
+                                            <a title="{{ 'common.see'|trans }}" href="{{ path('app_regulation_detail', { uuid: regulation.uuid }) }}" class="fr-btn fr-icon-eye-line fr-btn--tertiary-no-outline">
+                                                {{ 'common.see'|trans }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr data-testid="empty-row">
+                                        <td colspan="3">
+                                            <p class="fr-mb-0"><em>{{ 'dashboard.regulations.empty'|trans }}</em></p>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if latestRegulations|length > 0 %}
+                        <p class="fr-x-text--center fr-mb-0">
+                            <a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('app_regulations_list') }}">
+                                {{ 'dashboard.regulations.see_all'|trans }}
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

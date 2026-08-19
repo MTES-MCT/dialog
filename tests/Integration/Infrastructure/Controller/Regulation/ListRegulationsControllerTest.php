@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation;
 
+use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
@@ -48,9 +50,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         // Les 2 premiers n'en ont pas pour des raisons de test
         $this->assertSame('', $rows->eq(0)->filter('td')->eq(2)->text());
         $this->assertSame('', $rows->eq(1)->filter('td')->eq(2)->text());
-        $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(2)->filter('td')->eq(2)->text());
-        $this->assertSame('du 15/01/2025 au 30/01/2025 passé', $rows->eq(3)->filter('td')->eq(2)->text());
-        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $rows->eq(4)->filter('td')->eq(2)->text());
+        $this->assertSame('du 15/01/2025 au 30/01/2025', $rows->eq(2)->filter('td')->eq(2)->text());
+        $this->assertSame('du 15/01/2025 au 30/01/2025', $rows->eq(3)->filter('td')->eq(2)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023', $rows->eq(4)->filter('td')->eq(2)->text());
     }
 
     public function testSortByIdentifierAsc(): void
@@ -125,7 +127,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageOneRow0 = $pageOneRows->eq(0)->filter('td');
         $this->assertSame('FO1/2023', $pageOneRow0->eq(0)->text());
         $this->assertSame('Saint-Ouen-sur-Seine Rue Eugène Berthoud + 3 localisations', $pageOneRow0->eq(1)->text());
-        $this->assertSame('du 31/10/2023 au 31/10/2023 passé', $pageOneRow0->eq(2)->text());
+        $this->assertSame('du 31/10/2023 au 31/10/2023', $pageOneRow0->eq(2)->text());
         $this->assertStringContainsString('DiaLog', $pageOneRow0->eq(3)->text());
         $this->assertSame('Brouillon', $pageOneRow0->eq(4)->text());
 
@@ -144,9 +146,10 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $pageTwoRow0 = $pageTwoRows->eq(0)->filter('td');
         $this->assertSame('F/CIFS/2023', $pageTwoRow0->eq(0)->text());
         $this->assertSame('Saint-Ouen-sur-Seine Rue Claude Monet + 1 localisation', $pageTwoRow0->eq(1)->text());
-        $this->assertSame('du 02/06/2023 au 10/06/2023 passé', $pageTwoRow0->eq(2)->text());
+        $this->assertSame('du 02/06/2023 au 10/06/2023', $pageTwoRow0->eq(2)->text());
         $this->assertStringContainsString('DiaLog', $pageTwoRow0->eq(3)->text());
-        $this->assertSame('Publié', $pageTwoRow0->eq(4)->text());
+        // Le badge est calculé avec l'horloge réelle : ces dates de fixtures sont passées.
+        $this->assertSame('Passé', $pageTwoRow0->eq(4)->text());
     }
 
     public function testPublishedRegulationRendering(): void
@@ -162,9 +165,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $row0 = $rows->eq(0)->filter('td');
         $this->assertSame('FO2/2023', $row0->eq(0)->text());
         $this->assertSame('Saint-Ouen-sur-Seine Rue Albert Dhalenne + 3 localisations', $row0->eq(1)->text());
-        $this->assertSame('du 10/03/2023 au 28/03/2023 passé', $row0->eq(2)->text());
+        $this->assertSame('du 10/03/2023 au 28/03/2023', $row0->eq(2)->text());
         $this->assertStringContainsString('DiaLog', $row0->eq(3)->text());
-        $this->assertSame('Publié', $row0->eq(4)->text());
+        $this->assertSame('Passé', $row0->eq(4)->text());
 
         $links = $row0->eq(5)->filter('a');
         $this->assertSame('Voir le détail', $links->eq(0)->text());
@@ -292,7 +295,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $rows->count());
 
         $statuses = $rows->filter('td:nth-child(3)')->each(fn ($node) => $node->text());
-        $this->assertSame('à partir du 11/03/2023 en cours', implode(', ', $statuses));
+        $this->assertSame('à partir du 11/03/2023', implode(', ', $statuses));
     }
 
     public function testRegulationOrderTypeFilterTemporary(): void
@@ -328,6 +331,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
             ['', 'Tous les statuts'],
             [RegulationOrderRecordStatusEnum::DRAFT->value, 'Brouillon'],
             [RegulationOrderRecordStatusEnum::PUBLISHED->value, 'Publié'],
+            [RegulationListFiltersDTO::STATUS_PUBLISHED_PAST, 'Passé'],
+            [RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT, 'En vigueur'],
+            [RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING, 'À venir'],
         ], $choices);
         $this->assertSame('', $field->getValue());
 
@@ -335,10 +341,11 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $form['status'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
         $crawler = $client->submit($form);
 
+        // Le badge est calculé avec l'horloge réelle : toutes les fixtures publiées sont passées.
         $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
         $this->assertCount(4, $statuses);
         foreach ($statuses as $status) {
-            $this->assertSame('Publié', $status);
+            $this->assertSame('Passé', $status);
         }
     }
 
@@ -361,6 +368,51 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         }
     }
 
+    public function testStatusFilterPublishedPast(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?status=' . RegulationListFiltersDTO::STATUS_PUBLISHED_PAST);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Au 09/06/2023 (date figée par DateUtilsMock), seul l'arrêté FO2/2023 (10/03 → 28/03/2023) est passé.
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(1, $rows->count());
+
+        $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
+        $this->assertSame('FO2/2023', implode(', ', $identifiers));
+    }
+
+    public function testStatusFilterPublishedCurrent(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?status=' . RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Au 09/06/2023 (date figée par DateUtilsMock), seul l'arrêté CIFS (02/06 → 10/06/2023) est en vigueur.
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(1, $rows->count());
+
+        $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
+        $this->assertSame(RegulationOrderFixture::IDENTIFIER_CIFS, implode(', ', $identifiers));
+    }
+
+    public function testStatusFilterPublishedUpcoming(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/regulations?status=' . RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING);
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        // Au 09/06/2023, les arrêtés Litteralis (03/07/2023) et 2025-01 (15/01/2025) sont à venir.
+        $rows = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr');
+        $this->assertSame(2, $rows->count());
+
+        $identifiers = $rows->filter('td:nth-child(1)')->each(fn ($node) => $node->text());
+        $this->assertSame('2025-01, 117374#24-A-0473', implode(', ', $identifiers));
+    }
+
     public function testStatusFilterAsAnonymousUser(): void
     {
         $client = static::createClient();
@@ -377,11 +429,12 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $node = $crawler->filter('form[role="search"] select[name="status"]')->first();
         $this->assertNotNull($node->closest('[class*="fr-hidden"]'));
 
-        // Only published regulations are shown
+        // Only published regulations are shown (le badge est calculé avec l'horloge réelle :
+        // toutes les fixtures publiées sont passées, donc aucun badge « Brouillon »)
         $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
         $this->assertGreaterThan(0, \count($statuses));
         foreach ($statuses as $status) {
-            $this->assertSame('Publié', $status);
+            $this->assertSame('Passé', $status);
         }
     }
 
@@ -401,7 +454,7 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $statuses = $crawler->filter('[data-testid="app-regulation-table"] tbody > tr td:nth-child(5)')->each(fn ($node) => $node->text());
         $this->assertGreaterThan(0, \count($statuses));
         foreach ($statuses as $status) {
-            $this->assertSame('Publié', $status);
+            $this->assertSame('Passé', $status);
         }
     }
 

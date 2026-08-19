@@ -19,6 +19,12 @@ final class IndexControllerTest extends AbstractWebTestCase
         $this->assertSame('Mes organisations', $crawler->filter('h2')->text());
         $this->assertMetaTitle('Mes organisations - DiaLog', $crawler);
 
+        $breadcrumbItems = $crawler->filter('.fr-breadcrumb li');
+        $this->assertCount(2, $breadcrumbItems);
+        $this->assertSame('Accueil', $breadcrumbItems->eq(0)->text());
+        $this->assertSame('/', $breadcrumbItems->eq(0)->filter('a')->attr('href'));
+        $this->assertSame('Mes organisations', $breadcrumbItems->eq(1)->text());
+
         $organizations = $crawler->filter('[data-testid="organization-list"]');
         $this->assertCount(2, $organizations->filter('[data-testid="organization-detail"]'));
         $this->assertSame('Complété Département de Seine-Saint-Denis', $organizations->filter('[data-testid="organization-detail"]')->text());

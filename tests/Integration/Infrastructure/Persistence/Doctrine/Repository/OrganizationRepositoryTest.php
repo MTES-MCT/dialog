@@ -90,6 +90,37 @@ final class OrganizationRepositoryTest extends AbstractWebTestCase
         $this->assertNull($bbox);
     }
 
+    public function testFindMapBboxByOrganizationUuidsIgnoresOrganizationsWithoutGeometry(): void
+    {
+        // Seule seineSaintDenisOrg a une géométrie : l'union se réduit à sa bbox.
+        $bbox = $this->organizationRepository->findMapBboxByOrganizationUuids([
+            OrganizationFixture::SEINE_SAINT_DENIS_ID,
+            OrganizationFixture::DIALOG_ORG_ID,
+        ]);
+
+        $this->assertInstanceOf(MapBboxView::class, $bbox);
+        $this->assertGreaterThan(2.0, $bbox->minLon);
+        $this->assertLessThan(3.0, $bbox->maxLon);
+        $this->assertGreaterThan(48.0, $bbox->minLat);
+        $this->assertLessThan(49.5, $bbox->maxLat);
+        $this->assertLessThan($bbox->maxLon, $bbox->minLon);
+        $this->assertLessThan($bbox->maxLat, $bbox->minLat);
+    }
+
+    public function testFindMapBboxByOrganizationUuidsReturnsNullWhenNoGeometry(): void
+    {
+        $bbox = $this->organizationRepository->findMapBboxByOrganizationUuids([
+            OrganizationFixture::DIALOG_ORG_ID,
+        ]);
+
+        $this->assertNull($bbox);
+    }
+
+    public function testFindMapBboxByOrganizationUuidsReturnsNullForEmptyList(): void
+    {
+        $this->assertNull($this->organizationRepository->findMapBboxByOrganizationUuids([]));
+    }
+
     public function testRefreshTopPublishedOrganizationsAndPickRandom(): void
     {
         $this->organizationRepository->refreshTopPublishedOrganizations();
