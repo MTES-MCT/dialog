@@ -31,6 +31,11 @@ class ReportAddress
         return $this->content;
     }
 
+    public function setContent(string $content): string
+    {
+        return $this->content = $content;
+    }
+
     public function getLocation(): string
     {
         return $this->location;
