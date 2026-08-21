@@ -607,7 +607,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $roadTypeOptions = $crawler->filter('#measure_form_locations_0_roadType')->filter('option');
-        $this->assertSame('Tracé libre (GeoJSON)', $roadTypeOptions->eq(4)->innerText());
+        $this->assertSame('Tracé de linéaire (voie)', $roadTypeOptions->eq(4)->innerText());
         $this->assertSame(null, $roadTypeOptions->eq(4)->attr('hidden'));
         $this->assertSame(null, $roadTypeOptions->eq(4)->attr('disabled'));
     }
@@ -643,7 +643,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('Village olympique - tracé libre (geojson)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Village olympique - tracé de linéaire (voie)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testAddRawGeoJSONAsAdminInvalidBlank(): void

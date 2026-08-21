@@ -38,7 +38,7 @@ final class GetLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
-        // Le libellé du tracé libre est affiché seul, sans le suffixe "tracé libre (geojson)"
+        // Le libellé du tracé libre est affiché seul, sans le suffixe "tracé de linéaire (voie)"
         $li = $crawler->filter('ul > li');
         $this->assertSame('ROUTE 147 (NOYELLES-LÈS-SECLIN) DU PR7 +779 AU PR8 +413', $li->eq(1)->text());
     }
