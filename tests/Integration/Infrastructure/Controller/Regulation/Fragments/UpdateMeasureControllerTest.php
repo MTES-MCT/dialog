@@ -540,6 +540,13 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
+        // La carte de dessin est zoomée sur l'organisation, et la localisation étant
+        // déjà enregistrée, le bouton de tracé propose l'état "Modifier le tracé"
+        $drawMap = $crawler->filter('[data-controller="draw-line-map"]')->first();
+        $bbox = json_decode($drawMap->attr('data-draw-line-map-org-bbox-json-value'), true);
+        $this->assertCount(4, $bbox);
+        $this->assertSame('true', $drawMap->attr('data-draw-line-map-persisted-value'));
+
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $form['measure_form[locations][0][rawGeoJSON][label]'] = 'New label';

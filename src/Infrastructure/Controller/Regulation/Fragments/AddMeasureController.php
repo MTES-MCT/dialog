@@ -22,6 +22,7 @@ use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
+use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -43,6 +44,7 @@ final class AddMeasureController extends AbstractRegulationController
         private CommandBusInterface $commandBus,
         private TranslatorInterface $translator,
         private CanUseRawGeoJSON $canUseRawGeoJSON,
+        private OrganizationRepositoryInterface $organizationRepository,
 
         QueryBusInterface $queryBus,
         Security $security,
@@ -61,6 +63,9 @@ final class AddMeasureController extends AbstractRegulationController
         $regulationOrderRecord = $this->getRegulationOrderRecord($uuid);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $organization = $regulationOrderRecord->getOrganization();
+        // Calculée avant le traitement du formulaire : en cas d'échec d'une requête
+        // pendant la soumission, la transaction est avortée et ne permet plus de requêter
+        $organizationBbox = $this->organizationRepository->findMapBboxByOrganizationUuid($organization->getUuid());
         $command = SaveMeasureCommand::create($regulationOrder);
         $administrators = $this->queryBus->handle(new GetAdministratorsQuery());
         $storageAreas = $this->queryBus->handle(new GetStorageAreasByRoadNumbersQuery()); // Show all because no road selected yet
@@ -162,6 +167,7 @@ final class AddMeasureController extends AbstractRegulationController
                     'form' => $form->createView(),
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'measure' => null,
+                    'organizationBbox' => $organizationBbox,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed
