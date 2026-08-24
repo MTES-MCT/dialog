@@ -16,6 +16,8 @@ final class SaveZoneCommand implements RoadCommandInterface
     // Périmètre dessiné (polygone GeoJSON). La géométrie de la localisation (les tronçons
     // de rues couverts par la zone) est calculée à partir de ce périmètre à l'enregistrement.
     public ?string $geometry = null;
+    /** @var SaveWholeCityExceptionCommand[] */
+    public array $exceptions = [];
     public ?Location $location = null;
 
     public function __construct(
@@ -26,6 +28,10 @@ final class SaveZoneCommand implements RoadCommandInterface
             $this->roadType = $this->location->getRoadType();
             $this->label = $zone->getLabel();
             $this->geometry = $zone->getGeometry();
+
+            foreach ($this->location->getExceptions() as $exception) {
+                $this->exceptions[] = new SaveWholeCityExceptionCommand($exception);
+            }
         }
     }
 
@@ -43,5 +49,14 @@ final class SaveZoneCommand implements RoadCommandInterface
 
     public function clean(): void
     {
+        // On retire les exceptions incomplètes (ex. lignes ajoutées puis laissées vides dans le formulaire).
+        $this->exceptions = array_values(array_filter(
+            $this->exceptions,
+            fn (SaveWholeCityExceptionCommand $exception) => $exception->isComplete(),
+        ));
+
+        foreach ($this->exceptions as $exception) {
+            $exception->clean();
+        }
     }
 }

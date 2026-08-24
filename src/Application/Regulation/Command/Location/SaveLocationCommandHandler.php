@@ -80,22 +80,34 @@ final class SaveLocationCommandHandler
         // vivent sur la localisation elle-même, donc rien à persister via un sous-handler.
         if ($roadCommand instanceof SaveWholeCityCommand) {
             $location->setWholeCity($roadCommand->cityCode, $roadCommand->cityLabel);
-            $this->syncWholeCityExceptions($roadCommand, $location);
-
-            return;
+        } else {
+            $this->commandBus->handle($roadCommand);
         }
 
-        $this->commandBus->handle($roadCommand);
+        // « Ville entière », « Tracé de zone » et « Tracé libre » supportent des exceptions ;
+        // pour les autres types, on synchronise avec une liste vide afin de purger les
+        // exceptions restantes après un changement de type de localisation.
+        $exceptionCommands = match (true) {
+            $roadCommand instanceof SaveWholeCityCommand,
+            $roadCommand instanceof SaveZoneCommand,
+            $roadCommand instanceof SaveRawGeoJSONCommand => $roadCommand->exceptions,
+            default => [],
+        };
+
+        $this->syncExceptions($exceptionCommands, $location);
     }
 
-    private function syncWholeCityExceptions(SaveWholeCityCommand $command, Location $location): void
+    /**
+     * @param SaveWholeCityExceptionCommand[] $exceptionCommands
+     */
+    private function syncExceptions(array $exceptionCommands, Location $location): void
     {
         // On remplace l'ensemble des exceptions (l'orphan removal supprime les anciennes).
         foreach ($location->getExceptions() as $existingException) {
             $location->removeException($existingException);
         }
 
-        foreach ($command->exceptions as $exceptionCommand) {
+        foreach ($exceptionCommands as $exceptionCommand) {
             $geometryQuery = $exceptionCommand->getGeometryQuery();
             $geometry = $geometryQuery ? $this->queryBus->handle($geometryQuery) : null;
 

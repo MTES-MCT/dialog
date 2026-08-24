@@ -840,6 +840,10 @@
                 <source>regulation.location.zone.geometry.help</source>
                 <target>Dessinez le périmètre sur la carte : la restriction s'appliquera aux rues situées à l'intérieur de la zone (autoroutes exclues).</target>
             </trans-unit>
+            <trans-unit id="regulation.location.zone.exceptions.description">
+                <source>regulation.location.zone.exceptions.description</source>
+                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à toute la zone sauf ces voies.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.zone.draw_polygon_map.draw.start">
                 <source>regulation.location.zone.draw_polygon_map.draw.start</source>
                 <target>Tracer le périmètre</target>
@@ -1059,6 +1063,10 @@
             <trans-unit id="regulation.location.raw_geojson.geometry">
                 <source>regulation.location.raw_geojson.geometry</source>
                 <target>Géométrie GeoJSON</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.exceptions.description">
+                <source>regulation.location.raw_geojson.exceptions.description</source>
+                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à tout le tracé sauf ces voies.</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.warning">
                 <source>regulation.location.raw_geojson.draw_line_map.warning</source>

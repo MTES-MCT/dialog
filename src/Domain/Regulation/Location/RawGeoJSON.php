@@ -10,6 +10,11 @@ class RawGeoJSON
         private string $uuid,
         private Location $location,
         private string $label,
+        // Tracé dessiné par l'utilisateur (GeoJSON), conservé pour la ré-édition.
+        // La géométrie de la localisation contient quant à elle le tracé après
+        // soustraction des exceptions (affiché dans l'aperçu, la carte et les exports).
+        // Nullable pour les tracés créés avant l'introduction des exceptions.
+        private ?string $geometry = null,
     ) {
     }
 
@@ -28,9 +33,16 @@ class RawGeoJSON
         return $this->label;
     }
 
+    public function getGeometry(): ?string
+    {
+        return $this->geometry;
+    }
+
     public function update(
         string $label,
+        ?string $geometry = null,
     ): void {
         $this->label = $label;
+        $this->geometry = $geometry;
     }
 }

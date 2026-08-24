@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Form\Regulation;
 
+use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,6 +35,23 @@ final class ZoneFormType extends AbstractType
                 options: [
                     'label' => 'regulation.location.zone.geometry',
                     'help' => 'regulation.location.zone.geometry.help',
+                ],
+            )
+            ->add(
+                'exceptions',
+                CollectionType::class,
+                options: [
+                    'entry_type' => WholeCityExceptionFormType::class,
+                    'entry_options' => ['label' => false, 'with_city' => true],
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'by_reference' => false,
+                    'prototype' => true,
+                    'prototype_name' => '__exception_name__',
+                    // Pré-sélectionne « Voie » dans le prototype pour qu'une exception ajoutée
+                    // affiche directement son sous-formulaire.
+                    'prototype_data' => new SaveWholeCityExceptionCommand(),
+                    'label' => false,
                 ],
             )
             ->add('roadType', HiddenType::class)

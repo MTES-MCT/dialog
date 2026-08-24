@@ -69,9 +69,10 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
         throw new GeocodingAddressNotFoundException($message);
     }
 
-    // ~3 mètres en degrés (SRID 4326) : tolérance pour soustraire les géométries d'exception
-    // qui proviennent d'une source différente (troncon_de_route) de la ville (voie_nommee).
-    private const CITY_SUBTRACT_BUFFER_DEG = 0.00003;
+    // ~3 mètres en degrés (SRID 4326) : tolérance pour soustraire les géométries d'exception,
+    // qui peuvent provenir d'une source différente (troncon_de_route) de la géométrie de base
+    // (voie_nommee pour une ville, tracé dessiné pour une zone ou un tracé libre).
+    private const SUBTRACT_BUFFER_DEG = 0.00003;
 
     public function computeCityGeometry(string $cityCode, array $excludedRoadBanIds = [], array $subtractGeometries = []): string
     {
@@ -100,7 +101,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                 $subtractExprs[] = \sprintf('ST_GeomFromGeoJSON(:%s)', $key);
                 $params[$key] = $geometry;
             }
-            $params['buffer'] = self::CITY_SUBTRACT_BUFFER_DEG;
+            $params['buffer'] = self::SUBTRACT_BUFFER_DEG;
             $cityExpr = \sprintf(
                 'ST_Difference(ST_Union(geometrie), ST_Buffer(ST_Union(ARRAY[%s]), :buffer))',
                 implode(', ', $subtractExprs),
@@ -130,6 +131,50 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         $message = \sprintf("no result found for cityCode='%s'", $cityCode);
         throw new GeocodingAddressNotFoundException($message);
+    }
+
+    public function subtractGeometries(string $geometry, array $subtractGeometries): string
+    {
+        if (\count($subtractGeometries) === 0) {
+            return $geometry;
+        }
+
+        $params = [
+            'base' => $geometry,
+            'buffer' => self::SUBTRACT_BUFFER_DEG,
+        ];
+
+        $subtractExprs = [];
+        foreach ($subtractGeometries as $i => $subtractGeometry) {
+            $key = 'subtract_' . $i;
+            $subtractExprs[] = \sprintf('ST_GeomFromGeoJSON(:%s)', $key);
+            $params[$key] = $subtractGeometry;
+        }
+
+        try {
+            $rows = $this->bdtopo2025Connection->fetchAllAssociative(
+                \sprintf(
+                    // ST_UnaryUnion fusionne les lignes dupliquées/superposées de la géométrie
+                    // de base pour que ST_Difference se comporte correctement.
+                    'SELECT ST_AsGeoJSON(ST_Force2D(f_ST_NormalizeGeometryCollection(
+                        ST_Difference(
+                            ST_UnaryUnion(ST_GeomFromGeoJSON(:base)),
+                            ST_Buffer(ST_Union(ARRAY[%s]), :buffer)
+                        )
+                    ))) AS geometry',
+                    implode(', ', $subtractExprs),
+                ),
+                $params,
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('Geometry subtraction query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        if ($rows && $rows[0]['geometry']) {
+            return $rows[0]['geometry'];
+        }
+
+        throw new GeocodingFailureException('Geometry subtraction returned no result');
     }
 
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string
