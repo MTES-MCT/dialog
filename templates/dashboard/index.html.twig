@@ -9,6 +9,8 @@
     {{ encore_entry_link_tags('map') }}
 {% endblock %}
 
+{% block page_class %}app-dashboard-page{% endblock %}
+
 {% block body %}
     {% set organizations = app.user.userOrganizations %}
     {% set hasSeveralOrganizations = organizations|length > 1 %}
@@ -28,7 +30,7 @@
                     {{ 'dashboard.onboarding.more'|trans }}
                 </a>
             </div>
-            <button title="{{ 'notice.news.btn.close'|trans }}" data-action="notice#dismiss" type="button" class="fr-btn--close fr-btn">{{ 'notice.news.btn.close'|trans }}</button>
+            <button title="{{ 'common.close'|trans }}" data-action="notice#dismiss" type="button" class="fr-btn--close fr-btn">{{ 'common.close'|trans }}</button>
         </div>
 
         <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
@@ -62,18 +64,16 @@
         <div class="fr-card fr-p-3w fr-mb-3w">
             <h2 class="fr-h5">{{ 'dashboard.numbers.title'|trans }}</h2>
             <div class="fr-grid-row fr-grid-row--gutters">
-                {# Les classes d'icône sont écrites en toutes lettres pour rester détectables par PurgeCSS #}
                 {% set statCards = [
-                    { key: 'draft', count: regulationCounts.draftCount, icon: 'fr-icon-edit-box-line', iconClass: 'app-dashboard-stat__icon--draft', params: { status: 'draft' } },
-                    { key: 'current', count: regulationCounts.currentCount, icon: 'fr-icon-calendar-check-fill', iconClass: 'app-dashboard-stat__icon--current', params: { status: 'published_current' } },
-                    { key: 'upcoming', count: regulationCounts.upcomingCount, icon: 'fr-icon-time-line', iconClass: 'app-dashboard-stat__icon--upcoming', params: { status: 'published_upcoming' } },
+                    { key: 'draft', count: regulationCounts.draftCount, displayStatus: 'draft', params: { status: 'draft' } },
+                    { key: 'current', count: regulationCounts.currentCount, displayStatus: 'current', params: { status: 'published_current' } },
+                    { key: 'upcoming', count: regulationCounts.upcomingCount, displayStatus: 'upcoming', params: { status: 'published_upcoming' } },
                 ] %}
                 {% for card in statCards %}
                     <div class="fr-col-12 fr-col-md-4">
                         <div class="app-dashboard-stat fr-enlarge-link fr-p-2w">
-                            <p class="app-dashboard-stat__header fr-mb-1w">
-                                <span class="fr-badge fr-badge--sm fr-badge--no-icon app-dashboard-stat__badge">{{ ('dashboard.numbers.' ~ card.key)|trans }}</span>
-                                <span class="{{ card.icon }} app-dashboard-stat__icon {{ card.iconClass }}" aria-hidden="true"></span>
+                            <p class="fr-mb-1w">
+                                {% include 'regulation/_status_badge.html.twig' with { displayStatus: card.displayStatus, small: true } only %}
                             </p>
                             <p class="fr-mb-0">
                                 <a class="app-dashboard-stat__link" href="{{ path('app_regulations_list', card.params) }}" data-testid="{{ card.key }}-count">
@@ -111,7 +111,7 @@
                             {{ 'map.loading'|trans }}
                         </p>
                     </d-map>
-                    <p class="fr-x-text--center fr-mb-0">
+                    <p class="fr-x-text--right fr-mb-0 app-dashboard-block__more">
                         <a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('app_carto') }}">
                             {{ 'dashboard.map.see_all'|trans }}
                         </a>
@@ -162,7 +162,7 @@
                         </table>
                     </div>
                     {% if latestRegulations|length > 0 %}
-                        <p class="fr-x-text--center fr-mb-0">
+                        <p class="fr-x-text--right fr-mb-0 app-dashboard-block__more">
                             <a class="fr-link fr-icon-arrow-right-line fr-link--icon-right" href="{{ path('app_regulations_list') }}">
                                 {{ 'dashboard.regulations.see_all'|trans }}
                             </a>

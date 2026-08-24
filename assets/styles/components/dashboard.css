@@ -1,11 +1,17 @@
 /* Tableau de bord (accueil connecté) */
 
+/* Fond de page en bleu-france-975 (maquette) */
+.app-dashboard-page {
+    background: var(--background-alt-blue-france);
+}
+
 .app-dashboard-onboarding {
     position: relative;
     display: flex;
     gap: 2rem;
     align-items: center;
-    background: var(--background-alt-blue-france);
+    /* Bleu écume 925 (maquette) : pas de token de décision DSFR pour cette teinte */
+    background: var(--blue-ecume-925-125);
     border-radius: 0.5rem;
 }
 
@@ -41,35 +47,6 @@
     border-bottom: 3px solid var(--border-active-blue-france);
 }
 
-.app-dashboard-stat__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.app-dashboard-stat__badge {
-    text-transform: none;
-    font-weight: 500;
-    border-radius: 0.75rem;
-}
-
-/* Couleurs des pictos issues de la maquette Figma (#2011), palette "Illustration" du DSFR.
-   Valeurs en dur : ces états (ex. purple-glycine-850-hover) ne sont pas exposés en
-   variables CSS par le DSFR, et les tokens `--text-label-*` sont trop sombres en thème
-   clair (ex. pink-macaron → marron #8d533e). Teintes lisibles aussi en thème sombre. */
-.app-dashboard-stat__icon--draft {
-    color: #7ab1e8;
-}
-
-.app-dashboard-stat__icon--current {
-    color: #34cb6a;
-}
-
-/* Figma : Light/Options/Illustration/$color-850/Hover/$purple-glycine-850-hover */
-.app-dashboard-stat__icon--upcoming {
-    color: #fa96f2;
-}
-
 .app-dashboard-stat__link {
     background-image: none;
     color: inherit;
@@ -99,7 +76,23 @@
     flex-grow: 1;
 }
 
+/* Colonne Actions resserrée (maquette) : sans cela, le layout fixe répartit
+   les 3 colonnes à parts égales et laisse un grand vide à droite. */
+.app-dashboard-block__table th:last-child,
+.app-dashboard-block__table td:last-child {
+    width: 6rem;
+    padding-right: 1rem;
+}
+
+/* Lien "voir plus" épinglé en bas du bloc, pour que les liens des deux cartes
+   restent alignés horizontalement quelle que soit la hauteur de leur contenu. */
+.app-dashboard-block__more {
+    margin-top: auto;
+}
+
 .app-dashboard-map {
     display: block;
     min-height: 380px;
+    /* La carte s'étire pour combler le bloc quand la carte voisine est plus haute */
+    flex-grow: 1;
 }

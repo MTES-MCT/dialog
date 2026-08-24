@@ -58,19 +58,22 @@
                             </a>
                         </li>
                     {% else %}
+                        {# L'icône est portée par un span dédié : sur l'onglet actif, le DSFR
+                           dessine le soulignement via le ::before du lien, qui entrerait en
+                           conflit avec une icône posée directement sur le lien. #}
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link fr-btn--icon-right fr-icon-home-4-line" href="{{ path('app_landing') }}" {% if 'app_landing' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.home'|trans }}
+                            <a class="fr-nav__link" href="{{ path('app_landing') }}" {% if 'app_landing' == app.current_route %}aria-current="page"{% endif %}>
+                                <span class="fr-icon-home-4-line fr-icon--sm fr-mr-1w" aria-hidden="true"></span>{{ 'landing.menu.button.home'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link fr-btn--icon-right fr-icon-alarm-warning-line" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.regulations'|trans }}
+                            <a class="fr-nav__link" href="{{ path('app_regulations_list') }}" {% if 'app_regulations_list' == app.current_route %}aria-current="page"{% endif %}>
+                                <span class="fr-icon-alarm-warning-line fr-icon--sm fr-mr-1w" aria-hidden="true"></span>{{ 'landing.menu.button.regulations'|trans }}
                             </a>
                         </li>
                         <li class="fr-nav__item">
-                            <a class="fr-nav__link fr-btn--icon-right fr-icon-road-map-line" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
-                                {{ 'landing.menu.button.map'|trans }}
+                            <a class="fr-nav__link" href="{{ path('app_carto') }}" {% if 'app_carto' == app.current_route %}aria-current="page"{% endif %}>
+                                <span class="fr-icon-road-map-line fr-icon--sm fr-mr-1w" aria-hidden="true"></span>{{ 'landing.menu.button.map'|trans }}
                             </a>
                         </li>
                     {% endif %}

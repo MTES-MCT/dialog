@@ -1930,25 +1930,13 @@
                 <source>dashboard.numbers.title</source>
                 <target>En quelques chiffres</target>
             </trans-unit>
-            <trans-unit id="dashboard.numbers.draft">
-                <source>dashboard.numbers.draft</source>
-                <target>Brouillon</target>
-            </trans-unit>
             <trans-unit id="dashboard.numbers.draft.label">
                 <source>dashboard.numbers.draft.label</source>
                 <target>arrêtés en brouillon</target>
             </trans-unit>
-            <trans-unit id="dashboard.numbers.current">
-                <source>dashboard.numbers.current</source>
-                <target>En cours</target>
-            </trans-unit>
             <trans-unit id="dashboard.numbers.current.label">
                 <source>dashboard.numbers.current.label</source>
                 <target>arrêtés publiés en vigueur</target>
-            </trans-unit>
-            <trans-unit id="dashboard.numbers.upcoming">
-                <source>dashboard.numbers.upcoming</source>
-                <target>À venir</target>
             </trans-unit>
             <trans-unit id="dashboard.numbers.upcoming.label">
                 <source>dashboard.numbers.upcoming.label</source>
