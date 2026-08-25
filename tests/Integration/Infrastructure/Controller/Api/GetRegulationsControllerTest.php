@@ -42,7 +42,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         // Prepare some regulation orders to avoid the need to have published versions of fixtures
         $this->prepareWinterMaintenanceRegulationOrder($client);
 
-        $client->request('GET', '/api/regulations.xml');
+        $client->request('GET', '/api/regulations/datex.xml');
         $response = $client->getResponse();
 
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
@@ -67,12 +67,26 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         // Prepare some regulation orders to avoid the need to have published versions of fixtures
         $this->prepareWinterMaintenanceRegulationOrder($client);
 
-        $client->request('GET', '/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=true');
+        $client->request('GET', '/api/regulations/datex.xml?includePermanent=false&includeTemporary=true&includeExpired=true');
         $response = $client->getResponse();
 
         $this->assertInstanceOf(StreamedResponse::class, $response);
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
+    }
+
+    public function testLegacyDatexUrlRedirects(): void
+    {
+        $client = $this->login();
+
+        $client->request('GET', '/api/regulations.xml?includeExpired=true');
+        $response = $client->getResponse();
+
+        $this->assertResponseStatusCodeSame(301);
+        $this->assertSame(
+            'http://localhost/api/regulations/datex?includeExpired=true',
+            $response->headers->get('location'),
+        );
     }
 }

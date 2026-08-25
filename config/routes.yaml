@@ -2,6 +2,18 @@ controllers:
     resource: ../src/Infrastructure/Controller/
     type: attribute
 
+# Redirection de l'ancienne URL de l'export DATEX II (`/api/regulations.xml`)
+# vers la nouvelle URL canonique (`/api/regulations/datex`).
+api_regulations_datex_redirect:
+    path: /api/regulations.{_format}
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::redirectAction
+    methods: [GET, HEAD]
+    defaults:
+        route: api_regulations_datex
+        permanent: true
+        keepQueryParams: true
+        _format: xml
+
 my_area_controllers:
     resource: ../src/Infrastructure/Controller/MyArea
     type: attribute

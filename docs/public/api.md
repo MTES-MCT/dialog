@@ -20,7 +20,7 @@ L’authentification est requise pour les endpoints suivants :
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 - POST `/api/nearby-streets` (recherche de rues à proximité d'une géométrie)
 
-Les exports (lecture) via GET (`/api/regulations.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
+Les exports (lecture) via GET (`/api/regulations/datex.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
 
 ## Documentation OpenAPI
 
@@ -565,9 +565,11 @@ Pour obtenir des identifiants d’accès ou signaler un problème, contactez l�
 ### Export DATEX II
 
 - Méthode: GET
-- URL: `/api/regulations.xml`
+- URL: `/api/regulations/datex.xml`
 - Authentification requise: non
 - Réponse: XML (`Content-Type: text/xml; charset=UTF-8`)
+
+> L'ancienne URL `/api/regulations.xml` reste fonctionnelle : elle redirige (301) vers `/api/regulations/datex.xml` en conservant les paramètres de requête.
 
 #### Paramètres de requête (filtres)
 
@@ -584,20 +586,20 @@ Règles d’interprétation:
 #### Exemple de requête
 
 ```bash
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml' -H 'Accept: application/xml'
 ```
 
 Exemples avec filtres:
 
 ```bash
 # Uniquement permanents
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includeTemporary=false' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includeTemporary=false' -H 'Accept: application/xml'
 
 # Uniquement temporaires non expirés
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=false' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includePermanent=false&includeTemporary=true&includeExpired=false' -H 'Accept: application/xml'
 
 # Tous les temporaires, y compris expirés (et sans permanents)
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=true' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includePermanent=false&includeTemporary=true&includeExpired=true' -H 'Accept: application/xml'
 ```
 
 #### Détails
@@ -608,7 +610,7 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=fa
 ### Export CSV des restrictions
 
 - Méthode: GET
-- URL: `/api/regulations/export.csv`
+- URL: `/api/regulations/csv`
 - Authentification requise: non
 - Réponse: CSV (`Content-Type: text/csv; charset=UTF-8`)
 
@@ -640,7 +642,7 @@ Sans aucun filtre, l'export porte sur **toute la base publiée** (tous statuts c
 
 #### Paramètres de requête (filtres)
 
-Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/search`) sont disponibles. Dès qu'un filtre est fourni, l'export est calculé à la volée.
+Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/json`) sont disponibles. Dès qu'un filtre est fourni, l'export est calculé à la volée.
 
 - `status` (`current` | `expired` | `upcoming` | `all`, défaut `all`): statut de vigueur.
 - `inseeCode` (string): code INSEE exact d'une commune.
@@ -653,10 +655,10 @@ Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/search`) s
 
 ```bash
 # Export complet (toute la base)
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/export.csv' -o restrictions.csv
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv' -o restrictions.csv
 
 # Uniquement les arrêtés en vigueur d'une commune
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/export.csv?status=current&inseeCode=75056' -o restrictions.csv
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv?status=current&inseeCode=75056' -o restrictions.csv
 ```
 
 ### Export CIFS (Waze)

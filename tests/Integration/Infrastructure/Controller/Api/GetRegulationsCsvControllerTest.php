@@ -17,7 +17,7 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
     private function export(array $query = [], string $method = 'GET'): array
     {
         $this->client ??= static::createClient();
-        $this->client->request($method, '/api/regulations/export.csv', $query);
+        $this->client->request($method, '/api/regulations/csv', $query);
         $response = $this->client->getResponse();
 
         return [
@@ -81,7 +81,7 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
     public function testHeadFullExportReturnsContentLength(): void
     {
         $this->client ??= static::createClient();
-        $this->client->request('HEAD', '/api/regulations/export.csv');
+        $this->client->request('HEAD', '/api/regulations/csv');
         $response = $this->client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());
@@ -93,7 +93,7 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
     public function testHeadFilteredExportReturnsNoBody(): void
     {
         $this->client ??= static::createClient();
-        $this->client->request('HEAD', '/api/regulations/export.csv', ['status' => 'current']);
+        $this->client->request('HEAD', '/api/regulations/csv', ['status' => 'current']);
         $response = $this->client->getResponse();
 
         $this->assertSame(200, $response->getStatusCode());

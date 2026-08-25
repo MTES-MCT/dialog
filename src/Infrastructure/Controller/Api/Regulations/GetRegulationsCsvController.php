@@ -36,11 +36,11 @@ final class GetRegulationsCsvController
     }
 
     #[Route(
-        '/api/regulations/export.csv',
-        name: 'api_regulations_export_csv',
+        '/api/regulations/csv',
+        name: 'api_regulations_csv',
         methods: ['GET', 'HEAD'],
         // Priorité supérieure à `api_regulations_get` (`/api/regulations/{identifier}`) dont
-        // la contrainte `.+` capturerait sinon le segment `export.csv`.
+        // la contrainte `.+` capturerait sinon le segment `csv`.
         priority: 10,
     )]
     #[OA\Tag(name: 'Public')]
@@ -56,7 +56,7 @@ final class GetRegulationsCsvController
             export complet est pré-généré et servi depuis un cache pour un téléchargement rapide.
 
             ### Filtres
-            Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/search`) sont disponibles.
+            Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/json`) sont disponibles.
             Dès qu'un filtre est fourni, l'export est calculé à la volée.
 
             ### Authentification
