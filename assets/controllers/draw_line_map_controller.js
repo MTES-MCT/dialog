@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
 import { extractSingleGeometry } from '../maps/geojson';
-import { getMeasureTypeStyle, buildMeasurePointPaint } from '../maps/measure_type_styles';
+import { buildMeasurePointPaint } from '../maps/measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
@@ -13,6 +13,11 @@ const FILL_LAYER = 'draw-fill-layer';
 const POINTS_SOURCE = 'draw-points-source';
 const POINTS_LAYER = 'draw-points-layer';
 const EMPTY_FC = { type: 'FeatureCollection', features: [] };
+
+// Style du tracé en cours d'édition : bleu (au lieu du noir), avec un
+// remplissage translucide pour les zones (maquettes du ticket #2027)
+const DRAW_STYLE = { color: '#000091', dasharray: [1, 0], lineWidth: 4 };
+const DRAW_FILL_OPACITY = 0.2;
 
 const SEARCH_DEBOUNCE_MS = 250;
 const SEARCH_MIN_LENGTH = 3;
@@ -483,11 +488,11 @@ export default class extends Controller {
     addMeasureLineLayer(this.#map, {
       sourceId: LINE_SOURCE,
       layerId: LINE_LAYER,
-      measureType: this.measureTypeValue,
+      measureType: '',
+      style: DRAW_STYLE,
     });
 
     this.#map.addSource(POINTS_SOURCE, { type: 'geojson', data: EMPTY_FC });
-    const style = getMeasureTypeStyle(this.measureTypeValue);
 
     if (this.#isPolygon()) {
       // Remplissage translucide du périmètre, sous la ligne de contour
@@ -498,8 +503,8 @@ export default class extends Controller {
           source: LINE_SOURCE,
           filter: ['==', '$type', 'Polygon'],
           paint: {
-            'fill-color': style.color,
-            'fill-opacity': 0.12,
+            'fill-color': DRAW_STYLE.color,
+            'fill-opacity': DRAW_FILL_OPACITY,
           },
         },
         LINE_LAYER,
@@ -510,7 +515,7 @@ export default class extends Controller {
       type: 'circle',
       source: POINTS_SOURCE,
       paint: {
-        ...buildMeasurePointPaint(style, { radius: 5 }),
+        ...buildMeasurePointPaint(DRAW_STYLE, { radius: 5 }),
         'circle-radius': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
