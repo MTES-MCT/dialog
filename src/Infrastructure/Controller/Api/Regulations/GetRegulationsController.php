@@ -26,10 +26,13 @@ final class GetRegulationsController
     }
 
     #[Route(
-        '/api/regulations.{_format}',
+        '/api/regulations/datex.{_format}',
         methods: ['GET', 'HEAD'],
-        name: 'api_regulations_list',
+        name: 'api_regulations_datex',
         defaults: ['_format' => 'xml'],
+        // Priorité supérieure à `api_regulations_get` (`/api/regulations/{identifier}`) dont
+        // la contrainte `.+` capturerait sinon le segment `datex`.
+        priority: 10,
     )]
     #[OA\Tag(name: 'Public')]
     public function __invoke(

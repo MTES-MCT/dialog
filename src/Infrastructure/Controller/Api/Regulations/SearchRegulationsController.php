@@ -36,11 +36,11 @@ final class SearchRegulationsController
     }
 
     #[Route(
-        '/api/regulations/search',
-        name: 'api_regulations_search',
+        '/api/regulations/json',
+        name: 'api_regulations_json',
         methods: ['GET'],
         // Priorité supérieure à `api_regulations_get` (`/api/regulations/{identifier}`) dont
-        // la contrainte `.+` capturerait sinon le segment `search`.
+        // la contrainte `.+` capturerait sinon le segment `json`.
         priority: 10,
     )]
     #[OA\Tag(name: 'Public')]
