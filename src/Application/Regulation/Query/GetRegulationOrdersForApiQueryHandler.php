@@ -7,16 +7,20 @@ namespace App\Application\Regulation\Query;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Application\Regulation\View\RegulationOrderForApiView;
+use App\Application\StorageInterface;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Repository\StorageRegulationOrderRepositoryInterface;
 
 final class GetRegulationOrdersForApiQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $regulationOrderRecordRepository,
+        private StorageRegulationOrderRepositoryInterface $storageRegulationOrderRepository,
+        private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
     ) {
     }
@@ -38,6 +42,7 @@ final class GetRegulationOrdersForApiQueryHandler
         }
 
         $overallDates = $this->regulationOrderRecordRepository->getOverallDatesByRegulationUuids($uuids);
+        $documentUrls = $this->getDocumentUrlsByRecordUuids($uuids);
 
         $views = [];
 
@@ -49,7 +54,7 @@ final class GetRegulationOrdersForApiQueryHandler
                 continue;
             }
 
-            $views[] = $this->buildView($record, $overallDates);
+            $views[] = $this->buildView($record, $overallDates, $documentUrls);
         }
 
         $totalItems = \count($views);
@@ -73,7 +78,24 @@ final class GetRegulationOrdersForApiQueryHandler
         return false;
     }
 
-    private function buildView(RegulationOrderRecord $record, array $overallDates): RegulationOrderForApiView
+    /**
+     * Résout l'URL du document original de chaque arrêté : fichier téléversé sur DiaLog
+     * en priorité, sinon URL externe fournie par l'organisation.
+     */
+    private function getDocumentUrlsByRecordUuids(array $uuids): array
+    {
+        $documentUrls = [];
+
+        foreach ($this->storageRegulationOrderRepository->getStoragesByRegulationOrderRecordUuids($uuids) as $recordUuid => $storageInfo) {
+            $documentUrls[$recordUuid] = $storageInfo['path']
+                ? $this->storage->getUrl($storageInfo['path'])
+                : $storageInfo['url'];
+        }
+
+        return $documentUrls;
+    }
+
+    private function buildView(RegulationOrderRecord $record, array $overallDates, array $documentUrls): RegulationOrderForApiView
     {
         $regulationOrder = $record->getRegulationOrder();
         $dates = $overallDates[$record->getUuid()] ?? ['overallStartDate' => null, 'overallEndDate' => null];
@@ -85,6 +107,7 @@ final class GetRegulationOrdersForApiQueryHandler
         }
 
         return new RegulationOrderForApiView(
+            uuid: $record->getUuid(),
             identifier: $regulationOrder->getIdentifier(),
             status: $record->getStatus(),
             category: $regulationOrder->getCategory(),
@@ -93,6 +116,7 @@ final class GetRegulationOrdersForApiQueryHandler
             title: $regulationOrder->getTitle(),
             startDate: $dates['overallStartDate'],
             endDate: $dates['overallEndDate'],
+            documentUrl: $documentUrls[$record->getUuid()] ?? null,
             organizationUuid: $record->getOrganizationUuid(),
             organizationName: $record->getOrganizationName(),
             measures: $measures,

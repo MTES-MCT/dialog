@@ -34,6 +34,7 @@ final class SearchRegulationsControllerTest extends TestCase
     public function testReturnsPaginatedEnvelope(): void
     {
         $view = new RegulationOrderForApiView(
+            uuid: 'roc-uuid',
             identifier: 'F/1',
             status: 'published',
             category: 'temporaryRegulation',
@@ -42,6 +43,7 @@ final class SearchRegulationsControllerTest extends TestCase
             title: 'Title',
             startDate: null,
             endDate: null,
+            documentUrl: null,
             organizationUuid: 'org-uuid',
             organizationName: 'Org',
             measures: [],

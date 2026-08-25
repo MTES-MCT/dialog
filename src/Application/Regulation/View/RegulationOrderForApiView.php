@@ -18,6 +18,7 @@ final readonly class RegulationOrderForApiView
      * @param MeasureView[] $measures
      */
     public function __construct(
+        public string $uuid,
         public string $identifier,
         public string $status,
         public string $category,
@@ -26,6 +27,7 @@ final readonly class RegulationOrderForApiView
         public string $title,
         public ?\DateTimeInterface $startDate,
         public ?\DateTimeInterface $endDate,
+        public ?string $documentUrl,
         public ?string $organizationUuid,
         public string $organizationName,
         public array $measures,
