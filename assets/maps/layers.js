@@ -63,16 +63,18 @@ export function addHouseNumbersLayer(map) {
  * @param {import('geojson').GeoJSON} [options.data] - Initial GeoJSON data (defaults to empty FeatureCollection).
  * @param {string} [options.pointLayerId] - When provided, a circle layer is added
  *   for `Point` features and the line layer is restricted to `LineString`/`Polygon`.
+ * @param {import('./measure_type_styles').MeasureTypeStyle} [options.style] - Style utilisé
+ *   à la place de celui déduit de `measureType` (ex : tracé bleu en cours d'édition).
  */
-export function addMeasureLineLayer(map, { sourceId, layerId, measureType, data, pointLayerId }) {
-    const style = getMeasureTypeStyle(measureType);
+export function addMeasureLineLayer(map, { sourceId, layerId, measureType, data, pointLayerId, style }) {
+    const resolvedStyle = style ?? getMeasureTypeStyle(measureType);
 
     map.addSource(sourceId, {
         type: 'geojson',
         data: data !== undefined ? toFeatureCollection(data) : { type: 'FeatureCollection', features: [] },
     });
 
-    const lineLayers = buildMeasureLineLayers(measureType, style, {
+    const lineLayers = buildMeasureLineLayers(measureType, resolvedStyle, {
         sourceId,
         layerIdPrefix: layerId,
         // The source is a GeoJSON whose features all belong to the same
@@ -99,7 +101,7 @@ export function addMeasureLineLayer(map, { sourceId, layerId, measureType, data,
             type: 'circle',
             source: sourceId,
             filter: ['==', '$type', 'Point'],
-            paint: buildMeasurePointPaint(style),
+            paint: buildMeasurePointPaint(resolvedStyle),
         });
     }
 }

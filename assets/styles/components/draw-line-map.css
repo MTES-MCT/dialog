@@ -41,11 +41,17 @@
     white-space: nowrap;
 }
 
+/* État cliqué du bouton de tracé : fond bleu clair DSFR pour rendre l'état "en cours" visible */
 .draw-line-map-controls .fr-btn.active {
-    background-color: #EBEBEB;
+    background-color: var(--background-action-low-blue-france, #e3e3fd);
 }
 
-.draw-line-map-controls .fr-btn.fr-icon-x-draw-line::before {
+.draw-line-map-controls .fr-btn.active:hover {
+    background-color: var(--background-action-low-blue-france-hover, #c1c1fb);
+}
+
+.draw-line-map-controls .fr-btn.fr-icon-x-draw-line::before,
+.draw-line-map-controls .fr-btn.fr-icon-x-draw-zone::before {
     --icon-size: 1.25rem;
 }
 
@@ -151,6 +157,34 @@ textarea.fr-input.draw-line-map-geometry-field {
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 0.875rem;
     line-height: 1.4;
-    min-height: 30rem;
+    min-height: 8rem;
     white-space: pre;
+}
+
+/* Section "Géométrie GeoJSON" repliable, ouverte par défaut */
+.draw-line-map-geojson > .draw-line-map-geojson__summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    list-style: none;
+    color: var(--text-action-high-blue-france, #000091);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.draw-line-map-geojson > .draw-line-map-geojson__summary::-webkit-details-marker {
+    display: none;
+}
+
+.draw-line-map-geojson__chevron::before {
+    --icon-size: 1rem;
+}
+
+.draw-line-map-geojson__chevron {
+    transition: transform 0.2s ease;
+}
+
+.draw-line-map-geojson[open] .draw-line-map-geojson__chevron {
+    transform: rotate(180deg);
 }

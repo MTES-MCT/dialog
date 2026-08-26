@@ -687,7 +687,6 @@
                         data-controller="draw-line-map"
                         data-draw-line-map-center-json-value='[2.725, 47.16]'
                         data-draw-line-map-zoom-value="5"
-                        data-draw-line-map-measure-type-value="{{ measureType }}"
                         data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                         data-draw-line-map-start-value='{{ {
                             "label": "regulation.location.raw_geojson.draw_line_map.draw.start"|trans,
@@ -703,6 +702,10 @@
                         }|json_encode }}'
                         class="draw-line-map-wrapper fr-mb-3w"
                     >
+                        <p class="fr-mb-1w">
+                            {{ 'regulation.location.raw_geojson.map.label'|trans }}
+                            <span class="fr-hint-text">{{ 'regulation.location.raw_geojson.map.description'|trans }}</span>
+                        </p>
                         <div
                             data-draw-line-map-target="warning"
                             class="draw-line-map-warning fr-mb-1w"
@@ -768,17 +771,24 @@
                             ></div>
                         </div>
 
-                        {{ form_row(form.rawGeoJSON.geometry, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input draw-line-map-geometry-field',
-                            attr: {
-                                'data-form-reveal-target': 'formControl',
-                                'data-value': 'rawGeoJSON',
-                                'disabled': not isRawGeoJSON,
-                                'data-draw-line-map-target': 'geometryField',
-                                'rows': 12,
-                            },
-                        }) }}
+                        <details class="draw-line-map-geojson" open>
+                            <summary class="draw-line-map-geojson__summary">
+                                {{ 'regulation.location.raw_geojson.geometry'|trans }}
+                                <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+                            </summary>
+                            {{ form_row(form.rawGeoJSON.geometry, {
+                                group_class: 'fr-input-group',
+                                widget_class: 'fr-input draw-line-map-geometry-field',
+                                label_attr: { class: 'fr-sr-only' },
+                                attr: {
+                                    'data-form-reveal-target': 'formControl',
+                                    'data-value': 'rawGeoJSON',
+                                    'disabled': not isRawGeoJSON,
+                                    'data-draw-line-map-target': 'geometryField',
+                                    'rows': 5,
+                                },
+                            }) }}
+                        </details>
                     </div>
                 </div>
 
@@ -937,11 +947,10 @@
                         data-draw-line-map-geometry-type-value="Polygon"
                         data-draw-line-map-center-json-value='[2.725, 47.16]'
                         data-draw-line-map-zoom-value="5"
-                        data-draw-line-map-measure-type-value="{{ measureType }}"
                         data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                         data-draw-line-map-start-value='{{ {
                             "label": "regulation.location.zone.draw_polygon_map.draw.start"|trans,
-                            "icon": "fr-icon-x-draw-line"
+                            "icon": "fr-icon-x-draw-zone"
                         }|json_encode }}'
                         data-draw-line-map-finish-value='{{ {
                             "label": "regulation.location.zone.draw_polygon_map.draw.finish"|trans,
@@ -953,6 +962,10 @@
                         }|json_encode }}'
                         class="draw-line-map-wrapper fr-mb-3w"
                     >
+                        <p class="fr-mb-1w">
+                            {{ 'regulation.location.zone.map.label'|trans }}
+                            <span class="fr-hint-text">{{ 'regulation.location.zone.map.description'|trans }}</span>
+                        </p>
                         <div
                             data-draw-line-map-target="warning"
                             class="draw-line-map-warning fr-mb-1w"
@@ -984,7 +997,7 @@
                             <div class="draw-line-map-controls draw-line-map-controls--top">
                                 <button
                                     type="button"
-                                    class="fr-btn fr-btn--secondary fr-icon-x-draw-line fr-btn--icon-left"
+                                    class="fr-btn fr-btn--secondary fr-icon-x-draw-zone fr-btn--icon-left"
                                     data-draw-line-map-target="drawBtn"
                                     data-action="click->draw-line-map#toggleDraw"
                                     aria-pressed="false"
@@ -1018,17 +1031,24 @@
                             ></div>
                         </div>
 
-                        {{ form_row(form.zone.geometry, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input draw-line-map-geometry-field',
-                            attr: {
-                                'data-form-reveal-target': 'formControl',
-                                'data-value': 'zone',
-                                'disabled': not isZone,
-                                'data-draw-line-map-target': 'geometryField',
-                                'rows': 8,
-                            },
-                        }) }}
+                        <details class="draw-line-map-geojson" open>
+                            <summary class="draw-line-map-geojson__summary">
+                                {{ 'regulation.location.zone.geometry'|trans }}
+                                <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+                            </summary>
+                            {{ form_row(form.zone.geometry, {
+                                group_class: 'fr-input-group',
+                                widget_class: 'fr-input draw-line-map-geometry-field',
+                                label_attr: { class: 'fr-sr-only' },
+                                attr: {
+                                    'data-form-reveal-target': 'formControl',
+                                    'data-value': 'zone',
+                                    'disabled': not isZone,
+                                    'data-draw-line-map-target': 'geometryField',
+                                    'rows': 5,
+                                },
+                            }) }}
+                        </details>
                     </div>
                 </div>
             </div>
@@ -1185,13 +1205,16 @@
                     data-controller="draw-line-map"
                     data-draw-line-map-center-json-value='[2.725, 47.16]'
                     data-draw-line-map-zoom-value="5"
-                    data-draw-line-map-measure-type-value="{{ measureType }}"
                     data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                     data-draw-line-map-start-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.start"|trans, "icon": "fr-icon-x-draw-line" }|json_encode }}'
                     data-draw-line-map-finish-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.finish"|trans, "icon": "fr-icon-checkbox-line" }|json_encode }}'
                     data-draw-line-map-edit-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.edit"|trans, "icon": "fr-icon-edit-line" }|json_encode }}'
                     class="draw-line-map-wrapper fr-mb-3w"
                 >
+                    <p class="fr-mb-1w">
+                        {{ 'regulation.location.raw_geojson.map.label'|trans }}
+                        <span class="fr-hint-text">{{ 'regulation.location.raw_geojson.map.description'|trans }}</span>
+                    </p>
                     <div data-draw-line-map-target="warning" class="draw-line-map-warning fr-mb-1w" hidden>
                         {{ 'regulation.location.raw_geojson.draw_line_map.warning'|trans }}
                     </div>
@@ -1223,17 +1246,24 @@
                         <div data-draw-line-map-target="container" class="draw-line-map-container"></div>
                     </div>
 
-                    {{ form_row(form.rawGeoJSON.geometry, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input draw-line-map-geometry-field',
-                        attr: {
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'rawGeoJSON',
-                            'disabled': not isRawGeoJSON,
-                            'data-draw-line-map-target': 'geometryField',
-                            'rows': 12,
-                        },
-                    }) }}
+                    <details class="draw-line-map-geojson" open>
+                        <summary class="draw-line-map-geojson__summary">
+                            {{ 'regulation.location.raw_geojson.geometry'|trans }}
+                            <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+                        </summary>
+                        {{ form_row(form.rawGeoJSON.geometry, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input draw-line-map-geometry-field',
+                            label_attr: { class: 'fr-sr-only' },
+                            attr: {
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'rawGeoJSON',
+                                'disabled': not isRawGeoJSON,
+                                'data-draw-line-map-target': 'geometryField',
+                                'rows': 5,
+                            },
+                        }) }}
+                    </details>
                 </div>
             </div>
         </div>

@@ -730,7 +730,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.type">
                 <source>regulation.location.type</source>
-                <target>Type de localisation</target>
+                <target>Type de route ou voie</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.from">
                 <source>regulation.location.referencePoint.from</source>
@@ -786,7 +786,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.type.placeholder">
                 <source>regulation.location.type.placeholder</source>
-                <target>Sélectionner un type de localisation...</target>
+                <target>Sélectionner un type de route ou voie...</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.departmentalRoad">
                 <source>regulation.location.road.type.departmentalRoad</source>
@@ -802,7 +802,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
-                <target>Tracé libre (GeoJSON)</target>
+                <target>Tracé de linéaire (voie)</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.wholeCity">
                 <source>regulation.location.road.type.wholeCity</source>
@@ -834,7 +834,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.zone">
                 <source>regulation.location.road.type.zone</source>
-                <target>Zone</target>
+                <target>Tracé de zone</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.label">
                 <source>regulation.location.zone.label</source>
@@ -842,19 +842,23 @@
             </trans-unit>
             <trans-unit id="regulation.location.zone.label.help">
                 <source>regulation.location.zone.label.help</source>
-                <target>Par exemple : Centre-ville, Quartier de la gare...</target>
+                <target>Exemple : "Quartier de la gare", "Centre-ville"</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.geometry">
                 <source>regulation.location.zone.geometry</source>
-                <target>Périmètre de la zone (GeoJSON)</target>
+                <target>Géométrie GeoJSON</target>
             </trans-unit>
-            <trans-unit id="regulation.location.zone.geometry.help">
-                <source>regulation.location.zone.geometry.help</source>
+            <trans-unit id="regulation.location.zone.map.label">
+                <source>regulation.location.zone.map.label</source>
+                <target>Tracé de la zone</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.map.description">
+                <source>regulation.location.zone.map.description</source>
                 <target>Dessinez le périmètre sur la carte : la restriction s'appliquera aux rues situées à l'intérieur de la zone (autoroutes exclues).</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.draw_polygon_map.draw.start">
                 <source>regulation.location.zone.draw_polygon_map.draw.start</source>
-                <target>Tracer le périmètre</target>
+                <target>Dessiner une zone</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.draw_polygon_map.draw.finish">
                 <source>regulation.location.zone.draw_polygon_map.draw.finish</source>
@@ -1066,11 +1070,23 @@
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.label">
                 <source>regulation.location.raw_geojson.label</source>
-                <target>Descriptif</target>
+                <target>Nom de la voie ou du tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.label.help">
+                <source>regulation.location.raw_geojson.label.help</source>
+                <target>Exemple : "Chemin du moulin à vent"</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.geometry">
                 <source>regulation.location.raw_geojson.geometry</source>
                 <target>Géométrie GeoJSON</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.map.label">
+                <source>regulation.location.raw_geojson.map.label</source>
+                <target>Tracé du linéaire (voie)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.map.description">
+                <source>regulation.location.raw_geojson.map.description</source>
+                <target>Tracez la voie sur la carte à l'aide du bouton "Tracer un linéaire" ou renseignez directement la géométrie GeoJSON.</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.warning">
                 <source>regulation.location.raw_geojson.draw_line_map.warning</source>
@@ -1078,7 +1094,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.search.placeholder">
                 <source>regulation.location.raw_geojson.draw_line_map.search.placeholder</source>
-                <target>Rechercher une adresse ou une commune</target>
+                <target>Rechercher un lieu</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.search.aria_label">
                 <source>regulation.location.raw_geojson.draw_line_map.search.aria_label</source>
@@ -1086,7 +1102,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.start">
                 <source>regulation.location.raw_geojson.draw_line_map.draw.start</source>
-                <target>Tracer une ligne</target>
+                <target>Tracer un linéaire</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.finish">
                 <source>regulation.location.raw_geojson.draw_line_map.draw.finish</source>

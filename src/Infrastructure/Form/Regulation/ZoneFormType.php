@@ -32,7 +32,6 @@ final class ZoneFormType extends AbstractType
                 TextareaType::class,
                 options: [
                     'label' => 'regulation.location.zone.geometry',
-                    'help' => 'regulation.location.zone.geometry.help',
                 ],
             )
             ->add('roadType', HiddenType::class)
