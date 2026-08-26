@@ -227,18 +227,6 @@
                 <source>common.date.since</source>
                 <target>depuis le %date%</target>
             </trans-unit>
-            <trans-unit id="common.date.upcoming">
-                <source>common.date.upcoming</source>
-                <target>à venir</target>
-            </trans-unit>
-            <trans-unit id="common.date.ongoing">
-                <source>common.date.ongoing</source>
-                <target>en cours</target>
-            </trans-unit>
-            <trans-unit id="common.date.passed">
-                <source>common.date.passed</source>
-                <target>passé</target>
-            </trans-unit>
             <trans-unit id="common.unit.tons">
                 <source>common.unit.tons</source>
                 <target>tonnes</target>
@@ -383,6 +371,18 @@
                 <source>regulation.list.filters.status.published</source>
                 <target>Publié</target>
             </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_past">
+                <source>regulation.list.filters.status.published_past</source>
+                <target>Passé</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_current">
+                <source>regulation.list.filters.status.published_current</source>
+                <target>En vigueur</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_upcoming">
+                <source>regulation.list.filters.status.published_upcoming</source>
+                <target>À venir</target>
+            </trans-unit>
             <trans-unit id="regulation.list.filters.status.placeholder">
                 <source>regulation.list.filters.status.placeholder</source>
                 <target>Tous les statuts</target>
@@ -418,6 +418,18 @@
             <trans-unit id="regulation.status_badge.published.hint">
                 <source>regulation.status_badge.published.hint</source>
                 <target>Données accessibles aux réutilisateurs (GPS...)</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.past.text">
+                <source>regulation.status_badge.past.text</source>
+                <target>Passé</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.current.text">
+                <source>regulation.status_badge.current.text</source>
+                <target>En vigueur</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.upcoming.text">
+                <source>regulation.status_badge.upcoming.text</source>
+                <target>À venir</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.create">
                 <source>regulation.regulation_order_history.action.create</source>
@@ -1885,6 +1897,94 @@
             <trans-unit id="home.breadcrumb">
                 <source>home.breadcrumb</source>
                 <target>Accueil</target>
+            </trans-unit>
+            <trans-unit id="dashboard.meta.title">
+                <source>dashboard.meta.title</source>
+                <target>Accueil</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.title">
+                <source>dashboard.onboarding.title</source>
+                <target>Bienvenue sur DiaLog !</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.intro">
+                <source>dashboard.onboarding.intro</source>
+                <target>Pour commencer à diffuser votre réglementation de circulation avec DiaLog :</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.add">
+                <source>dashboard.onboarding.step.add</source>
+                <target><![CDATA[<strong>]]>Ajoutez<![CDATA[</strong>]]> un arrêté</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.fill">
+                <source>dashboard.onboarding.step.fill</source>
+                <target><![CDATA[<strong>]]>Saisissez<![CDATA[</strong>]]> les restrictions et localisations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.publish">
+                <source>dashboard.onboarding.step.publish</source>
+                <target><![CDATA[<strong>]]>Publiez<![CDATA[</strong>]]> vos restrictions</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.visualize">
+                <source>dashboard.onboarding.step.visualize</source>
+                <target><![CDATA[<strong>]]>Visualisez<![CDATA[</strong>]]> les restrictions dans la carte DiaLog et certains GPS</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.invite">
+                <source>dashboard.onboarding.step.invite</source>
+                <target><![CDATA[<strong>]]>Invitez<![CDATA[</strong>]]> des collègues et ajoutez votre logo, si vous le souhaitez !</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.more">
+                <source>dashboard.onboarding.more</source>
+                <target>Voir plus d'informations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.manage_organization">
+                <source>dashboard.manage_organization</source>
+                <target>Gérer mon organisation</target>
+            </trans-unit>
+            <trans-unit id="dashboard.manage_organizations">
+                <source>dashboard.manage_organizations</source>
+                <target>Gérer mes organisations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.title">
+                <source>dashboard.numbers.title</source>
+                <target>En quelques chiffres</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.draft.label">
+                <source>dashboard.numbers.draft.label</source>
+                <target>arrêtés en brouillon</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.current.label">
+                <source>dashboard.numbers.current.label</source>
+                <target>arrêtés publiés en vigueur</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.upcoming.label">
+                <source>dashboard.numbers.upcoming.label</source>
+                <target>arrêtés publiés à venir</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.title">
+                <source>dashboard.map.title</source>
+                <target>Carte</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.description">
+                <source>dashboard.map.description</source>
+                <target>Visualisation des restrictions en vigueur sur la ville.</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.see_all">
+                <source>dashboard.map.see_all</source>
+                <target>Voir toute la carte</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.title">
+                <source>dashboard.regulations.title</source>
+                <target>Arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.description">
+                <source>dashboard.regulations.description</source>
+                <target>Liste des derniers arrêtés modifiés, ajoutés ou publiés.</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.see_all">
+                <source>dashboard.regulations.see_all</source>
+                <target>Voir la liste des arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.empty">
+                <source>dashboard.regulations.empty</source>
+                <target>Vous n'avez pas encore ajouté d'arrêté</target>
             </trans-unit>
             <trans-unit id="error.home_link">
                 <source>error.home_link</source>

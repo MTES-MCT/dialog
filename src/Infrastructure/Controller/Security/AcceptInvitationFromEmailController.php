@@ -82,7 +82,7 @@ final class AcceptInvitationFromEmailController
             $session->getFlashBag()->add('error', $this->translator->trans('invitation.accept.error_not_owned'));
 
             return new RedirectResponse(
-                url: $this->urlGenerator->generate('app_regulations_list'),
+                url: $this->urlGenerator->generate('app_landing'),
                 status: Response::HTTP_SEE_OTHER,
             );
         }
