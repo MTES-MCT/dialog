@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization\User;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class EditUserControllerTest extends AbstractWebTestCase
 {
+    private const MANDATAIRE_USER_UUID = 'a54c4f39-6b48-4a12-9e2e-6a1b9f8c1d3e';
+
     public function testEdit(): void
     {
         $client = $this->login('mathieu.fernandez@beta.gouv.fr');
@@ -89,6 +92,58 @@ final class EditUserControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame(0, $crawler->filter('#user_form_isOwner')->count());
+    }
+
+    public function testCannotBeOwnerAndMandataire(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['user_form']['fullName'] = 'Mathieu MARCHOIS';
+        $values['user_form']['email'] = 'mathieu.marchois@beta.gouv.fr';
+        $values['user_form']['isOwner'] = '1';
+        $values['user_form']['isMandataire'] = '1';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Un utilisateur ne peut pas être à la fois propriétaire et mandataire de l\'organisation.', $crawler->filter('#user_form_isMandataire_error')->text());
+    }
+
+    public function testEditMandataireAsMember(): void
+    {
+        // Un membre "normal" peut modifier un mandataire
+        $client = $this->login();
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/' . self::MANDATAIRE_USER_UUID . '/edit');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(0, $crawler->filter('#user_form_isOwner')->count());
+        $this->assertSame(1, $crawler->filter('#user_form_isMandataire')->count());
+        $this->assertTrue($crawler->filter('#user_form_isMandataire')->attr('checked') !== null);
+    }
+
+    public function testEditNormalUserAsMandataire(): void
+    {
+        // Un mandataire ne peut pas modifier un membre "normal"
+        $client = $this->login(UserFixture::MANDATAIRE_USER_EMAIL);
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testMandataireCheckboxHiddenForMandataire(): void
+    {
+        // Un mandataire peut modifier un autre mandataire mais pas changer son statut
+        $client = $this->login(UserFixture::MANDATAIRE_USER_EMAIL);
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/' . self::MANDATAIRE_USER_UUID . '/edit');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame(0, $crawler->filter('#user_form_isOwner')->count());
+        $this->assertSame(0, $crawler->filter('#user_form_isMandataire')->count());
     }
 
     public function testTransferOwnership(): void

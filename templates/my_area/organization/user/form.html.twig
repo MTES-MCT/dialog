@@ -24,6 +24,11 @@
                         {{ form_row(form.isOwner, { group_class: 'fr-checkbox-group' }) }}
                     </div>
                 {% endif %}
+                {% if form.isMandataire is defined %}
+                    <div class="fr-mb-3w">
+                        {{ form_row(form.isMandataire, { group_class: 'fr-checkbox-group' }) }}
+                    </div>
+                {% endif %}
                 <a href="{{ path('app_users_list', {uuid: organization.uuid }) }}" class="fr-btn fr-btn--tertiary fr-mr-3w">
                     {{ "common.cancel"|trans }}
                 </a>

@@ -9,6 +9,8 @@ use App\Application\Regulation\Query\GetRegulationOrderHistoryQueryHandler;
 use App\Application\Regulation\View\RegulationOrderHistoryView;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Repository\RegulationOrderHistoryRepositoryInterface;
+use App\Domain\User\OrganizationUser;
+use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
@@ -40,14 +42,70 @@ final class GetRegulationOrderHistoryQueryHandlerTest extends TestCase
             ->with($userUuid)
             ->willReturn($user);
 
+        $organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
+        $organizationUserRepository
+            ->expects(self::never())
+            ->method('findOrganizationUser');
+
         $regulationOrderHistoryView = new RegulationOrderHistoryView(
             date: $mockDate,
             action: ActionTypeEnum::CREATE->value,
             userFullName: 'Mathieu Marchois',
         );
 
-        $handler = new GetRegulationOrderHistoryQueryHandler($repository, $userRepository);
+        $handler = new GetRegulationOrderHistoryQueryHandler($repository, $userRepository, $organizationUserRepository);
         $result = $handler(new GetRegulationOrderHistoryQuery('c41d4831-1c4c-4e3b-aaa6-202d98a63b3a'));
+
+        $this->assertEquals($regulationOrderHistoryView, $result);
+    }
+
+    public function testGetRegulationOrderHistoryWithMandataire(): void
+    {
+        $mockDate = new \DateTime('2025-01-31 08:41:57');
+        $userUuid = 'a3f1e6c8-1c4c-4e3b-aaa6-202d98a63b3a';
+        $organizationUuid = 'f7b9a1c3-5d2e-4f6a-8b0c-1d2e3f4a5b6c';
+        $row = [
+            'date' => $mockDate,
+            'action' => 'publish',
+            'userUuid' => $userUuid,
+        ];
+        $repository = $this->createMock(RegulationOrderHistoryRepositoryInterface::class);
+        $repository
+            ->expects(self::once())
+            ->method('findLastRegulationOrderHistoryByUuid')
+            ->with('c41d4831-1c4c-4e3b-aaa6-202d98a63b3a')
+            ->willReturn($row);
+
+        $user = (new User($userUuid))->setFullName('Léa Mandataire');
+        $userRepository = $this->createMock(UserRepositoryInterface::class);
+        $userRepository
+            ->expects(self::once())
+            ->method('findOneByUuid')
+            ->with($userUuid)
+            ->willReturn($user);
+
+        $organizationUser = $this->createMock(OrganizationUser::class);
+        $organizationUser
+            ->expects(self::once())
+            ->method('isMandataire')
+            ->willReturn(true);
+
+        $organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
+        $organizationUserRepository
+            ->expects(self::once())
+            ->method('findOrganizationUser')
+            ->with($organizationUuid, $userUuid)
+            ->willReturn($organizationUser);
+
+        $regulationOrderHistoryView = new RegulationOrderHistoryView(
+            date: $mockDate,
+            action: ActionTypeEnum::PUBLISH->value,
+            userFullName: 'Léa Mandataire',
+            isMandataire: true,
+        );
+
+        $handler = new GetRegulationOrderHistoryQueryHandler($repository, $userRepository, $organizationUserRepository);
+        $result = $handler(new GetRegulationOrderHistoryQuery('c41d4831-1c4c-4e3b-aaa6-202d98a63b3a', $organizationUuid));
 
         $this->assertEquals($regulationOrderHistoryView, $result);
     }
@@ -74,7 +132,12 @@ final class GetRegulationOrderHistoryQueryHandlerTest extends TestCase
             ->with($userUuid)
             ->willReturn(null);
 
-        $handler = new GetRegulationOrderHistoryQueryHandler($repository, $userRepository);
+        $organizationUserRepository = $this->createMock(OrganizationUserRepositoryInterface::class);
+        $organizationUserRepository
+            ->expects(self::never())
+            ->method('findOrganizationUser');
+
+        $handler = new GetRegulationOrderHistoryQueryHandler($repository, $userRepository, $organizationUserRepository);
         $result = $handler(new GetRegulationOrderHistoryQuery('c41d4831-1c4c-4e3b-aaa6-202d98a63b3a'));
 
         $this->assertNull($result->userFullName);

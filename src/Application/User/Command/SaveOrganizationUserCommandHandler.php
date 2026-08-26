@@ -12,6 +12,7 @@ use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
+use App\Domain\User\Exception\UserCannotBeOwnerAndMandataireException;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\PasswordUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
@@ -41,6 +42,10 @@ final class SaveOrganizationUserCommandHandler
         $email = $this->stringUtils->normalizeEmail($command->email);
         $organizationUser = $command->organizationUser;
 
+        if ($command->isOwner && $command->isMandataire) {
+            throw new UserCannotBeOwnerAndMandataireException();
+        }
+
         if ($organizationUser) {
             $user = $organizationUser->getUser();
 
@@ -62,6 +67,7 @@ final class SaveOrganizationUserCommandHandler
             }
 
             $organizationUser->setIsOwner($command->isOwner);
+            $organizationUser->setIsMandataire($command->isMandataire);
 
             return;
         }
@@ -92,7 +98,8 @@ final class SaveOrganizationUserCommandHandler
         $this->organizationUserRepository->add(
             (new OrganizationUser($this->idFactory->make()))
                 ->setUser($user)
-                ->setOrganization($command->organization),
+                ->setOrganization($command->organization)
+                ->setIsMandataire($command->isMandataire),
         );
     }
 }

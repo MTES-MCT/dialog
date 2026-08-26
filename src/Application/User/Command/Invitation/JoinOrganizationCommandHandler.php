@@ -46,7 +46,8 @@ final readonly class JoinOrganizationCommandHandler
         $this->organizationUserRepository->add(
             (new OrganizationUser($this->idFactory->make()))
                 ->setUser($user)
-                ->setOrganization($organization),
+                ->setOrganization($organization)
+                ->setIsMandataire($invitation->isMandataire()),
         );
 
         $this->invitationRepository->delete($invitation);

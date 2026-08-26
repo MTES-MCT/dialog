@@ -13,6 +13,7 @@ class Invitation
         private \DateTimeInterface $createdAt,
         private User $owner,
         private Organization $organization,
+        private bool $isMandataire = false,
     ) {
     }
 
@@ -44,5 +45,10 @@ class Invitation
     public function getOrganization(): Organization
     {
         return $this->organization;
+    }
+
+    public function isMandataire(): bool
+    {
+        return $this->isMandataire;
     }
 }

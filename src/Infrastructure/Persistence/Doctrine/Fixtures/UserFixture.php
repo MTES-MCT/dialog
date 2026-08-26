@@ -18,6 +18,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
     public const DEPARTMENT_93_USER_EMAIL = 'mathieu.marchois@beta.gouv.fr';
     public const DEPARTMENT_93_ADMIN_EMAIL = 'mathieu.fernandez@beta.gouv.fr';
     public const OTHER_ORG_USER_EMAIL = 'florimond.manca@beta.gouv.fr';
+    public const MANDATAIRE_USER_EMAIL = 'lea.mandataire@beta.gouv.fr';
     public const PASSWORD = 'password';
 
     public function load(ObjectManager $manager): void
@@ -48,6 +49,15 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
 
         $otherOrgPasswordUser = new PasswordUser('7eb26f55-3029-4a61-b88b-30e2a97806ea', self::PASSWORD, $otherOrgUser);
 
+        $mandataireUser = (new User('a54c4f39-6b48-4a12-9e2e-6a1b9f8c1d3e'))
+            ->setFullName('Léa MANDATAIRE')
+            ->setEmail(self::MANDATAIRE_USER_EMAIL)
+            ->setRoles([UserRolesEnum::ROLE_USER->value])
+            ->setRegistrationDate(new \DateTimeImmutable('2024-06-01'))
+            ->setLastActiveAt(new \DateTimeImmutable('2024-06-10'))
+            ->setIsVerified();
+        $mandataireUserPassword = new PasswordUser('c1f2ab73-90d4-4e0b-8a5f-2d3e4f5a6b7c', self::PASSWORD, $mandataireUser);
+
         $organizationUser1 = new OrganizationUser('53aede0c-1ff3-4873-9e3d-132950dfb893');
         $organizationUser1->setUser($department93User);
         $organizationUser1->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
@@ -71,22 +81,31 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
         $organizationUser5->setOrganization($this->getReference('dialogOrg', Organization::class));
         $organizationUser5->setIsOwner(true);
 
+        $organizationUser6 = new OrganizationUser('f4a7d3b1-2c5e-4f6a-9b8c-0d1e2f3a4b5c');
+        $organizationUser6->setUser($mandataireUser);
+        $organizationUser6->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
+        $organizationUser6->setIsMandataire(true);
+
         $manager->persist($department93User);
         $manager->persist($department93Admin);
         $manager->persist($otherOrgUser);
+        $manager->persist($mandataireUser);
         $manager->persist($department93UserPassword);
         $manager->persist($department93AdminPassword);
         $manager->persist($otherOrgPasswordUser);
+        $manager->persist($mandataireUserPassword);
         $manager->persist($organizationUser1);
         $manager->persist($organizationUser2);
         $manager->persist($organizationUser3);
         $manager->persist($organizationUser4);
         $manager->persist($organizationUser5);
+        $manager->persist($organizationUser6);
         $manager->flush();
 
         $this->addReference('department93User', $department93User);
         $this->addReference('department93Admin', $department93Admin);
         $this->addReference('otherOrgUser', $otherOrgUser);
+        $this->addReference('mandataireUser', $mandataireUser);
     }
 
     public function getDependencies(): array

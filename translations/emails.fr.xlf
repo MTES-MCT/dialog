@@ -110,6 +110,14 @@
                 <source>organization_invitation.join</source>
                 <target>Je rejoins cette organisation</target>
             </trans-unit>
+            <trans-unit id="organization_invitation.mandataire.subject">
+                <source>organization_invitation.mandataire.subject</source>
+                <target>Invitation à devenir mandataire d'une organisation DiaLog</target>
+            </trans-unit>
+            <trans-unit id="organization_invitation.mandataire.description">
+                <source>organization_invitation.mandataire.description</source>
+                <target>%invitedBy% vous invite à devenir mandataire de l'organisation %organizationName%. En tant que mandataire, vous pourrez publier des arrêtés de circulation pour le compte de cette organisation sans en faire partie.</target>
+            </trans-unit>
             <trans-unit id="mailing_list.email.subject">
                 <source>mailing_list.email.subject</source>
                 <target>Arrêté de circulation publié</target>

@@ -68,7 +68,7 @@ final class RegulationDetailController extends AbstractRegulationController
         $measures = $this->queryBus->handle(new GetMeasuresQuery($uuid));
         $isReadOnly = !($currentUser && $this->canOrganizationAccessToRegulation->isSatisfiedBy($organizationUuid, $currentUser->getUserOrganizationUuids()));
 
-        $latestHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderUuid));
+        $latestHistory = $this->queryBus->handle(new GetRegulationOrderHistoryQuery($regulationOrderUuid, $organizationUuid));
 
         $isSourceDialog = $generalInfo->isSourceDialog();
         $isDraft = $generalInfo->isDraft();

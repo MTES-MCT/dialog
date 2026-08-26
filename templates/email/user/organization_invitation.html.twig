@@ -2,9 +2,15 @@
 {% trans_default_domain 'emails' %}
 
 {% block body %}
-    <h1>{{ 'organization_invitation.subject'|trans }}</h1>
-    <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
-    <p>{{ 'organization_invitation.description'|trans({'%invitedBy%': invitedBy, '%organizationName%': organizationName}) }}</p>
+    {% if isMandataire is defined and isMandataire %}
+        <h1>{{ 'organization_invitation.mandataire.subject'|trans }}</h1>
+        <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
+        <p>{{ 'organization_invitation.mandataire.description'|trans({'%invitedBy%': invitedBy, '%organizationName%': organizationName}) }}</p>
+    {% else %}
+        <h1>{{ 'organization_invitation.subject'|trans }}</h1>
+        <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
+        <p>{{ 'organization_invitation.description'|trans({'%invitedBy%': invitedBy, '%organizationName%': organizationName}) }}</p>
+    {% endif %}
     <a href="{{ baseUrl ~ path('app_invitation_accept', { uuid: invitationUuid }) }}">
         {{ 'organization_invitation.join'|trans }}
     </a>

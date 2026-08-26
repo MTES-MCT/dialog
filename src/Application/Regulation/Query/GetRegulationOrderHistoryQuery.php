@@ -10,6 +10,7 @@ final class GetRegulationOrderHistoryQuery implements QueryInterface
 {
     public function __construct(
         public readonly string $regulationOrderUuid,
+        public readonly ?string $organizationUuid = null,
     ) {
     }
 }

@@ -64,7 +64,8 @@ final class InvitationRepository extends ServiceEntityRepository implements Invi
                 'NEW %s(
                     i.uuid,
                     i.fullName,
-                    i.email
+                    i.email,
+                    i.isMandataire
                 )',
                 InvitationView::class,
             ))
