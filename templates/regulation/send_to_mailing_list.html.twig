@@ -9,6 +9,7 @@
         <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
                 {% include "common/breadcrumb.html.twig" with { items: [
+                { title: 'home.breadcrumb'|trans, path: 'app_landing' },
                 { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
                 { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': identifier }), url: path('app_regulation_detail', {uuid}), generatedPath: true },
                 { title: 'mailing.list.share.breadcrumb'|trans({ '%identifier%': identifier }) }

@@ -10,6 +10,7 @@
 {% block body %}
     <section class="fr-container fr-py-5w" aria-labelledby="regulation-order-template-list">
         {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing' },
             { title: 'user.myorganizations'|trans, path: 'app_my_organizations'},
             { title: organization.name, url: path('app_config_organization_detail', {uuid: organization.uuid}), generatedPath: true },
             { title: 'regulation_order_template.list.title'|trans },
