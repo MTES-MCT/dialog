@@ -47,7 +47,7 @@ final class ProConnectLoginController
     #[Route('/proconnect/auth', name: 'pro_connect_callback')]
     public function proConnectCallback(): RedirectResponse
     {
-        return new RedirectResponse($this->urlGenerator->generate('app_regulations_list'));
+        return new RedirectResponse($this->urlGenerator->generate('app_landing'));
     }
 
     #[Route('/proconnect/logout', name: 'pro_connect_logout')]

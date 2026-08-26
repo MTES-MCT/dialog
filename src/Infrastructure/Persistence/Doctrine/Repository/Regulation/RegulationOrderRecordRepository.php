@@ -15,11 +15,13 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
+use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -105,10 +107,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             WHERE _ro6.uuid = ro.uuid
         )';
 
-    public function findAllRegulations(
-        RegulationListFiltersDTO $dto,
-    ): array {
-        $query = $this->createQueryBuilder('roc')
+    private function createRegulationListQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('roc')
             ->select('roc.uuid, ro.identifier, ro.category, roc.status, roc.source, o.name as organizationName, o.uuid as organizationUuid')
             ->addSelect(\sprintf('(%s) AS overallStartDate', str_replace('%%n', '10', self::OVERALL_START_DATE_QUERY_TEMPLATE)))
             ->addSelect(\sprintf('(%s) AS overallEndDate', str_replace('%%n', '11', self::OVERALL_END_DATE_QUERY_TEMPLATE)))
@@ -118,6 +119,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->addSelect(\sprintf('(%s) as rawGeoJSON', self::GET_RAW_GEOJSON_QUERY))
             ->addSelect(\sprintf('(%s) as wholeCity', self::GET_WHOLE_CITY_QUERY))
             ->addSelect(\sprintf('(%s) as zone', self::GET_ZONE_QUERY));
+    }
+
+    public function findAllRegulations(
+        RegulationListFiltersDTO $dto,
+    ): array {
+        $query = $this->createRegulationListQueryBuilder();
 
         $parameters = [];
 
@@ -152,10 +159,33 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             $query
                 ->andWhere('roc.status = :draft');
             $parameters['draft'] = RegulationOrderRecordStatusEnum::DRAFT->value;
-        } elseif ($dto->status === RegulationOrderRecordStatusEnum::PUBLISHED->value) {
+        } elseif (\in_array($dto->status, [
+            RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_PAST,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING,
+        ], true)) {
             $query
                 ->andWhere('roc.status = :published');
             $parameters['published'] = RegulationOrderRecordStatusEnum::PUBLISHED->value;
+
+            $overallStartDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_START_DATE_QUERY_TEMPLATE));
+            $overallEndDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_END_DATE_QUERY_TEMPLATE));
+
+            // Mêmes critères "passé" / "en vigueur" / "à venir" que findUuidsForApi()
+            // et countRegulationsByStatusForOrganizations().
+            if ($dto->status === RegulationListFiltersDTO::STATUS_PUBLISHED_PAST) {
+                $query->andWhere(\sprintf('ro.category != :permanentCategory AND %s < :now', $overallEndDateExpr(15)));
+                $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+                $parameters['now'] = $this->dateUtils->getNow();
+            } elseif ($dto->status === RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT) {
+                $query->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr(12), $overallEndDateExpr(13)));
+                $parameters['permanentCategory'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+                $parameters['now'] = $this->dateUtils->getNow();
+            } elseif ($dto->status === RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING) {
+                $query->andWhere(\sprintf('%s > :now', $overallStartDateExpr(14)));
+                $parameters['now'] = $this->dateUtils->getNow();
+            }
         }
 
         $query->setParameters($parameters);
@@ -183,6 +213,86 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         }
 
         return $result;
+    }
+
+    public function findLatestRegulations(array $organizationUuids, int $maxResults): array
+    {
+        if (0 === \count($organizationUuids)) {
+            return [];
+        }
+
+        return $this->createRegulationListQueryBuilder()
+            // La date de dernière activité vient de l'historique (création, modification,
+            // publication) ; les arrêtés sans historique (ex : intégrations) retombent sur createdAt.
+            ->addSelect('COALESCE(MAX(roh.date), roc.createdAt) AS HIDDEN lastActivityDate')
+            ->innerJoin('roc.organization', 'o')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->leftJoin(RegulationOrderHistory::class, 'roh', Join::WITH, 'roh.regulationOrderUuid = ro.uuid')
+            ->where('roc.organization IN (:organizationUuids)')
+            ->setParameter('organizationUuids', $organizationUuids)
+            ->addGroupBy('ro, roc, o')
+            ->orderBy('lastActivityDate', 'DESC')
+            ->addOrderBy('ro.identifier', 'ASC')
+            ->setMaxResults($maxResults)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countRegulationsByStatusForOrganizations(array $organizationUuids, \DateTimeInterface $now): array
+    {
+        if (0 === \count($organizationUuids)) {
+            return ['draftCount' => 0, 'currentCount' => 0, 'upcomingCount' => 0];
+        }
+
+        $overallStartDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_START_DATE_QUERY_TEMPLATE));
+        $overallEndDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_END_DATE_QUERY_TEMPLATE));
+
+        $draftCount = $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->where('roc.organization IN (:organizationUuids)')
+            ->andWhere('roc.status = :status')
+            ->setParameters([
+                'organizationUuids' => $organizationUuids,
+                'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        // Mêmes critères "en vigueur" / "à venir" que findUuidsForApi().
+        $currentCount = $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where('roc.organization IN (:organizationUuids)')
+            ->andWhere('roc.status = :status')
+            ->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr(30), $overallEndDateExpr(31)))
+            ->setParameters([
+                'organizationUuids' => $organizationUuids,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+                'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
+                'now' => $now,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $upcomingCount = $this->createQueryBuilder('roc')
+            ->select('count(roc.uuid)')
+            ->innerJoin('roc.regulationOrder', 'ro')
+            ->where('roc.organization IN (:organizationUuids)')
+            ->andWhere('roc.status = :status')
+            ->andWhere(\sprintf('%s > :now', $overallStartDateExpr(32)))
+            ->setParameters([
+                'organizationUuids' => $organizationUuids,
+                'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+                'now' => $now,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return [
+            'draftCount' => (int) $draftCount,
+            'currentCount' => (int) $currentCount,
+            'upcomingCount' => (int) $upcomingCount,
+        ];
     }
 
     private function applyOrderBy(QueryBuilder $query, RegulationListFiltersDTO $dto): void

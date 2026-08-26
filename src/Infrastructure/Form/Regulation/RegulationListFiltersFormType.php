@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\User\View\OrganizationView;
+use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RegulationOrderTypeEnum;
 use Symfony\Component\Form\AbstractType;
@@ -102,6 +103,15 @@ final class RegulationListFiltersFormType extends AbstractType
 
         foreach (RegulationOrderRecordStatusEnum::cases() as $case) {
             $choices[\sprintf('regulation.list.filters.status.%s', $case->value)] = $case->value;
+        }
+
+        // Affinements du statut "published" selon les dates de l'arrêté
+        foreach ([
+            RegulationListFiltersDTO::STATUS_PUBLISHED_PAST,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_CURRENT,
+            RegulationListFiltersDTO::STATUS_PUBLISHED_UPCOMING,
+        ] as $status) {
+            $choices[\sprintf('regulation.list.filters.status.%s', $status)] = $status;
         }
 
         $options = [

@@ -18,6 +18,7 @@
     {% set storageFileName = storageRegulationOrderFile ? storageRegulationOrderFile|split('/')|last|split('#')|first|split('?')|first : null %}
     <section class="fr-container fr-py-2w fr-py-md-5w" aria-labelledby="regulation-detail">
         {% include "common/breadcrumb.html.twig" with { items: [
+            { title: 'home.breadcrumb'|trans, path: 'app_landing' },
             { title: 'regulation.breadcrumb'|trans, path: 'app_regulations_list'},
             { title: 'regulation.detail.breadcrumb'|trans({ '%identifier%': generalInfo.identifier }) },
         ]} %}
@@ -60,7 +61,7 @@
                         <div class="app-card__content">
                             <h3 class="fr-h4 fr-mb-2w">{{ 'regulation.details'|trans }}</h3>
                             <p class="fr-text--bold fr-mb-0">{{ 'regulation.status'|trans }}</p>
-                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, withHint: true } %}
+                            {% include 'regulation/_status_badge.html.twig' with { status: generalInfo.status, startDate: generalInfo.startDate, endDate: generalInfo.endDate, withHint: true } %}
                             <p class="fr-text--bold fr-mb-0 fr-mt-2w">{{ 'regulation.source'|trans }}</p>
                             <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v fr-mb-0">{{ ('regulation.source.' ~ generalInfo.source.value)|trans }}</p>
                             {% if latestHistory and is_granted('ROLE_USER') %}
