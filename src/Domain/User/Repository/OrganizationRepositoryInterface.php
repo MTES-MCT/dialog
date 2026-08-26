@@ -35,6 +35,8 @@ interface OrganizationRepositoryInterface
 
     public function findMapBboxByOrganizationUuid(string $organizationUuid): ?MapBboxView;
 
+    public function findMapBboxByOrganizationUuids(array $organizationUuids): ?MapBboxView;
+
     public function refreshTopPublishedOrganizations(int $limit = 10): void;
 
     /**

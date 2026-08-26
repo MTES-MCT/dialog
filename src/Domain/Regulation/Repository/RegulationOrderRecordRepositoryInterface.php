@@ -22,6 +22,10 @@ interface RegulationOrderRecordRepositoryInterface
         RegulationListFiltersDTO $dto,
     ): array;
 
+    public function findLatestRegulations(array $organizationUuids, int $maxResults): array;
+
+    public function countRegulationsByStatusForOrganizations(array $organizationUuids, \DateTimeInterface $now): array;
+
     public function findGeneralInformation(string $uuid): ?array;
 
     public function findOrganizationUuid(string $uuid): ?string;

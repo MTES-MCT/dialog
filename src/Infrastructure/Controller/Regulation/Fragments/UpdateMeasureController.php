@@ -23,6 +23,7 @@ use App\Domain\Regulation\Enum\ActionTypeEnum;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
+use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,6 +49,7 @@ final class UpdateMeasureController extends AbstractRegulationController
         private CanUseRawGeoJSON $canUseRawGeoJSON,
         private CanDeleteMeasures $canDeleteMeasures,
         private EntityManagerInterface $entityManager,
+        private OrganizationRepositoryInterface $organizationRepository,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         Security $security,
         QueryBusInterface $queryBus,
@@ -65,6 +67,9 @@ final class UpdateMeasureController extends AbstractRegulationController
         $regulationOrderRecord = $this->getRegulationOrderRecord($regulationOrderRecordUuid);
         $regulationOrder = $regulationOrderRecord->getRegulationOrder();
         $organization = $regulationOrderRecord->getOrganization();
+        // Calculée avant le traitement du formulaire : en cas d'échec d'une requête
+        // pendant la soumission, la transaction est avortée et ne permet plus de requêter
+        $organizationBbox = $this->organizationRepository->findMapBboxByOrganizationUuid($organization->getUuid());
 
         $measure = $this->queryBus->handle(new GetMeasureByUuidQuery($uuid));
         if (!$measure) {
@@ -179,6 +184,7 @@ final class UpdateMeasureController extends AbstractRegulationController
                     'form' => $form->createView(),
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'measure' => MeasureView::fromEntity($measure),
+                    'organizationBbox' => $organizationBbox,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed

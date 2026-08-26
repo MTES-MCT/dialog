@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
+
 final class LandingControllerTest extends AbstractWebTestCase
 {
     public function testLanding(): void
@@ -45,19 +48,87 @@ final class LandingControllerTest extends AbstractWebTestCase
             $crawler);
     }
 
-    public function testLandingWithLoggedUser(): void
+    public function testDashboardWithLoggedUser(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(200);
-        $this->assertSame('Numériser la réglementation de circulation routière avec DiaLog', $crawler->filter('h1')->text());
-        $userLinks = $crawler->filter(selector: '[data-testid="user-links"]')->filter('li');
-        $this->assertCount(3, $userLinks);
-        $this->assertSame('Nouveautés', $userLinks->eq(0)->text());
-        $this->assertSame('Aide', $userLinks->eq(1)->text());
-        $joinLink = $crawler->selectLink("Découvrir l'équipe");
-        $this->assertSame('https://beta.gouv.fr/startups/dialogue.html', $joinLink->attr('href'));
+        $this->assertSecurityHeaders();
+        $this->assertMetaTitle('Accueil - DiaLog', $crawler);
+
+        // L'utilisateur appartient à plusieurs organisations.
+        $this->assertSame('Mes organisations', $crawler->filter('h1')->text());
+        $this->assertSame('/mon-espace/organizations', $crawler->selectLink('Gérer mes organisations')->attr('href'));
+        $this->assertSame('/regulations/add', $crawler->selectLink('Ajouter un arrêté')->attr('href'));
+
+        // Onboarding fermable.
+        $onboarding = $crawler->filter('[data-testid="dashboard-onboarding"]');
+        $this->assertCount(1, $onboarding);
+        $this->assertStringContainsString('Bienvenue sur DiaLog !', $onboarding->text());
+        $this->assertSame('notice', $onboarding->attr('data-controller'));
+
+        // Chiffres clés au 09/06/2023 (date figée par DateUtilsMock) :
+        // en vigueur = CIFS (01/06 → 10/06/2023), à venir = Litteralis (03/07/2023) et 2025-01 (15/01/2025).
+        $this->assertSame('7 arrêtés en brouillon', $crawler->filter('[data-testid="draft-count"]')->text());
+        $this->assertSame('1 arrêtés publiés en vigueur', $crawler->filter('[data-testid="current-count"]')->text());
+        $this->assertSame('2 arrêtés publiés à venir', $crawler->filter('[data-testid="upcoming-count"]')->text());
+
+        // Chaque carte renvoie vers la liste des arrêtés avec le filtre statut correspondant.
+        $this->assertSame('/regulations?status=draft', $crawler->filter('[data-testid="draft-count"]')->attr('href'));
+        $this->assertSame('/regulations?status=published_current', $crawler->filter('[data-testid="current-count"]')->attr('href'));
+        $this->assertSame('/regulations?status=published_upcoming', $crawler->filter('[data-testid="upcoming-count"]')->attr('href'));
+
+        // Lien vers la documentation.
+        $this->assertSame('https://doc.dialog.beta.gouv.fr/', $crawler->selectLink('Voir plus d\'informations')->attr('href'));
+
+        // Derniers arrêtés.
+        $this->assertCount(4, $crawler->filter('[data-testid="dashboard-regulation-table"] tbody tr'));
+
+        // Carte zoomée sur le périmètre géographique des organisations de l'utilisateur.
+        $map = $crawler->filter('d-map');
+        $this->assertCount(1, $map);
+        $bbox = json_decode($map->attr('initialbbox'), true);
+        // Bbox de la Seine-Saint-Denis (dialogOrg n'a pas de géométrie) : lon ~[2.28, 2.60], lat ~[48.80, 49.01].
+        $this->assertEqualsWithDelta(2.28, $bbox['minLon'], 0.2);
+        $this->assertEqualsWithDelta(2.60, $bbox['maxLon'], 0.2);
+        $this->assertEqualsWithDelta(48.80, $bbox['minLat'], 0.2);
+        $this->assertEqualsWithDelta(49.01, $bbox['maxLat'], 0.2);
+        // Position de repli sur la France entière si aucune organisation n'a de périmètre.
+        $this->assertSame('[2.725, 47.16]', $map->attr('mappos'));
+        $this->assertSame('5', $map->attr('mapzoom'));
+
+        // Pas d'UI de filtres sur cette carte : l'URL des tuiles demande toutes les restrictions
+        // en vigueur ou à venir, y compris poids lourds.
+        [$tilesPath, $tilesQuery] = explode('?', $map->attr('tilesurl'));
+        $this->assertSame('/carte/tiles/{z}/{x}/{y}.mvt', $tilesPath);
+        parse_str($tilesQuery, $tilesParams);
+        $this->assertEqualsCanonicalizing(
+            ['noEntry', 'speedLimitation', 'alternateRoad', 'parkingProhibited', 'noOvertaking'],
+            $tilesParams['map_filter_form']['measureTypes'],
+        );
+        $this->assertSame('yes', $tilesParams['map_filter_form']['displayPermanentRegulations']);
+        $this->assertSame('yes', $tilesParams['map_filter_form']['displayTemporaryRegulations']);
+        $this->assertSame('yes', $tilesParams['map_filter_form']['displayHeavyGoodsVehicles']);
+        $this->assertSame('2023-06-09', $tilesParams['map_filter_form']['startDate']);
+
+        $this->assertSame('/carte', $crawler->selectLink('Voir toute la carte')->attr('href'));
+        $this->assertSame('/regulations', $crawler->selectLink('Voir la liste des arrêtés')->attr('href'));
+    }
+
+    public function testDashboardWithSingleOrganizationUser(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('Mon organisation', $crawler->filter('h1')->text());
+        $this->assertSame(
+            '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID,
+            $crawler->selectLink('Gérer mon organisation')->attr('href'),
+        );
+
+        $this->assertSame('6 arrêtés en brouillon', $crawler->filter('[data-testid="draft-count"]')->text());
     }
 
     public function testNavigationLink(): void
@@ -66,6 +137,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => 'page']],
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
         ], $crawler);
@@ -73,6 +145,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/regulations');
 
         $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => 'page']],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => null]],
         ], $crawler);
@@ -80,6 +153,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/carte');
 
         $this->assertNavStructure([
+            ['Accueil', ['href' => '/', 'aria-current' => null]],
             ['Liste des arrêtés', ['href' => '/regulations', 'aria-current' => null]],
             ['Carte des restrictions', ['href' => '/carte', 'aria-current' => 'page']],
         ], $crawler);

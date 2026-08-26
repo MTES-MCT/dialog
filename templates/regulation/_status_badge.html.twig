@@ -1,12 +1,43 @@
-{% set text = 'regulation.status_badge.' ~ status ~ '.text' %}
-{% set hint = 'regulation.status_badge.' ~ status ~ '.hint' %}
+{# Statut d'affichage : « draft » tel quel ; pour un arrêté publié, on affine selon les
+   dates (passé / en vigueur / à venir), avec repli sur « published » neutre sans dates.
+   Même logique de calcul (au jour près, fuseau client) que l'ancienne mention de la
+   colonne Période de la liste des arrêtés.
+   Un appelant qui connaît déjà le statut d'affichage (ex : cartes du tableau de bord)
+   peut le passer directement via `displayStatus`. #}
+{% set displayStatus = displayStatus|default(null) %}
 
-<span class="fr-mt-2v fr-badge {% if status == 'draft' %}fr-badge--info{% else %}fr-badge--success{% endif %}" data-testid="status-badge">
-    {{ text|trans }}
+{% if displayStatus is null %}
+    {% set startDate = startDate|default(null) %}
+    {% set endDate = endDate|default(null) %}
+
+    {% if status == 'draft' %}
+        {% set displayStatus = 'draft' %}
+    {% elseif startDate is null %}
+        {% set displayStatus = 'published' %}
+    {% elseif app_is_client_future_day(startDate) %}
+        {% set displayStatus = 'upcoming' %}
+    {% elseif endDate and app_is_client_past_day(endDate) %}
+        {% set displayStatus = 'past' %}
+    {% else %}
+        {% set displayStatus = 'current' %}
+    {% endif %}
+{% endif %}
+
+{% set badgeClasses = {
+    draft: 'fr-badge--blue-cumulus fr-badge--icon-left fr-icon-edit-box-fill',
+    published: '',
+    past: 'fr-badge--icon-left fr-icon-checkbox-circle-line',
+    current: 'fr-badge--success',
+    upcoming: 'fr-badge--purple-glycine fr-badge--icon-left fr-icon-time-line',
+} %}
+
+<span class="fr-mt-2v fr-badge {{ badgeClasses[displayStatus] }}{% if small|default(false) %} fr-badge--sm{% endif %}" data-testid="status-badge">
+    {{ ('regulation.status_badge.' ~ displayStatus ~ '.text')|trans }}
 </span>
 
 {% if withHint|default(false) %}
+    {# L'infobulle décrit la visibilité des données, qui ne dépend que de brouillon/publié. #}
     <p class="fr-text--sm fr-x-text--mention-grey fr-mt-1v fr-mb-0">
-        {{ hint|trans }}
+        {{ ('regulation.status_badge.' ~ status ~ '.hint')|trans }}
     </p>
 {% endif %}

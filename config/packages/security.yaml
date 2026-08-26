@@ -45,6 +45,9 @@ security:
                 enable_csrf: true
                 username_parameter: email
                 password_parameter: password
+                # Après connexion, rediriger vers le tableau de bord (sauf retour vers une page
+                # protégée demandée avant le login, ex : lien d'invitation).
+                default_target_path: app_landing
             logout:
                 path: app_logout
 
