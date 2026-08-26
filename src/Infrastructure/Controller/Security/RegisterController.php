@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Security;
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\Mail\SendConfirmationMailCommand;
 use App\Application\User\Command\RegisterCommand;
+use App\Domain\User\Exception\OrganizationFetchFailedException;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Infrastructure\Form\User\RegisterFormType;
@@ -54,6 +55,10 @@ final class RegisterController
             } catch (OrganizationNotFoundException) {
                 $form->get('organizationSiret')->addError(
                     new FormError($this->translator->trans('register.error.organizationSiret_not_found')),
+                );
+            } catch (OrganizationFetchFailedException) {
+                $form->get('organizationSiret')->addError(
+                    new FormError($this->translator->trans('register.error.organizationSiret_fetch_failed')),
                 );
             } catch (UserAlreadyRegisteredException) {
                 $form->get('email')->addError(
