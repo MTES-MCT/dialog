@@ -12,6 +12,7 @@ use App\Infrastructure\Form\Map\MapFilterFormType;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,6 +36,7 @@ final class MapController
         methods: ['GET'],
     )]
     public function __invoke(
+        Request $request,
         #[MapQueryParameter] ?Uuid $organizationUuid,
         #[MapQueryParameter] ?Uuid $regulationOrderRecordUuid,
     ): Response {
@@ -52,8 +54,11 @@ final class MapController
             options: [
                 'action' => $tilesUrl,
                 'method' => 'GET',
+                'csrf_protection' => false,
             ],
         );
+
+        $form->handleRequest($request);
 
         $user = $this->security->getUser();
         $userUuid = $user instanceof AbstractAuthenticatedUser ? $user->getUuid() : null;
