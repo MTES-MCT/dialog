@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
@@ -41,11 +42,25 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
 
         foreach ($data['regulations'] as $regulation) {
             $this->assertSame(RegulationOrderRecordStatusEnum::PUBLISHED->value, $regulation['status']);
+            $this->assertArrayHasKey('uuid', $regulation);
             $this->assertArrayHasKey('category', $regulation);
             $this->assertArrayHasKey('title', $regulation);
             $this->assertArrayHasKey('organization', $regulation);
             $this->assertArrayHasKey('measures', $regulation);
+            $this->assertArrayHasKey('documentUrl', $regulation);
         }
+
+        $regulationsByIdentifier = array_column($data['regulations'], null, 'identifier');
+
+        // L'UUID exposé est celui de l'enregistrement d'arrêté, qui permet de
+        // reconstituer l'URL publique DiaLog (/regulations/{uuid}).
+        $this->assertSame(RegulationOrderRecordFixture::UUID_PUBLISHED, $regulationsByIdentifier['FO2/2023']['uuid']);
+        $this->assertSame(RegulationOrderRecordFixture::UUID_CIFS, $regulationsByIdentifier['F/CIFS/2023']['uuid']);
+
+        // F/CIFS/2023 a un document sans fichier téléversé : l'URL externe est exposée.
+        $this->assertSame('https://example.com/arrete-cifs.pdf', $regulationsByIdentifier['F/CIFS/2023']['documentUrl']);
+        // FO2/2023 n'a aucun document associé.
+        $this->assertNull($regulationsByIdentifier['FO2/2023']['documentUrl']);
     }
 
     public function testSearchDefaultsToCurrentStatus(): void

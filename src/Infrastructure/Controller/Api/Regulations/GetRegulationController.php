@@ -9,11 +9,14 @@ use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
+use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Application\StorageInterface;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\StorageRegulationOrder;
 use App\Infrastructure\DTO\Regulation\RegulationApiView;
 use App\Infrastructure\Security\User\OrganizationAwareUserInterface;
 use OpenApi\Attributes as OA;
@@ -31,6 +34,7 @@ final class GetRegulationController
         private readonly CommandBusInterface $commandBus,
         private readonly Security $security,
         private readonly NormalizerInterface $normalizer,
+        private readonly StorageInterface $storage,
     ) {
     }
 
@@ -84,6 +88,13 @@ final class GetRegulationController
             type: 'object',
             description: "Représentation complète d'un arrêté de circulation.",
             properties: [
+                new OA\Property(
+                    property: 'uuid',
+                    type: 'string',
+                    description: "Identifiant technique (UUID) de l'arrêté dans DiaLog. Permet de reconstituer "
+                        . "l'URL publique de l'arrêté sur DiaLog : `https://dialog.beta.gouv.fr/regulations/{uuid}`.",
+                    example: '123e4567-e89b-12d3-a456-426614174000',
+                ),
                 new OA\Property(
                     property: 'identifier',
                     type: 'string',
@@ -148,6 +159,15 @@ final class GetRegulationController
                     description: "Date et heure de fin de validité de l'arrêté (ISO 8601). "
                         . '`null` pour un arrêté permanent.',
                     example: '2025-10-15T18:00:00+00:00',
+                ),
+                new OA\Property(
+                    property: 'documentUrl',
+                    type: 'string',
+                    nullable: true,
+                    description: "URL du document original de l'arrêté (PDF ou autre) : fichier téléversé "
+                        . "sur DiaLog, ou à défaut lien externe fourni par l'organisation. "
+                        . "`null` si aucun document n'est associé à l'arrêté.",
+                    example: 'https://storage.dialog.beta.gouv.fr/regulationOrder/123e4567/arrete.pdf',
                 ),
                 new OA\Property(
                     property: 'organization',
@@ -439,11 +459,22 @@ final class GetRegulationController
         /** @var MeasureView[] $measures */
         $measures = $this->queryBus->handle(new GetMeasuresQuery($regulationOrderRecord->getUuid()));
 
+        /** @var ?StorageRegulationOrder $storageRegulationOrder */
+        $storageRegulationOrder = $this->queryBus->handle(
+            new GetStorageRegulationOrderQuery($regulationOrderRecord->getRegulationOrder()),
+        );
+
+        // Document original de l'arrêté : fichier téléversé sur DiaLog en priorité,
+        // sinon URL externe fournie par l'organisation.
+        $documentUrl = $storageRegulationOrder?->getPath()
+            ? $this->storage->getUrl($storageRegulationOrder->getPath())
+            : $storageRegulationOrder?->getUrl();
+
         $this->commandBus->handle(new UpdateApiClientLastUsedAtCommand($user->getUserIdentifier()));
 
         return new JsonResponse(
             $this->normalizer->normalize(
-                RegulationApiView::fromViews($generalInfo, $measures),
+                RegulationApiView::fromViews($generalInfo, $measures, $documentUrl),
                 'json',
                 [DateTimeNormalizer::FORMAT_KEY => \DateTimeInterface::ATOM],
             ),

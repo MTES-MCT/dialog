@@ -39,8 +39,10 @@ final class RegulationApiViewTest extends TestCase
     {
         $generalInfo = $this->createGeneralInfo();
 
-        $view = RegulationApiView::fromViews($generalInfo, []);
+        $view = RegulationApiView::fromViews($generalInfo, [], 'http://media.example/regulationOrder/ro-uuid/arrete.pdf');
 
+        $this->assertSame('roc-uuid', $view->uuid);
+        $this->assertSame('http://media.example/regulationOrder/ro-uuid/arrete.pdf', $view->documentUrl);
         $this->assertSame('F2025/001', $view->identifier);
         $this->assertSame('draft', $view->status);
         $this->assertSame('temporaryRegulation', $view->category);
@@ -69,6 +71,7 @@ final class RegulationApiViewTest extends TestCase
         );
 
         $apiView = new RegulationOrderForApiView(
+            uuid: 'roc-uuid',
             identifier: 'F2025/002',
             status: 'published',
             category: 'temporaryRegulation',
@@ -77,6 +80,7 @@ final class RegulationApiViewTest extends TestCase
             title: 'Arrêté temporaire',
             startDate: new \DateTimeImmutable('2025-10-09T08:00:00+00:00'),
             endDate: new \DateTimeImmutable('2025-10-15T18:00:00+00:00'),
+            documentUrl: 'https://example.com/arrete.pdf',
             organizationUuid: 'org-uuid',
             organizationName: 'Ma collectivité',
             measures: [$measure],
@@ -84,6 +88,8 @@ final class RegulationApiViewTest extends TestCase
 
         $view = RegulationApiView::fromApiView($apiView);
 
+        $this->assertSame('roc-uuid', $view->uuid);
+        $this->assertSame('https://example.com/arrete.pdf', $view->documentUrl);
         $this->assertSame('F2025/002', $view->identifier);
         $this->assertSame('published', $view->status);
         $this->assertSame('temporaryRegulation', $view->category);

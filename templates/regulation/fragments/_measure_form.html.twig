@@ -814,7 +814,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.rawGeoJSON.exceptions|length > 0 ? form.rawGeoJSON.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.rawGeoJSON.exceptions.vars.prototype, '__exception_name__', measureType, true)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.rawGeoJSON.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -823,7 +823,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.rawGeoJSON.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted) }}
                                 {%- else -%}
                                     {%- do form.rawGeoJSON.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -917,7 +917,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.wholeCity.exceptions|length > 0 ? form.wholeCity.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, organizationBbox, locationPersisted)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, false, organizationBbox, locationPersisted)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -926,7 +926,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.wholeCity.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, organizationBbox, locationPersisted) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, false, organizationBbox, locationPersisted) }}
                                 {%- else -%}
                                     {%- do form.wholeCity.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -1120,7 +1120,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.zone.exceptions|length > 0 ? form.zone.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.zone.exceptions.vars.prototype, '__exception_name__', measureType, true)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.zone.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -1129,7 +1129,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.zone.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted) }}
                                 {%- else -%}
                                     {%- do form.zone.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -1150,7 +1150,7 @@
     </li>
 {% endmacro %}
 
-{% macro whole_city_exception_item(form, index, measureType, organizationBbox, locationPersisted) %}
+{% macro whole_city_exception_item(form, index, measureType, withCity, organizationBbox, locationPersisted) %}
     {% set isLane = form.roadType.vars.value == 'lane' %}
     {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
     <li
