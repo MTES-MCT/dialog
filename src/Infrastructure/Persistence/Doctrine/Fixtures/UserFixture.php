@@ -18,7 +18,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
     public const DEPARTMENT_93_USER_EMAIL = 'mathieu.marchois@beta.gouv.fr';
     public const DEPARTMENT_93_ADMIN_EMAIL = 'mathieu.fernandez@beta.gouv.fr';
     public const OTHER_ORG_USER_EMAIL = 'florimond.manca@beta.gouv.fr';
-    public const MANDATAIRE_USER_EMAIL = 'lea.mandataire@beta.gouv.fr';
+    public const MANDATAIRE_USER_EMAIL = 'mathieu.mandataire@beta.gouv.fr';
     public const PASSWORD = 'password';
 
     public function load(ObjectManager $manager): void
@@ -50,7 +50,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
         $otherOrgPasswordUser = new PasswordUser('7eb26f55-3029-4a61-b88b-30e2a97806ea', self::PASSWORD, $otherOrgUser);
 
         $mandataireUser = (new User('a54c4f39-6b48-4a12-9e2e-6a1b9f8c1d3e'))
-            ->setFullName('Léa MANDATAIRE')
+            ->setFullName('Mathieu MANDATAIRE')
             ->setEmail(self::MANDATAIRE_USER_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-06-01'))

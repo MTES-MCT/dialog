@@ -87,7 +87,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
-        $this->assertEmailHtmlBodyContains($email, 'Léa MANDATAIRE vous invite à devenir mandataire de l&#039;organisation Département de Seine-Saint-Denis.');
+        $this->assertEmailHtmlBodyContains($email, 'Mathieu MANDATAIRE vous invite à devenir mandataire de l&#039;organisation Département de Seine-Saint-Denis.');
 
         $client->followRedirect();
 

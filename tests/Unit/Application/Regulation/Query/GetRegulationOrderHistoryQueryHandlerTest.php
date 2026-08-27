@@ -76,7 +76,7 @@ final class GetRegulationOrderHistoryQueryHandlerTest extends TestCase
             ->with('c41d4831-1c4c-4e3b-aaa6-202d98a63b3a')
             ->willReturn($row);
 
-        $user = (new User($userUuid))->setFullName('Léa Mandataire');
+        $user = (new User($userUuid))->setFullName('Mathieu MANDATAIRE');
         $userRepository = $this->createMock(UserRepositoryInterface::class);
         $userRepository
             ->expects(self::once())
@@ -100,7 +100,7 @@ final class GetRegulationOrderHistoryQueryHandlerTest extends TestCase
         $regulationOrderHistoryView = new RegulationOrderHistoryView(
             date: $mockDate,
             action: ActionTypeEnum::PUBLISH->value,
-            userFullName: 'Léa Mandataire',
+            userFullName: 'Mathieu MANDATAIRE',
             isMandataire: true,
         );
 

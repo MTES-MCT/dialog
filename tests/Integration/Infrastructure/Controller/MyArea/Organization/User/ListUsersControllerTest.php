@@ -34,12 +34,12 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $this->assertSame('Marc PRESTATAIRE En attente d\'activation Mandataire', $tr1->eq(0)->text());
         $this->assertSame('marc.prestataire@example.com', $tr1->eq(1)->text());
 
-        $this->assertSame('Léa MANDATAIRE Mandataire', $tr2->eq(0)->text());
-        $this->assertSame('lea.mandataire@beta.gouv.fr', $tr2->eq(1)->text());
-        $this->assertSame('Modifier', $tr2->eq(2)->filter('a')->text());
+        $this->assertSame('Mathieu FERNANDEZ Propriétaire', $tr2->eq(0)->text());
+        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr2->eq(1)->text());
 
-        $this->assertSame('Mathieu FERNANDEZ Propriétaire', $tr3->eq(0)->text());
-        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr3->eq(1)->text());
+        $this->assertSame('Mathieu MANDATAIRE Mandataire', $tr3->eq(0)->text());
+        $this->assertSame('mathieu.mandataire@beta.gouv.fr', $tr3->eq(1)->text());
+        $this->assertSame('Modifier', $tr3->eq(2)->filter('a')->text());
 
         $this->assertSame('Mathieu MARCHOIS', $tr4->eq(0)->text());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr4->eq(1)->text());
@@ -66,14 +66,14 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $this->assertSame('Marc PRESTATAIRE En attente d\'activation Mandataire', $tr1->eq(0)->text());
         $this->assertSame('marc.prestataire@example.com', $tr1->eq(1)->text());
 
-        // Un membre "normal" peut modifier et supprimer un mandataire
-        $this->assertSame('Léa MANDATAIRE Mandataire', $tr2->eq(0)->text());
-        $this->assertSame('lea.mandataire@beta.gouv.fr', $tr2->eq(1)->text());
-        $this->assertSame('Modifier', $tr2->eq(2)->filter('a')->text());
+        $this->assertSame('Mathieu FERNANDEZ Propriétaire', $tr2->eq(0)->text());
+        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr2->eq(1)->text());
+        $this->assertEmpty($tr2->eq(2)->text());
 
-        $this->assertSame('Mathieu FERNANDEZ Propriétaire', $tr3->eq(0)->text());
-        $this->assertSame('mathieu.fernandez@beta.gouv.fr', $tr3->eq(1)->text());
-        $this->assertEmpty($tr3->eq(2)->text());
+        // Un membre "normal" peut modifier et supprimer un mandataire
+        $this->assertSame('Mathieu MANDATAIRE Mandataire', $tr3->eq(0)->text());
+        $this->assertSame('mathieu.mandataire@beta.gouv.fr', $tr3->eq(1)->text());
+        $this->assertSame('Modifier', $tr3->eq(2)->filter('a')->text());
 
         $this->assertSame('Mathieu MARCHOIS', $tr4->eq(0)->text());
         $this->assertSame('mathieu.marchois@beta.gouv.fr', $tr4->eq(1)->text());
@@ -93,9 +93,9 @@ final class ListUsersControllerTest extends AbstractWebTestCase
         $this->assertCount(5, $users->filter('tr'));
 
         // Un mandataire ne peut gérer que les autres mandataires
-        $this->assertSame('Léa MANDATAIRE Mandataire', $tr2->eq(0)->text());
-        $this->assertSame('Modifier', $tr2->eq(2)->filter('a')->text());
-        $this->assertEmpty($tr3->eq(2)->text());
+        $this->assertSame('Mathieu MANDATAIRE Mandataire', $tr3->eq(0)->text());
+        $this->assertSame('Modifier', $tr3->eq(2)->filter('a')->text());
+        $this->assertEmpty($tr2->eq(2)->text());
     }
 
     public function testOrganizationNotOwned(): void
