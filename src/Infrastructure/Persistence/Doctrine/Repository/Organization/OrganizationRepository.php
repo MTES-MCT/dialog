@@ -11,6 +11,7 @@ use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class OrganizationRepository extends ServiceEntityRepository implements OrganizationRepositoryInterface
@@ -224,6 +225,35 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
                 AND NOT ST_IsEmpty(o.geometry)
             ) AS t',
             ['organizationUuid' => $organizationUuid],
+        );
+
+        return $row && $row['min_lon'] !== null ? $this->bboxRowToView($row) : null;
+    }
+
+    public function findMapBboxByOrganizationUuids(array $organizationUuids): ?MapBboxView
+    {
+        if (0 === \count($organizationUuids)) {
+            return null;
+        }
+
+        $connection = $this->getEntityManager()->getConnection();
+
+        // ST_Extent agrège l'union des emprises des organisations en une seule bbox.
+        $row = $connection->fetchAssociative(
+            'SELECT
+                ST_XMin(env) AS min_lon,
+                ST_YMin(env) AS min_lat,
+                ST_XMax(env) AS max_lon,
+                ST_YMax(env) AS max_lat
+            FROM (
+                SELECT ST_Extent(o.geometry) AS env
+                FROM organization AS o
+                WHERE o.uuid IN (:organizationUuids)
+                AND o.geometry IS NOT NULL
+                AND NOT ST_IsEmpty(o.geometry)
+            ) AS t',
+            ['organizationUuids' => $organizationUuids],
+            ['organizationUuids' => ArrayParameterType::STRING],
         );
 
         return $row && $row['min_lon'] !== null ? $this->bboxRowToView($row) : null;

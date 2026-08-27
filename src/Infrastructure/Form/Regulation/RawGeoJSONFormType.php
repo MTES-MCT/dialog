@@ -26,6 +26,7 @@ final class RawGeoJSONFormType extends AbstractType
                 TextType::class,
                 options: [
                     'label' => 'regulation.location.raw_geojson.label',
+                    'help' => 'regulation.location.raw_geojson.label.help',
                 ],
             )
             ->add(

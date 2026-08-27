@@ -515,7 +515,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
-        $this->assertSame('Tracé libre (GeoJSON)', $rawGeoJSONOption->innerText());
+        $this->assertSame('Tracé de linéaire (voie)', $rawGeoJSONOption->innerText());
         $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
         $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
     }
@@ -528,7 +528,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
-        $this->assertSame('Tracé libre (GeoJSON)', $rawGeoJSONOption->innerText());
+        $this->assertSame('Tracé de linéaire (voie)', $rawGeoJSONOption->innerText());
         $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
         $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
     }
@@ -539,6 +539,13 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
+
+        // La carte de dessin est zoomée sur l'organisation, et la localisation étant
+        // déjà enregistrée, le bouton de tracé propose l'état "Modifier le tracé"
+        $drawMap = $crawler->filter('[data-controller="draw-line-map"]')->first();
+        $bbox = json_decode($drawMap->attr('data-draw-line-map-org-bbox-json-value'), true);
+        $this->assertCount(4, $bbox);
+        $this->assertSame('true', $drawMap->attr('data-draw-line-map-persisted-value'));
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();

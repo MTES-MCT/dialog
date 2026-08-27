@@ -4,7 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
 import { extractSingleGeometry } from '../maps/geojson';
-import { getMeasureTypeStyle, buildMeasurePointPaint } from '../maps/measure_type_styles';
+import { buildMeasurePointPaint } from '../maps/measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
 const LINE_SOURCE = 'draw-line-source';
@@ -13,6 +13,11 @@ const FILL_LAYER = 'draw-fill-layer';
 const POINTS_SOURCE = 'draw-points-source';
 const POINTS_LAYER = 'draw-points-layer';
 const EMPTY_FC = { type: 'FeatureCollection', features: [] };
+
+// Style du tracé en cours d'édition : bleu (au lieu du noir), avec un
+// remplissage translucide pour les zones (maquettes du ticket #2027)
+const DRAW_STYLE = { color: '#000091', dasharray: [1, 0], lineWidth: 4 };
+const DRAW_FILL_OPACITY = 0.2;
 
 const SEARCH_DEBOUNCE_MS = 250;
 const SEARCH_MIN_LENGTH = 3;
@@ -39,6 +44,12 @@ export default class extends Controller {
   static values = {
     centerJson: { type: String, default: '[2.725, 47.16]' },
     zoom: { type: Number, default: 15 },
+    // Étendue de l'organisation '[minLon, minLat, maxLon, maxLat]' : quand elle est
+    // fournie, la carte s'ouvre zoomée dessus au lieu du centre/zoom par défaut
+    orgBboxJson: { type: String, default: '' },
+    // Indique si la localisation a déjà été enregistrée (l'état "Modifier le tracé"
+    // du bouton n'est proposé qu'après validation du formulaire)
+    persisted: { type: Boolean, default: false },
     measureType: { type: String, default: '' },
     searchApiUrl: { type: String, default: '' },
     // 'LineString' (tracé libre) ou 'Polygon' (périmètre d'une zone, anneau fermé automatiquement)
@@ -373,6 +384,35 @@ export default class extends Controller {
     this.#writeFieldFromCoordinates();
   }
 
+  // Retourne l'étendue de l'organisation sous forme [[minLon, minLat], [maxLon, maxLat]],
+  // ou null si elle est absente ou invalide (la carte retombe alors sur centre/zoom)
+  #organizationBounds() {
+    if (!this.orgBboxJsonValue) {
+      return null;
+    }
+
+    let bbox;
+
+    try {
+      bbox = JSON.parse(this.orgBboxJsonValue);
+    } catch {
+      return null;
+    }
+
+    if (
+      !Array.isArray(bbox) ||
+      bbox.length !== 4 ||
+      !bbox.every(Number.isFinite)
+    ) {
+      return null;
+    }
+
+    return [
+      [bbox[0], bbox[1]],
+      [bbox[2], bbox[3]],
+    ];
+  }
+
   #isSectionHidden() {
     return (
       !!this.#hiddenAncestor && this.#hiddenAncestor.hasAttribute('hidden')
@@ -409,11 +449,17 @@ export default class extends Controller {
     }
 
     try {
+      const orgBounds = this.#organizationBounds();
+
       this.#map = new maplibregl.Map({
         container: this.containerTarget,
         style: mapStyles.desaturated,
-        center: JSON.parse(this.centerJsonValue),
-        zoom: this.zoomValue,
+        ...(orgBounds
+          ? { bounds: orgBounds, fitBoundsOptions: { padding: 40 } }
+          : {
+              center: JSON.parse(this.centerJsonValue),
+              zoom: this.zoomValue,
+            }),
         minZoom: 4,
         maxZoom: 19,
         attributionControl: false,
@@ -442,11 +488,11 @@ export default class extends Controller {
     addMeasureLineLayer(this.#map, {
       sourceId: LINE_SOURCE,
       layerId: LINE_LAYER,
-      measureType: this.measureTypeValue,
+      measureType: '',
+      style: DRAW_STYLE,
     });
 
     this.#map.addSource(POINTS_SOURCE, { type: 'geojson', data: EMPTY_FC });
-    const style = getMeasureTypeStyle(this.measureTypeValue);
 
     if (this.#isPolygon()) {
       // Remplissage translucide du périmètre, sous la ligne de contour
@@ -457,8 +503,8 @@ export default class extends Controller {
           source: LINE_SOURCE,
           filter: ['==', '$type', 'Polygon'],
           paint: {
-            'fill-color': style.color,
-            'fill-opacity': 0.12,
+            'fill-color': DRAW_STYLE.color,
+            'fill-opacity': DRAW_FILL_OPACITY,
           },
         },
         LINE_LAYER,
@@ -469,7 +515,7 @@ export default class extends Controller {
       type: 'circle',
       source: POINTS_SOURCE,
       paint: {
-        ...buildMeasurePointPaint(style, { radius: 5 }),
+        ...buildMeasurePointPaint(DRAW_STYLE, { radius: 5 }),
         'circle-radius': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
@@ -899,7 +945,10 @@ export default class extends Controller {
       return;
     }
 
-    if (this.#coordinates.length > 0) {
+    // L'état "Modifier le tracé" n'apparaît que pour une localisation déjà
+    // enregistrée : tant que le formulaire n'a pas été validé, le tracé reste
+    // librement modifiable et le bouton garde son libellé initial
+    if (this.#coordinates.length > 0 && this.persistedValue) {
       this.drawBtnTarget.classList.add(this.editValue.icon);
       this.drawBtnTarget.textContent = this.editValue.label;
       return;

@@ -651,9 +651,16 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
 
         $roadTypeOptions = $crawler->filter('#measure_form_locations_0_roadType')->filter('option');
-        $this->assertSame('Tracé libre (GeoJSON)', $roadTypeOptions->eq(4)->innerText());
+        $this->assertSame('Tracé de linéaire (voie)', $roadTypeOptions->eq(4)->innerText());
         $this->assertSame(null, $roadTypeOptions->eq(4)->attr('hidden'));
         $this->assertSame(null, $roadTypeOptions->eq(4)->attr('disabled'));
+
+        // La carte de dessin est zoomée sur l'organisation, et l'état "Modifier le tracé"
+        // n'est pas proposé tant que la localisation n'a pas été enregistrée
+        $drawMap = $crawler->filter('[data-controller="draw-line-map"]')->first();
+        $bbox = json_decode($drawMap->attr('data-draw-line-map-org-bbox-json-value'), true);
+        $this->assertCount(4, $bbox);
+        $this->assertSame('false', $drawMap->attr('data-draw-line-map-persisted-value'));
     }
 
     public function testAddRawGeoJSONAsAdmin(): void
@@ -687,7 +694,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
-        $this->assertSame('Village olympique - tracé libre (geojson)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
+        $this->assertSame('Village olympique - tracé de linéaire (voie)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
     public function testAddRawGeoJSONWithExceptionAsAdmin(): void

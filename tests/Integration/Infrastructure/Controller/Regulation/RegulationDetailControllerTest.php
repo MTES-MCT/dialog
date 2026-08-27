@@ -141,7 +141,8 @@ final class RegulationDetailControllerTest extends AbstractWebTestCase
         $this->assertSecurityHeaders();
         $this->assertResponseStatusCodeSame(200);
 
-        $this->assertSame('Publié', $crawler->filter('[data-testid="status-badge"]')->text());
+        // Badge calculé avec l'horloge réelle : l'arrêté publié des fixtures (10/03 → 28/03/2023) est passé.
+        $this->assertSame('Passé', $crawler->filter('[data-testid="status-badge"]')->text());
         $this->assertGreaterThan(0, $crawler->selectButton('Modifier')->count()); // Edit buttons visible for published DIALOG regulations
         $this->assertSame(0, $crawler->selectButton('Publier')->count()); // No publish button when no unpublished changes
 

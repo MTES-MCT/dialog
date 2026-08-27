@@ -1,0 +1,98 @@
+/* Tableau de bord (accueil connecté) */
+
+/* Fond de page en bleu-france-975 (maquette) */
+.app-dashboard-page {
+    background: var(--background-alt-blue-france);
+}
+
+.app-dashboard-onboarding {
+    position: relative;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    /* Bleu écume 925 (maquette) : pas de token de décision DSFR pour cette teinte */
+    background: var(--blue-ecume-925-125);
+    border-radius: 0.5rem;
+}
+
+.app-dashboard-onboarding__illustration {
+    width: 10rem;
+    flex-shrink: 0;
+}
+
+.app-dashboard-onboarding__steps {
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.app-dashboard-onboarding > .fr-btn--close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+@media (max-width: 48em) {
+    .app-dashboard-onboarding__illustration {
+        display: none;
+    }
+}
+
+.app-dashboard-stat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--background-default-grey);
+    border: 1px solid var(--border-default-grey);
+    border-bottom: 3px solid var(--border-active-blue-france);
+}
+
+.app-dashboard-stat__link {
+    background-image: none;
+    color: inherit;
+}
+
+.app-dashboard-stat__number {
+    display: inline-block;
+    margin-right: 0.25rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-title-blue-france);
+}
+
+.app-dashboard-stat__arrow {
+    margin-top: auto;
+    text-align: right;
+    color: var(--text-title-blue-france);
+}
+
+.app-dashboard-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.app-dashboard-block__table {
+    flex-grow: 1;
+}
+
+/* Colonne Actions resserrée (maquette) : sans cela, le layout fixe répartit
+   les 3 colonnes à parts égales et laisse un grand vide à droite. */
+.app-dashboard-block__table th:last-child,
+.app-dashboard-block__table td:last-child {
+    width: 6rem;
+    padding-right: 1rem;
+}
+
+/* Lien "voir plus" épinglé en bas du bloc, pour que les liens des deux cartes
+   restent alignés horizontalement quelle que soit la hauteur de leur contenu. */
+.app-dashboard-block__more {
+    margin-top: auto;
+}
+
+.app-dashboard-map {
+    display: block;
+    min-height: 380px;
+    /* La carte s'étire pour combler le bloc quand la carte voisine est plus haute */
+    flex-grow: 1;
+}

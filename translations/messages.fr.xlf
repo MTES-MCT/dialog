@@ -227,18 +227,6 @@
                 <source>common.date.since</source>
                 <target>depuis le %date%</target>
             </trans-unit>
-            <trans-unit id="common.date.upcoming">
-                <source>common.date.upcoming</source>
-                <target>à venir</target>
-            </trans-unit>
-            <trans-unit id="common.date.ongoing">
-                <source>common.date.ongoing</source>
-                <target>en cours</target>
-            </trans-unit>
-            <trans-unit id="common.date.passed">
-                <source>common.date.passed</source>
-                <target>passé</target>
-            </trans-unit>
             <trans-unit id="common.unit.tons">
                 <source>common.unit.tons</source>
                 <target>tonnes</target>
@@ -383,6 +371,18 @@
                 <source>regulation.list.filters.status.published</source>
                 <target>Publié</target>
             </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_past">
+                <source>regulation.list.filters.status.published_past</source>
+                <target>Passé</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_current">
+                <source>regulation.list.filters.status.published_current</source>
+                <target>En vigueur</target>
+            </trans-unit>
+            <trans-unit id="regulation.list.filters.status.published_upcoming">
+                <source>regulation.list.filters.status.published_upcoming</source>
+                <target>À venir</target>
+            </trans-unit>
             <trans-unit id="regulation.list.filters.status.placeholder">
                 <source>regulation.list.filters.status.placeholder</source>
                 <target>Tous les statuts</target>
@@ -418,6 +418,18 @@
             <trans-unit id="regulation.status_badge.published.hint">
                 <source>regulation.status_badge.published.hint</source>
                 <target>Données accessibles aux réutilisateurs (GPS...)</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.past.text">
+                <source>regulation.status_badge.past.text</source>
+                <target>Passé</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.current.text">
+                <source>regulation.status_badge.current.text</source>
+                <target>En vigueur</target>
+            </trans-unit>
+            <trans-unit id="regulation.status_badge.upcoming.text">
+                <source>regulation.status_badge.upcoming.text</source>
+                <target>À venir</target>
             </trans-unit>
             <trans-unit id="regulation.regulation_order_history.action.create">
                 <source>regulation.regulation_order_history.action.create</source>
@@ -718,7 +730,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.type">
                 <source>regulation.location.type</source>
-                <target>Type de localisation</target>
+                <target>Type de route ou voie</target>
             </trans-unit>
             <trans-unit id="regulation.location.referencePoint.from">
                 <source>regulation.location.referencePoint.from</source>
@@ -774,7 +786,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.type.placeholder">
                 <source>regulation.location.type.placeholder</source>
-                <target>Sélectionner un type de localisation...</target>
+                <target>Sélectionner un type de route ou voie...</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.departmentalRoad">
                 <source>regulation.location.road.type.departmentalRoad</source>
@@ -790,7 +802,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.rawGeoJSON">
                 <source>regulation.location.road.type.rawGeoJSON</source>
-                <target>Tracé libre (GeoJSON)</target>
+                <target>Tracé de linéaire (voie)</target>
             </trans-unit>
             <trans-unit id="regulation.location.road.type.wholeCity">
                 <source>regulation.location.road.type.wholeCity</source>
@@ -822,7 +834,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.road.type.zone">
                 <source>regulation.location.road.type.zone</source>
-                <target>Zone</target>
+                <target>Tracé de zone</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.label">
                 <source>regulation.location.zone.label</source>
@@ -830,14 +842,18 @@
             </trans-unit>
             <trans-unit id="regulation.location.zone.label.help">
                 <source>regulation.location.zone.label.help</source>
-                <target>Par exemple : Centre-ville, Quartier de la gare...</target>
+                <target>Exemple : "Quartier de la gare", "Centre-ville"</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.geometry">
                 <source>regulation.location.zone.geometry</source>
-                <target>Périmètre de la zone (GeoJSON)</target>
+                <target>Géométrie GeoJSON</target>
             </trans-unit>
-            <trans-unit id="regulation.location.zone.geometry.help">
-                <source>regulation.location.zone.geometry.help</source>
+            <trans-unit id="regulation.location.zone.map.label">
+                <source>regulation.location.zone.map.label</source>
+                <target>Tracé de la zone</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.zone.map.description">
+                <source>regulation.location.zone.map.description</source>
                 <target>Dessinez le périmètre sur la carte : la restriction s'appliquera aux rues situées à l'intérieur de la zone (autoroutes exclues).</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.exceptions.description">
@@ -846,7 +862,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.zone.draw_polygon_map.draw.start">
                 <source>regulation.location.zone.draw_polygon_map.draw.start</source>
-                <target>Tracer le périmètre</target>
+                <target>Dessiner une zone</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.draw_polygon_map.draw.finish">
                 <source>regulation.location.zone.draw_polygon_map.draw.finish</source>
@@ -1058,15 +1074,23 @@
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.label">
                 <source>regulation.location.raw_geojson.label</source>
-                <target>Descriptif</target>
+                <target>Nom de la voie ou du tracé</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.label.help">
+                <source>regulation.location.raw_geojson.label.help</source>
+                <target>Exemple : "Chemin du moulin à vent"</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.geometry">
                 <source>regulation.location.raw_geojson.geometry</source>
                 <target>Géométrie GeoJSON</target>
             </trans-unit>
-            <trans-unit id="regulation.location.raw_geojson.exceptions.description">
-                <source>regulation.location.raw_geojson.exceptions.description</source>
-                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à tout le tracé sauf ces voies.</target>
+            <trans-unit id="regulation.location.raw_geojson.map.label">
+                <source>regulation.location.raw_geojson.map.label</source>
+                <target>Tracé du linéaire (voie)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.map.description">
+                <source>regulation.location.raw_geojson.map.description</source>
+                <target>Tracez la voie sur la carte à l'aide du bouton "Tracer un linéaire" ou renseignez directement la géométrie GeoJSON.</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.warning">
                 <source>regulation.location.raw_geojson.draw_line_map.warning</source>
@@ -1074,7 +1098,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.search.placeholder">
                 <source>regulation.location.raw_geojson.draw_line_map.search.placeholder</source>
-                <target>Rechercher une adresse ou une commune</target>
+                <target>Rechercher un lieu</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.search.aria_label">
                 <source>regulation.location.raw_geojson.draw_line_map.search.aria_label</source>
@@ -1082,7 +1106,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.start">
                 <source>regulation.location.raw_geojson.draw_line_map.draw.start</source>
-                <target>Tracer une ligne</target>
+                <target>Tracer un linéaire</target>
             </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.draw_line_map.draw.finish">
                 <source>regulation.location.raw_geojson.draw_line_map.draw.finish</source>
@@ -1878,6 +1902,94 @@
                 <source>home.breadcrumb</source>
                 <target>Accueil</target>
             </trans-unit>
+            <trans-unit id="dashboard.meta.title">
+                <source>dashboard.meta.title</source>
+                <target>Accueil</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.title">
+                <source>dashboard.onboarding.title</source>
+                <target>Bienvenue sur DiaLog !</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.intro">
+                <source>dashboard.onboarding.intro</source>
+                <target>Pour commencer à diffuser votre réglementation de circulation avec DiaLog :</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.add">
+                <source>dashboard.onboarding.step.add</source>
+                <target><![CDATA[<strong>]]>Ajoutez<![CDATA[</strong>]]> un arrêté</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.fill">
+                <source>dashboard.onboarding.step.fill</source>
+                <target><![CDATA[<strong>]]>Saisissez<![CDATA[</strong>]]> les restrictions et localisations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.publish">
+                <source>dashboard.onboarding.step.publish</source>
+                <target><![CDATA[<strong>]]>Publiez<![CDATA[</strong>]]> vos restrictions</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.visualize">
+                <source>dashboard.onboarding.step.visualize</source>
+                <target><![CDATA[<strong>]]>Visualisez<![CDATA[</strong>]]> les restrictions dans la carte DiaLog et certains GPS</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.step.invite">
+                <source>dashboard.onboarding.step.invite</source>
+                <target><![CDATA[<strong>]]>Invitez<![CDATA[</strong>]]> des collègues et ajoutez votre logo, si vous le souhaitez !</target>
+            </trans-unit>
+            <trans-unit id="dashboard.onboarding.more">
+                <source>dashboard.onboarding.more</source>
+                <target>Voir plus d'informations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.manage_organization">
+                <source>dashboard.manage_organization</source>
+                <target>Gérer mon organisation</target>
+            </trans-unit>
+            <trans-unit id="dashboard.manage_organizations">
+                <source>dashboard.manage_organizations</source>
+                <target>Gérer mes organisations</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.title">
+                <source>dashboard.numbers.title</source>
+                <target>En quelques chiffres</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.draft.label">
+                <source>dashboard.numbers.draft.label</source>
+                <target>arrêtés en brouillon</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.current.label">
+                <source>dashboard.numbers.current.label</source>
+                <target>arrêtés publiés en vigueur</target>
+            </trans-unit>
+            <trans-unit id="dashboard.numbers.upcoming.label">
+                <source>dashboard.numbers.upcoming.label</source>
+                <target>arrêtés publiés à venir</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.title">
+                <source>dashboard.map.title</source>
+                <target>Carte</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.description">
+                <source>dashboard.map.description</source>
+                <target>Visualisation des restrictions en vigueur sur la ville.</target>
+            </trans-unit>
+            <trans-unit id="dashboard.map.see_all">
+                <source>dashboard.map.see_all</source>
+                <target>Voir toute la carte</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.title">
+                <source>dashboard.regulations.title</source>
+                <target>Arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.description">
+                <source>dashboard.regulations.description</source>
+                <target>Liste des derniers arrêtés modifiés, ajoutés ou publiés.</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.see_all">
+                <source>dashboard.regulations.see_all</source>
+                <target>Voir la liste des arrêtés</target>
+            </trans-unit>
+            <trans-unit id="dashboard.regulations.empty">
+                <source>dashboard.regulations.empty</source>
+                <target>Vous n'avez pas encore ajouté d'arrêté</target>
+            </trans-unit>
             <trans-unit id="error.home_link">
                 <source>error.home_link</source>
                 <target>Page d'accueil</target>
@@ -2584,6 +2696,10 @@
             <trans-unit id="register.error.organizationSiret_not_found">
                 <source>register.error.organizationSiret_not_found</source>
                 <target>Votre SIRET est invalide : numéro inexistant ou entité juridique non compatible avec DiaLog.</target>
+            </trans-unit>
+            <trans-unit id="register.error.organizationSiret_fetch_failed">
+                <source>register.error.organizationSiret_fetch_failed</source>
+                <target>Le service de vérification du SIRET est momentanément indisponible. Merci de réessayer dans quelques instants.</target>
             </trans-unit>
             <trans-unit id="register.find_siret">
                 <source>register.find_siret</source>

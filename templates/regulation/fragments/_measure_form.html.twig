@@ -392,7 +392,9 @@
     </div>
 {% endmacro %}
 
-{% macro locations_list_item(form, index, position, regulationSubject, regulationOrderRecord, measureType) %}
+{% macro locations_list_item(form, index, position, regulationSubject, regulationOrderRecord, measureType, organizationBbox) %}
+    {# Une localisation déjà enregistrée passe le bouton de tracé en mode "Modifier le tracé" #}
+    {% set locationPersisted = form.vars.value and form.vars.value.location is not null %}
     <li
         class="app-card app-card--no-header"
         data-controller="remove"
@@ -687,6 +689,8 @@
                         data-controller="draw-line-map"
                         data-draw-line-map-center-json-value='[2.725, 47.16]'
                         data-draw-line-map-zoom-value="5"
+                        {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
+                        data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
                         data-draw-line-map-measure-type-value="{{ measureType }}"
                         data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                         data-draw-line-map-start-value='{{ {
@@ -703,6 +707,10 @@
                         }|json_encode }}'
                         class="draw-line-map-wrapper fr-mb-3w"
                     >
+                        <p class="fr-mb-1w">
+                            {{ 'regulation.location.raw_geojson.map.label'|trans }}
+                            <span class="fr-hint-text">{{ 'regulation.location.raw_geojson.map.description'|trans }}</span>
+                        </p>
                         <div
                             data-draw-line-map-target="warning"
                             class="draw-line-map-warning fr-mb-1w"
@@ -768,17 +776,24 @@
                             ></div>
                         </div>
 
-                        {{ form_row(form.rawGeoJSON.geometry, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input draw-line-map-geometry-field',
-                            attr: {
-                                'data-form-reveal-target': 'formControl',
-                                'data-value': 'rawGeoJSON',
-                                'disabled': not isRawGeoJSON,
-                                'data-draw-line-map-target': 'geometryField',
-                                'rows': 12,
-                            },
-                        }) }}
+                        <details class="draw-line-map-geojson" open>
+                            <summary class="draw-line-map-geojson__summary">
+                                {{ 'regulation.location.raw_geojson.geometry'|trans }}
+                                <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+                            </summary>
+                            {{ form_row(form.rawGeoJSON.geometry, {
+                                group_class: 'fr-input-group',
+                                widget_class: 'fr-input draw-line-map-geometry-field',
+                                label_attr: { class: 'fr-sr-only' },
+                                attr: {
+                                    'data-form-reveal-target': 'formControl',
+                                    'data-value': 'rawGeoJSON',
+                                    'disabled': not isRawGeoJSON,
+                                    'data-draw-line-map-target': 'geometryField',
+                                    'rows': 5,
+                                },
+                            }) }}
+                        </details>
                     </div>
 
                     <fieldset
@@ -902,7 +917,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.wholeCity.exceptions|length > 0 ? form.wholeCity.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, false)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, organizationBbox, locationPersisted)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -911,7 +926,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.wholeCity.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, false) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, organizationBbox, locationPersisted) }}
                                 {%- else -%}
                                     {%- do form.wholeCity.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -980,11 +995,13 @@
                         data-draw-line-map-geometry-type-value="Polygon"
                         data-draw-line-map-center-json-value='[2.725, 47.16]'
                         data-draw-line-map-zoom-value="5"
+                        {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
+                        data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
                         data-draw-line-map-measure-type-value="{{ measureType }}"
                         data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                         data-draw-line-map-start-value='{{ {
                             "label": "regulation.location.zone.draw_polygon_map.draw.start"|trans,
-                            "icon": "fr-icon-x-draw-line"
+                            "icon": "fr-icon-x-draw-zone"
                         }|json_encode }}'
                         data-draw-line-map-finish-value='{{ {
                             "label": "regulation.location.zone.draw_polygon_map.draw.finish"|trans,
@@ -996,6 +1013,10 @@
                         }|json_encode }}'
                         class="draw-line-map-wrapper fr-mb-3w"
                     >
+                        <p class="fr-mb-1w">
+                            {{ 'regulation.location.zone.map.label'|trans }}
+                            <span class="fr-hint-text">{{ 'regulation.location.zone.map.description'|trans }}</span>
+                        </p>
                         <div
                             data-draw-line-map-target="warning"
                             class="draw-line-map-warning fr-mb-1w"
@@ -1027,7 +1048,7 @@
                             <div class="draw-line-map-controls draw-line-map-controls--top">
                                 <button
                                     type="button"
-                                    class="fr-btn fr-btn--secondary fr-icon-x-draw-line fr-btn--icon-left"
+                                    class="fr-btn fr-btn--secondary fr-icon-x-draw-zone fr-btn--icon-left"
                                     data-draw-line-map-target="drawBtn"
                                     data-action="click->draw-line-map#toggleDraw"
                                     aria-pressed="false"
@@ -1061,17 +1082,24 @@
                             ></div>
                         </div>
 
-                        {{ form_row(form.zone.geometry, {
-                            group_class: 'fr-input-group',
-                            widget_class: 'fr-input draw-line-map-geometry-field',
-                            attr: {
-                                'data-form-reveal-target': 'formControl',
-                                'data-value': 'zone',
-                                'disabled': not isZone,
-                                'data-draw-line-map-target': 'geometryField',
-                                'rows': 8,
-                            },
-                        }) }}
+                        <details class="draw-line-map-geojson" open>
+                            <summary class="draw-line-map-geojson__summary">
+                                {{ 'regulation.location.zone.geometry'|trans }}
+                                <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+                            </summary>
+                            {{ form_row(form.zone.geometry, {
+                                group_class: 'fr-input-group',
+                                widget_class: 'fr-input draw-line-map-geometry-field',
+                                label_attr: { class: 'fr-sr-only' },
+                                attr: {
+                                    'data-form-reveal-target': 'formControl',
+                                    'data-value': 'zone',
+                                    'disabled': not isZone,
+                                    'data-draw-line-map-target': 'geometryField',
+                                    'rows': 5,
+                                },
+                            }) }}
+                        </details>
                     </div>
 
                     <fieldset
@@ -1122,7 +1150,7 @@
     </li>
 {% endmacro %}
 
-{% macro whole_city_exception_item(form, index, measureType, withCity) %}
+{% macro whole_city_exception_item(form, index, measureType, organizationBbox, locationPersisted) %}
     {% set isLane = form.roadType.vars.value == 'lane' %}
     {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
     <li
@@ -1304,6 +1332,8 @@
                     data-controller="draw-line-map"
                     data-draw-line-map-center-json-value='[2.725, 47.16]'
                     data-draw-line-map-zoom-value="5"
+                    {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
+                    data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
                     data-draw-line-map-measure-type-value="{{ measureType }}"
                     data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                     data-draw-line-map-start-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.start"|trans, "icon": "fr-icon-x-draw-line" }|json_encode }}'
@@ -1311,6 +1341,10 @@
                     data-draw-line-map-edit-value='{{ { "label": "regulation.location.raw_geojson.draw_line_map.draw.edit"|trans, "icon": "fr-icon-edit-line" }|json_encode }}'
                     class="draw-line-map-wrapper fr-mb-3w"
                 >
+                    <p class="fr-mb-1w">
+                        {{ 'regulation.location.raw_geojson.map.label'|trans }}
+                        <span class="fr-hint-text">{{ 'regulation.location.raw_geojson.map.description'|trans }}</span>
+                    </p>
                     <div data-draw-line-map-target="warning" class="draw-line-map-warning fr-mb-1w" hidden>
                         {{ 'regulation.location.raw_geojson.draw_line_map.warning'|trans }}
                     </div>
@@ -1342,17 +1376,24 @@
                         <div data-draw-line-map-target="container" class="draw-line-map-container"></div>
                     </div>
 
-                    {{ form_row(form.rawGeoJSON.geometry, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input draw-line-map-geometry-field',
-                        attr: {
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'rawGeoJSON',
-                            'disabled': not isRawGeoJSON,
-                            'data-draw-line-map-target': 'geometryField',
-                            'rows': 12,
-                        },
-                    }) }}
+                    <details class="draw-line-map-geojson" open>
+                        <summary class="draw-line-map-geojson__summary">
+                            {{ 'regulation.location.raw_geojson.geometry'|trans }}
+                            <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+                        </summary>
+                        {{ form_row(form.rawGeoJSON.geometry, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input draw-line-map-geometry-field',
+                            label_attr: { class: 'fr-sr-only' },
+                            attr: {
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'rawGeoJSON',
+                                'disabled': not isRawGeoJSON,
+                                'data-draw-line-map-target': 'geometryField',
+                                'rows': 5,
+                            },
+                        }) }}
+                    </details>
                 </div>
             </div>
         </div>
@@ -1509,7 +1550,7 @@
                             data-form-collection-prototype-key-value="location"
                             data-form-collection-next-index-value="{{ form.locations|length > 0 ? form.locations|last.vars.name + 1 : 0 }}"
                             data-form-collection-prefill-fields-value="{{ ['roadType', 'namedStreet[cityCode]', 'namedStreet[cityLabel]', 'wholeCity[cityCode]', 'wholeCity[cityLabel]']|json_encode }}"
-                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject, regulationOrderRecord, form.type.vars.value)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.locations_list_item(form.locations.vars.prototype, '__location_name__', '__location_position__', regulationSubject, regulationOrderRecord, form.type.vars.value, organizationBbox)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-2w d-stack"
@@ -1518,7 +1559,7 @@
                                 data-action="remove:child-removed->form-collection#syncPositions"
                             >
                                 {% for item in form.locations %}
-                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject, regulationOrderRecord, form.type.vars.value) }}
+                                    {{ _self.locations_list_item(item, loop.index0, loop.index, regulationSubject, regulationOrderRecord, form.type.vars.value, organizationBbox) }}
                                 {% else %}
                                     {% do form.locations.setRendered %}
                                 {% endfor %}
