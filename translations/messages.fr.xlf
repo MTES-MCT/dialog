@@ -2693,6 +2693,10 @@
                 <source>register.error.organizationSiret_not_found</source>
                 <target>Votre SIRET est invalide : numéro inexistant ou entité juridique non compatible avec DiaLog.</target>
             </trans-unit>
+            <trans-unit id="register.error.organizationSiret_fetch_failed">
+                <source>register.error.organizationSiret_fetch_failed</source>
+                <target>Le service de vérification du SIRET est momentanément indisponible. Merci de réessayer dans quelques instants.</target>
+            </trans-unit>
             <trans-unit id="register.find_siret">
                 <source>register.find_siret</source>
                 <target>Retrouver votre SIRET sur L’Annuaire des Entreprises</target>
