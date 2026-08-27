@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQueryHandler;
 use App\Application\Regulation\View\RegulationOrderForApiView;
+use App\Application\StorageInterface;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -15,6 +16,7 @@ use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\Regulation\Repository\StorageRegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,15 +24,24 @@ use PHPUnit\Framework\TestCase;
 final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
 {
     private RegulationOrderRecordRepositoryInterface&MockObject $repository;
+    private StorageRegulationOrderRepositoryInterface&MockObject $storageRepository;
+    private StorageInterface&MockObject $storage;
     private DateUtilsInterface&MockObject $dateUtils;
     private GetRegulationOrdersForApiQueryHandler $handler;
 
     protected function setUp(): void
     {
         $this->repository = $this->createMock(RegulationOrderRecordRepositoryInterface::class);
+        $this->storageRepository = $this->createMock(StorageRegulationOrderRepositoryInterface::class);
+        $this->storage = $this->createMock(StorageInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2025-01-01'));
-        $this->handler = new GetRegulationOrdersForApiQueryHandler($this->repository, $this->dateUtils);
+        $this->handler = new GetRegulationOrdersForApiQueryHandler(
+            $this->repository,
+            $this->storageRepository,
+            $this->storage,
+            $this->dateUtils,
+        );
     }
 
     private function makeRecord(string $uuid, string $identifier, ?array $restrictedTypes = null): RegulationOrderRecord
@@ -84,6 +95,40 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->assertSame('F/1', $view->identifier);
         $this->assertEquals(new \DateTimeImmutable('2025-01-01'), $view->startDate);
         $this->assertEquals(new \DateTimeImmutable('2025-02-01'), $view->endDate);
+    }
+
+    public function testExposesUuidAndResolvesDocumentUrl(): void
+    {
+        $withFile = $this->makeRecord('uuid-file', 'F/FILE', []);
+        $withExternalUrl = $this->makeRecord('uuid-url', 'F/URL', []);
+        $withoutDocument = $this->makeRecord('uuid-none', 'F/NONE', []);
+
+        $this->repository->method('findUuidsForApi')->willReturn(['uuid-file', 'uuid-url', 'uuid-none']);
+        $this->repository->method('getOverallDatesByRegulationUuids')->willReturn([]);
+        $this->repository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$withFile, $withExternalUrl, $withoutDocument]);
+
+        $this->storageRepository
+            ->method('getStoragesByRegulationOrderRecordUuids')
+            ->with(['uuid-file', 'uuid-url', 'uuid-none'])
+            ->willReturn([
+                'uuid-file' => ['path' => 'regulationOrder/ro-uuid/arrete.pdf', 'url' => 'https://example.com/ignore.pdf'],
+                'uuid-url' => ['path' => null, 'url' => 'https://example.com/arrete.pdf'],
+            ]);
+
+        $this->storage
+            ->method('getUrl')
+            ->with('regulationOrder/ro-uuid/arrete.pdf')
+            ->willReturn('http://media.example/regulationOrder/ro-uuid/arrete.pdf');
+
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery());
+
+        $viewsByUuid = array_column($result->items, null, 'uuid');
+
+        $this->assertSame(['uuid-file', 'uuid-url', 'uuid-none'], array_keys($viewsByUuid));
+        // Le fichier téléversé est prioritaire sur l'URL externe.
+        $this->assertSame('http://media.example/regulationOrder/ro-uuid/arrete.pdf', $viewsByUuid['uuid-file']->documentUrl);
+        $this->assertSame('https://example.com/arrete.pdf', $viewsByUuid['uuid-url']->documentUrl);
+        $this->assertNull($viewsByUuid['uuid-none']->documentUrl);
     }
 
     public function testExcludesHeavyGoodsVehicleWhenFilterIsFalse(): void

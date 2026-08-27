@@ -44,6 +44,13 @@ export default class extends Controller {
   static values = {
     centerJson: { type: String, default: '[2.725, 47.16]' },
     zoom: { type: Number, default: 15 },
+    // Étendue de l'organisation '[minLon, minLat, maxLon, maxLat]' : quand elle est
+    // fournie, la carte s'ouvre zoomée dessus au lieu du centre/zoom par défaut
+    orgBboxJson: { type: String, default: '' },
+    // Indique si la localisation a déjà été enregistrée (l'état "Modifier le tracé"
+    // du bouton n'est proposé qu'après validation du formulaire)
+    persisted: { type: Boolean, default: false },
+    measureType: { type: String, default: '' },
     searchApiUrl: { type: String, default: '' },
     // 'LineString' (tracé libre) ou 'Polygon' (périmètre d'une zone, anneau fermé automatiquement)
     geometryType: { type: String, default: 'LineString' },
@@ -377,6 +384,35 @@ export default class extends Controller {
     this.#writeFieldFromCoordinates();
   }
 
+  // Retourne l'étendue de l'organisation sous forme [[minLon, minLat], [maxLon, maxLat]],
+  // ou null si elle est absente ou invalide (la carte retombe alors sur centre/zoom)
+  #organizationBounds() {
+    if (!this.orgBboxJsonValue) {
+      return null;
+    }
+
+    let bbox;
+
+    try {
+      bbox = JSON.parse(this.orgBboxJsonValue);
+    } catch {
+      return null;
+    }
+
+    if (
+      !Array.isArray(bbox) ||
+      bbox.length !== 4 ||
+      !bbox.every(Number.isFinite)
+    ) {
+      return null;
+    }
+
+    return [
+      [bbox[0], bbox[1]],
+      [bbox[2], bbox[3]],
+    ];
+  }
+
   #isSectionHidden() {
     return (
       !!this.#hiddenAncestor && this.#hiddenAncestor.hasAttribute('hidden')
@@ -413,11 +449,17 @@ export default class extends Controller {
     }
 
     try {
+      const orgBounds = this.#organizationBounds();
+
       this.#map = new maplibregl.Map({
         container: this.containerTarget,
         style: mapStyles.desaturated,
-        center: JSON.parse(this.centerJsonValue),
-        zoom: this.zoomValue,
+        ...(orgBounds
+          ? { bounds: orgBounds, fitBoundsOptions: { padding: 40 } }
+          : {
+              center: JSON.parse(this.centerJsonValue),
+              zoom: this.zoomValue,
+            }),
         minZoom: 4,
         maxZoom: 19,
         attributionControl: false,
@@ -903,7 +945,10 @@ export default class extends Controller {
       return;
     }
 
-    if (this.#coordinates.length > 0) {
+    // L'état "Modifier le tracé" n'apparaît que pour une localisation déjà
+    // enregistrée : tant que le formulaire n'a pas été validé, le tracé reste
+    // librement modifiable et le bouton garde son libellé initial
+    if (this.#coordinates.length > 0 && this.persistedValue) {
       this.drawBtnTarget.classList.add(this.editValue.icon);
       this.drawBtnTarget.textContent = this.editValue.label;
       return;

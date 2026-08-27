@@ -22,7 +22,18 @@ final class StorageRegulationOrderFixture extends Fixture implements DependentFi
             title: 'Arrêté test 2025-06',
         );
 
+        // Document rattaché à un arrêté publié, sans fichier téléversé : seule l'URL
+        // externe est disponible (cas couvert par l'API de recherche).
+        $storageRegulationOrderCifs = new StorageRegulationOrder(
+            uuid: '2a2fac83-b2f7-4d47-9273-e2454b2b863d',
+            regulationOrder: $this->getReference('regulationOrderCifs', RegulationOrder::class),
+            path: null,
+            url: 'https://example.com/arrete-cifs.pdf',
+            title: 'Arrêté CIFS',
+        );
+
         $manager->persist($storageRegulationOrder);
+        $manager->persist($storageRegulationOrderCifs);
         $manager->flush();
     }
 

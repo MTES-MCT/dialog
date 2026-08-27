@@ -9,12 +9,16 @@ use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
+use App\Application\Regulation\Query\GetStorageRegulationOrderQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\View\GeneralInfoView;
 use App\Application\Regulation\View\Measure\MeasureView;
+use App\Application\StorageInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
+use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
+use App\Domain\Regulation\StorageRegulationOrder;
 use App\Domain\User\Organization;
 use App\Infrastructure\Controller\Api\Regulations\GetRegulationController;
 use App\Infrastructure\DTO\Regulation\RegulationApiView;
@@ -32,6 +36,7 @@ final class GetRegulationControllerTest extends TestCase
     private CommandBusInterface&MockObject $commandBus;
     private Security&MockObject $security;
     private NormalizerInterface&MockObject $normalizer;
+    private StorageInterface&MockObject $storage;
     private GetRegulationController $controller;
 
     protected function setUp(): void
@@ -40,12 +45,14 @@ final class GetRegulationControllerTest extends TestCase
         $this->commandBus = $this->createMock(CommandBusInterface::class);
         $this->security = $this->createMock(Security::class);
         $this->normalizer = $this->createMock(NormalizerInterface::class);
+        $this->storage = $this->createMock(StorageInterface::class);
 
         $this->controller = new GetRegulationController(
             $this->queryBus,
             $this->commandBus,
             $this->security,
             $this->normalizer,
+            $this->storage,
         );
     }
 
@@ -59,8 +66,24 @@ final class GetRegulationControllerTest extends TestCase
 
         $this->security->method('getUser')->willReturn($user);
 
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder->method('getUuid')->willReturn('ro-uuid');
+
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
         $regulationOrderRecord->method('getUuid')->willReturn('roc-uuid');
+        $regulationOrderRecord->method('getRegulationOrder')->willReturn($regulationOrder);
+
+        $storageRegulationOrder = new StorageRegulationOrder(
+            uuid: 'storage-uuid',
+            regulationOrder: $regulationOrder,
+            path: 'regulationOrder/ro-uuid/arrete.pdf',
+            url: 'https://example.com/arrete.pdf',
+        );
+
+        $this->storage
+            ->method('getUrl')
+            ->with('regulationOrder/ro-uuid/arrete.pdf')
+            ->willReturn('http://media.example/regulationOrder/ro-uuid/arrete.pdf');
 
         $generalInfo = new GeneralInfoView(
             uuid: 'roc-uuid',
@@ -91,9 +114,9 @@ final class GetRegulationControllerTest extends TestCase
         );
 
         $this->queryBus
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(4))
             ->method('handle')
-            ->willReturnCallback(function ($query) use ($regulationOrderRecord, $generalInfo, $measure) {
+            ->willReturnCallback(function ($query) use ($regulationOrderRecord, $generalInfo, $measure, $storageRegulationOrder) {
                 if ($query instanceof GetRegulationOrderRecordByIdentifierQuery) {
                     return $regulationOrderRecord;
                 }
@@ -104,6 +127,10 @@ final class GetRegulationControllerTest extends TestCase
 
                 if ($query instanceof GetMeasuresQuery) {
                     return [$measure];
+                }
+
+                if ($query instanceof GetStorageRegulationOrderQuery) {
+                    return $storageRegulationOrder;
                 }
 
                 self::fail('Unexpected query: ' . $query::class);
@@ -122,7 +149,9 @@ final class GetRegulationControllerTest extends TestCase
             ->with(
                 self::callback(function ($view): bool {
                     return $view instanceof RegulationApiView
+                        && $view->uuid === 'roc-uuid'
                         && $view->identifier === 'F2025/001'
+                        && $view->documentUrl === 'http://media.example/regulationOrder/ro-uuid/arrete.pdf'
                         && $view->organization->uuid === 'org-uuid'
                         && $view->organization->name === 'Ma collectivité'
                         && \count($view->measures) === 1

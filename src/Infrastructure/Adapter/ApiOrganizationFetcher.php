@@ -7,7 +7,9 @@ namespace App\Infrastructure\Adapter;
 use App\Application\ApiOrganizationFetcherInterface;
 use App\Application\Organization\View\OrganizationFetchedView;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
+use App\Domain\User\Exception\OrganizationFetchFailedException;
 use App\Domain\User\Exception\OrganizationNotFoundException;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
@@ -55,8 +57,12 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
             'minimal' => 'true',
         ];
 
-        $response = $this->organizationFetcherClient->request('GET', 'search', ['query' => $query]);
-        $data = $response->toArray();
+        try {
+            $response = $this->organizationFetcherClient->request('GET', 'search', ['query' => $query]);
+            $data = $response->toArray();
+        } catch (HttpClientExceptionInterface $e) {
+            throw new OrganizationFetchFailedException(\sprintf('Failed to fetch organization from API: %s', $siret), previous: $e);
+        }
 
         if (0 === $data['total_results']) {
             throw new OrganizationNotFoundException(\sprintf('Organization not found: %s', $siret));
@@ -70,8 +76,12 @@ class ApiOrganizationFetcher implements ApiOrganizationFetcherInterface
 
         // Récupération des code/nom du département dans le cas d'une commune ou d'un département
         if (OrganizationCodeTypeEnum::INSEE->value === $codeType || OrganizationCodeTypeEnum::DEPARTMENT->value === $codeType) {
-            $geoResponse = $this->geoApiClient->request('GET', 'departements/' . $result['siege']['departement']);
-            $geoData = $geoResponse->toArray();
+            try {
+                $geoResponse = $this->geoApiClient->request('GET', 'departements/' . $result['siege']['departement']);
+                $geoData = $geoResponse->toArray();
+            } catch (HttpClientExceptionInterface $e) {
+                throw new OrganizationFetchFailedException(\sprintf('Failed to fetch department from geo API: %s', $result['siege']['departement']), previous: $e);
+            }
 
             if (!empty($geoData)) {
                 $departmentName = $geoData['nom'];
