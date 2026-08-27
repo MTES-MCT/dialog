@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class GetRegulationControllerTest extends AbstractWebTestCase
@@ -32,7 +33,10 @@ final class GetRegulationControllerTest extends AbstractWebTestCase
         $data = json_decode($client->getResponse()->getContent(), true);
 
         $this->assertSame(RegulationOrderFixture::TYPICAL_IDENTIFIER, $data['identifier']);
+        $this->assertSame(RegulationOrderRecordFixture::UUID_TYPICAL, $data['uuid']);
         $this->assertSame(RegulationOrderRecordStatusEnum::DRAFT->value, $data['status']);
+        // Le fichier téléversé est prioritaire sur l'URL externe du document.
+        $this->assertSame('http://localhost:8000/storage//files/storage1.pdf', $data['documentUrl']);
         $this->assertArrayHasKey('category', $data);
         $this->assertArrayHasKey('title', $data);
         $this->assertArrayHasKey('organization', $data);

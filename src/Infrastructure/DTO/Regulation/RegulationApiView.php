@@ -22,6 +22,7 @@ final readonly class RegulationApiView
      * @param MeasureApiView[] $measures
      */
     public function __construct(
+        public string $uuid,
         public string $identifier,
         public string $status,
         public string $category,
@@ -30,6 +31,7 @@ final readonly class RegulationApiView
         public string $title,
         public ?\DateTimeInterface $startDate,
         public ?\DateTimeInterface $endDate,
+        public ?string $documentUrl,
         public OrganizationApiView $organization,
         public array $measures,
     ) {
@@ -38,9 +40,10 @@ final readonly class RegulationApiView
     /**
      * @param MeasureView[] $measures
      */
-    public static function fromViews(GeneralInfoView $generalInfo, array $measures): self
+    public static function fromViews(GeneralInfoView $generalInfo, array $measures, ?string $documentUrl = null): self
     {
         return new self(
+            uuid: $generalInfo->uuid,
             identifier: $generalInfo->identifier,
             status: $generalInfo->status,
             category: $generalInfo->category,
@@ -49,6 +52,7 @@ final readonly class RegulationApiView
             title: $generalInfo->title,
             startDate: $generalInfo->startDate,
             endDate: $generalInfo->endDate,
+            documentUrl: $documentUrl,
             organization: new OrganizationApiView(
                 uuid: $generalInfo->organizationUuid,
                 name: $generalInfo->organizationName,
@@ -60,6 +64,7 @@ final readonly class RegulationApiView
     public static function fromApiView(RegulationOrderForApiView $view): self
     {
         return new self(
+            uuid: $view->uuid,
             identifier: $view->identifier,
             status: $view->status,
             category: $view->category,
@@ -68,6 +73,7 @@ final readonly class RegulationApiView
             title: $view->title,
             startDate: $view->startDate,
             endDate: $view->endDate,
+            documentUrl: $view->documentUrl,
             organization: new OrganizationApiView(
                 uuid: $view->organizationUuid,
                 name: $view->organizationName,
