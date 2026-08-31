@@ -45,7 +45,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         }
 
         $overallDates = $this->regulationOrderRecordRepository->getOverallDatesByRegulationUuids($uuids);
-        $pdfInfoByRegulationOrder = $this->storageRegulationOrderRepository->findPdfInfoByRegulationOrderUuids($uuids);
+        $pdfInfoByRegulationOrderRecord = $this->storageRegulationOrderRepository->getStoragesByRegulationOrderRecordUuids($uuids);
 
         $rows = [];
 
@@ -59,7 +59,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
 
             $regulationOrder = $record->getRegulationOrder();
             $dates = $overallDates[$record->getUuid()] ?? ['overallStartDate' => null, 'overallEndDate' => null];
-            $linkPdf = $this->resolveLinkPdf($pdfInfoByRegulationOrder[$regulationOrder->getUuid()] ?? null);
+            $linkPdf = $this->resolveLinkPdf($pdfInfoByRegulationOrderRecord[$record->getUuid()] ?? null);
 
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
@@ -79,6 +79,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         locationUuid: $location->getUuid(),
                         locationType: $location->getRoadType(),
                         locationLabel: $this->buildLocationLabel($location),
+                        geometry: $location->getGeometry() ?? '',
                     );
                 }
             }

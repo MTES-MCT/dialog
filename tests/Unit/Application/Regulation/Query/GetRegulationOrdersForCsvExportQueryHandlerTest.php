@@ -114,8 +114,8 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
             ],
         ]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([
-            'uuid-1-ro' => ['path' => null, 'url' => 'https://example.org/doc.pdf'],
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([
+            'uuid-1' => ['path' => null, 'url' => 'https://example.org/doc.pdf'],
         ]);
 
         $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
@@ -146,8 +146,8 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-1']);
         $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([
-            'uuid-1-ro' => ['path' => 'pdf/doc.pdf', 'url' => null],
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([
+            'uuid-1' => ['path' => 'pdf/doc.pdf', 'url' => null],
         ]);
         $this->storage->method('getUrl')->with('pdf/doc.pdf')->willReturn('https://storage.example.org/pdf/doc.pdf');
 
@@ -172,7 +172,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-1']);
         $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([]);
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([]);
 
         $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
 
@@ -193,8 +193,8 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-1']);
         $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([
-            'uuid-1-ro' => ['path' => null, 'url' => null],
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([
+            'uuid-1' => ['path' => null, 'url' => null],
         ]);
 
         $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
@@ -216,7 +216,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-hgv', 'uuid-other']);
         $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$withHgv, $withoutHgv]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([]);
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([]);
 
         $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery(includeHeavyGoodsVehicle: false));
 
@@ -231,7 +231,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-hgv']);
         $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$withHgv]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([]);
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([]);
 
         $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
 
@@ -336,7 +336,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-1']);
         $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
         $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
-        $this->storageRegulationOrderRepository->method('findPdfInfoByRegulationOrderUuids')->willReturn([]);
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([]);
 
         return $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
     }

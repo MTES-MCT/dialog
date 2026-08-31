@@ -34,6 +34,7 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
         'emprise_uuid',
         'emprise_type',
         'emprise_libelle',
+        'geometrie',
     ];
 
     public function __construct(
@@ -113,6 +114,7 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
             $row->locationUuid,
             $this->translator->trans('regulation.location.road.type.' . $row->locationType),
             $row->locationLabel,
+            $row->geometry,
         ];
     }
 }

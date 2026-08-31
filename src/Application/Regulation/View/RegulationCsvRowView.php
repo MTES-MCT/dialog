@@ -21,6 +21,7 @@ final readonly class RegulationCsvRowView
         public string $locationUuid,
         public string $locationType,
         public string $locationLabel,
+        public string $geometry,
     ) {
     }
 }
