@@ -14,6 +14,7 @@ final readonly class RegulationCsvRowView
         public ?\DateTimeInterface $startDate,
         public ?\DateTimeInterface $endDate,
         public string $organizationName,
+        public string $organizationSiret,
         public string $linkPdf,
         public string $measureUuid,
         public string $measureType,

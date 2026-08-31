@@ -41,6 +41,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
             startDate: new \DateTimeImmutable('2025-01-01'),
             endDate: new \DateTimeImmutable('2025-02-01'),
             organizationName: 'Org',
+            organizationSiret: '12345678901234',
             linkPdf: 'https://example.org/doc.pdf',
             measureUuid: 'measure-uuid',
             measureType: 'noEntry',
@@ -78,6 +79,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
             startDate: null,
             endDate: null,
             organizationName: 'Org',
+            organizationSiret: '12345678901234',
             linkPdf: '',
             measureUuid: 'measure-uuid',
             measureType: 'noEntry',
@@ -94,7 +96,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         fclose($handle);
 
         $this->assertStringContainsString(
-            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org',
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234',
             $content,
         );
     }
