@@ -48,6 +48,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
             locationUuid: 'location-uuid',
             locationType: 'lane',
             locationLabel: 'Rue de la Paix, Paris',
+            geometry: '[]',
         );
     }
 
@@ -86,6 +87,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
             locationUuid: 'location-uuid',
             locationType: 'lane',
             locationLabel: 'Label',
+            geometry: '[]',
         );
 
         $handle = fopen('php://memory', 'r+');
@@ -96,7 +98,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         fclose($handle);
 
         $this->assertStringContainsString(
-            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234',
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;location-uuid;regulation.location.road.type.lane;Label;[]',
             $content,
         );
     }
