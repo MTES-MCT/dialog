@@ -38,7 +38,7 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
         }
 
         $this->assertEquals([
-            'users' => 3,
+            'users' => 4,
             'organizations' => 3,
             // Only counts regulations outside of DiaLog org
             'regulationOrderRecords' => 10,
@@ -50,7 +50,7 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
 
         // Check user active statistics
         $rows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_user_active');
-        $this->assertCount(3, $rows);
+        $this->assertCount(4, $rows);
         $this->assertEquals(['id', 'uploaded_at', 'last_active_at'], array_keys($rows[0]));
 
         $this->assertSame('2023-06-09 00:00:00', $rows[0]['uploaded_at']);
@@ -61,6 +61,9 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
 
         $this->assertSame('2023-06-09 00:00:00', $rows[2]['uploaded_at']);
         $this->assertSame(null, $rows[2]['last_active_at']);
+
+        $this->assertSame('2023-06-09 00:00:00', $rows[3]['uploaded_at']);
+        $this->assertSame('2024-06-10 00:00:00', $rows[3]['last_active_at']);
 
         // Check organization extract (organizations excluding DiaLog org)
         $orgRows = $metabaseConnection->fetchAllAssociative('SELECT * FROM analytics_organization_extract');
