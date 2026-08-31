@@ -26,7 +26,7 @@ final readonly class Mailer implements MailerInterface
             (new TemplatedEmail())
                 ->from(new Address($mail->from ?? $this->emailSupport))
                 ->to(new Address($mail->address))
-                ->subject($this->translator->trans($mail->subject, [], 'emails'))
+                ->subject($this->translator->trans($mail->subject, $mail->subjectParams, 'emails'))
                 ->htmlTemplate($mail->template)
                 ->context($mail->payload),
         );

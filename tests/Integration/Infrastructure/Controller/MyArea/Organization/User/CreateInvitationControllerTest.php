@@ -30,6 +30,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
+        $this->assertSame('Invitation à rejoindre l\'organisation Département de Seine-Saint-Denis sur DiaLog', $email->getSubject());
         $this->assertEmailHtmlBodyContains($email, 'Mathieu FERNANDEZ vous invite à rejoindre l&#039;organisation Département de Seine-Saint-Denis.');
 
         $client->followRedirect();
@@ -56,6 +57,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
+        $this->assertSame('Invitation à devenir mandataire de l\'organisation Département de Seine-Saint-Denis sur DiaLog', $email->getSubject());
         $this->assertEmailHtmlBodyContains($email, 'Mathieu FERNANDEZ vous invite à devenir mandataire de l&#039;organisation Département de Seine-Saint-Denis.');
 
         $client->followRedirect();

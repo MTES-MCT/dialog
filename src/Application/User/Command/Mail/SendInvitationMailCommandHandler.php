@@ -17,6 +17,7 @@ final readonly class SendInvitationMailCommandHandler
     public function __invoke(SendInvitationMailCommand $command): void
     {
         $invitation = $command->invitation;
+        $organizationName = $invitation->getOrganization()->getName();
 
         $this->mailer->send(
             new Mail(
@@ -29,9 +30,12 @@ final readonly class SendInvitationMailCommandHandler
                 payload: [
                     'fullName' => $invitation->getFullName(),
                     'invitedBy' => $invitation->getOwner()->getFullName(),
-                    'organizationName' => $invitation->getOrganization()->getName(),
+                    'organizationName' => $organizationName,
                     'invitationUuid' => $invitation->getUuid(),
                     'isMandataire' => $invitation->isMandataire(),
+                ],
+                subjectParams: [
+                    '%organizationName%' => $organizationName,
                 ],
             ),
         );

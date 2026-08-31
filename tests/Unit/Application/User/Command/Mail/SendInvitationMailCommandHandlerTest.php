@@ -70,6 +70,9 @@ final class SendInvitationMailCommandHandlerTest extends TestCase
                             'invitationUuid' => 'b4bd1811-937b-43ed-b627-1a0f927311bd',
                             'isMandataire' => false,
                         ],
+                        subjectParams: [
+                            '%organizationName%' => 'Dialog',
+                        ],
                     ),
                 ),
             );
@@ -133,6 +136,9 @@ final class SendInvitationMailCommandHandlerTest extends TestCase
                             'organizationName' => 'Dialog',
                             'invitationUuid' => 'b4bd1811-937b-43ed-b627-1a0f927311bd',
                             'isMandataire' => true,
+                        ],
+                        subjectParams: [
+                            '%organizationName%' => 'Dialog',
                         ],
                     ),
                 ),
