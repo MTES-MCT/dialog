@@ -72,6 +72,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         startDate: $dates['overallStartDate'],
                         endDate: $dates['overallEndDate'],
                         organizationName: $record->getOrganizationName() ?? '',
+                        organizationSiret: $record->getOrganization()->getSiret() ?? '',
                         linkPdf: $linkPdf,
                         measureUuid: $measure->getUuid(),
                         measureType: $measure->getType(),
