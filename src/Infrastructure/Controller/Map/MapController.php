@@ -58,6 +58,13 @@ final class MapController
             ],
         );
 
+        $submittedParams = $request->query->all($form->getName());
+        if ($submittedParams !== [] && !\array_key_exists('statusFilterActive', $submittedParams)) {
+            $submittedParams['displayPublished'] = 'yes';
+            $submittedParams['statusFilterActive'] = '1';
+            $request->query->set($form->getName(), $submittedParams);
+        }
+
         $form->handleRequest($request);
 
         $user = $this->security->getUser();
