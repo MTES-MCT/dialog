@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\CommandBusInterface;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
+use App\Application\Exception\ZoneWithoutStreetsException;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\DeleteNamedStreetCommand;
@@ -16,9 +17,11 @@ use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
+use App\Application\Regulation\Query\Location\GetZoneGeometryQuery;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
@@ -318,6 +321,138 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $result = $handler($command);
 
         $this->assertSame($createdLocation, $result);
+    }
+
+    public function testCreateZoneChecksCompetenceOnDrawnPolygon(): void
+    {
+        // Régression #2055 : la compétence doit être vérifiée sur le polygone dessiné, pas
+        // sur les tronçons calculés (une géométrie de tronçons vide ferait toujours échouer
+        // ST_Intersects et l'enregistrement serait refusé à tort).
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $createdLocation = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+        $measure
+            ->expects(self::once())
+            ->method('addLocation')
+            ->with($createdLocation);
+
+        $zoneCommand = new SaveZoneCommand();
+        $zoneCommand->label = 'Quartier de la gare';
+        $zoneCommand->geometry = '<polygone dessiné>';
+
+        $this->idFactory
+            ->expects(self::once())
+            ->method('make')
+            ->willReturn('7fb74c5d-069b-4027-b994-7545bb0942d0');
+
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetZoneGeometryQuery($zoneCommand))
+            ->willReturn('<tronçons couverts>');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', '<polygone dessiné>')
+            ->willReturn(true);
+
+        $this->locationRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(new Location(
+                uuid: '7fb74c5d-069b-4027-b994-7545bb0942d0',
+                measure: $measure,
+                roadType: RoadTypeEnum::ZONE->value,
+                geometry: '<tronçons couverts>',
+            ))
+            ->willReturn($createdLocation);
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with($this->equalTo($zoneCommand));
+
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = RoadTypeEnum::ZONE->value;
+        $command->zone = $zoneCommand;
+        $command->organization = $this->organization;
+
+        $result = $handler($command);
+
+        $this->assertSame($createdLocation, $result);
+    }
+
+    public function testCreateZoneWithoutStreetsIsRejected(): void
+    {
+        // Une zone dont le périmètre ne contient aucune rue (ex : un parking) produit une
+        // géométrie de tronçons vide : l'enregistrement doit être refusé avec une erreur dédiée.
+        $this->expectException(ZoneWithoutStreetsException::class);
+
+        $this->organization
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $measure = $this->createMock(Measure::class);
+        $measure
+            ->expects(self::never())
+            ->method('addLocation');
+
+        $zoneCommand = new SaveZoneCommand();
+        $zoneCommand->label = 'Parking MMS';
+        $zoneCommand->geometry = '<polygone dessiné>';
+
+        $this->idFactory
+            ->expects(self::never())
+            ->method('make');
+
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(new GetZoneGeometryQuery($zoneCommand))
+            ->willReturn('{"type":"GeometryCollection","geometries":[]}');
+
+        $this->canOrganizationInterveneOnGeometry
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de', '<polygone dessiné>')
+            ->willReturn(true);
+
+        $this->locationRepository
+            ->expects(self::never())
+            ->method('add');
+
+        $this->commandBus
+            ->expects(self::never())
+            ->method('handle');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
+        $command = new SaveLocationCommand();
+        $command->measure = $measure;
+        $command->roadType = RoadTypeEnum::ZONE->value;
+        $command->zone = $zoneCommand;
+        $command->organization = $this->organization;
+
+        $handler($command);
     }
 
     public function testUpdateNumberedRoadWithNamedStreetDeletion(): void

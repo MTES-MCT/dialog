@@ -12,6 +12,7 @@ use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\Exception\StartAbscissaOutOfRangeException;
+use App\Application\Exception\ZoneWithoutStreetsException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\CreateRegulationOrderHistoryCommand;
 use App\Application\Regulation\Command\SaveMeasureCommand;
@@ -155,6 +156,13 @@ final class AddMeasureController extends AbstractRegulationController
                 $form->get('locations')->get((string) $exc->getLocationIndex())->get('roadType')->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.organization_cannot_intervene_on_geometry', ['%organizationName%' => $organization->getName()], 'validators'),
+                    ),
+                );
+            } catch (ZoneWithoutStreetsException $exc) {
+                $commandFailed = true;
+                $form->get('locations')->get((string) $exc->getLocationIndex())->get('zone')->get('geometry')->addError(
+                    new FormError(
+                        $this->translator->trans('regulation.location.error.zone_without_streets', [], 'validators'),
                     ),
                 );
             }

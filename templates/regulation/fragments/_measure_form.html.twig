@@ -1162,7 +1162,11 @@
                             }
                         }) }}
 
-                        <hr class="fr-mt-3w" />
+                         <hr
+                            class="fr-mt-3w"
+                            data-form-reveal-target="section"
+                            {% if form.namedStreet.isEntireStreet.vars.checked %}hidden{% endif %}
+                        />
 
                         <fieldset
                             aria-labelledby="{{ form.namedStreet.vars.id }}-points-legend"

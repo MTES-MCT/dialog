@@ -240,6 +240,36 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertContains(['append', 'measure_list'], $streams);
     }
 
+    public function testAddZoneWithoutStreets(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['zone']['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['zone']['label'] = 'Zone sans rue';
+        // Périmètre au milieu d'un lac du parc Georges-Valbon (La Courneuve) : dans le
+        // périmètre de la Seine-Saint-Denis mais sans aucun tronçon de route BD TOPO.
+        $values['measure_form']['locations'][0]['zone']['geometry'] = '{"type":"Polygon","coordinates":[[[2.4013,48.943],[2.4027,48.943],[2.4027,48.944],[2.4013,48.944],[2.4013,48.943]]]}';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Aucune rue n\'a été trouvée à l\'intérieur de la zone dessinée.', $crawler->filter('#measure_form_locations_0_zone_geometry_error')->text());
+    }
+
     public function testLocationOutOfOrganization(): void
     {
         $client = $this->login();
