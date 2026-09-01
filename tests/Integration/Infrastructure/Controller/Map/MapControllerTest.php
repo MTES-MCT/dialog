@@ -43,6 +43,34 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertNull($crawler->filter('d-map')->attr('draftsurl'));
     }
 
+    public function testGetRestoresFiltersFromQueryString(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => [
+                'displayTemporaryRegulations' => 'yes',
+                'measureTypes' => ['speedLimitation'],
+            ],
+        ]));
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $this->assertNull($crawler->filter('[name="map_filter_form[displayPermanentRegulations]"]')->attr('checked'));
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[displayTemporaryRegulations]"]')->attr('checked'));
+
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[measureTypes][]"][value="speedLimitation"]')->attr('checked'));
+        $this->assertNull($crawler->filter('[name="map_filter_form[measureTypes][]"][value="noEntry"]')->attr('checked'));
+    }
+
+    public function testGetHasNoCsrfTokenLeakingIntoTheUrl(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('[name="map_filter_form[_token]"]'));
+    }
+
     public function testGetAuthenticatedShowsStatusFilter(): void
     {
         $client = $this->login();

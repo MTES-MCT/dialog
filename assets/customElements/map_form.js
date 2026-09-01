@@ -12,6 +12,11 @@ customElements.define('d-map-form', class extends HTMLElement {
     /** @type {string} */
     #urlAttribute;
 
+    /**
+     * @type {string | null | undefined}
+     */
+    #paramPrefix;
+
     connectedCallback() {
         requestAnimationFrame(() => {
             const form = /** @type {HTMLFormElement} */ querySelectorOrError(this, 'form');
@@ -55,5 +60,56 @@ customElements.define('d-map-form', class extends HTMLElement {
         const url = absoluteAction + '?' + searchParams.toString();
 
         this.#map.setAttribute(this.#urlAttribute, url);
+
+        this.#syncBrowserUrl(formData);
+    }
+
+    /**
+     * @param {FormData} formData
+     */
+    #syncBrowserUrl(formData) {
+        const paramPrefix = this.#getParamPrefix();
+        if (paramPrefix === null) {
+            return;
+        }
+
+        const url = new URL(window.location.href);
+
+        for (const key of [...url.searchParams.keys()]) {
+            if (key.startsWith(paramPrefix)) {
+                url.searchParams.delete(key);
+            }
+        }
+
+        for (const [key, value] of formData.entries()) {
+            const stringValue = value.toString();
+            if (!key.startsWith(paramPrefix) || stringValue === '') {
+                continue;
+            }
+            url.searchParams.append(key, stringValue);
+        }
+
+        window.history.replaceState(null, '', url.toString());
+    }
+
+    /**
+     * @returns {string | null}
+     */
+    #getParamPrefix() {
+        if (this.#paramPrefix !== undefined) {
+            return this.#paramPrefix;
+        }
+
+        for (const formControl of this.#form.elements) {
+            const name = /** @type {HTMLInputElement} */ (formControl).name;
+            const bracketIndex = name ? name.indexOf('[') : -1;
+            if (bracketIndex > 0) {
+                this.#paramPrefix = name.slice(0, bracketIndex);
+                return this.#paramPrefix;
+            }
+        }
+
+        this.#paramPrefix = null;
+        return null;
     }
 });
