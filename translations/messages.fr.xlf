@@ -1286,6 +1286,10 @@
                 <source>pagination.page</source>
                 <target>Page %page%</target>
             </trans-unit>
+            <trans-unit id="pagination.count">
+                <source>pagination.count</source>
+                <target>{1}%start%-%end% sur %total% arrêté|]1,Inf[%start%-%end% sur %total% arrêtés</target>
+            </trans-unit>
             <trans-unit id="feedback.meta.title">
                 <source>feedback.meta.title</source>
                 <target>Votre avis</target>

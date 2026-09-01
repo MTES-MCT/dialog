@@ -32,9 +32,14 @@ final class PaginationTest extends WebTestCase
                 'totalItems' => 50,
             ],
             'currentPage' => 3,
+            'pageSize' => 10,
         ]);
 
         $crawler = new Crawler($html);
+
+        $count = $crawler->filter('span.fr-text--bold');
+        $this->assertSame('21-30 sur 50 arrêtés', trim($count->text()));
+
         $navLi = $crawler->filter('nav.fr-pagination')->filter('li');
 
         $this->assertSame('Première page', $navLi->eq(0)->filter('a')->text());
