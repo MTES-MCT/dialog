@@ -1,0 +1,6 @@
+.pagination__separator {
+    align-self: stretch;
+    border-left: .15rem solid var(--border-default-grey);
+    margin-right: 1rem;
+    margin-left: .5rem;
+}
