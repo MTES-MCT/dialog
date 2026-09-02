@@ -38,7 +38,15 @@
             <ul class="app-card__actions">
                 <li>
                     <form method="GET" action="{{ path('fragment_regulations_general_info_form', { uuid: generalInfo.uuid }) }}">
-                        <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line">
+                        <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line"
+                            {% if not generalInfo.isDraft %}
+                                data-controller="matomo-event"
+                                data-action="click->matomo-event#track"
+                                data-matomo-event-category-value="Arrêté"
+                                data-matomo-event-action-value="Modification arrêté publié"
+                                data-matomo-event-name-value="{{ generalInfo.identifier }}"
+                            {% endif %}
+                        >
                             {{ 'common.update'|trans }}
                         </button>
                     </form>

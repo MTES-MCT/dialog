@@ -90,7 +90,12 @@
                                     <ul class="fr-mt-2v fr-btns-group fr-btns-group--icon-left">
                                         <li>
                                             <d-modal-trigger modal="create-form-modal" submitvalue="upload">
-                                                <button class="fr-btn fr-btn--secondary" aria-controls="create-form-modal">
+                                                <button class="fr-btn fr-btn--secondary" aria-controls="create-form-modal"
+                                                    data-controller="matomo-event"
+                                                    data-action="click->matomo-event#track"
+                                                    data-matomo-event-category-value="Arrêté"
+                                                    data-matomo-event-action-value="Joindre l'arrêté officiel"
+                                                    data-matomo-event-name-value="{{ generalInfo.identifier }}">
                                                     {{ 'regulation.storage.title'|trans }}
                                                 </button>
                                             </d-modal-trigger>
@@ -135,23 +140,33 @@
                                         <li>
                                             <div id="block_publication">
                                                 {% if isDraft %}
-                                                    {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid, regulationOrderRecord } only %}
+                                                    {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid, regulationOrderRecord, regulationOrderIdentifier: generalInfo.identifier } only %}
                                                 {% elseif hasUnpublishedChanges %}
-                                                    {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid, regulationOrderRecord, publishLabel: 'regulation.publish_changes'|trans } only %}
+                                                    {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish, uuid: generalInfo.uuid, regulationOrderRecord, regulationOrderIdentifier: generalInfo.identifier, publishLabel: 'regulation.publish_changes'|trans } only %}
                                                 {% endif %}
                                             </div>
                                         </li>
                                     {% endif %}
                                     {% if not isDraft %}
                                         <li>
-                                            <a href="{{ path('app_mailing_list_share', { uuid: regulationOrderRecord.uuid })}}" role="button" class="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-send-plane-line">{{ 'common.share'|trans }}</a>
+                                            <a href="{{ path('app_mailing_list_share', { uuid: regulationOrderRecord.uuid })}}" role="button" class="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-send-plane-line"
+                                                data-controller="matomo-event"
+                                                data-action="click->matomo-event#track"
+                                                data-matomo-event-category-value="Arrêté"
+                                                data-matomo-event-action-value="Partage"
+                                                data-matomo-event-name-value="{{ generalInfo.identifier }}">{{ 'common.share'|trans }}</a>
                                             <hr class="fr-mt-1w">
                                         </li>
                                     {% endif %}
                                     <li>
                                         {% set duplicateCsrfToken = csrf_token('duplicate-regulation') %}
                                         <form method="post" action="{{ path('app_regulation_duplicate', { uuid: generalInfo.uuid })}}">
-                                            <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-x-file-copy-line" title="{{ 'common.duplicate'|trans }}">{{ 'common.duplicate'|trans }}</button>
+                                            <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-x-file-copy-line" title="{{ 'common.duplicate'|trans }}"
+                                                data-controller="matomo-event"
+                                                data-action="click->matomo-event#track"
+                                                data-matomo-event-category-value="Arrêté"
+                                                data-matomo-event-action-value="Duplication"
+                                                data-matomo-event-name-value="{{ generalInfo.identifier }}">{{ 'common.duplicate'|trans }}</button>
                                             <input type="hidden" name="_token" value="{{ duplicateCsrfToken }}"/>
                                         </form>
                                     </li>
