@@ -58,6 +58,12 @@
                         {{ form_row(form.regulationOrderTemplateUuid, {
                             group_class: 'fr-select-group fr-mb-2w',
                             widget_class: 'fr-select',
+                            row_attr: {
+                                'data-controller': 'matomo-event',
+                                'data-action': 'change->matomo-event#trackValue',
+                                'data-matomo-event-category-value': 'Arrêté',
+                                'data-matomo-event-action-value': 'Sélection modèle d\'arrêté',
+                            },
                         }) }}
                         <p class="fr-text--sm fr-x-text--blue-france-light">
                             <span class="fr-icon-info-fill fr-icon--sm" aria-hidden="true"></span>
