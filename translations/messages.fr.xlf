@@ -455,6 +455,10 @@
                 <source>regulation.regulation_order_history.action.update.with_user</source>
                 <target>Modifié le %date% par %name%</target>
             </trans-unit>
+            <trans-unit id="regulation.regulation_order_history.mandataire">
+                <source>regulation.regulation_order_history.mandataire</source>
+                <target>(mandataire)</target>
+            </trans-unit>
             <trans-unit id="regulation.status">
                 <source>regulation.status</source>
                 <target>Statut</target>
@@ -2928,6 +2932,26 @@
             <trans-unit id="user.form.is_owner.last_owner_error">
                 <source>user.form.is_owner.last_owner_error</source>
                 <target>Impossible de retirer le statut de propriétaire : l'organisation doit avoir au moins un propriétaire.</target>
+            </trans-unit>
+            <trans-unit id="user.list.mandataire">
+                <source>user.list.mandataire</source>
+                <target>Mandataire</target>
+            </trans-unit>
+            <trans-unit id="user.form.is_mandataire">
+                <source>user.form.is_mandataire</source>
+                <target>Mandataire</target>
+            </trans-unit>
+            <trans-unit id="user.form.is_mandataire.invite">
+                <source>user.form.is_mandataire.invite</source>
+                <target>Inviter en tant que mandataire</target>
+            </trans-unit>
+            <trans-unit id="user.form.is_mandataire.help">
+                <source>user.form.is_mandataire.help</source>
+                <target>Un mandataire peut publier pour votre organisation mais n'en fait pas partie.</target>
+            </trans-unit>
+            <trans-unit id="user.form.is_mandataire.owner_conflict_error">
+                <source>user.form.is_mandataire.owner_conflict_error</source>
+                <target>Un utilisateur ne peut pas être à la fois propriétaire et mandataire de l'organisation.</target>
             </trans-unit>
             <trans-unit id="user.list.fullName">
                 <source>user.list.fullName</source>

@@ -36,6 +36,9 @@
                                 {% if organization.isOwner %}
                                     {{ 'user.list.owner'|trans }}
                                 {% endif %}
+                                {% if organization.isMandataire %}
+                                    {{ 'user.list.mandataire'|trans }}
+                                {% endif %}
                                 </p>
                             </div>
                         </div>

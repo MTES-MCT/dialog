@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization\User;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use App\Tests\SessionHelper;
 
 final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
 {
     use SessionHelper;
+
+    private const MANDATAIRE_USER_UUID = 'a54c4f39-6b48-4a12-9e2e-6a1b9f8c1d3e';
 
     public function testDelete(): void
     {
@@ -30,6 +33,32 @@ final class DeleteOrganizationUserControllerTest extends AbstractWebTestCase
     {
         $client = $this->login('mathieu.marchois@beta.gouv.fr');
         $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33', [
+            '_token' => $this->generateCsrfToken($client, 'delete-user'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testDeleteMandataireAsMember(): void
+    {
+        // Un membre "normal" (non propriétaire) peut supprimer un mandataire
+        $client = $this->login('mathieu.marchois@beta.gouv.fr');
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/' . self::MANDATAIRE_USER_UUID, [
+            '_token' => $this->generateCsrfToken($client, 'delete-user'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(303);
+        $client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_users_list');
+    }
+
+    public function testDeleteNormalUserAsMandataire(): void
+    {
+        // Un mandataire ne peut pas supprimer un membre "normal"
+        $client = $this->login(UserFixture::MANDATAIRE_USER_EMAIL);
+        $client->request('DELETE', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e', [
             '_token' => $this->generateCsrfToken($client, 'delete-user'),
         ]);
 

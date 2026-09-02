@@ -47,8 +47,13 @@ final class DeleteOrganizationUserController
 
         $organization = $organizationUser->getOrganization();
 
-        if (!$this->security->isGranted(OrganizationVoter::OWNER, $organization)
-            || $organizationUser->isOwner()) {
+        // Un mandataire peut être supprimé par n'importe quel membre de l'organisation,
+        // les autres membres uniquement par un propriétaire.
+        $canDelete = $organizationUser->isMandataire()
+            ? $this->security->isGranted(OrganizationVoter::EDIT, $organization)
+            : $this->security->isGranted(OrganizationVoter::OWNER, $organization) && !$organizationUser->isOwner();
+
+        if (!$canDelete) {
             throw new AccessDeniedHttpException();
         }
 

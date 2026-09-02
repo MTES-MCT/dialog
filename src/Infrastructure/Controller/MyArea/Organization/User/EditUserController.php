@@ -11,7 +11,9 @@ use App\Application\User\Query\GetOrganizationUserQuery;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
 use App\Domain\User\Exception\OrganizationUserNotFoundException;
+use App\Domain\User\Exception\UserCannotBeOwnerAndMandataireException;
 use App\Infrastructure\Form\User\UserFormType;
+use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
 use App\Infrastructure\Security\Voter\OrganizationVoter;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -60,11 +62,21 @@ final class EditUserController
             throw new AccessDeniedHttpException();
         }
 
+        $sessionUser = $this->security->getUser();
+        $isCurrentUserMandataire = $sessionUser instanceof AbstractAuthenticatedUser
+            && $sessionUser->isMandataireOfOrganization($organizationUuid);
+
+        // Un mandataire ne peut modifier que d'autres mandataires.
+        if ($isCurrentUserMandataire && !$organizationUser->isMandataire()) {
+            throw new AccessDeniedHttpException();
+        }
+
         $isCurrentUserOwner = $this->security->isGranted(OrganizationVoter::OWNER, $organization);
 
         $command = new SaveOrganizationUserCommand($organization, $organizationUser);
         $form = $this->formFactory->create(UserFormType::class, $command, [
             'is_owner_visible' => $isCurrentUserOwner,
+            'is_mandataire_visible' => !$isCurrentUserMandataire,
         ]);
         $form->handleRequest($request);
 
@@ -83,6 +95,10 @@ final class EditUserController
             } catch (OrganizationMustHaveAtLeastOneOwnerException) {
                 $form->get('isOwner')->addError(
                     new FormError($this->translator->trans('user.form.is_owner.last_owner_error')),
+                );
+            } catch (UserCannotBeOwnerAndMandataireException) {
+                $form->get('isMandataire')->addError(
+                    new FormError($this->translator->trans('user.form.is_mandataire.owner_conflict_error')),
                 );
             }
         }

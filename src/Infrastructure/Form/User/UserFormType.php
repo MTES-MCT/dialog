@@ -45,6 +45,18 @@ final class UserFormType extends AbstractType
             );
         }
 
+        if ($options['is_mandataire_visible']) {
+            $builder->add(
+                'isMandataire',
+                CheckboxType::class,
+                options: [
+                    'label' => 'user.form.is_mandataire',
+                    'help' => 'user.form.is_mandataire.help',
+                    'required' => false,
+                ],
+            );
+        }
+
         $builder->add('save', SubmitType::class,
             options: [
                 'label' => 'common.save',
@@ -57,6 +69,7 @@ final class UserFormType extends AbstractType
     {
         $resolver->setDefaults([
             'is_owner_visible' => false,
+            'is_mandataire_visible' => false,
         ]);
     }
 }
