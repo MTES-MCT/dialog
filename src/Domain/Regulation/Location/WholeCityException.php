@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Regulation\Location;
 
 /**
- * Une voie (entière ou tronçon) ou un tracé libre exclu d'une restriction « Ville entière ».
+ * Une voie (entière ou tronçon) ou un tracé libre exclu d'une restriction « Ville entière »,
+ * « Tracé de zone » ou « Tracé libre ». (Nom historique : introduite pour les villes entières.)
  *
  * Pas de sous-entité dédiée par type de voie : le descripteur structuré nécessaire à la
  * ré-édition du formulaire est conservé en JSON dans `data`, la géométrie calculée dans

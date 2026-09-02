@@ -8,6 +8,8 @@ final readonly class RawGeoJSONView
 {
     public function __construct(
         public string $label,
+        /** @var WholeCityExceptionView[] */
+        public array $exceptions = [],
     ) {
     }
 }

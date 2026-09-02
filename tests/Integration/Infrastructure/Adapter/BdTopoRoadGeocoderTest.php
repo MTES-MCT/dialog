@@ -324,6 +324,21 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->roadGeocoder->computeIntersection($roadBanId, $otherRoadBanId);
     }
 
+    public function testSubtractGeometries(): void
+    {
+        $base = '{"type":"LineString","coordinates":[[2.7,49.375],[2.701,49.375]]}';
+        $exception = '{"type":"LineString","coordinates":[[2.7004,49.375],[2.7006,49.375]]}';
+
+        // Sans géométrie à soustraire, la géométrie de base est renvoyée telle quelle.
+        $this->assertSame($base, $this->roadGeocoder->subtractGeometries($base, []));
+
+        // Le tronçon central (avec un petit buffer) est retiré de la ligne.
+        $this->assertSame(
+            '{"type":"MultiLineString","coordinates":[[[2.7,49.375],[2.70037,49.375]],[[2.70063,49.375],[2.701,49.375]]]}',
+            $this->roadGeocoder->subtractGeometries($base, [$exception]),
+        );
+    }
+
     public function testFindSectionsInArea(): void
     {
         // This area is a rectangle, it contains:
