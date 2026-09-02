@@ -6,8 +6,10 @@ namespace App\Application\Regulation\Command\Location;
 
 use App\Application\CommandBusInterface;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
+use App\Application\Exception\ZoneWithoutStreetsException;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
+use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\WholeCityException;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -36,10 +38,7 @@ final class SaveLocationCommandHandler
         if ($location = $command->location) {
             $roadCommand->setLocation($location);
             $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
-
-            if (!$this->canOrganizationInterveneOnGeometry->isSatisfiedBy($organizationUuid, $geometry)) {
-                throw new OrganizationCannotInterveneOnGeometryException();
-            }
+            $this->checkGeometry($roadCommand, $organizationUuid, $geometry);
 
             $location->update($command->roadType, $geometry);
             $this->applyRoadCommand($roadCommand, $location);
@@ -54,10 +53,7 @@ final class SaveLocationCommandHandler
         // Create location
 
         $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
-
-        if (!$this->canOrganizationInterveneOnGeometry->isSatisfiedBy($organizationUuid, $geometry)) {
-            throw new OrganizationCannotInterveneOnGeometryException();
-        }
+        $this->checkGeometry($roadCommand, $organizationUuid, $geometry);
 
         $location = $this->locationRepository->add(
             new Location(
@@ -72,6 +68,27 @@ final class SaveLocationCommandHandler
         $command->measure->addLocation($location);
 
         return $location;
+    }
+
+    private function checkGeometry(RoadCommandInterface $roadCommand, string $organizationUuid, string $geometry): void
+    {
+        // Pour une zone, la géométrie enregistrée (les tronçons de rues couverts) peut être
+        // vide si le périmètre ne contient aucune rue, et ST_Intersects avec une géométrie
+        // vide renvoie toujours faux. La compétence de l'organisation s'évalue donc sur le
+        // polygone dessiné, qui représente la zone d'intervention voulue.
+        $competenceGeometry = $roadCommand instanceof SaveZoneCommand && $roadCommand->geometry
+            ? $roadCommand->geometry
+            : $geometry;
+
+        if (!$this->canOrganizationInterveneOnGeometry->isSatisfiedBy($organizationUuid, $competenceGeometry)) {
+            throw new OrganizationCannotInterveneOnGeometryException();
+        }
+
+        // Une zone sans rue n'aurait aucun linéaire exploitable (carte, exports DATEX II et
+        // CIFS) : on refuse l'enregistrement pour que l'usager corrige son tracé.
+        if ($roadCommand instanceof SaveZoneCommand && GeoJSON::isEmptyGeometryCollection($geometry)) {
+            throw new ZoneWithoutStreetsException();
+        }
     }
 
     private function applyRoadCommand(RoadCommandInterface $roadCommand, Location $location): void
