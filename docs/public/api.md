@@ -20,7 +20,7 @@ L’authentification est requise pour les endpoints suivants :
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 - POST `/api/nearby-streets` (recherche de rues à proximité d'une géométrie)
 
-Les exports (lecture) via GET (`/api/regulations.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
+Les exports (lecture) via GET (`/api/regulations/datex.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
 
 ## Documentation OpenAPI
 
@@ -565,9 +565,11 @@ Pour obtenir des identifiants d’accès ou signaler un problème, contactez l�
 ### Export DATEX II
 
 - Méthode: GET
-- URL: `/api/regulations.xml`
+- URL: `/api/regulations/datex.xml`
 - Authentification requise: non
 - Réponse: XML (`Content-Type: text/xml; charset=UTF-8`)
+
+> L'ancienne URL `/api/regulations.xml` reste fonctionnelle : elle redirige (301) vers `/api/regulations/datex.xml` en conservant les paramètres de requête.
 
 #### Paramètres de requête (filtres)
 
@@ -584,26 +586,80 @@ Règles d’interprétation:
 #### Exemple de requête
 
 ```bash
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml' -H 'Accept: application/xml'
 ```
 
 Exemples avec filtres:
 
 ```bash
 # Uniquement permanents
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includeTemporary=false' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includeTemporary=false' -H 'Accept: application/xml'
 
 # Uniquement temporaires non expirés
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=false' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includePermanent=false&includeTemporary=true&includeExpired=false' -H 'Accept: application/xml'
 
 # Tous les temporaires, y compris expirés (et sans permanents)
-curl -X GET 'https://dialog.beta.gouv.fr/api/regulations.xml?includePermanent=false&includeTemporary=true&includeExpired=true' -H 'Accept: application/xml'
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includePermanent=false&includeTemporary=true&includeExpired=true' -H 'Accept: application/xml'
 ```
 
 #### Détails
 
 - Le flux suit le standard DATEX II (schémas disponibles dans `docs/spec/datex2/`).
 - Le document XML contient l’ensemble des arrêtés publiés, prêts à être réutilisés.
+
+### Export CSV des restrictions
+
+- Méthode: GET
+- URL: `/api/regulations/csv`
+- Authentification requise: non
+- Réponse: CSV (`Content-Type: text/csv; charset=UTF-8`)
+
+#### Description
+
+Exporte la base nationale des restrictions au format CSV. **Une ligne du fichier correspond à une emprise** (localisation d'une mesure) : un arrêté comportant plusieurs mesures, chacune sur plusieurs emprises, génère donc plusieurs lignes.
+
+Le fichier est encodé en UTF-8 (avec BOM) et délimité par des points-virgules (`;`), pour un usage direct dans Excel.
+
+Sans aucun filtre, l'export porte sur **toute la base publiée** (tous statuts confondus). Cet export complet est pré-généré chaque nuit et servi depuis un cache, afin de garantir un téléchargement rapide.
+
+#### Colonnes
+
+| Colonne | Description |
+| --- | --- |
+| `arrete_uuid` | UUID de l'arrêté. |
+| `arrete_titre` | Titre de l'arrêté. |
+| `arrete_categorie` | Nature de l'arrêté (`permanentRegulation` ou `temporaryRegulation`). |
+| `arrete_statut` | Statut de l'arrêté. |
+| `date_debut` | Date de début de vigueur (`AAAA-MM-JJ`). |
+| `date_fin` | Date de fin de vigueur (vide pour un arrêté permanent). |
+| `organisation` | Organisation émettrice. |
+| `lien_pdf` | Lien vers le document source (PDF) le cas échéant. |
+| `mesure_uuid` | UUID de la mesure. |
+| `type_restriction` | Type de restriction (`alternateRoad`, `noOvertaking`, `noEntry`, `speedLimitation`, `parkingProhibited`). |
+| `emprise_uuid` | UUID de l'emprise. |
+| `emprise_type` | Type d'emprise (voie nommée, route numérotée, ville entière, zone…). |
+| `emprise_libelle` | Libellé lisible de l'emprise. |
+
+#### Paramètres de requête (filtres)
+
+Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/json`) sont disponibles. Dès qu'un filtre est fourni, l'export est calculé à la volée.
+
+- `status` (`current` | `expired` | `upcoming` | `all`, défaut `all`): statut de vigueur.
+- `inseeCode` (string): code INSEE exact d'une commune.
+- `dateStart` / `dateEnd` (date ISO 8601): plage de dates de vigueur.
+- `category` (`permanentRegulation` | `temporaryRegulation`): nature de l'arrêté.
+- `measureType` (string): type de restriction.
+- `includeHeavyGoodsVehicle` (boolean, défaut `true`): inclut les restrictions poids lourds.
+
+#### Exemple de requête
+
+```bash
+# Export complet (toute la base)
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv' -o restrictions.csv
+
+# Uniquement les arrêtés en vigueur d'une commune
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv?status=current&inseeCode=75056' -o restrictions.csv
+```
 
 ### Export CIFS (Waze)
 

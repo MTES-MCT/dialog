@@ -67,7 +67,7 @@ Les arrêtés dont les données sources ne permettent pas de les importer de fa�
 Une fois importée dans la base de données DiaLog, la donnée est automatiquement mise à disposition sur les canaux suivants :
 
 * La carte des restrictions : https://dialog.beta.gouv.fr/carte
-* L'export au standard DATEX II : https://dialog.beta.gouv.fr/api/regulations.xml
+* L'export au standard DATEX II : https://dialog.beta.gouv.fr/api/regulations/datex.xml
     * Cet export est publié en open data sur la plateforme data.gouv : https://www.data.gouv.fr/fr/datasets/64947a4af5faf2f1f9eee299/
     * Il est aussi publié sur le Point d'Accès National (PAN) transport.data.gouv.fr : https://transport.data.gouv.fr/datasets/base-de-donnees-nationale-de-la-reglementation-de-circulation
 * L'export CIFS (Waze) : https://dialog.beta.gouv.fr/api/regulations/cifs.xml

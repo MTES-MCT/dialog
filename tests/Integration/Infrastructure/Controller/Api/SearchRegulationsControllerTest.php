@@ -21,7 +21,7 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
     private function search(array $query = [], array $headers = self::AUTH_HEADERS): array
     {
         $this->client ??= static::createClient();
-        $this->client->request('GET', '/api/regulations/search', $query, [], $headers);
+        $this->client->request('GET', '/api/regulations/json', $query, [], $headers);
 
         return [$this->client->getResponse()->getStatusCode(), json_decode($this->client->getResponse()->getContent(), true)];
     }
