@@ -29,7 +29,7 @@ final class WholeCityExceptionFormType extends AbstractType
                 ],
             )
             ->add('namedStreet', NamedStreetFormType::class, [
-                'with_city' => false,
+                'with_city' => $options['with_city'],
                 'label' => false,
             ])
             ->add('rawGeoJSON', RawGeoJSONFormType::class, [
@@ -41,8 +41,12 @@ final class WholeCityExceptionFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            // Pour une exception de « Ville entière », la ville est héritée de la localisation
+            // parente ; pour un tracé de zone ou un tracé libre, l'utilisateur la choisit.
+            'with_city' => false,
             'validation_groups' => ['Default', 'html_form'],
             'data_class' => SaveWholeCityExceptionCommand::class,
         ]);
+        $resolver->setAllowedTypes('with_city', 'bool');
     }
 }

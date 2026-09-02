@@ -683,6 +683,47 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Village olympique - tracé de linéaire (voie)', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
     }
 
+    public function testAddRawGeoJSONWithExceptionAsAdmin(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSecurityHeaders();
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Village olympique';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '{"type": "LineString", "coordinates": [[2.3295, 48.9184], [2.3315, 48.9194]]}';
+        // Un tronçon du tracé est exclu de la restriction (exception de type tracé libre)
+        $values['measure_form']['locations'][0]['rawGeoJSON']['exceptions'][0]['roadType'] = 'rawGeoJSON';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['exceptions'][0]['rawGeoJSON']['label'] = 'Passage réservé';
+        $values['measure_form']['locations'][0]['rawGeoJSON']['exceptions'][0]['rawGeoJSON']['geometry'] = '{"type": "LineString", "coordinates": [[2.3304, 48.9188], [2.3308, 48.9190]]}';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['periods'][0]['startTime']['hour'] = '0';
+        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
+        $values['measure_form']['periods'][0]['endDate'] = '2023-10-31';
+        $values['measure_form']['periods'][0]['endTime']['hour'] = '23';
+        $values['measure_form']['periods'][0]['endTime']['minute'] = '59';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $measures = $crawler->filter('[data-testid="measure"]');
+
+        $this->assertSame('Circulation interdite', $measures->eq(0)->filter('h3')->text());
+
+        // L'exception apparaît dans le résumé de la localisation
+        $measureHtml = $measures->eq(0)->html();
+        $this->assertStringContainsString('Sauf :', $measureHtml);
+        $this->assertStringContainsString('Passage réservé', $measureHtml);
+    }
+
     public function testAddRawGeoJSONAsAdminInvalidBlank(): void
     {
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);

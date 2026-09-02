@@ -20,6 +20,15 @@ interface RoadGeocoderInterface
      */
     public function computeCityGeometry(string $cityCode, array $excludedRoadBanIds = [], array $subtractGeometries = []): string;
 
+    /**
+     * Soustrait géométriquement des géométries GeoJSON d'une géométrie de base
+     * (ST_Difference avec un petit buffer) : utilisé pour retirer les exceptions
+     * d'un tracé de zone ou d'un tracé libre.
+     *
+     * @param string[] $subtractGeometries
+     */
+    public function subtractGeometries(string $geometry, array $subtractGeometries): string;
+
     public function getRoadBanIdFromName(string $roadName, string $inseeCode): string;
 
     public function findRoads(string $search, string $roadType, string $administrator): array;

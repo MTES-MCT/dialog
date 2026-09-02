@@ -280,7 +280,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->queryBus
             ->expects(self::once())
             ->method('handle')
-            ->with(new GetRawGeoJSONGeometryQuery('<geometry>'))
+            ->with(new GetRawGeoJSONGeometryQuery($rawGeoJSONCommand))
             ->willReturn('<geometry>');
 
         $this->canOrganizationInterveneOnGeometry

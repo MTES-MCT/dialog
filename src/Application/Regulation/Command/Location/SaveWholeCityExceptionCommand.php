@@ -9,8 +9,9 @@ use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\WholeCityException;
 
 /**
- * Une exception à une restriction « Ville entière » : une voie (entière ou tronçon) ou un
- * tracé libre, saisi avec les MÊMES sous-formulaires qu'une localisation classique (réutilisation).
+ * Une exception à une restriction « Ville entière », « Tracé de zone » ou « Tracé libre » :
+ * une voie (entière ou tronçon) ou un tracé libre, saisi avec les MÊMES sous-formulaires
+ * qu'une localisation classique (réutilisation).
  */
 final class SaveWholeCityExceptionCommand
 {
@@ -110,6 +111,7 @@ final class SaveWholeCityExceptionCommand
 
         return [
             'cityCode' => $namedStreet?->cityCode,
+            'cityLabel' => $namedStreet?->cityLabel,
             'roadBanId' => $namedStreet?->roadBanId,
             'roadName' => $namedStreet?->roadName,
             'fromPointType' => $namedStreet?->fromPointType,
@@ -132,6 +134,7 @@ final class SaveWholeCityExceptionCommand
         $command = new SaveNamedStreetCommand();
         $command->roadType = RoadTypeEnum::LANE->value;
         $command->cityCode = $data['cityCode'] ?? null;
+        $command->cityLabel = $data['cityLabel'] ?? null;
         $command->roadBanId = $data['roadBanId'] ?? null;
         $command->roadName = $data['roadName'] ?? null;
         $command->fromPointType = $data['fromPointType'] ?? null;

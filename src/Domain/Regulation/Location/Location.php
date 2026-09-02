@@ -88,7 +88,7 @@ class Location
     }
 
     /**
-     * Voies/tracés exclus d'une restriction « Ville entière ».
+     * Voies/tracés exclus d'une restriction « Ville entière », « Tracé de zone » ou « Tracé libre ».
      *
      * @return WholeCityException[]
      */

@@ -9,6 +9,7 @@ use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 
 readonly class MeasureView
@@ -89,6 +90,7 @@ readonly class MeasureView
                     roadType: $location->getRoadType(),
                     rawGeoJSON: new RawGeoJSONView(
                         label: $rawGeoJSON->getLabel(),
+                        exceptions: self::exceptionViews($location),
                     ),
                     geometry: $location->getGeometry(),
                 );
@@ -98,33 +100,18 @@ readonly class MeasureView
                     roadType: $location->getRoadType(),
                     zone: new ZoneView(
                         label: $zone->getLabel(),
+                        exceptions: self::exceptionViews($location),
                     ),
                     geometry: $location->getGeometry(),
                 );
             } elseif ($location->getRoadType() === RoadTypeEnum::WHOLE_CITY->value) {
-                $exceptions = array_map(
-                    function ($exception) {
-                        $data = $exception->getData();
-
-                        return new WholeCityExceptionView(
-                            roadType: $exception->getRoadType(),
-                            label: $exception->getLabel(),
-                            fromHouseNumber: $data['fromHouseNumber'] ?? null,
-                            fromRoadName: $data['fromRoadName'] ?? null,
-                            toHouseNumber: $data['toHouseNumber'] ?? null,
-                            toRoadName: $data['toRoadName'] ?? null,
-                        );
-                    },
-                    $location->getExceptions(),
-                );
-
                 $locations[] = new LocationView(
                     uuid: $location->getUuid(),
                     roadType: $location->getRoadType(),
                     wholeCity: new WholeCityView(
                         cityCode: $location->getCityCode(),
                         cityLabel: $location->getCityLabel(),
-                        exceptions: $exceptions,
+                        exceptions: self::exceptionViews($location),
                     ),
                     geometry: $location->getGeometry(),
                 );
@@ -138,6 +125,28 @@ readonly class MeasureView
             VehicleSetView::fromEntity($measure->getVehicleSet()),
             $measure->getMaxSpeed(),
             $locations,
+        );
+    }
+
+    /**
+     * @return WholeCityExceptionView[]
+     */
+    private static function exceptionViews(Location $location): array
+    {
+        return array_map(
+            function ($exception) {
+                $data = $exception->getData();
+
+                return new WholeCityExceptionView(
+                    roadType: $exception->getRoadType(),
+                    label: $exception->getLabel(),
+                    fromHouseNumber: $data['fromHouseNumber'] ?? null,
+                    fromRoadName: $data['fromRoadName'] ?? null,
+                    toHouseNumber: $data['toHouseNumber'] ?? null,
+                    toRoadName: $data['toRoadName'] ?? null,
+                );
+            },
+            $location->getExceptions(),
         );
     }
 }

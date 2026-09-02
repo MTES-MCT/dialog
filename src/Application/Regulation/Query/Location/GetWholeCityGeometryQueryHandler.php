@@ -62,28 +62,6 @@ final class GetWholeCityGeometryQueryHandler implements QueryInterface
             return true;
         }
 
-        return $this->exceptionsSignature($query) !== $this->persistedExceptionsSignature($location);
-    }
-
-    private function exceptionsSignature(GetWholeCityGeometryQuery $query): array
-    {
-        $signature = array_map(
-            fn ($exception) => json_encode([$exception->roadType, $exception->toData()]),
-            $query->command->exceptions,
-        );
-        sort($signature);
-
-        return $signature;
-    }
-
-    private function persistedExceptionsSignature($location): array
-    {
-        $signature = array_map(
-            fn ($exception) => json_encode([$exception->getRoadType(), $exception->getData()]),
-            $location->getExceptions(),
-        );
-        sort($signature);
-
-        return $signature;
+        return ExceptionsSignature::ofCommands($query->command->exceptions) !== ExceptionsSignature::ofLocation($location);
     }
 }

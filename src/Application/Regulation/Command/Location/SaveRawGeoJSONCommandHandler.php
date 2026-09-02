@@ -24,6 +24,7 @@ final class SaveRawGeoJSONCommandHandler
                     uuid: $this->idFactory->make(),
                     location: $command->location,
                     label: $command->label,
+                    geometry: $command->geometry,
                 ),
             );
 
@@ -34,6 +35,7 @@ final class SaveRawGeoJSONCommandHandler
 
         $command->rawGeoJSON->update(
             label: $command->label,
+            geometry: $command->geometry,
         );
 
         return $command->rawGeoJSON;
