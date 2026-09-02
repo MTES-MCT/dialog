@@ -54,6 +54,10 @@
                             </div>
                             {% if location.roadType == 'wholeCity' %}
                                 {% include 'regulation/_whole_city_exceptions.html.twig' with { exceptions: location.wholeCity.exceptions } only %}
+                            {% elseif location.roadType == 'zone' %}
+                                {% include 'regulation/_whole_city_exceptions.html.twig' with { exceptions: location.zone.exceptions } only %}
+                            {% elseif location.roadType == 'rawGeoJSON' %}
+                                {% include 'regulation/_whole_city_exceptions.html.twig' with { exceptions: location.rawGeoJSON.exceptions } only %}
                             {% endif %}
                            {% if location.storageArea %}
                                 <div class="fr-grid-row fr-mt-1w">

@@ -795,6 +795,49 @@
                             }) }}
                         </details>
                     </div>
+
+                    <fieldset
+                        aria-labelledby="{{ form.rawGeoJSON.vars.id }}-exceptions-legend"
+                        data-form-reveal-target="formControl"
+                        data-value="rawGeoJSON"
+                        {% if not isRawGeoJSON %}disabled{% endif %}
+                    >
+                        <legend id="{{ form.rawGeoJSON.vars.id }}-exceptions-legend" class="fr-text--bold">
+                            {{ 'regulation.location.wholeCity.exceptions'|trans }}
+                        </legend>
+                        <div class="fr-hint-text help-text fr-mb-1w">
+                            {{ 'regulation.location.raw_geojson.exceptions.description'|trans }}
+                        </div>
+
+                        <div
+                            data-controller="form-collection"
+                            data-form-collection-prototype-key-value="exception"
+                            data-form-collection-trigger-conditionals-value="true"
+                            data-form-collection-next-index-value="{{ form.rawGeoJSON.exceptions|length > 0 ? form.rawGeoJSON.exceptions|last.vars.name + 1 : 0 }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.rawGeoJSON.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted)|e('html_attr') }}"
+                        >
+                            <ul
+                                class="fr-raw-list fr-mb-1w"
+                                data-form-collection-target="collectionContainer"
+                                {% if form.rawGeoJSON.exceptions|length == 0 %}data-empty{% endif %}
+                                aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
+                            >
+                                {%- for item in form.rawGeoJSON.exceptions -%}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted) }}
+                                {%- else -%}
+                                    {%- do form.rawGeoJSON.exceptions.setRendered -%}
+                                {%- endfor -%}
+                            </ul>
+
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                                data-action="form-collection#addCollectionElement"
+                            >
+                                {{ 'regulation.location.wholeCity.exceptions.add'|trans }}
+                            </button>
+                        </div>
+                    </fieldset>
                 </div>
 
                 {% set isWholeCity = form.roadType.vars.value == 'wholeCity' %}
@@ -874,7 +917,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.wholeCity.exceptions|length > 0 ? form.wholeCity.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, organizationBbox, locationPersisted)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, false, organizationBbox, locationPersisted)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -883,7 +926,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.wholeCity.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, organizationBbox, locationPersisted) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, false, organizationBbox, locationPersisted) }}
                                 {%- else -%}
                                     {%- do form.wholeCity.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -1058,13 +1101,56 @@
                             }) }}
                         </details>
                     </div>
+
+                    <fieldset
+                        aria-labelledby="{{ form.zone.vars.id }}-exceptions-legend"
+                        data-form-reveal-target="formControl"
+                        data-value="zone"
+                        {% if not isZone %}disabled{% endif %}
+                    >
+                        <legend id="{{ form.zone.vars.id }}-exceptions-legend" class="fr-text--bold">
+                            {{ 'regulation.location.wholeCity.exceptions'|trans }}
+                        </legend>
+                        <div class="fr-hint-text help-text fr-mb-1w">
+                            {{ 'regulation.location.zone.exceptions.description'|trans }}
+                        </div>
+
+                        <div
+                            data-controller="form-collection"
+                            data-form-collection-prototype-key-value="exception"
+                            data-form-collection-trigger-conditionals-value="true"
+                            data-form-collection-next-index-value="{{ form.zone.exceptions|length > 0 ? form.zone.exceptions|last.vars.name + 1 : 0 }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.zone.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted)|e('html_attr') }}"
+                        >
+                            <ul
+                                class="fr-raw-list fr-mb-1w"
+                                data-form-collection-target="collectionContainer"
+                                {% if form.zone.exceptions|length == 0 %}data-empty{% endif %}
+                                aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
+                            >
+                                {%- for item in form.zone.exceptions -%}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted) }}
+                                {%- else -%}
+                                    {%- do form.zone.exceptions.setRendered -%}
+                                {%- endfor -%}
+                            </ul>
+
+                            <button
+                                type="button"
+                                class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line"
+                                data-action="form-collection#addCollectionElement"
+                            >
+                                {{ 'regulation.location.wholeCity.exceptions.add'|trans }}
+                            </button>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
         </div>
     </li>
 {% endmacro %}
 
-{% macro whole_city_exception_item(form, index, measureType, organizationBbox, locationPersisted) %}
+{% macro whole_city_exception_item(form, index, measureType, withCity, organizationBbox, locationPersisted) %}
     {% set isLane = form.roadType.vars.value == 'lane' %}
     {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
     <li
@@ -1097,8 +1183,41 @@
                 {% if not isLane %}hidden{% endif %}
             >
                 {{ form_row(form.namedStreet.roadType, { attr: { 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
-                {{ form_row(form.namedStreet.cityCode, { attr: { 'data-mirror-value-target': 'destination', 'data-mirror-value-name': 'cityCode', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
-                {{ form_row(form.namedStreet.cityLabel, { attr: { 'data-mirror-value-target': 'destination', 'data-mirror-value-name': 'cityLabel', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                {% if withCity %}
+                    {# La ville est choisie par l'utilisateur (exception d'un tracé de zone ou d'un tracé libre) #}
+                    <div
+                        class="fr-x-autocomplete-wrapper"
+                        data-controller="autocomplete"
+                        data-autocomplete-url-value="{{ path('fragment_city_completion') }}"
+                        data-autocomplete-query-param-value="search"
+                        data-autocomplete-min-length-value="3"
+                        data-autocomplete-delay-value="500"
+                        data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
+                        data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 3 }) }}"
+                        data-action="autocomplete.change->reset#reset"
+                        data-reset-key-param="city"
+                    >
+                        {{ form_row(form.namedStreet.cityCode, { attr: { 'data-autocomplete-target': 'hidden', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                        {{ form_row(form.namedStreet.cityLabel, {
+                            group_class: 'fr-input-group',
+                            widget_class: 'fr-input',
+                            attr: { 'data-autocomplete-target': 'input', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane },
+                        }) }}
+                        <ul
+                            id="{{ form.namedStreet.cityLabel.vars.id }}-results"
+                            role="listbox"
+                            aria-label="{{ 'regulation.location.city.results_label'|trans }}"
+                            class="fr-x-autocomplete"
+                            data-autocomplete-target="results"
+                        >
+                            <li role="status" data-autocomplete-target="status"></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    {# La ville est héritée de la « Ville entière » parente (champs miroirs) #}
+                    {{ form_row(form.namedStreet.cityCode, { attr: { 'data-mirror-value-target': 'destination', 'data-mirror-value-name': 'cityCode', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                    {{ form_row(form.namedStreet.cityLabel, { attr: { 'data-mirror-value-target': 'destination', 'data-mirror-value-name': 'cityLabel', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                {% endif %}
 
                 <div
                     data-controller="fetch"
@@ -1133,11 +1252,11 @@
                         data-fetch-prefetch-value="true"
                         data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch autocomplete.prefetch->fetch#fetch"
                     >
-                        {{ form_row(form.namedStreet.roadBanId, { attr: { 'data-autocomplete-target': 'hidden', 'data-whole-city-exception-road-ban-id': '', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
+                        {{ form_row(form.namedStreet.roadBanId, { attr: { 'data-autocomplete-target': 'hidden', 'data-whole-city-exception-road-ban-id': '', 'data-reset-target': 'element', 'data-reset-keys': ['city']|json_encode, 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane } }) }}
                         {{ form_row(form.namedStreet.roadName, {
                             group_class: 'fr-input-group',
                             widget_class: 'fr-input',
-                            attr: { 'data-autocomplete-target': 'input', 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane },
+                            attr: { 'data-autocomplete-target': 'input', 'data-reset-target': 'element', 'data-reset-keys': ['city']|json_encode, 'data-form-reveal-target': 'formControl', 'data-value': 'lane', 'disabled': not isLane },
                         }) }}
                         <ul
                             id="{{ form.namedStreet.roadName.vars.id }}-results"

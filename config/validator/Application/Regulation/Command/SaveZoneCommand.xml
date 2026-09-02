@@ -23,5 +23,8 @@
                 </option>
             </constraint>
         </property>
+        <property name="exceptions">
+            <constraint name="Valid" />
+        </property>
     </class>
 </constraint-mapping>

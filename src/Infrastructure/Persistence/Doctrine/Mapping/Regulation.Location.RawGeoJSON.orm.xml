@@ -7,6 +7,13 @@
     table="raw_geojson">
     <id name="uuid" type="guid" column="uuid" />
     <field name="label" type="text" column="label" nullable="false"/>
+    <!-- Tracé dessiné, conservé pour la ré-édition. Le tracé après soustraction des exceptions vit sur location.geometry. -->
+    <field name="geometry" type="geojson_geometry" column="geometry" nullable="true">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
     <one-to-one field="location" target-entity="App\Domain\Regulation\Location\Location" inversed-by="rawGeoJSON">
         <join-column name="location_uuid" referenced-column-name="uuid" on-delete="CASCADE"/>
     </one-to-one>

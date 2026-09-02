@@ -47,6 +47,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
                         uuid: 'f2c03654-4ad9-4eed-827d-dab4ebec5a29',
                         location: $location,
                         label: 'Evénement spécial',
+                        geometry: '<geometry>',
                     ),
                 ),
             )->willReturn($createdRawGeoJSON);
@@ -81,6 +82,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
             ->method('update')
             ->with(
                 'Evénement très spécial',
+                '<geometry>',
             );
 
         $this->idFactory
@@ -98,6 +100,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
 
         $command = new SaveRawGeoJSONCommand($rawGeoJSON);
         $command->label = 'Evénement très spécial';
+        $command->geometry = '<geometry>';
 
         $this->assertSame($rawGeoJSON, $handler($command));
     }
