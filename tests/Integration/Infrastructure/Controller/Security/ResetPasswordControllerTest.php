@@ -65,7 +65,7 @@ final class ResetPasswordControllerTest extends AbstractWebTestCase
         $form['reset_password_form[password][second]'] = 'password';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop courte. Elle doit avoir au minimum 12 caractères.', $crawler->filter('#reset_password_form_password_first_error')->text());
+        $this->assertSame('Cette chaîne est trop courte. Elle doit contenir au minimum 12 caractères.', $crawler->filter('#reset_password_form_password_first_error')->text());
     }
 
     public function testTokenNotFound(): void

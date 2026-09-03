@@ -52,7 +52,7 @@ final class EditPasswordControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop courte. Elle doit avoir au minimum 12 caractères.', $crawler->filter('#edit_password_form_password_first_error')->text());
+        $this->assertSame('Cette chaîne est trop courte. Elle doit contenir au minimum 12 caractères.', $crawler->filter('#edit_password_form_password_first_error')->text());
     }
 
     public function testEditWithTooLongPsw(): void
@@ -70,7 +70,7 @@ final class EditPasswordControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#edit_password_form_password_first_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#edit_password_form_password_first_error')->text());
     }
 
     public function testEditWithPswDiff(): void

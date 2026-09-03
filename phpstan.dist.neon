@@ -1,0 +1,8 @@
+includes:
+    # Erreurs préexistantes gelées lors du passage à PHPStan 2.x, à résorber au fil de l'eau.
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
