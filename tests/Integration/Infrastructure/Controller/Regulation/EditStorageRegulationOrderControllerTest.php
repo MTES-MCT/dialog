@@ -56,7 +56,7 @@ final class EditStorageRegulationOrderControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 30 caractères.', $crawler->filter('#storage_regulation_order_form_title_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 30 caractères.', $crawler->filter('#storage_regulation_order_form_title_error')->text());
         $this->assertSame('Cette valeur n\'est pas une URL valide.', $crawler->filter('#storage_regulation_order_form_url_error')->text());
     }
 

@@ -152,9 +152,9 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 60 caractères.', $crawler->filter('#general_info_form_identifier_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#general_info_form_title_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#general_info_form_otherCategoryText_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 60 caractères.', $crawler->filter('#general_info_form_identifier_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#general_info_form_title_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 100 caractères.', $crawler->filter('#general_info_form_otherCategoryText_error')->text());
     }
 
     public function testWithoutAuthenticatedUser(): void

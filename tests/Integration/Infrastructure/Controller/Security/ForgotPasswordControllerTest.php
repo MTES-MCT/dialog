@@ -60,12 +60,12 @@ final class ForgotPasswordControllerTest extends AbstractWebTestCase
         $crawler = $client->submit($form);
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame("Cette valeur n'est pas une adresse email valide.", $crawler->filter('#forgot_password_form_email_error')->text());
+        $this->assertSame("Cette valeur n'est pas une adresse e-mail valide.", $crawler->filter('#forgot_password_form_email_error')->text());
 
         // Email too long
         $form['forgot_password_form[email]'] = str_repeat('a', 101) . '@gmail.com';
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#forgot_password_form_email_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 100 caractères.', $crawler->filter('#forgot_password_form_email_error')->text());
     }
 }
