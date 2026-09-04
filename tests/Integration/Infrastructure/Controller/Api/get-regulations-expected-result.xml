@@ -158,7 +158,7 @@
                 <trafficRegulationOrderExtended>
 
                     <dx:source>dialog</dx:source>
-                    <dx:publicUrl>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</dx:publicUrl>
+                    <dx:publicUrl>https://dialog.beta.gouv.fr/regulations/0654905d-6771-75d8-8000-d523184d0b55</dx:publicUrl>
                 </trafficRegulationOrderExtended>
 
             </_trafficRegulationOrderExtension>
@@ -243,7 +243,7 @@
                 <trafficRegulationOrderExtended>
 
                     <dx:source>litteralis</dx:source>
-                    <dx:publicUrl>http://localhost/regulations/066e9849-1457-7a1e-8000-3142ece4a7de</dx:publicUrl>
+                    <dx:publicUrl>https://dialog.beta.gouv.fr/regulations/066e9849-1457-7a1e-8000-3142ece4a7de</dx:publicUrl>
                 </trafficRegulationOrderExtended>
 
             </_trafficRegulationOrderExtension>
@@ -477,7 +477,7 @@
                 <trafficRegulationOrderExtended>
                     <dx:source>dialog</dx:source>
 
-                    <dx:publicUrl>http://localhost/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5</dx:publicUrl>
+                    <dx:publicUrl>https://dialog.beta.gouv.fr/regulations/3ede8b1a-1816-4788-8510-e08f45511cb5</dx:publicUrl>
                 </trafficRegulationOrderExtended>
 
             </_trafficRegulationOrderExtension>
@@ -622,7 +622,7 @@
                 <trafficRegulationOrderExtended>
 
                     <dx:source>dialog</dx:source>
-                    <dx:publicUrl>http://localhost/regulations/6f665f38-7765-47b1-849a-06279eba3ac6</dx:publicUrl>
+                    <dx:publicUrl>https://dialog.beta.gouv.fr/regulations/6f665f38-7765-47b1-849a-06279eba3ac6</dx:publicUrl>
                 </trafficRegulationOrderExtended>
 
             </_trafficRegulationOrderExtension>
@@ -706,7 +706,7 @@
                 <trafficRegulationOrderExtended>
 
                     <dx:source>dialog</dx:source>
-                    <dx:publicUrl>http://localhost/regulations/9995801a-0a5c-4a93-8562-f84df8484315</dx:publicUrl>
+                    <dx:publicUrl>https://dialog.beta.gouv.fr/regulations/9995801a-0a5c-4a93-8562-f84df8484315</dx:publicUrl>
                 </trafficRegulationOrderExtended>
 
             </_trafficRegulationOrderExtension>
@@ -799,7 +799,7 @@
                 <trafficRegulationOrderExtended>
 
                     <dx:source>dialog</dx:source>
-                    <dx:publicUrl>http://localhost/regulations/9d408332-d30f-4530-be66-dfb2d98ebae5</dx:publicUrl>
+                    <dx:publicUrl>https://dialog.beta.gouv.fr/regulations/9d408332-d30f-4530-be66-dfb2d98ebae5</dx:publicUrl>
                 </trafficRegulationOrderExtended>
 
             </_trafficRegulationOrderExtension>
