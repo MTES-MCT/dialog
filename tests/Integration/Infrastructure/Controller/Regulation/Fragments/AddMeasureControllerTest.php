@@ -954,8 +954,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#measure_form_vehicleSet_otherRestrictedTypeText_error')->text());
-        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit avoir au maximum 300 caractères.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit contenir au maximum 100 caractères.', $crawler->filter('#measure_form_vehicleSet_otherRestrictedTypeText_error')->text());
+        $this->assertStringContainsString('Cette chaîne est trop longue. Elle doit contenir au maximum 300 caractères.', $crawler->filter('#measure_form_vehicleSet_otherExemptedTypeText_error')->text());
     }
 
     public function testInvalidVehicleSetBlankDimensions(): void
@@ -1213,12 +1213,12 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne doit avoir exactement 5 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toHouseNumber_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
+        $this->assertSame('Cette chaîne doit contenir exactement 5 caractères. Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_cityLabel_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_fromRoadName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 8 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toHouseNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 20 caractères. Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#measure_form_locations_0_namedStreet_toRoadName_error')->text());
     }
 
     public function testFieldsTooLongDepartmentalRoad(): void
@@ -1240,7 +1240,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 50 caractères.', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 50 caractères.', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
     }
 
     public function testFieldsTooLongRawGeoJSON(): void
@@ -1262,7 +1262,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 5000 caractères.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_label_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 5000 caractères.', $crawler->filter('#measure_form_locations_0_rawGeoJSON_label_error')->text());
     }
 
     public function testCannotAccessBecauseDifferentOrganization(): void

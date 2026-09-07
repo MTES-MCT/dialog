@@ -63,7 +63,7 @@ final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_name_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 150 caractères.', $crawler->filter('#regulation_order_template_form_name_error')->text());
     }
 
     public function testOrganizationNotOwned(): void

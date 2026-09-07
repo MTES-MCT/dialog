@@ -70,7 +70,7 @@ final class EditUserControllerTest extends AbstractWebTestCase
         $values['user_form']['email'] = 'abc';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#user_form_email_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une adresse e-mail valide.', $crawler->filter('#user_form_email_error')->text());
     }
 
     public function testOwnerCheckboxVisibleForOwner(): void
