@@ -81,7 +81,7 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $content = $response->getContent();
+        $content = $client->getInternalResponse()->getContent();
         $this->assertMatchesRegularExpression(
             '#<dx:publicUrl>https://dialog\.beta\.gouv\.fr/regulations/[0-9a-f-]{36}</dx:publicUrl>#',
             $content,
