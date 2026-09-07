@@ -92,7 +92,7 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
         $values['invitation_form']['email'] = 'abc';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#invitation_form_email_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une adresse e-mail valide.', $crawler->filter('#invitation_form_email_error')->text());
     }
 
     public function testOrganizationNotOwned(): void

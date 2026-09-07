@@ -1,0 +1,163 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Using nullsafe property access "\?\-\>geometry" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Application/Regulation/Command/Location/SaveWholeCityExceptionCommand.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>roadBanId" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Application/Regulation/Command/Location/SaveWholeCityExceptionCommand.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: src/Application/Regulation/Query/GetCifsIncidentsQueryHandler.php
+
+		-
+			message: '#^Result of \|\| is always true\.$#'
+			identifier: booleanOr.alwaysTrue
+			count: 1
+			path: src/Application/Regulation/Query/GetCifsIncidentsQueryHandler.php
+
+		-
+			message: '#^Property App\\Domain\\Regulation\\Measure\:\:\$locations in empty\(\) is not falsy nor uninitialized\.$#'
+			identifier: empty.initializedProperty
+			count: 1
+			path: src/Domain/Regulation/Measure.php
+
+		-
+			message: '#^Property App\\Domain\\Regulation\\RegulationOrder\:\:\$regulationOrderRecord \(App\\Domain\\Regulation\\RegulationOrderRecord\|null\) is never assigned App\\Domain\\Regulation\\RegulationOrderRecord so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Domain/Regulation/RegulationOrder.php
+
+		-
+			message: '#^Property App\\Domain\\User\\Organization\:\:\$geometry \(string\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Domain/User/Organization.php
+
+		-
+			message: '#^Property App\\Domain\\User\\Organization\:\:\$siret \(string\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Domain/User/Organization.php
+
+		-
+			message: '#^Property App\\Domain\\User\\Organization\:\:\$updatedAt \(DateTimeInterface\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Domain/User/Organization.php
+
+		-
+			message: '#^Method App\\Infrastructure\\Cifs\\PolylineMaker\:\:attemptMergeLines\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Infrastructure/Cifs/PolylineMaker.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Infrastructure/Cifs/PolylineMaker.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/AddRegulationController.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/AddStorageRegulationOrderController.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/DeleteRegulationController.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/GetOrganizationIdentifiersController.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/GetRegulationController.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/PublishRegulationController.php
+
+		-
+			message: '#^PHPDoc tag @var with type App\\Infrastructure\\Security\\User\\OrganizationAwareUserInterface is not subtype of native type Symfony\\Component\\Security\\Core\\User\\UserInterface\|null\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Infrastructure/Controller/Api/Regulations/UpdateRegulationController.php
+
+		-
+			message: '#^Method App\\Infrastructure\\Integration\\Litteralis\\LitteralisPeriodParser\:\:parseTimeSlots\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Infrastructure/Integration/Litteralis/LitteralisPeriodParser.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 3
+			path: src/Infrastructure/Integration/Litteralis/LitteralisTransformer.php
+
+		-
+			message: '#^Instanceof between App\\Infrastructure\\DTO\\Event\\SaveTimeSlotDTO and App\\Infrastructure\\DTO\\Event\\SaveTimeSlotDTO will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Infrastructure/Mapper/Transformers/PeriodsTransformer.php
+
+		-
+			message: '#^Property App\\Infrastructure\\DTO\\Event\\SaveDailyRangeDTO\:\:\$applicableDays \(array\<string\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: src/Infrastructure/Mapper/Transformers/PeriodsTransformer.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<array\<string, mixed\>\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Infrastructure/Persistence/Doctrine/Repository/Regulation/LocationRepository.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: src/Infrastructure/Persistence/Doctrine/Repository/Regulation/RegulationOrderRecordRepository.php
+
+		-
+			message: '#^Method App\\Infrastructure\\Security\\Authenticator\\ApiClientAuthenticator\:\:onAuthenticationFailure\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Infrastructure/Security/Authenticator/ApiClientAuthenticator.php
+
+		-
+			message: '#^Method App\\Infrastructure\\Security\\Authenticator\\ApiClientAuthenticator\:\:supports\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Infrastructure/Security/Authenticator/ApiClientAuthenticator.php
+
+		-
+			message: '#^Method App\\Infrastructure\\Security\\User\\ApiClientUser\:\:getPassword\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: src/Infrastructure/Security/User/ApiClientUser.php
