@@ -1,5 +1,19 @@
-{% if pagination.lastPage > 1 %}
-    <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+{% if pagination.totalItems > 0 %}
+    {% set rangeStart = (currentPage - 1) * pageSize + 1 %}
+    {% set rangeEnd = min(currentPage * pageSize, pagination.totalItems) %}
+    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--center">
+        <span class="fr-mb-2w fr-mr-2w fr-text--sm fr-mr-md-auto fr-text--bold">
+            {{ 'pagination.count'|trans({
+                '%count%': pagination.totalItems,
+                '%start%': rangeStart,
+                '%end%': rangeEnd,
+                '%total%': pagination.totalItems,
+            }) }}
+        </span>
+
+    {% if pagination.lastPage > 1 %}
+    <span class="pagination__separator fr-mb-2w fr-hidden fr-unhidden-md" aria-hidden="true"></span>
+    <nav role="navigation" class="fr-col-auto fr-pagination" aria-label="Pagination">
         <ul class="fr-pagination__list">
             <li>
                 <a class="fr-pagination__link fr-pagination__link--first"
@@ -93,4 +107,6 @@
             </li>
         </ul>
     </nav>
+    {% endif %}
+    </div>
 {% endif %}

@@ -21,6 +21,7 @@
             {% include "common/pagination.html.twig" with {
                 pagination: regulations,
                 currentPage: app.request.get('page', 1),
+                pageSize: pageSize,
                 queryParams: app.request.query.all(),
             } only %}
         </div>
