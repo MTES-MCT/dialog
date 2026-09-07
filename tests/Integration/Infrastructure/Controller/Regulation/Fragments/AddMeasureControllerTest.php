@@ -240,7 +240,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertContains(['append', 'measure_list'], $streams);
     }
 
-    public function testAddZoneWithException(): void
+    public function testAddZoneWithoutStreets(): void
     {
         $client = $this->login();
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
@@ -259,29 +259,15 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $values['measure_form']['locations'][0]['roadType'] = 'zone';
         $values['measure_form']['locations'][0]['zone']['roadType'] = 'zone';
-        $values['measure_form']['locations'][0]['zone']['label'] = 'Quartier de la Rue Ardoin';
-        // Périmètre autour de la Rue Ardoin à Saint-Ouen-sur-Seine (93070)
-        $values['measure_form']['locations'][0]['zone']['geometry'] = '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}';
-        // La Rue Ardoin elle-même est exclue de la restriction (la ville est choisie par l'utilisateur)
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['namedStreet']['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['namedStreet']['cityCode'] = '93070';
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['namedStreet']['roadBanId'] = '93070_0074';
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
-        $values['measure_form']['locations'][0]['zone']['exceptions'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
+        $values['measure_form']['locations'][0]['zone']['label'] = 'Zone sans rue';
+        // Périmètre au milieu d'un lac du parc Georges-Valbon (La Courneuve) : dans le
+        // périmètre de la Seine-Saint-Denis mais sans aucun tronçon de route BD TOPO.
+        $values['measure_form']['locations'][0]['zone']['geometry'] = '{"type":"Polygon","coordinates":[[[2.4013,48.943],[2.4027,48.943],[2.4027,48.944],[2.4013,48.944],[2.4013,48.943]]]}';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
-        $this->assertResponseStatusCodeSame(200);
-
-        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
-        $this->assertContains(['append', 'measure_list'], $streams);
-
-        // L'exception apparaît dans le résumé de la localisation
-        $measureHtml = $crawler->filter('turbo-stream[target=measure_list]')->html();
-        $this->assertStringContainsString('Sauf :', $measureHtml);
-        $this->assertStringContainsString('Rue Ardoin', $measureHtml);
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString('Aucune rue n\'a été trouvée à l\'intérieur de la zone dessinée.', $crawler->filter('#measure_form_locations_0_zone_geometry_error')->text());
     }
 
     public function testLocationOutOfOrganization(): void

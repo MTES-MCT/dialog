@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
+use App\Application\Exception\ZoneWithoutStreetsException;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\Location\DeleteLocationCommand;
 use App\Application\Regulation\Command\MapImage\WarmRegulationMapImageCacheCommand;
@@ -79,6 +80,9 @@ final class SaveMeasureCommandHandler
                 } catch (OrganizationCannotInterveneOnGeometryException $e) {
                     $e->setLocationIndex($index);
                     throw $e;
+                } catch (ZoneWithoutStreetsException $e) {
+                    $e->setLocationIndex($index);
+                    throw $e;
                 }
             }
 
@@ -127,6 +131,9 @@ final class SaveMeasureCommandHandler
                 $e->setLocationIndex($index);
                 throw $e;
             } catch (OrganizationCannotInterveneOnGeometryException $e) {
+                $e->setLocationIndex($index);
+                throw $e;
+            } catch (ZoneWithoutStreetsException $e) {
                 $e->setLocationIndex($index);
                 throw $e;
             }
