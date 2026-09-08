@@ -30,6 +30,8 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertPageStructure(
             [
+                ['a', 'Exporter mes arrêtés de circulation', ['href' => 'https://www.dialog.beta.gouv.fr/regulations/export']],
+                ['button', 'Masquer le message'],
                 ['h1', 'Numériser la réglementation de circulation routière avec DiaLog'],
                 ['h2', 'Où sont les restrictions de circulation ?'],
                 ['a', 'Voir la carte', ['href' => '/carte']],
@@ -46,6 +48,9 @@ final class LandingControllerTest extends AbstractWebTestCase
                 ['a', 'Découvrir l\'équipe', ['href' => 'https://beta.gouv.fr/startups/dialogue.html']],
             ],
             $crawler);
+
+        $newsNotice = $crawler->filter('[data-testid="notice-news"]');
+        $this->assertSame('Dernières nouveautés Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Exporter mes arrêtés de circulation Masquer le message', $newsNotice->filter('[data-testid="news-notice-content"]')->text());
     }
 
     public function testDashboardWithLoggedUser(): void
@@ -114,6 +119,10 @@ final class LandingControllerTest extends AbstractWebTestCase
 
         $this->assertSame('/carte', $crawler->selectLink('Voir toute la carte')->attr('href'));
         $this->assertSame('/regulations', $crawler->selectLink('Voir la liste des arrêtés')->attr('href'));
+
+        // Bandeau nouveautés affiché sur l'accueil connecté.
+        $newsNotice = $crawler->filter('[data-testid="notice-news"]');
+        $this->assertSame('Dernières nouveautés Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Exporter mes arrêtés de circulation Masquer le message', $newsNotice->filter('[data-testid="news-notice-content"]')->text());
     }
 
     public function testDashboardWithSingleOrganizationUser(): void
