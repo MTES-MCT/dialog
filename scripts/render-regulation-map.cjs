@@ -21,6 +21,7 @@ async function readStdin() {
     const { url, bounds, width, height, timeoutMs = 15000 } = input;
 
     const browser = await chromium.launch({
+        channel: 'chromium-headless-shell',
         headless: true,
         args: ['--no-sandbox', '--disable-dev-shm-usage'],
     });

@@ -1,0 +1,8 @@
+blog/node_modules
+
+tests
+phpunit.xml.dist
+coverage
+coverage.xml
+
+docs
