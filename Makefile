@@ -32,7 +32,7 @@ install: build start install_deps dbinstall assets blog_install ## Bootstrap pro
 install_deps: ## Install dependencies
 	make composer CMD="install -n --prefer-dist"
 	$(BIN_NPM) ci
-	$(BIN_NPX) playwright install chromium
+	$(BIN_NPX) playwright install chromium-headless-shell
 	$(BIN_SHELL) chmod -R 777 public/storage
 
 update_deps:
@@ -377,7 +377,7 @@ workers_restart:
 
 scalingo-node-postbuild: ## Scalingo postbuild hook for the Node buildpack
 	make assets
-	npx playwright install chromium
+	npx playwright install chromium-headless-shell
 	make blog_install
 
 scalingo-postdeploy: ## Scalingo postdeploy hook
