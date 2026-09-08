@@ -32,5 +32,14 @@ final class OrganizationUserTest extends TestCase
         $organizationUser = new OrganizationUser('9cebe00d-04d8-48da-89b1-059f6b7bfe44');
 
         $this->assertFalse($organizationUser->isOwner());
+        $this->assertFalse($organizationUser->isMandataire());
+    }
+
+    public function testSetIsMandataire(): void
+    {
+        $organizationUser = (new OrganizationUser('9cebe00d-04d8-48da-89b1-059f6b7bfe44'))
+            ->setIsMandataire(true);
+
+        $this->assertTrue($organizationUser->isMandataire());
     }
 }

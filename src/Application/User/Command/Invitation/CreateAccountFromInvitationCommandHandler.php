@@ -64,7 +64,8 @@ final readonly class CreateAccountFromInvitationCommandHandler
 
         $organizationUser = (new OrganizationUser($this->idFactory->make()))
             ->setUser($user)
-            ->setOrganization($invitation->getOrganization());
+            ->setOrganization($invitation->getOrganization())
+            ->setIsMandataire($invitation->isMandataire());
 
         $this->userRepository->add($user);
         $this->passwordUserRepository->add($passwordUser);

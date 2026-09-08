@@ -9,5 +9,9 @@
                 <value>user</value>
             </option>
         </constraint>
+        <constraint name="Expression">
+            <option name="expression">not (this.isOwner() and this.isMandataire())</option>
+            <option name="message">Un utilisateur ne peut pas être à la fois propriétaire et mandataire de l'organisation.</option>
+        </constraint>
     </class>
 </constraint-mapping>

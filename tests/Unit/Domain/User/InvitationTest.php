@@ -31,5 +31,23 @@ final class InvitationTest extends TestCase
         $this->assertSame($owner, $invitation->getOwner());
         $this->assertSame($organization, $invitation->getOrganization());
         $this->assertSame($createdAt, $invitation->getCreatedAt());
+        $this->assertFalse($invitation->isMandataire());
+    }
+
+    public function testMandataireInvitation(): void
+    {
+        $owner = $this->createMock(User::class);
+        $organization = $this->createMock(Organization::class);
+        $invitation = new Invitation(
+            '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
+            'marc.prestataire@example.com',
+            'Marc PRESTATAIRE',
+            new \DateTime('2025-01-17'),
+            $owner,
+            $organization,
+            isMandataire: true,
+        );
+
+        $this->assertTrue($invitation->isMandataire());
     }
 }

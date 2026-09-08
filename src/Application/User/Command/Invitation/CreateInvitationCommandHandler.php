@@ -36,6 +36,13 @@ final readonly class CreateInvitationCommandHandler
             throw new OrganizationUserAlreadyExistException();
         }
 
+        // Un mandataire ne peut inviter que des mandataires.
+        $inviterOrganizationUser = $this->organizationUserRepository->findOrganizationUser(
+            $command->organization->getUuid(),
+            $command->owner->getUuid(),
+        );
+        $isMandataire = $inviterOrganizationUser?->isMandataire() ? true : $command->isMandataire;
+
         return $this->invitationRepository->add(
             new Invitation(
                 uuid: $this->idFactory->make(),
@@ -44,6 +51,7 @@ final readonly class CreateInvitationCommandHandler
                 createdAt: $this->dateUtils->getNow(),
                 owner: $command->owner,
                 organization: $command->organization,
+                isMandataire: $isMandataire,
             ),
         );
     }

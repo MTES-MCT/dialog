@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization\User;
 
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 
 final class CreateInvitationControllerTest extends AbstractWebTestCase
@@ -29,7 +30,66 @@ final class CreateInvitationControllerTest extends AbstractWebTestCase
 
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
+        $this->assertSame('Invitation à rejoindre l\'organisation Département de Seine-Saint-Denis sur DiaLog', $email->getSubject());
         $this->assertEmailHtmlBodyContains($email, 'Mathieu FERNANDEZ vous invite à rejoindre l&#039;organisation Département de Seine-Saint-Denis.');
+
+        $client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_users_list');
+    }
+
+    public function testInviteAsMandataireOfOrganization(): void
+    {
+        $client = $this->login('mathieu.fernandez@beta.gouv.fr');
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Inviter');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['invitation_form']['fullName'] = 'Test Mandataire';
+        $values['invitation_form']['email'] = 'test.mandataire@example.com';
+        $values['invitation_form']['isMandataire'] = '1';
+        $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertSame('Invitation à devenir mandataire de l\'organisation Département de Seine-Saint-Denis sur DiaLog', $email->getSubject());
+        $this->assertEmailHtmlBodyContains($email, 'Mathieu FERNANDEZ vous invite à devenir mandataire de l&#039;organisation Département de Seine-Saint-Denis.');
+
+        $client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertRouteSame('app_users_list');
+    }
+
+    public function testInviteByMandataireIsForcedAsMandataire(): void
+    {
+        $client = $this->login(UserFixture::MANDATAIRE_USER_EMAIL);
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/invite');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // La case mandataire est cochée et désactivée pour un inviteur mandataire
+        $checkbox = $crawler->filter('#invitation_form_isMandataire');
+        $this->assertSame(1, $checkbox->count());
+        $this->assertNotNull($checkbox->attr('checked'));
+        $this->assertNotNull($checkbox->attr('disabled'));
+
+        $saveButton = $crawler->selectButton('Inviter');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['invitation_form']['fullName'] = 'Test Mandataire';
+        $values['invitation_form']['email'] = 'test.mandataire@example.com';
+        $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHtmlBodyContains($email, 'Mathieu MANDATAIRE vous invite à devenir mandataire de l&#039;organisation Département de Seine-Saint-Denis.');
 
         $client->followRedirect();
 

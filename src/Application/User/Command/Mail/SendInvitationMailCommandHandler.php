@@ -17,18 +17,25 @@ final readonly class SendInvitationMailCommandHandler
     public function __invoke(SendInvitationMailCommand $command): void
     {
         $invitation = $command->invitation;
+        $organizationName = $invitation->getOrganization()->getName();
 
         $this->mailer->send(
             new Mail(
                 from: null,
                 address: $invitation->getEmail(),
-                subject: 'organization_invitation.subject',
+                subject: $invitation->isMandataire()
+                    ? 'organization_invitation.mandataire.subject'
+                    : 'organization_invitation.subject',
                 template: 'email/user/organization_invitation.html.twig',
                 payload: [
                     'fullName' => $invitation->getFullName(),
                     'invitedBy' => $invitation->getOwner()->getFullName(),
-                    'organizationName' => $invitation->getOrganization()->getName(),
+                    'organizationName' => $organizationName,
                     'invitationUuid' => $invitation->getUuid(),
+                    'isMandataire' => $invitation->isMandataire(),
+                ],
+                subjectParams: [
+                    '%organizationName%' => $organizationName,
                 ],
             ),
         );

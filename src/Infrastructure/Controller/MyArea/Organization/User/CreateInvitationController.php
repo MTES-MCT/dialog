@@ -56,8 +56,12 @@ final class CreateInvitationController extends AbstractOrganizationController
             throw new AccessDeniedHttpException();
         }
 
+        $isCurrentUserMandataire = $this->authenticatedUser->getSessionUser()?->isMandataireOfOrganization($organizationUuid) ?? false;
+
         $command = new CreateInvitationCommand($organization, $user);
-        $form = $this->formFactory->create(InvitationFormType::class, $command);
+        $form = $this->formFactory->create(InvitationFormType::class, $command, [
+            'mandataire_forced' => $isCurrentUserMandataire,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

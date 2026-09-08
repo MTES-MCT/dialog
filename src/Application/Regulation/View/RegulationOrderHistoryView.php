@@ -10,6 +10,7 @@ final readonly class RegulationOrderHistoryView
         public readonly \DateTimeInterface $date,
         public readonly string $action,
         public readonly ?string $userFullName = null,
+        public readonly bool $isMandataire = false,
     ) {
     }
 }

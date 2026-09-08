@@ -9,6 +9,7 @@ class OrganizationUser
     private Organization $organization;
     private User $user;
     private bool $isOwner = false;
+    private bool $isMandataire = false;
 
     public function __construct(
         private string $uuid,
@@ -52,6 +53,18 @@ class OrganizationUser
     public function setIsOwner(bool $isOwner): self
     {
         $this->isOwner = $isOwner;
+
+        return $this;
+    }
+
+    public function isMandataire(): bool
+    {
+        return $this->isMandataire;
+    }
+
+    public function setIsMandataire(bool $isMandataire): self
+    {
+        $this->isMandataire = $isMandataire;
 
         return $this;
     }
