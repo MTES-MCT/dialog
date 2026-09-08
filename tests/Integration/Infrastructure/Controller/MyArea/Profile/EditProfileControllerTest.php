@@ -49,7 +49,7 @@ final class EditProfileControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 255 caractères.', $crawler->filter('#profile_form_fullName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#profile_form_fullName_error')->text());
     }
 
     public function testEditWithEmailAlreadyExists(): void
@@ -106,6 +106,6 @@ final class EditProfileControllerTest extends AbstractWebTestCase
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur n\'est pas une adresse email valide.', $crawler->filter('#profile_form_email_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une adresse e-mail valide.', $crawler->filter('#profile_form_email_error')->text());
     }
 }

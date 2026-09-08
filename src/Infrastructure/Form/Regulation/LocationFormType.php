@@ -45,6 +45,7 @@ final class LocationFormType extends AbstractType
             ])
             ->add('wholeCity', WholeCityFormType::class, [
                 'label' => false,
+                'organization' => $options['organization'],
             ])
             ->add('zone', ZoneFormType::class, [
                 'label' => false,

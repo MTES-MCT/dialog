@@ -8,6 +8,8 @@ $finder = (new PhpCsFixer\Finder())
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
+    // Fichier auto-généré par symfony/flex au "composer install", non conforme à nos règles.
+    ->notPath('reference.php')
 ;
 
 return (new PhpCsFixer\Config())
