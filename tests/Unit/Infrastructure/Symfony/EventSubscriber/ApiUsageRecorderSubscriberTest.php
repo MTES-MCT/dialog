@@ -56,7 +56,7 @@ final class ApiUsageRecorderSubscriberTest extends TestCase
 
     public function testDispatchesDatexCommandWhenPathIsRegulationsAndResponse2xx(): void
     {
-        $request = Request::create('/api/regulations.xml');
+        $request = Request::create('/api/regulations/datex.xml');
         $response = new Response('', 200);
         $event = new ResponseEvent(
             $this->createMock(KernelInterface::class),

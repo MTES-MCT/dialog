@@ -21,7 +21,7 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
     private function search(array $query = [], array $headers = self::AUTH_HEADERS): array
     {
         $this->client ??= static::createClient();
-        $this->client->request('GET', '/api/regulations/search', $query, [], $headers);
+        $this->client->request('GET', '/api/regulations/json', $query, [], $headers);
 
         return [$this->client->getResponse()->getStatusCode(), json_decode($this->client->getResponse()->getContent(), true)];
     }
@@ -221,5 +221,23 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
         ]);
 
         $this->assertSame(401, $status);
+    }
+
+    public function testLegacySearchUrlRedirects(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/regulations/search', ['status' => 'all'], [], self::AUTH_HEADERS);
+        $response = $client->getResponse();
+
+        $this->assertSame(301, $response->getStatusCode());
+        $this->assertSame(
+            'http://localhost/api/regulations/json?status=all',
+            $response->headers->get('location'),
+        );
+        $this->assertSame('true', $response->headers->get('Deprecation'));
+        $this->assertSame(
+            '<http://localhost/api/regulations/json>; rel="successor-version"',
+            $response->headers->get('Link'),
+        );
     }
 }
