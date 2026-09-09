@@ -13,6 +13,8 @@ use PHPUnit\Framework\TestCase;
 
 final class PeriodsTransformerTest extends TestCase
 {
+    private string $clientTimezone = 'Etc/GMT-1';
+
     public function testTransformsBasicPeriod(): void
     {
         $dto = new SavePeriodDTO();
@@ -23,7 +25,7 @@ final class PeriodsTransformerTest extends TestCase
         $dto->recurrenceType = PeriodRecurrenceTypeEnum::EVERY_DAY;
         $dto->isPermanent = false;
 
-        $commands = PeriodsTransformer::toCommands([$dto]);
+        $commands = (new PeriodsTransformer($this->clientTimezone))->toCommands([$dto]);
 
         self::assertCount(1, $commands);
         $cmd = $commands[0];
@@ -50,7 +52,7 @@ final class PeriodsTransformerTest extends TestCase
         $dailyRangeDto->applicableDays = ['monday', 'tuesday', 'wednesday'];
         $dto->dailyRange = $dailyRangeDto;
 
-        $commands = PeriodsTransformer::toCommands([$dto]);
+        $commands = (new PeriodsTransformer($this->clientTimezone))->toCommands([$dto]);
 
         self::assertCount(1, $commands);
         $cmd = $commands[0];
@@ -74,7 +76,7 @@ final class PeriodsTransformerTest extends TestCase
 
         $dto->timeSlots = [$timeSlot1, $timeSlot2];
 
-        $commands = PeriodsTransformer::toCommands([$dto]);
+        $commands = (new PeriodsTransformer($this->clientTimezone))->toCommands([$dto]);
 
         self::assertCount(1, $commands);
         $cmd = $commands[0];
@@ -83,15 +85,15 @@ final class PeriodsTransformerTest extends TestCase
 
         $ts1 = $cmd->timeSlots[0];
         self::assertInstanceOf(\DateTimeImmutable::class, $ts1->startTime);
-        self::assertSame('2025-01-15T08:00:00+00:00', $ts1->startTime->format('c'));
+        self::assertSame('1970-01-01T07:00:00+00:00', $ts1->startTime->format('c'));
         self::assertInstanceOf(\DateTimeImmutable::class, $ts1->endTime);
-        self::assertSame('2025-01-15T12:00:00+00:00', $ts1->endTime->format('c'));
+        self::assertSame('1970-01-01T11:00:00+00:00', $ts1->endTime->format('c'));
 
         $ts2 = $cmd->timeSlots[1];
         self::assertInstanceOf(\DateTimeImmutable::class, $ts2->startTime);
-        self::assertSame('2025-01-15T14:00:00+00:00', $ts2->startTime->format('c'));
+        self::assertSame('1970-01-01T13:00:00+00:00', $ts2->startTime->format('c'));
         self::assertInstanceOf(\DateTimeImmutable::class, $ts2->endTime);
-        self::assertSame('2025-01-15T18:00:00+00:00', $ts2->endTime->format('c'));
+        self::assertSame('1970-01-01T17:00:00+00:00', $ts2->endTime->format('c'));
     }
 
     public function testSkipsInvalidTimeSlotItems(): void
@@ -109,7 +111,7 @@ final class PeriodsTransformerTest extends TestCase
             'invalid', // Invalid item
         ];
 
-        $commands = PeriodsTransformer::toCommands([$dto]);
+        $commands = (new PeriodsTransformer($this->clientTimezone))->toCommands([$dto]);
 
         self::assertCount(1, $commands);
         $cmd = $commands[0];
@@ -129,7 +131,7 @@ final class PeriodsTransformerTest extends TestCase
         $dto->dailyRange = null;
         $dto->timeSlots = null;
 
-        $commands = PeriodsTransformer::toCommands([$dto]);
+        $commands = (new PeriodsTransformer($this->clientTimezone))->toCommands([$dto]);
 
         self::assertCount(1, $commands);
         $cmd = $commands[0];
@@ -151,7 +153,7 @@ final class PeriodsTransformerTest extends TestCase
         $dto->endDate = '2025-13-45'; // Invalid date
         $dto->endTime = 'invalid-time';
 
-        $commands = PeriodsTransformer::toCommands([$dto]);
+        $commands = (new PeriodsTransformer($this->clientTimezone))->toCommands([$dto]);
 
         self::assertCount(1, $commands);
         $cmd = $commands[0];

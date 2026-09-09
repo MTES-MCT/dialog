@@ -11,6 +11,7 @@ final readonly class OrganizationUserView
         public string $fullName,
         public string $email,
         public bool $isOwner = false,
+        public bool $isMandataire = false,
     ) {
     }
 }

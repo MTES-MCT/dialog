@@ -28,6 +28,15 @@ final class GeoJSONTest extends TestCase
         );
     }
 
+    public function testIsEmptyGeometryCollection(): void
+    {
+        $this->assertTrue(GeoJSON::isEmptyGeometryCollection('{"type":"GeometryCollection","geometries":[]}'));
+
+        $this->assertFalse(GeoJSON::isEmptyGeometryCollection('{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[-1.9,43.6]}]}'));
+        $this->assertFalse(GeoJSON::isEmptyGeometryCollection('{"type":"MultiLineString","coordinates":[]}'));
+        $this->assertFalse(GeoJSON::isEmptyGeometryCollection('pas du JSON'));
+    }
+
     public function testToPoint(): void
     {
         $this->assertSame(

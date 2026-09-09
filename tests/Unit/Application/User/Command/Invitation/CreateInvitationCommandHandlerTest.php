@@ -49,9 +49,12 @@ final class CreateInvitationCommandHandlerTest extends TestCase
     {
         $now = new \DateTimeImmutable('2025-02-12');
         $owner = $this->createMock(User::class);
+        $owner
+            ->method('getUuid')
+            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
         $organization = $this->createMock(Organization::class);
         $organization
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('getUuid')
             ->willReturn('327712a7-6573-43f0-843b-f0a368b3b45a');
 
@@ -80,6 +83,12 @@ final class CreateInvitationCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop', '327712a7-6573-43f0-843b-f0a368b3b45a')
             ->willReturn(null);
 
+        $this->organizationUserRepository
+            ->expects($this->once())
+            ->method('findOrganizationUser')
+            ->with('327712a7-6573-43f0-843b-f0a368b3b45a', '0de5692b-cab1-494c-804d-765dc14df674')
+            ->willReturn(null);
+
         $this->idFactory
             ->expects($this->once())
             ->method('make')
@@ -97,6 +106,84 @@ final class CreateInvitationCommandHandlerTest extends TestCase
             createdAt: $now,
             owner: $owner,
             organization: $organization,
+        );
+
+        $this->invitationRepository
+            ->expects($this->once())
+            ->method('add')
+            ->with($expectedInvitation)
+            ->willReturn($expectedInvitation);
+
+        $result = $this->handler->__invoke($command);
+        $this->assertSame($expectedInvitation, $result);
+    }
+
+    public function testInviteByMandataireForcesMandataire(): void
+    {
+        $now = new \DateTimeImmutable('2025-02-12');
+        $owner = $this->createMock(User::class);
+        $owner
+            ->method('getUuid')
+            ->willReturn('0de5692b-cab1-494c-804d-765dc14df674');
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->method('getUuid')
+            ->willReturn('327712a7-6573-43f0-843b-f0a368b3b45a');
+
+        $command = new CreateInvitationCommand(
+            organization: $organization,
+            owner: $owner,
+        );
+        $command->email = 'mathieu@fairness.coop';
+        $command->fullName = 'Mathieu MARCHOIS';
+        $command->isMandataire = false;
+
+        $this->stringUtils
+            ->expects($this->once())
+            ->method('normalizeEmail')
+            ->with('mathieu@fairness.coop')
+            ->willReturn('mathieu@fairness.coop');
+
+        $this->invitationRepository
+            ->expects($this->once())
+            ->method('findOneByEmailAndOrganization')
+            ->willReturn(null);
+
+        $this->organizationUserRepository
+            ->expects($this->once())
+            ->method('findByEmailAndOrganization')
+            ->willReturn(null);
+
+        $inviterOrganizationUser = $this->createMock(OrganizationUser::class);
+        $inviterOrganizationUser
+            ->expects($this->once())
+            ->method('isMandataire')
+            ->willReturn(true);
+
+        $this->organizationUserRepository
+            ->expects($this->once())
+            ->method('findOrganizationUser')
+            ->with('327712a7-6573-43f0-843b-f0a368b3b45a', '0de5692b-cab1-494c-804d-765dc14df674')
+            ->willReturn($inviterOrganizationUser);
+
+        $this->idFactory
+            ->expects($this->once())
+            ->method('make')
+            ->willReturn('80ab24ce-5297-46ed-b649-739bf47812fc');
+
+        $this->dateUtils
+            ->expects($this->once())
+            ->method('getNow')
+            ->willReturn($now);
+
+        $expectedInvitation = new Invitation(
+            uuid: '80ab24ce-5297-46ed-b649-739bf47812fc',
+            email: 'mathieu@fairness.coop',
+            fullName: 'Mathieu MARCHOIS',
+            createdAt: $now,
+            owner: $owner,
+            organization: $organization,
+            isMandataire: true,
         );
 
         $this->invitationRepository

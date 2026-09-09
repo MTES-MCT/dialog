@@ -25,6 +25,15 @@ class GeoJSON
         );
     }
 
+    public static function isEmptyGeometryCollection(string $geometry): bool
+    {
+        $data = json_decode($geometry, true);
+
+        return \is_array($data)
+            && ($data['type'] ?? null) === 'GeometryCollection'
+            && empty($data['geometries']);
+    }
+
     public static function toPoint(Coordinates $point, bool $includeCrs = false): string
     {
         $geometry = [

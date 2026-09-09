@@ -85,6 +85,17 @@ abstract class AbstractAuthenticatedUser implements UserInterface
         return false;
     }
 
+    public function isMandataireOfOrganization(string $organizationUuid): bool
+    {
+        foreach ($this->userOrganizations as $org) {
+            if ($org->uuid === $organizationUuid && $org->isMandataire) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isOrganizationsCompleted(): bool
     {
         foreach ($this->userOrganizations as $org) {

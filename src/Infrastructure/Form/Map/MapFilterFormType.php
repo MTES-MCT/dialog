@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -61,6 +62,14 @@ final class MapFilterFormType extends AbstractType
                     'label' => 'map.filter.drafts',
                     'value' => 'yes',
                     'required' => false,
+                ],
+            )
+            ->add(
+                'statusFilterActive',
+                HiddenType::class,
+                options: [
+                    'mapped' => false,
+                    'data' => '1',
                 ],
             )
             ->add(

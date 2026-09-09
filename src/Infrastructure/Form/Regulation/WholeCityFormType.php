@@ -6,7 +6,9 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
+use App\Domain\User\Organization;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -52,6 +54,34 @@ final class WholeCityFormType extends AbstractType
             ->add('roadType', HiddenType::class)
         ;
 
+        // Quand l'organisation compétente est une commune, on préremplit la ville : elle ne
+        // peut de toute façon intervenir que sur son propre territoire.
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options): void {
+            $organization = $options['organization'];
+
+            if (
+                !$organization instanceof Organization
+                || $organization->getCodeType() !== OrganizationCodeTypeEnum::INSEE->value
+                || !$organization->getCode()
+            ) {
+                return;
+            }
+
+            $command = $event->getData() ?? new SaveWholeCityCommand();
+
+            if ($command->cityCode) {
+                return;
+            }
+
+            $establishment = $organization->getEstablishment();
+            $command->cityCode = $organization->getCode();
+            $command->cityLabel = $establishment
+                ? \sprintf('%s (%s)', $establishment->getCity(), $establishment->getZipCode())
+                : $organization->getName();
+
+            $event->setData($command);
+        });
+
         // Constraint "Valid" cannot be nested inside constraint When. The event listener is used to ensure that the roadType is added to the submitted data before the form is processed.
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
@@ -83,9 +113,11 @@ final class WholeCityFormType extends AbstractType
         $resolver->setDefaults([
             'validation_groups' => ['Default', 'html_form'],
             'data_class' => SaveWholeCityCommand::class,
+            'organization' => null,
             'error_mapping' => [
                 'cityCode' => 'cityLabel',
             ],
         ]);
+        $resolver->setAllowedTypes('organization', ['null', Organization::class]);
     }
 }

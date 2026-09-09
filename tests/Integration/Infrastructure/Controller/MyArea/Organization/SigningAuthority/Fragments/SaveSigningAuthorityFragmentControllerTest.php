@@ -57,9 +57,9 @@ final class SaveSigningAuthorityFragmentControllerTest extends AbstractWebTestCa
         $values['signing_authority_form']['signatoryName'] = str_repeat('a', 101);
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_name_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_role_error')->text());
-        $this->assertSame('Cette chaîne est trop longue. Elle doit avoir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_signatoryName_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_name_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_role_error')->text());
+        $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 100 caractères.', $crawler->filter('#signing_authority_form_signatoryName_error')->text());
     }
 
     public function testOrganizationNotOwned(): void

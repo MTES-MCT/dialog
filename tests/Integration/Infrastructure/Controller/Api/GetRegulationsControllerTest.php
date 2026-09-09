@@ -49,6 +49,12 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
+        $content = $response->getContent();
+        $this->assertMatchesRegularExpression(
+            '#<dx:publicUrl>https://dialog\.beta\.gouv\.fr/regulations/[0-9a-f-]{36}</dx:publicUrl>#',
+            $content,
+        );
+
         // Je commente le temps de trouver une solution concernant l'execution random
         /*$xml = new \DOMDocument();
         $xml->loadXML($response->getContent(), \LIBXML_NOBLANKS);
@@ -74,5 +80,11 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('text/xml; charset=UTF-8', $response->headers->get('content-type'));
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
+
+        $content = $client->getInternalResponse()->getContent();
+        $this->assertMatchesRegularExpression(
+            '#<dx:publicUrl>https://dialog\.beta\.gouv\.fr/regulations/[0-9a-f-]{36}</dx:publicUrl>#',
+            $content,
+        );
     }
 }

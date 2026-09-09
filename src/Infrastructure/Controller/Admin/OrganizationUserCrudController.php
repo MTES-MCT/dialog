@@ -52,6 +52,7 @@ final class OrganizationUserCrudController extends AbstractCrudController
             AssociationField::new('organization')->setLabel('Organisation')->setSortProperty('name'),
             AssociationField::new('user')->setLabel('Utilisateur')->setSortProperty('fullName'),
             BooleanField::new('isOwner')->setLabel('Propriétaire'),
+            BooleanField::new('isMandataire')->setLabel('Mandataire'),
         ];
     }
 }

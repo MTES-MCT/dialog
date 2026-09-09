@@ -1,0 +1,15 @@
+blog/node_modules
+
+tests
+phpunit.xml.dist
+
+docs
+
+phpstan.dist.neon
+phpstan-baseline.neon
+vitest.config.js
+webpack.config.js
+
+docker
+docker-compose.yml
+docker-compose-bac-idf.yml
