@@ -569,7 +569,9 @@ Pour obtenir des identifiants d’accès ou signaler un problème, contactez l�
 - Authentification requise: non
 - Réponse: XML (`Content-Type: text/xml; charset=UTF-8`)
 
-> L'ancienne URL `/api/regulations.xml` reste fonctionnelle : elle redirige (301) vers `/api/regulations/datex.xml` en conservant les paramètres de requête.
+> ⚠️ **Déprécié.** L'ancienne URL `/api/regulations.xml` reste fonctionnelle mais est **dépréciée** : elle redirige (301) vers `/api/regulations/datex.xml` en conservant les paramètres de requête, et renvoie l'en-tête `Deprecation: true`.
+>
+> ⚠️ **Déprécié.** De même, l'ancienne URL de recherche JSON `/api/regulations/search` reste fonctionnelle mais est **dépréciée** : elle redirige (301) vers `/api/regulations/json` en conservant les paramètres de requête, et renvoie l'en-tête `Deprecation: true`.
 
 #### Paramètres de requête (filtres)
 

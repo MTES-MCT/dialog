@@ -12,9 +12,12 @@ use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Infrastructure\DTO\Regulation\RegulationApiView;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -32,15 +35,45 @@ final class SearchRegulationsController
     public function __construct(
         private readonly QueryBusInterface $queryBus,
         private readonly NormalizerInterface $normalizer,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
+    }
+
+    #[Route(
+        '/api/regulations/search',
+        name: 'api_regulations_search',
+        methods: ['GET'],
+        priority: 10,
+    )]
+    #[OA\Tag(name: 'Public')]
+    #[OA\Get(
+        deprecated: true,
+        summary: '[Déprécié] Rechercher les arrêtés de circulation',
+        description: 'Endpoint déprécié : utilisez `GET /api/regulations/json`. Cette URL redirige (301) '
+            . 'vers le nouvel endpoint en conservant les paramètres de requête.',
+    )]
+    public function legacySearch(Request $request): RedirectResponse
+    {
+        trigger_deprecation(
+            'mtes-mct/dialog',
+            '1.0',
+            'The "GET /api/regulations/search" API endpoint is deprecated, use "GET /api/regulations/json" instead.',
+        );
+
+        $successor = $this->urlGenerator->generate('api_regulations_json', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $target = $this->urlGenerator->generate('api_regulations_json', $request->query->all(), UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $response = new RedirectResponse($target, Response::HTTP_MOVED_PERMANENTLY);
+        $response->headers->set('Deprecation', 'true');
+        $response->headers->set('Link', \sprintf('<%s>; rel="successor-version"', $successor));
+
+        return $response;
     }
 
     #[Route(
         '/api/regulations/json',
         name: 'api_regulations_json',
         methods: ['GET'],
-        // Priorité supérieure à `api_regulations_get` (`/api/regulations/{identifier}`) dont
-        // la contrainte `.+` capturerait sinon le segment `json`.
         priority: 10,
     )]
     #[OA\Tag(name: 'Public')]

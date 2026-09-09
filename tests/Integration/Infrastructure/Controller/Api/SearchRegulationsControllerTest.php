@@ -222,4 +222,22 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
 
         $this->assertSame(401, $status);
     }
+
+    public function testLegacySearchUrlRedirects(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/regulations/search', ['status' => 'all'], [], self::AUTH_HEADERS);
+        $response = $client->getResponse();
+
+        $this->assertSame(301, $response->getStatusCode());
+        $this->assertSame(
+            'http://localhost/api/regulations/json?status=all',
+            $response->headers->get('location'),
+        );
+        $this->assertSame('true', $response->headers->get('Deprecation'));
+        $this->assertSame(
+            '<http://localhost/api/regulations/json>; rel="successor-version"',
+            $response->headers->get('Link'),
+        );
+    }
 }

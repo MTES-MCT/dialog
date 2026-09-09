@@ -9,11 +9,13 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\DatexGeneratorInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class GetRegulationsController
 {
@@ -22,7 +24,39 @@ final class GetRegulationsController
         private DateUtilsInterface $dateUtils,
         private QueryBusInterface $queryBus,
         private DatexGeneratorInterface $datexGenerator,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
+    }
+
+    #[Route(
+        '/api/regulations.{_format}',
+        methods: ['GET', 'HEAD'],
+        name: 'api_regulations_list',
+        defaults: ['_format' => 'xml'],
+    )]
+    #[OA\Tag(name: 'Public')]
+    #[OA\Get(
+        deprecated: true,
+        summary: '[Déprécié] Export DATEX II',
+        description: 'Endpoint déprécié : utilisez `GET /api/regulations/datex.xml`. Cette URL redirige (301) '
+            . 'vers le nouvel endpoint en conservant les paramètres de requête.',
+    )]
+    public function legacyDatex(Request $request): RedirectResponse
+    {
+        trigger_deprecation(
+            'mtes-mct/dialog',
+            '1.0',
+            'The "GET /api/regulations.{_format}" API endpoint is deprecated, use "GET /api/regulations/datex.{_format}" instead.',
+        );
+
+        $successor = $this->urlGenerator->generate('api_regulations_datex', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $target = $this->urlGenerator->generate('api_regulations_datex', $request->query->all(), UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $response = new RedirectResponse($target, Response::HTTP_MOVED_PERMANENTLY);
+        $response->headers->set('Deprecation', 'true');
+        $response->headers->set('Link', \sprintf('<%s>; rel="successor-version"', $successor));
+
+        return $response;
     }
 
     #[Route(
@@ -30,8 +64,6 @@ final class GetRegulationsController
         methods: ['GET', 'HEAD'],
         name: 'api_regulations_datex',
         defaults: ['_format' => 'xml'],
-        // Priorité supérieure à `api_regulations_get` (`/api/regulations/{identifier}`) dont
-        // la contrainte `.+` capturerait sinon le segment `datex`.
         priority: 10,
     )]
     #[OA\Tag(name: 'Public')]

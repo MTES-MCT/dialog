@@ -100,5 +100,10 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
             'http://localhost/api/regulations/datex?includeExpired=true',
             $response->headers->get('location'),
         );
+        $this->assertSame('true', $response->headers->get('Deprecation'));
+        $this->assertSame(
+            '<http://localhost/api/regulations/datex>; rel="successor-version"',
+            $response->headers->get('Link'),
+        );
     }
 }

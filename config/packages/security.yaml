@@ -53,6 +53,7 @@ security:
 
     access_control:
         - { path: '^/api/regulations/json', roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: '^/api/regulations/search', roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: '^/api/regulations$', roles: ROLE_API, methods: [POST] }
         - { path: '^/api/organization', roles: ROLE_API, methods: [POST, GET] }
         - { path: ^/api, roles: PUBLIC_ACCESS }
