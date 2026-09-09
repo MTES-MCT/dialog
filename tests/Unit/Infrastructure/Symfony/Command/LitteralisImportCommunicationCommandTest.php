@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
-use App\Application\MattermostInterface;
+use App\Application\TchapInterface;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommunicationCommand;
@@ -24,7 +24,7 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
     private $reporter;
     private $executor;
     private $dateUtils;
-    private $mattermost;
+    private $tchap;
 
     protected function setUp(): void
     {
@@ -38,7 +38,7 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
         $this->reporter = $this->createMock(Reporter::class);
         $this->executor = $this->createMock(LitteralisCommunicationExecutor::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->mattermost = $this->createMock(MattermostInterface::class);
+        $this->tchap = $this->createMock(TchapInterface::class);
     }
 
     private function createCommand(): LitteralisImportCommunicationCommand
@@ -50,7 +50,7 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             $this->reporter,
             $this->executor,
             $this->dateUtils,
-            $this->mattermost,
+            $this->tchap,
         );
     }
 
@@ -77,13 +77,13 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             )
             ->willReturn('Rapport Communication');
 
-        $this->mattermost
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->with(self::callback(function (string $text): bool {
-                return str_contains($text, 'Rapport d\'intégration Litteralis (Communication)')
-                    && str_contains($text, 'mel')
-                    && str_contains($text, 'fougeres');
+            ->with(self::callback(function (string $body): bool {
+                return str_contains($body, 'Rapport d\'intégration Litteralis (Communication)')
+                    && str_contains($body, 'mel')
+                    && str_contains($body, 'fougeres');
             }));
 
         $command = $this->createCommand();
@@ -129,12 +129,12 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             ->with('mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', $now, $this->reporter)
             ->willThrowException(new \RuntimeException('Something went wrong'));
 
-        $sentText = null;
-        $this->mattermost
+        $sentBody = null;
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->willReturnCallback(function (string $text) use (&$sentText): void {
-                $sentText = $text;
+            ->willReturnCallback(function (string $body) use (&$sentBody): void {
+                $sentBody = $body;
             });
 
         $commandTester = new CommandTester($this->createCommand());
@@ -142,9 +142,9 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
 
         $this->assertStringContainsString('import failed', $commandTester->getDisplay());
         $this->assertStringContainsString('Something went wrong', $commandTester->getDisplay());
-        $this->assertNotNull($sentText);
-        $this->assertStringContainsString(':x: **mel**', $sentText);
-        $this->assertStringContainsString('Something went wrong', $sentText);
+        $this->assertNotNull($sentBody);
+        $this->assertStringContainsString('❌ mel', $sentBody);
+        $this->assertStringContainsString('Something went wrong', $sentBody);
     }
 
     public function testExecuteWhenExecutorThrowsTimeoutSendsReportWithWarning(): void
@@ -159,34 +159,34 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             ->willThrowException(new class extends \Exception implements TransportExceptionInterface {
             });
 
-        $this->mattermost
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->with(self::callback(function (string $text): bool {
-                return str_contains($text, ':warning: **mel**');
+            ->with(self::callback(function (string $body): bool {
+                return str_contains($body, '⚠️ mel');
             }));
 
         $commandTester = new CommandTester($this->createCommand());
         $commandTester->execute([]);
     }
 
-    public function testExecuteWhenMattermostPostThrowsLogsError(): void
+    public function testExecuteWhenTchapPostThrowsLogsError(): void
     {
         $now = new \DateTimeImmutable();
         $this->dateUtils->method('getNow')->willReturn($now);
         $this->executor->method('execute')->willReturn('Rapport');
 
-        $this->mattermost
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->willThrowException(new \RuntimeException('Mattermost unreachable'));
+            ->willThrowException(new \RuntimeException('Tchap unreachable'));
 
         $this->logger
             ->expects(self::once())
             ->method('error')
-            ->with('Échec de l\'envoi du rapport Litteralis sur Mattermost', self::callback(function (array $context): bool {
+            ->with('Échec de l\'envoi du rapport Litteralis sur Tchap', self::callback(function (array $context): bool {
                 return isset($context['exception'])
-                    && $context['exception'] === 'Mattermost unreachable';
+                    && $context['exception'] === 'Tchap unreachable';
             }));
 
         $commandTester = new CommandTester($this->createCommand());

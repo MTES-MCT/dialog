@@ -6,7 +6,7 @@ namespace App\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
-use App\Application\MattermostInterface;
+use App\Application\TchapInterface;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExecutor;
 use Psr\Log\LoggerInterface;
@@ -39,7 +39,7 @@ class LitteralisImportCommunicationCommand extends Command
         private Reporter $reporter,
         private LitteralisCommunicationExecutor $executor,
         private DateUtilsInterface $dateUtils,
-        private MattermostInterface $mattermost,
+        private TchapInterface $tchap,
     ) {
         parent::__construct();
 
@@ -105,30 +105,49 @@ class LitteralisImportCommunicationCommand extends Command
 
     private function sendSupportReport(array $orgResults): void
     {
-        $lines = [];
-        $lines[] = '#### Rapport d\'intégration Litteralis (Communication)';
-        $lines[] = 'Rapport généré le ' . $this->dateUtils->getNow()->format('d/m/Y H:i') . '.';
-        $lines[] = '';
+        $title = 'Rapport d\'intégration Litteralis (Communication)';
+        $generatedAt = 'Rapport généré le ' . $this->dateUtils->getNow()->format('d/m/Y H:i') . '.';
+
+        $textLines = [$title, $generatedAt, ''];
+        $htmlItems = [];
 
         foreach ($orgResults as $result) {
             $exception = $result['exception'] ?? null;
 
             if ($exception === null) {
-                $lines[] = '- :white_check_mark: **' . $result['name'] . '** : Importé avec succès';
+                $icon = '✅';
+                $status = 'Importé avec succès';
             } elseif ($this->isTimeout($exception)) {
-                $lines[] = '- :warning: **' . $result['name'] . '** : Timeout / échec de connexion';
+                $icon = '⚠️';
+                $status = 'Timeout / échec de connexion';
             } else {
-                $lines[] = '- :x: **' . $result['name'] . '** : ' . $this->formatExceptionDetail($exception);
+                $icon = '❌';
+                $status = $this->formatExceptionDetail($exception);
             }
+
+            $name = $result['name'];
+            $textLines[] = \sprintf('%s %s : %s', $icon, $name, $status);
+            $htmlItems[] = \sprintf(
+                '<li>%s <strong>%s</strong> : %s</li>',
+                $icon,
+                htmlspecialchars($name, ENT_QUOTES),
+                htmlspecialchars($status, ENT_QUOTES),
+            );
         }
 
-        $text = implode("\n", $lines);
+        $body = implode("\n", $textLines);
+        $formattedBody = \sprintf(
+            '<h4>%s</h4><p>%s</p><ul>%s</ul>',
+            htmlspecialchars($title, ENT_QUOTES),
+            htmlspecialchars($generatedAt, ENT_QUOTES),
+            implode('', $htmlItems),
+        );
 
         try {
-            $this->mattermost->post($text);
-            $this->logger->info('Rapport d\'intégration Litteralis (Communication) envoyé sur Mattermost');
+            $this->tchap->post($body, $formattedBody);
+            $this->logger->info('Rapport d\'intégration Litteralis (Communication) envoyé sur Tchap');
         } catch (\Throwable $e) {
-            $this->logger->error('Échec de l\'envoi du rapport Litteralis sur Mattermost', ['exception' => $e->getMessage()]);
+            $this->logger->error('Échec de l\'envoi du rapport Litteralis sur Tchap', ['exception' => $e->getMessage()]);
         }
     }
 
