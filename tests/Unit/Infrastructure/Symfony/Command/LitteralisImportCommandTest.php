@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Integration\Litteralis\DTO\LitteralisCredentials;
-use App\Application\MattermostInterface;
+use App\Application\TchapInterface;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Symfony\Command\LitteralisImportCommand;
@@ -23,7 +23,7 @@ class LitteralisImportCommandTest extends TestCase
     private $reporter;
     private $executor;
     private $dateUtils;
-    private $mattermost;
+    private $tchap;
 
     protected function setUp(): void
     {
@@ -38,7 +38,7 @@ class LitteralisImportCommandTest extends TestCase
         $this->reporter = $this->createMock(Reporter::class);
         $this->executor = $this->createMock(LitteralisExecutor::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->mattermost = $this->createMock(MattermostInterface::class);
+        $this->tchap = $this->createMock(TchapInterface::class);
     }
 
     private function createCommand(): LitteralisImportCommand
@@ -50,7 +50,7 @@ class LitteralisImportCommandTest extends TestCase
             $this->reporter,
             $this->executor,
             $this->dateUtils,
-            $this->mattermost,
+            $this->tchap,
         );
     }
 
@@ -78,15 +78,15 @@ class LitteralisImportCommandTest extends TestCase
             )
             ->willReturn('Rapport');
 
-        $this->mattermost
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->with(self::callback(function (string $text): bool {
-                return str_contains($text, 'Rapport d\'intégration Litteralis')
-                    && str_contains($text, 'mel')
-                    && str_contains($text, 'fougeres')
-                    && str_contains($text, 'lonslesaunier')
-                    && str_contains($text, 'Importé avec succès');
+            ->with(self::callback(function (string $body): bool {
+                return str_contains($body, 'Rapport d\'intégration Litteralis')
+                    && str_contains($body, 'mel')
+                    && str_contains($body, 'fougeres')
+                    && str_contains($body, 'lonslesaunier')
+                    && str_contains($body, 'Importé avec succès');
             }));
 
         $command = $this->createCommand();
@@ -114,12 +114,12 @@ class LitteralisImportCommandTest extends TestCase
                 },
             );
 
-        $this->mattermost
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->with(self::callback(function (string $text): bool {
-                return str_contains($text, ':x: **fougeres**')
-                    && str_contains($text, 'Failed');
+            ->with(self::callback(function (string $body): bool {
+                return str_contains($body, '❌ fougeres')
+                    && str_contains($body, 'Failed');
             }));
 
         $commandTester = new CommandTester($this->createCommand());
@@ -140,12 +140,12 @@ class LitteralisImportCommandTest extends TestCase
             ->method('execute')
             ->willReturn('Rapport org');
 
-        $this->mattermost
+        $this->tchap
             ->expects(self::once())
             ->method('post')
-            ->with(self::callback(function (string $text): bool {
-                return str_contains($text, 'Rapport d\'intégration Litteralis')
-                    && substr_count($text, ':white_check_mark:') === 3;
+            ->with(self::callback(function (string $body): bool {
+                return str_contains($body, 'Rapport d\'intégration Litteralis')
+                    && substr_count($body, '✅') === 3;
             }));
 
         $commandTester = new CommandTester($this->createCommand());
