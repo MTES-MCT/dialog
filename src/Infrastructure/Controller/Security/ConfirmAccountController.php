@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Security;
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\ConfirmAccountCommand;
 use App\Application\User\Command\Mail\SendWelcomeEmailCommand;
+use App\Domain\User\Exception\TokenAlreadyUsedException;
 use App\Domain\User\Exception\TokenExpiredException;
 use App\Domain\User\Exception\TokenNotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -43,6 +44,8 @@ final readonly class ConfirmAccountController
             throw new NotFoundHttpException();
         } catch (TokenExpiredException) {
             throw new BadRequestHttpException('Token expired.');
+        } catch (TokenAlreadyUsedException) {
+            throw new BadRequestHttpException('Token already used.');
         }
     }
 }
