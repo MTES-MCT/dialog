@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Regulation;
 
 use App\Application\QueryBusInterface;
-use App\Application\Regulation\Query\GetNewsNoticeQuery;
 use App\Application\Regulation\Query\GetRegulationsQuery;
 use App\Application\User\Query\GetOrganizationsQuery;
 use App\Domain\Pagination;
@@ -91,7 +90,6 @@ final class ListRegulationsController
 
         $form->handleRequest($request);
         $regulations = $this->queryBus->handle(new GetRegulationsQuery($dto));
-        $newsNotice = $this->queryBus->handle(new GetNewsNoticeQuery());
 
         return new Response($this->twig->render(
             name: 'regulation/index.html.twig',
@@ -100,7 +98,6 @@ final class ListRegulationsController
                 'regulations' => $regulations,
                 'pageSize' => $dto->pageSize,
                 'page' => $dto->page,
-                'newsNotice' => $newsNotice,
                 'sort' => $dto->sort,
                 'sortDir' => $dto->sortDir,
             ],

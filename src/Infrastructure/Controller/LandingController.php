@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller;
 use App\Application\DateUtilsInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetLatestRegulationsQuery;
+use App\Application\Regulation\Query\GetNewsNoticeQuery;
 use App\Application\Regulation\Query\GetRegulationCountsByStatusQuery;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
@@ -30,8 +31,12 @@ final class LandingController
     {
         $user = $this->authenticatedUser->getSessionUser();
 
+        $newsNotice = $this->queryBus->handle(new GetNewsNoticeQuery());
+
         if (!$user) {
-            return new Response($this->twig->render('index.html.twig'));
+            return new Response($this->twig->render('index.html.twig', [
+                'newsNotice' => $newsNotice,
+            ]));
         }
 
         $organizationUuids = $user->getUserOrganizationUuids();
@@ -58,6 +63,7 @@ final class LandingController
                 'initialBbox' => $this->organizationRepository->findMapBboxByOrganizationUuids($organizationUuids),
                 // Voir le commentaire dans MapController à propos des placeholders {z}/{x}/{y}.
                 'tilesUrlTemplate' => '/carte/tiles/{z}/{x}/{y}.mvt?' . $tilesQuery,
+                'newsNotice' => $newsNotice,
             ],
         ));
     }
