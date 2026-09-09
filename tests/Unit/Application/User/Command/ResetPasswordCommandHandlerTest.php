@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\User\Command;
 
+use App\Application\DateUtilsInterface;
 use App\Application\PasswordHasherInterface;
 use App\Application\User\Command\ResetPasswordCommand;
 use App\Application\User\Command\ResetPasswordCommandHandler;
 use App\Domain\User\Enum\TokenTypeEnum;
+use App\Domain\User\Exception\TokenAlreadyUsedException;
 use App\Domain\User\Exception\TokenExpiredException;
 use App\Domain\User\Exception\TokenNotFoundException;
 use App\Domain\User\PasswordUser;
@@ -23,12 +25,14 @@ final class ResetPasswordCommandHandlerTest extends TestCase
     private MockObject $tokenRepository;
     private MockObject $isTokenExpired;
     private MockObject $passwordHasher;
+    private MockObject $dateUtils;
 
     public function setUp(): void
     {
         $this->passwordHasher = $this->createMock(PasswordHasherInterface::class);
         $this->tokenRepository = $this->createMock(TokenRepositoryInterface::class);
         $this->isTokenExpired = $this->createMock(IsTokenExpired::class);
+        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
     }
 
     public function testResetPassword(): void
@@ -45,17 +49,35 @@ final class ResetPasswordCommandHandlerTest extends TestCase
             ->method('getPasswordUser')
             ->willReturn($passwordUser);
 
+        $now = new \DateTimeImmutable('2023-06-09 10:00:00');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($now);
+
         $token = $this->createMock(Token::class);
         $token
             ->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
+        $token
+            ->expects(self::once())
+            ->method('isUsed')
+            ->willReturn(false);
+        $token
+            ->expects(self::once())
+            ->method('markAsUsed')
+            ->with($now);
 
         $this->tokenRepository
             ->expects(self::once())
             ->method('findOneByTokenAndType')
             ->with('myToken', TokenTypeEnum::FORGOT_PASSWORD->value)
             ->willReturn($token);
+
+        $this->tokenRepository
+            ->expects(self::never())
+            ->method('remove');
 
         $this->isTokenExpired
             ->expects(self::once())
@@ -69,14 +91,9 @@ final class ResetPasswordCommandHandlerTest extends TestCase
             ->with('newPassword')
             ->willReturn('newPasswordHash');
 
-        $this->tokenRepository
-            ->expects(self::once())
-            ->method('remove')
-            ->with($token);
-
         $command = new ResetPasswordCommand('myToken');
         $command->password = 'newPassword';
-        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher);
+        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher, $this->dateUtils);
 
         ($handler)($command);
     }
@@ -104,7 +121,42 @@ final class ResetPasswordCommandHandlerTest extends TestCase
 
         $command = new ResetPasswordCommand('myToken');
         $command->password = 'newPassword';
-        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher);
+        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher, $this->dateUtils);
+
+        ($handler)($command);
+    }
+
+    public function testTokenAlreadyUsed(): void
+    {
+        $this->expectException(TokenAlreadyUsedException::class);
+        $token = $this->createMock(Token::class);
+        $token
+            ->expects(self::once())
+            ->method('isUsed')
+            ->willReturn(true);
+        $token
+            ->expects(self::never())
+            ->method('markAsUsed');
+
+        $this->tokenRepository
+            ->expects(self::once())
+            ->method('findOneByTokenAndType')
+            ->with('myToken', TokenTypeEnum::FORGOT_PASSWORD->value)
+            ->willReturn($token);
+
+        $this->isTokenExpired
+            ->expects(self::once())
+            ->method('isSatisfiedBy')
+            ->with($token)
+            ->willReturn(false);
+
+        $this->passwordHasher
+            ->expects(self::never())
+            ->method('hash');
+
+        $command = new ResetPasswordCommand('myToken');
+        $command->password = 'newPassword';
+        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher, $this->dateUtils);
 
         ($handler)($command);
     }
@@ -128,7 +180,7 @@ final class ResetPasswordCommandHandlerTest extends TestCase
 
         $command = new ResetPasswordCommand('myToken');
         $command->password = 'newPassword';
-        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher);
+        $handler = new ResetPasswordCommandHandler($this->tokenRepository, $this->isTokenExpired, $this->passwordHasher, $this->dateUtils);
 
         ($handler)($command);
     }

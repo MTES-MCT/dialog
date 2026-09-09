@@ -30,6 +30,38 @@ final class ResetPasswordControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
         $this->assertEquals(['success' => ['Votre mot de passe a bien été changé. Vous pouvez dès à présent vous connecter en utilisant votre nouveau mot de passe.']], $this->getFlashes($crawler));
         $this->assertRouteSame('app_login');
+
+        // Le token est conservé mais marqué comme utilisé : le lien ne peut pas être réutilisé.
+        $crawler = $client->request('GET', '/reset-password/forgotPasswordToken');
+        $saveButton = $crawler->selectButton('Changer mon mot de passe');
+        $form = $saveButton->form();
+        $form['reset_password_form[password][first]'] = 'password5678demo';
+        $form['reset_password_form[password][second]'] = 'password5678demo';
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(302);
+
+        $crawler = $client->followRedirect();
+        $this->assertRouteSame('app_forgot_password');
+        $this->assertEquals(['error' => ['Le changement de mot de passe a échoué, veuillez faire une nouvelle demande.']], $this->getFlashes($crawler));
+    }
+
+    public function testTokenAlreadyUsed(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/reset-password/usedForgotPasswordToken');
+
+        $saveButton = $crawler->selectButton('Changer mon mot de passe');
+        $form = $saveButton->form();
+        $form['reset_password_form[password][first]'] = 'password1234';
+        $form['reset_password_form[password][second]'] = 'password1234';
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(302);
+
+        $crawler = $client->followRedirect();
+        $this->assertRouteSame('app_forgot_password');
+        $this->assertEquals(['error' => ['Le changement de mot de passe a échoué, veuillez faire une nouvelle demande.']], $this->getFlashes($crawler));
     }
 
     public function testEmptyValues(): void

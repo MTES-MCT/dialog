@@ -11,7 +11,9 @@ class Token
         private string $token,
         private string $type,
         private User $user,
+        private \DateTimeInterface $createdAt,
         private \DateTimeInterface $expirationDate,
+        private ?\DateTimeInterface $usedAt = null,
     ) {
     }
 
@@ -35,8 +37,28 @@ class Token
         return $this->user;
     }
 
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
     public function getExpirationDate(): \DateTimeInterface
     {
         return $this->expirationDate;
+    }
+
+    public function getUsedAt(): ?\DateTimeInterface
+    {
+        return $this->usedAt;
+    }
+
+    public function isUsed(): bool
+    {
+        return $this->usedAt !== null;
+    }
+
+    public function markAsUsed(\DateTimeInterface $usedAt): void
+    {
+        $this->usedAt = $usedAt;
     }
 }
