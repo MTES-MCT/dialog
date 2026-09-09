@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Security;
 
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\ResetPasswordCommand;
+use App\Domain\User\Exception\TokenAlreadyUsedException;
 use App\Domain\User\Exception\TokenExpiredException;
 use App\Domain\User\Exception\TokenNotFoundException;
 use App\Infrastructure\Form\User\ResetPasswordFormType;
@@ -45,7 +46,7 @@ final readonly class ResetPasswordController
                 $session->getFlashBag()->add('success', $this->translator->trans('reset_password.succeeded'));
 
                 return new RedirectResponse($this->urlGenerator->generate('app_login'));
-            } catch (TokenNotFoundException|TokenExpiredException) {
+            } catch (TokenNotFoundException|TokenExpiredException|TokenAlreadyUsedException) {
                 $session->getFlashBag()->add('error', $this->translator->trans('reset_password.token.error'));
 
                 return new RedirectResponse($this->urlGenerator->generate('app_forgot_password'));

@@ -20,6 +20,7 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'confirmAccountToken',
             TokenTypeEnum::CONFIRM_ACCOUNT->value,
             $this->getReference('otherOrgUser', User::class),
+            new \DateTime('2025-07-26 09:00:00'),
             new \DateTime('2025-08-26 09:00:00'),
         );
 
@@ -28,7 +29,18 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'expiredConfirmAccountToken',
             TokenTypeEnum::CONFIRM_ACCOUNT->value,
             $this->getReference('otherOrgUser', User::class),
+            new \DateTime('2022-12-01 19:00:00'),
             new \DateTime('2023-01-01 19:00:00'),
+        );
+
+        $usedConfirmAccountToken = new Token(
+            'e6a51b06-8283-4bdd-b8bf-3a03fd2ce2e5',
+            'usedConfirmAccountToken',
+            TokenTypeEnum::CONFIRM_ACCOUNT->value,
+            $this->getReference('otherOrgUser', User::class),
+            new \DateTime('2023-06-01 09:00:00'),
+            new \DateTime('2023-07-01 09:00:00'),
+            new \DateTime('2023-06-02 10:00:00'),
         );
 
         $forgotPasswordToken = new Token(
@@ -36,6 +48,7 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'forgotPasswordToken',
             TokenTypeEnum::FORGOT_PASSWORD->value,
             $this->getReference('department93User', User::class),
+            new \DateTime('2025-07-26 09:00:00'),
             new \DateTime('2025-08-26 09:00:00'),
         );
 
@@ -44,13 +57,26 @@ final class TokenFixture extends Fixture implements DependentFixtureInterface
             'expiredForgotPasswordToken',
             TokenTypeEnum::FORGOT_PASSWORD->value,
             $this->getReference('department93User', User::class),
+            new \DateTime('2022-12-01 19:00:00'),
             new \DateTime('2023-01-01 19:00:00'),
+        );
+
+        $usedForgotPasswordToken = new Token(
+            '5c47da4b-b3a1-4e7b-9e8c-3db5b60ff041',
+            'usedForgotPasswordToken',
+            TokenTypeEnum::FORGOT_PASSWORD->value,
+            $this->getReference('department93User', User::class),
+            new \DateTime('2023-06-01 09:00:00'),
+            new \DateTime('2023-07-01 09:00:00'),
+            new \DateTime('2023-06-02 10:00:00'),
         );
 
         $manager->persist($forgotPasswordToken);
         $manager->persist($expiredForgotPasswordToken);
+        $manager->persist($usedForgotPasswordToken);
         $manager->persist($confirmAccountToken);
         $manager->persist($expiredConfirmAccountToken);
+        $manager->persist($usedConfirmAccountToken);
         $manager->flush();
     }
 
