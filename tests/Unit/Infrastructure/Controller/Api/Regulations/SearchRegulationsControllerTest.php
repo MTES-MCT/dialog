@@ -12,22 +12,26 @@ use App\Infrastructure\Controller\Api\Regulations\SearchRegulationsController;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class SearchRegulationsControllerTest extends TestCase
 {
     private QueryBusInterface&MockObject $queryBus;
     private NormalizerInterface&MockObject $normalizer;
+    private UrlGeneratorInterface&MockObject $urlGenerator;
     private SearchRegulationsController $controller;
 
     protected function setUp(): void
     {
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->normalizer = $this->createMock(NormalizerInterface::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
         $this->controller = new SearchRegulationsController(
             $this->queryBus,
             $this->normalizer,
+            $this->urlGenerator,
         );
     }
 
