@@ -31,7 +31,7 @@ final readonly class CreateTokenCommandHandler
             throw new UserNotFoundException();
         }
 
-        $expirationDate = $this->dateUtils->getNow()->modify('+1 month');
+        $now = $this->dateUtils->getNow();
         $token = $this->tokenGenerator->generate();
 
         return $this->tokenRepository->add(
@@ -40,7 +40,8 @@ final readonly class CreateTokenCommandHandler
                 token: $token,
                 type: $command->type,
                 user: $user,
-                expirationDate: $expirationDate,
+                createdAt: $now,
+                expirationDate: $now->modify('+1 month'),
             ),
         );
     }

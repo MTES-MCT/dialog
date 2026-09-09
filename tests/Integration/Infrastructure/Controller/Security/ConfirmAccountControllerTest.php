@@ -33,6 +33,14 @@ final class ConfirmAccountControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
+    public function testUsedToken(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/register/usedConfirmAccountToken/confirm-account');
+
+        $this->assertResponseStatusCodeSame(400);
+    }
+
     public function testNotFoundToken(): void
     {
         $client = static::createClient();

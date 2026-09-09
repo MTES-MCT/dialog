@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\User\Command;
 
+use App\Application\DateUtilsInterface;
 use App\Application\PasswordHasherInterface;
 use App\Domain\User\Enum\TokenTypeEnum;
+use App\Domain\User\Exception\TokenAlreadyUsedException;
 use App\Domain\User\Exception\TokenExpiredException;
 use App\Domain\User\Exception\TokenNotFoundException;
 use App\Domain\User\Repository\TokenRepositoryInterface;
@@ -18,6 +20,7 @@ final readonly class ResetPasswordCommandHandler
         private TokenRepositoryInterface $tokenRepository,
         private IsTokenExpired $isTokenExpired,
         private PasswordHasherInterface $passwordHasher,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -36,8 +39,13 @@ final readonly class ResetPasswordCommandHandler
             throw new TokenExpiredException();
         }
 
+        if ($token->isUsed()) {
+            throw new TokenAlreadyUsedException();
+        }
+
         $password = $this->passwordHasher->hash($command->password);
         $token->getUser()->getPasswordUser()->setPassword($password);
-        $this->tokenRepository->remove($token);
+        // Le token est conservé jusqu'à sa purge afin de garder une trace des demandes (#2068).
+        $token->markAsUsed($this->dateUtils->getNow());
     }
 }

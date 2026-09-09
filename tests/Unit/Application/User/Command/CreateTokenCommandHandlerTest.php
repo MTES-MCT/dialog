@@ -43,11 +43,11 @@ final class CreateTokenCommandHandlerTest extends TestCase
             ->method('generate')
             ->willReturn('myToken');
 
-        $expirationDate = new \DateTimeImmutable('2023-08-31 08:00:00');
+        $now = new \DateTimeImmutable('2023-08-31 08:00:00');
         $this->dateUtils
             ->expects(self::once())
             ->method('getNow')
-            ->willReturn($expirationDate);
+            ->willReturn($now);
 
         $passwordUser = $this->createMock(PasswordUser::class);
 
@@ -73,6 +73,7 @@ final class CreateTokenCommandHandlerTest extends TestCase
             token: 'myToken',
             type: TokenTypeEnum::FORGOT_PASSWORD->value,
             user: $user,
+            createdAt: $now,
             expirationDate: new \DateTime('2023-09-31 08:00:00'),
         );
 
