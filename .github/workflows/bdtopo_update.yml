@@ -1,0 +1,123 @@
+name: BD TOPO Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Base BDTOPO cible'
+        required: false
+        default: '2025'
+        type: choice
+        options:
+          - '2025'
+          - '2025_2'
+      skip_download:
+        description: 'Ne pas re-télécharger les archives (réutilise le S3/local existant)'
+        required: false
+        default: false
+        type: boolean
+      skip_import:
+        description: "Uploader l'archive sur S3 sans lancer l'import"
+        required: false
+        default: false
+        type: boolean
+      keep_archives:
+        description: "Conserver les archives téléchargées après l'upload S3"
+        required: false
+        default: false
+        type: boolean
+
+  # schedule:
+  #   # Voir https://crontab.guru/ : les 1er et 16 de chaque mois à 02h00 GMT (~tous les 15 jours)
+  #   - cron: '0 2 1,16 * *'
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      BDTOPO_TARGET: ${{ github.event.inputs.target || '2025' }}
+      SKIP_DOWNLOAD: ${{ github.event.inputs.skip_download || 'false' }}
+      SKIP_IMPORT: ${{ github.event.inputs.skip_import || 'false' }}
+      KEEP_ARCHIVES: ${{ github.event.inputs.keep_archives || 'false' }}
+      BDTOPO_2025_DATABASE_URL: ${{ secrets.BDTOPO_2025_DATABASE_URL }}
+      BDTOPO_2025_2_DATABASE_URL: ${{ secrets.BDTOPO_2025_2_DATABASE_URL }}
+      S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+      S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        # L'archive BD TOPO fait ~24 Go ; on libère de l'espace sur le runner.
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install system dependencies
+        # 7z (listing de l'archive) et postgresql-client (VACUUM ANALYZE).
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full postgresql-client
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Init environment variables
+        run: |
+          echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
+          echo "BDTOPO_2025_2_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
+          if [ "${BDTOPO_TARGET}" = "2025_2" ]; then
+            echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
+          else
+            echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
+          fi
+
+      - name: Run BD TOPO update
+        run: >
+          make ci_bdtopo_update
+          BIN_COMPOSER="composer"
+          BIN_CONSOLE="php bin/console"
+          BDTOPO_TARGET="${BDTOPO_TARGET}"
+          SKIP_DOWNLOAD="${SKIP_DOWNLOAD}"
+          SKIP_IMPORT="${SKIP_IMPORT}"
+          KEEP_ARCHIVES="${KEEP_ARCHIVES}"
