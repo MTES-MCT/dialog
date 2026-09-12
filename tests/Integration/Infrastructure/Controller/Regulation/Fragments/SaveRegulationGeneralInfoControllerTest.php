@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
@@ -34,6 +35,49 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
         $this->assertSame('Modifié le 09/06/2023 à 01h00 par Mathieu MARCHOIS', $crawler->filter('[data-testid="history"]')->text());
+    }
+
+    public function testEditChangingTheCategoryRefreshesWhatDependsOnIt(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $content = $client->getResponse()->getContent();
+        $this->assertStringContainsString('<turbo-stream action="update" target="regulation-detail">', $content);
+        $this->assertStringContainsString('Arrêté permanent', $content);
+        $this->assertStringContainsString('<turbo-stream action="replace" target="block_measure_' . MeasureFixture::UUID_TYPICAL . '">', $content);
+    }
+
+    public function testEditKeepingTheCategoryLeavesTheMeasuresAlone(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_TYPICAL);
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['general_info_form']['title'] = 'Nouveau titre';
+        $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $content = $client->getResponse()->getContent();
+        $this->assertStringNotContainsString('target="regulation-detail"', $content);
+        $this->assertStringNotContainsString('target="block_measure_', $content);
     }
 
     public function testEditWithAnAlreadyExistingIdentifier(): void

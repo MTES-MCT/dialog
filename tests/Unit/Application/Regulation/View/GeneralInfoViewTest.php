@@ -45,6 +45,7 @@ final class GeneralInfoViewTest extends TestCase
 
         $this->assertTrue($generalInfo->isDraft());
         $this->assertTrue($generalInfo->isSourceDialog());
+        $this->assertFalse($generalInfo->isPermanent());
 
         $generalInformation2 = new GeneralInfoView(
             uuid: '3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf',
@@ -63,7 +64,7 @@ final class GeneralInfoViewTest extends TestCase
             source: RegulationOrderRecordSourceEnum::LITTERALIS,
             regulationOrderUuid: '8a32e881-a683-4caa-976f-6882296bc29b',
             regulationOrderTemplateUuid: '92fc487a-b795-4583-88e6-0b83d23910cc',
-            category: RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            category: RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
             subject: RegulationSubjectEnum::OTHER->value,
             otherCategoryText: 'Other category 1',
             title: 'title 1',
@@ -73,5 +74,6 @@ final class GeneralInfoViewTest extends TestCase
 
         $this->assertFalse($generalInformation2->isDraft());
         $this->assertFalse($generalInformation2->isSourceDialog());
+        $this->assertTrue($generalInformation2->isPermanent());
     }
 }
