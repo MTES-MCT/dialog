@@ -85,13 +85,20 @@ final class EditUserControllerTest extends AbstractWebTestCase
         $this->assertSame(1, $crawler->filter('#user_form_isOwner')->count());
     }
 
-    public function testOwnerCheckboxHiddenForNonOwner(): void
+    public function testEditOwnerAsMember(): void
     {
         $client = $this->login();
-        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33/edit');
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/5bc831a3-7a09-44e9-aefa-5ce3588dac33/edit');
 
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSame(0, $crawler->filter('#user_form_isOwner')->count());
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testEditNormalUserAsMember(): void
+    {
+        $client = $this->login();
+        $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/users/0b507871-8b5e-4575-b297-a630310fc06e/edit');
+
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testCannotBeOwnerAndMandataire(): void
