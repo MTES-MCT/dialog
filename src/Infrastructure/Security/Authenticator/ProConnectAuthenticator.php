@@ -148,6 +148,10 @@ class ProConnectAuthenticator extends AbstractAuthenticator
      */
     private function decodeAndVerifyJwt(string $jwt): array
     {
+        // Tolérance de 30 s sur exp/iat/nbf pour absorber une dérive d'horloge
+        // entre notre serveur et ProConnect
+        JWT::$leeway = 30;
+
         // La signature et l'expiration sont vérifiées par JWT::decode
         $payload = (array) JWT::decode($jwt, $this->getSigningKeys());
 

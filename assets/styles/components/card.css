@@ -85,7 +85,6 @@
    plutôt que mask-image pour conserver leurs couleurs d'origine. */
 .fr-icon-x-alternate-road-circle::before,
 .fr-icon-x-forbidden-circle::before,
-.fr-icon-x-speed-limitation-circle::before,
 .fr-icon-x-noparking-circle::before,
 .fr-icon-x-noovertake-circle::before {
     mask-image: none;
@@ -101,10 +100,6 @@
 
 .fr-icon-x-forbidden-circle::before {
     background-image: url('../../../public/images/icons/forbidden-circle.svg');
-}
-
-.fr-icon-x-speed-limitation-circle::before {
-    background-image: url('../../../public/images/icons/speed-limitation-circle.svg');
 }
 
 .fr-icon-x-noparking-circle::before {
@@ -125,6 +120,25 @@
 
 .app-card__img {
     flex: 0;
+}
+
+/* Pastille de limitation de vitesse dessinée en CSS afin d'afficher
+   la vitesse saisie dans le formulaire plutôt qu'un "30" figé dans un SVG. */
+.app-speed-limitation-icon {
+    box-sizing: border-box;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    background-color: #fde39c;
+    border: 1px solid #b34000;
+    color: #b34000;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .app-card__title {
