@@ -8,6 +8,7 @@ use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Infrastructure\DTO\Event\SaveLocationDTO;
 
 final class LocationsTransformer
@@ -93,6 +94,14 @@ final class LocationsTransformer
                 $r->label = $dto->rawGeoJSON->label;
                 $r->geometry = $dto->rawGeoJSON->geometry;
                 $cmd->rawGeoJSON = $r;
+            }
+
+            if ($dto->zone) {
+                $z = new SaveZoneCommand();
+                $z->roadType = $cmd->roadType;
+                $z->label = $dto->zone->label;
+                $z->geometry = $dto->zone->geometry;
+                $cmd->zone = $z;
             }
 
             $commands[] = $cmd;

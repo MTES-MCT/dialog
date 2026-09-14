@@ -11,6 +11,7 @@ use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\RoadGeocodingFailureException;
+use App\Application\Exception\ZoneWithoutStreetsException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -103,6 +104,7 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
             [RoadGeocodingFailureException::class, $this->translator->trans('regulation.location.error.numbered_road_geocoding_failed', [], 'validators')],
             [GeocodingFailureException::class, $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators')],
             [OrganizationCannotInterveneOnGeometryException::class, $this->translator->trans('regulation.location.error.organization_cannot_intervene_on_geometry', ['%organizationName%' => null], 'validators')],
+            [ZoneWithoutStreetsException::class, $this->translator->trans('regulation.location.error.zone_without_streets', [], 'validators')],
         ];
     }
 }

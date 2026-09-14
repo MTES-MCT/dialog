@@ -10,6 +10,7 @@ use App\Infrastructure\DTO\Event\SaveLocationDTO;
 use App\Infrastructure\DTO\Event\SaveNamedStreetDTO;
 use App\Infrastructure\DTO\Event\SaveNumberedRoadDTO;
 use App\Infrastructure\DTO\Event\SaveRawGeoJSONDTO;
+use App\Infrastructure\DTO\Event\SaveZoneDTO;
 use App\Infrastructure\Mapper\Transformers\LocationsTransformer;
 use PHPUnit\Framework\TestCase;
 
@@ -140,5 +141,24 @@ final class LocationsTransformerTest extends TestCase
         self::assertNotNull($cmd->rawGeoJSON);
         self::assertSame('Zone travaux', $cmd->rawGeoJSON->label);
         self::assertSame('{"type":"Polygon"}', $cmd->rawGeoJSON->geometry);
+    }
+
+    public function testTransformsZone(): void
+    {
+        $dto = new SaveLocationDTO();
+        $dto->roadType = RoadTypeEnum::ZONE;
+        $dto->zone = new SaveZoneDTO();
+        $dto->zone->label = 'Quartier des Docks';
+        $dto->zone->geometry = '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}';
+
+        $commands = LocationsTransformer::toCommands([$dto]);
+
+        self::assertCount(1, $commands);
+        $cmd = $commands[0];
+        self::assertSame(RoadTypeEnum::ZONE->value, $cmd->roadType);
+        self::assertNotNull($cmd->zone);
+        self::assertSame(RoadTypeEnum::ZONE->value, $cmd->zone->roadType);
+        self::assertSame('Quartier des Docks', $cmd->zone->label);
+        self::assertSame('{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}', $cmd->zone->geometry);
     }
 }
