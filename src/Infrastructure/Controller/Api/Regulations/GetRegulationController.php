@@ -24,6 +24,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -44,6 +45,7 @@ final class GetRegulationController
         methods: ['GET'],
         requirements: ['identifier' => '.+'],
     )]
+    #[IsGranted('ROLE_API')]
     #[OA\Tag(name: 'Private')]
     #[OA\Get(
         summary: 'Récupérer un arrêté de circulation par son identifiant',

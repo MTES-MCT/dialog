@@ -14,9 +14,13 @@ use App\Application\Exception\RoadGeocodingFailureException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ApIExceptionSubscriber implements EventSubscriberInterface
@@ -56,6 +60,12 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
 
     private function createApiErrorResponse(\Throwable $exception): ?JsonResponse
     {
+        // Les exceptions de sécurité sont gérées par le composant Security
+        // (réponses 401/403), on ne les intercepte pas ici.
+        if ($exception instanceof AuthenticationException || $exception instanceof AccessDeniedException) {
+            return null;
+        }
+
         if ($exception instanceof EmptyRoadBanIdException) {
             $this->logger->error(
                 'Empty roadBanId in the command GetNamedStreetGeometryQuery',
@@ -63,8 +73,6 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
                     'exception' => $exception->getMessage(),
                 ],
             );
-
-            return null;
         }
 
         if ($exception instanceof ValidationFailedException) {
@@ -91,7 +99,27 @@ final class ApIExceptionSubscriber implements EventSubscriberInterface
             }
         }
 
-        return null;
+        // Exceptions HTTP (404, 405, 429...) : on conserve le code de statut
+        // mais on renvoie une réponse JSON cohérente avec le reste de l'API.
+        if ($exception instanceof HttpExceptionInterface) {
+            $statusCode = $exception->getStatusCode();
+
+            return new JsonResponse([
+                'status' => $statusCode,
+                'detail' => Response::$statusTexts[$statusCode] ?? 'Error',
+            ], $statusCode, $exception->getHeaders());
+        }
+
+        // Toute autre exception : réponse générique sans détail interne
+        // (pas de page HTML ni de stack trace côté API).
+        $this->logger->error('Unhandled API exception', [
+            'exception' => $exception,
+        ]);
+
+        return new JsonResponse([
+            'status' => 500,
+            'detail' => 'Internal Server Error',
+        ], 500);
     }
 
     private function getErrorMap(): array

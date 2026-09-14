@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Security\Authenticator;
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\ProConnect\CreateProConnectUserCommand;
 use App\Infrastructure\Security\Authenticator\ProConnectAuthenticator;
+use Firebase\JWT\JWT;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,6 +35,10 @@ final class ProConnectAuthenticatorTest extends TestCase
     private MockObject $flashBag;
     private Request $request;
 
+    // Paire de clés RSA générée pour signer les JWT de test
+    private \OpenSSLAsymmetricKey $privateKey;
+    private array $jwks;
+
     public function setUp(): void
     {
         $this->httpClient = $this->createMock(HttpClientInterface::class);
@@ -56,6 +61,93 @@ final class ProConnectAuthenticatorTest extends TestCase
         $this->request = new Request();
         $this->request->attributes->set('_route', 'pro_connect_callback');
         $this->request->setSession($this->session);
+
+        $this->privateKey = openssl_pkey_new([
+            'private_key_bits' => 2048,
+            'private_key_type' => \OPENSSL_KEYTYPE_RSA,
+        ]);
+        $details = openssl_pkey_get_details($this->privateKey);
+        $this->jwks = [
+            'keys' => [
+                [
+                    'kty' => 'RSA',
+                    'kid' => 'test-key',
+                    'use' => 'sig',
+                    'alg' => 'RS256',
+                    'n' => $this->base64UrlEncode($details['rsa']['n']),
+                    'e' => $this->base64UrlEncode($details['rsa']['e']),
+                ],
+            ],
+        ];
+    }
+
+    private function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    private function makeJwt(array $payload): string
+    {
+        return JWT::encode($payload, $this->privateKey, 'RS256', 'test-key');
+    }
+
+    private function makeIdToken(array $overrides = []): string
+    {
+        return $this->makeJwt(array_merge([
+            'iss' => $this->domain,
+            'aud' => $this->clientId,
+            'exp' => time() + 300,
+            'sub' => '1234567890',
+            'nonce' => 'valid_nonce',
+        ], $overrides));
+    }
+
+    private function makeUserInfoJwt(array $overrides = []): string
+    {
+        return $this->makeJwt(array_merge([
+            'iss' => $this->domain,
+            'aud' => $this->clientId,
+            'exp' => time() + 300,
+            'sub' => '1234567890',
+            'siret' => '12345678901234',
+            'email' => 'mathieu@fairness.coop',
+            'given_name' => 'Mathieu',
+            'usual_name' => 'Marchois',
+        ], $overrides));
+    }
+
+    /**
+     * Configure le client HTTP mocké pour répondre aux endpoints /token, /jwks et /userinfo.
+     */
+    private function mockHttpEndpoints(array $tokenData, string $userInfoJwt): void
+    {
+        $tokenResponse = $this->createMock(ResponseInterface::class);
+        $tokenResponse->method('toArray')->willReturn($tokenData);
+
+        $jwksResponse = $this->createMock(ResponseInterface::class);
+        $jwksResponse->method('toArray')->willReturn($this->jwks);
+
+        $userInfoResponse = $this->createMock(ResponseInterface::class);
+        $userInfoResponse->method('getContent')->willReturn($userInfoJwt);
+
+        $this->httpClient
+            ->method('request')
+            ->willReturnCallback(fn (string $method, string $url) => match ($url) {
+                $this->domain . '/token' => $tokenResponse,
+                $this->domain . '/jwks' => $jwksResponse,
+                $this->domain . '/userinfo' => $userInfoResponse,
+                default => throw new \LogicException('Unexpected URL: ' . $url),
+            });
+    }
+
+    private function mockValidStateAndNonce(): void
+    {
+        $this->session
+            ->method('get')
+            ->willReturnMap([
+                ['oauth2_state', null, 'valid_state'],
+                ['oauth2_nonce', null, 'valid_nonce'],
+            ]);
     }
 
     public function testSupports(): void
@@ -72,11 +164,7 @@ final class ProConnectAuthenticatorTest extends TestCase
         $this->request->query->set('state', 'valid_state');
         $this->request->query->set('code', 'valid_code');
 
-        $this->session
-            ->expects(self::once())
-            ->method('get')
-            ->with('oauth2_state')
-            ->willReturn('valid_state');
+        $this->mockValidStateAndNonce();
 
         $callbackUrl = 'https://example.com/callback';
         $this->urlGenerator
@@ -85,62 +173,16 @@ final class ProConnectAuthenticatorTest extends TestCase
             ->with('pro_connect_callback', [], UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($callbackUrl);
 
-        $tokenResponse = $this->createMock(ResponseInterface::class);
-        $tokenResponse
-            ->method('toArray')
-            ->willReturn([
-                'access_token' => 'test_access_token',
-                'id_token' => 'test_id_token',
-            ]);
-
-        $userInfoResponse = $this->createMock(ResponseInterface::class);
-        $payload = json_encode([
-            'sub' => '1234567890',
-            'siret' => '12345678901234',
-            'email' => 'mathieu@fairness.coop',
-            'given_name' => 'Mathieu',
-            'usual_name' => 'Marchois',
-        ]);
-        $encodedPayload = base64_encode($payload);
-        $jwt = "header.{$encodedPayload}.signature";
-        $userInfoResponse
-            ->method('getContent')
-            ->willReturn($jwt);
-
-        $this->httpClient
-            ->expects(self::exactly(2))
-            ->method('request')
-            ->withConsecutive(
-                [
-                    'POST',
-                    $this->domain . '/token',
-                    [
-                        'body' => [
-                            'grant_type' => 'authorization_code',
-                            'code' => 'valid_code',
-                            'client_id' => $this->clientId,
-                            'client_secret' => $this->clientSecret,
-                            'redirect_uri' => $callbackUrl,
-                        ],
-                    ],
-                ],
-                [
-                    'GET',
-                    $this->domain . '/userinfo',
-                    [
-                        'headers' => [
-                            'Authorization' => 'Bearer test_access_token',
-                            'Accept' => 'application/json',
-                        ],
-                    ],
-                ],
-            )
-            ->willReturnOnConsecutiveCalls($tokenResponse, $userInfoResponse);
+        $idToken = $this->makeIdToken();
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $idToken],
+            $this->makeUserInfoJwt(),
+        );
 
         $this->session
             ->expects(self::once())
             ->method('set')
-            ->with('id_token', 'test_id_token');
+            ->with('id_token', $idToken);
 
         $this->commandBus
             ->expects(self::once())
@@ -233,44 +275,139 @@ final class ProConnectAuthenticatorTest extends TestCase
         $this->authenticator->authenticate($this->request);
     }
 
+    public function testAuthenticateWithTamperedIdToken(): void
+    {
+        $this->request->query->set('state', 'valid_state');
+        $this->request->query->set('code', 'valid_code');
+
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
+
+        // L'id_token est altéré : le payload est remplacé sans re-signature
+        $idToken = $this->makeIdToken();
+        $parts = explode('.', $idToken);
+        $forgedPayload = $this->base64UrlEncode(json_encode([
+            'iss' => $this->domain,
+            'aud' => $this->clientId,
+            'exp' => time() + 300,
+            'sub' => 'attacker',
+            'nonce' => 'valid_nonce',
+        ]));
+        $tamperedIdToken = $parts[0] . '.' . $forgedPayload . '.' . $parts[2];
+
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $tamperedIdToken],
+            $this->makeUserInfoJwt(),
+        );
+
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $this->expectException(AuthenticationException::class);
+        $this->authenticator->authenticate($this->request);
+    }
+
+    public function testAuthenticateWithInvalidNonce(): void
+    {
+        $this->request->query->set('state', 'valid_state');
+        $this->request->query->set('code', 'valid_code');
+
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
+
+        // L'id_token contient un nonce différent de celui stocké en session (rejeu)
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken(['nonce' => 'other_nonce'])],
+            $this->makeUserInfoJwt(),
+        );
+
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Authentication failed: Invalid nonce');
+        $this->authenticator->authenticate($this->request);
+    }
+
+    public function testAuthenticateWithInvalidIssuer(): void
+    {
+        $this->request->query->set('state', 'valid_state');
+        $this->request->query->set('code', 'valid_code');
+
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
+
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken(['iss' => 'https://evil.example.com'])],
+            $this->makeUserInfoJwt(),
+        );
+
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Authentication failed: Invalid token issuer');
+        $this->authenticator->authenticate($this->request);
+    }
+
+    public function testAuthenticateWithInvalidAudience(): void
+    {
+        $this->request->query->set('state', 'valid_state');
+        $this->request->query->set('code', 'valid_code');
+
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
+
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken(['aud' => 'other_client'])],
+            $this->makeUserInfoJwt(),
+        );
+
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Authentication failed: Invalid token audience');
+        $this->authenticator->authenticate($this->request);
+    }
+
+    public function testAuthenticateWithUserInfoSubjectMismatch(): void
+    {
+        $this->request->query->set('state', 'valid_state');
+        $this->request->query->set('code', 'valid_code');
+
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
+
+        // Le sujet du userinfo ne correspond pas à celui de l'id_token
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken()],
+            $this->makeUserInfoJwt(['sub' => 'someone_else']),
+        );
+
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $this->expectException(AuthenticationException::class);
+        $this->expectExceptionMessage('Authentication failed: UserInfo subject mismatch');
+        $this->authenticator->authenticate($this->request);
+    }
+
     public function testAuthenticateWithMissingEmail(): void
     {
         $this->request->query->set('state', 'valid_state');
         $this->request->query->set('code', 'valid_code');
 
-        $this->session
-            ->expects(self::once())
-            ->method('get')
-            ->with('oauth2_state')
-            ->willReturn('valid_state');
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
 
-        $callbackUrl = 'https://example.com/callback';
-        $this->urlGenerator
-            ->expects(self::once())
-            ->method('generate')
-            ->willReturn($callbackUrl);
-
-        $tokenResponse = $this->createMock(ResponseInterface::class);
-        $tokenResponse
-            ->method('toArray')
-            ->willReturn([
-                'access_token' => 'test_access_token',
-                'id_token' => 'test_id_token',
-            ]);
-
-        $userInfoResponse = $this->createMock(ResponseInterface::class);
-        $payloadWithoutEmail = base64_encode(json_encode([
+        $userInfoJwt = $this->makeJwt([
+            'iss' => $this->domain,
+            'aud' => $this->clientId,
+            'exp' => time() + 300,
             'sub' => '1234567890',
             'name' => 'Mathieu Marchois',
-        ]));
-        $userInfoResponse
-            ->method('getContent')
-            ->willReturn("header.{$payloadWithoutEmail}.signature");
+        ]);
 
-        $this->httpClient
-            ->expects(self::exactly(2))
-            ->method('request')
-            ->willReturnOnConsecutiveCalls($tokenResponse, $userInfoResponse);
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken()],
+            $userInfoJwt,
+        );
 
         $this->expectException(AuthenticationException::class);
         $this->expectExceptionMessage('Authentication failed: Email not found in user info');

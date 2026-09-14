@@ -96,4 +96,15 @@ final class DeleteRegulationControllerTest extends AbstractWebTestCase
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame(['message' => 'Unauthorized'], $data);
     }
+
+    public function testDeleteUnauthorizedWithoutCredentials(): void
+    {
+        $client = static::createClient();
+
+        // Sans en-têtes d'authentification, l'accès doit être refusé (401)
+        $client->request('DELETE', '/api/regulations/FO1/2023');
+
+        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+    }
 }

@@ -48,9 +48,13 @@ export default class extends Controller {
             }
         });
 
-        // Initialiser le contenu de l'éditeur avec la valeur du champ caché
+        // Initialiser le contenu de l'éditeur avec la valeur du champ caché.
+        // On passe par le presse-papier de Quill plutôt que par innerHTML : le HTML
+        // est converti en Delta, ce qui ignore les balises et attributs non
+        // supportés (potentiellement malveillants) au lieu de les exécuter.
         if (this.element.value) {
-            this.quill.root.innerHTML = this.element.value;
+            const delta = this.quill.clipboard.convert({ html: this.element.value });
+            this.quill.setContents(delta);
         }
 
         // Mettre à jour le champ caché quand le contenu de l'éditeur change

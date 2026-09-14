@@ -288,4 +288,19 @@ final class AddStorageRegulationOrderControllerTest extends AbstractWebTestCase
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame(['message' => 'Unauthorized'], $data);
     }
+
+    public function testUnauthorizedWithoutCredentials(): void
+    {
+        $client = static::createClient();
+
+        // Sans en-têtes d'authentification, l'accès doit être refusé (401)
+        $client->request(
+            'POST',
+            '/api/regulations/FO2/2023/storage',
+            ['url' => 'https://example.com/arrete.pdf', 'title' => 'Test'],
+        );
+
+        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+    }
 }

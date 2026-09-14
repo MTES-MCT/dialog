@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\MyArea\Organization\RegulationOrderTemplate;
 
+use App\Domain\Regulation\RegulationOrderTemplate;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
@@ -32,6 +33,32 @@ final class AddRegulationOrderTemplateControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertRouteSame('app_config_regulation_order_templates_list');
+    }
+
+    public function testHtmlContentIsSanitizedOnSave(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $crawler = $client->request('GET', '/mon-espace/organizations/' . OrganizationFixture::SEINE_SAINT_DENIS_ID . '/regulation_order_templates/add');
+
+        $saveButton = $crawler->selectButton('Sauvegarder');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['regulation_order_template_form']['name'] = 'Modèle avec contenu malveillant';
+        // Payload XSS injecté hors interface (requête forgée)
+        $values['regulation_order_template_form']['articleContent'] = '<p>Article 1</p><img src=x onerror="alert(1)"><script>alert(2)</script>';
+
+        $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $client->followRedirect();
+        $this->assertResponseStatusCodeSame(200);
+
+        // Le HTML malveillant doit avoir été nettoyé côté serveur avant stockage
+        $template = static::getContainer()->get('doctrine')->getManager()
+            ->getRepository(RegulationOrderTemplate::class)
+            ->findOneBy(['name' => 'Modèle avec contenu malveillant']);
+
+        $this->assertNotNull($template);
+        $this->assertSame('<p>Article 1</p>', $template->getArticleContent());
     }
 
     public function testBadFormValues(): void

@@ -48,6 +48,11 @@ security:
                 # Après connexion, rediriger vers le tableau de bord (sauf retour vers une page
                 # protégée demandée avant le login, ex : lien d'invitation).
                 default_target_path: app_landing
+            # Protection anti brute-force ciblé : blocage par couple (email, IP)
+            # en complément du rate-limiter global par IP.
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
             logout:
                 path: app_logout
 
@@ -75,3 +80,9 @@ when@test:
         password_hashers:
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: "plaintext"
+        firewalls:
+            main:
+                # Seuil élevé en test : le cache du rate limiter persiste entre les
+                # exécutions, un seuil bas rendrait les tests de login instables.
+                login_throttling:
+                    max_attempts: 1000
