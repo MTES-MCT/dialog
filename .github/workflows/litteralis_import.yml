@@ -59,7 +59,9 @@ jobs:
         run: |
           echo "DATABASE_URL=${{ secrets.APP_LITTERALIS_IMPORT_DATABASE_URL }}" >> .env.local
           echo "MESSENGER_ASYNC_DSN=sync://" >> .env.local
-          echo "MATTERMOST_WEBHOOK_URL=${{ secrets.MATTERMOST_WEBHOOK_URL }}" >> .env.local
+          echo "TCHAP_HOMESERVER_URL=${{ secrets.TCHAP_HOMESERVER_URL }}" >> .env.local
+          echo "TCHAP_ACCESS_TOKEN=${{ secrets.TCHAP_ACCESS_TOKEN }}" >> .env.local
+          echo "TCHAP_ROOM_ID=${{ secrets.TCHAP_ROOM_ID }}" >> .env.local
           echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
           echo "BDTOPO_2025_2_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
           echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env
