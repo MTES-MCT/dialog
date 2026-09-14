@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\View\RegulationCsvRowView;
+use App\Application\Regulation\View\VehicleSetView;
 use App\Infrastructure\Adapter\RegulationExportCsvGenerator;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -70,6 +71,54 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         $this->assertStringContainsString('Rue de la Paix, Paris', $content);
     }
 
+    public function testWriteCsvOutputsVehicleTypesAndExceptions(): void
+    {
+        $row = new RegulationCsvRowView(
+            regulationOrderUuid: 'ro-uuid',
+            title: 'Titre',
+            category: 'temporaryRegulation',
+            status: 'published',
+            startDate: null,
+            endDate: null,
+            organizationName: 'Org',
+            organizationSiret: '12345678901234',
+            linkPdf: '',
+            measureUuid: 'measure-uuid',
+            measureType: 'noEntry',
+            locationUuid: 'location-uuid',
+            locationType: 'lane',
+            locationLabel: 'Label',
+            geometry: '[]',
+            vehicleSet: new VehicleSetView(
+                restrictedTypes: [
+                    ['name' => 'hazardousMaterials'],
+                    ['name' => 'Mon texte libre', 'isOther' => true],
+                ],
+                exemptedTypes: [
+                    ['name' => 'emergencyServices'],
+                ],
+                maxCharacteristics: [
+                    ['name' => 'weight', 'value' => 3.5],
+                ],
+            ),
+        );
+
+        $handle = fopen('php://memory', 'r+');
+        $this->generator->writeCsv([$row], $handle);
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $this->assertStringContainsString(
+            'regulation.measure.type.noEntry;'
+            . '"regulation.vehicles.maxCharacteristics.weight, regulation.vehicle_set.type.hazardousMaterials, Mon texte libre";'
+            . 'regulation.vehicle_set.type.emergencyServices;'
+            . 'location-uuid',
+            $content,
+        );
+    }
+
     public function testWriteCsvHandlesNullDates(): void
     {
         $row = new RegulationCsvRowView(
@@ -98,7 +147,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         fclose($handle);
 
         $this->assertStringContainsString(
-            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;location-uuid;regulation.location.road.type.lane;Label;[]',
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;;;location-uuid;regulation.location.road.type.lane;Label;[]',
             $content,
         );
     }
