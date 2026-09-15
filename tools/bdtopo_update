@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import os
 import signal
 import subprocess
 import sys
@@ -19,10 +20,13 @@ def _sizeof_fmt(num: float, suffix: str = "B") -> str:
     return f"{num:.1f} Yi{suffix}"
 
 
-def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: list):
-    assert directory.is_absolute()
-    assert path.is_absolute()
-
+def _run_dockerized_ogr2ogr(
+    database_url,
+    source: str,
+    options: list,
+    volume: tuple[str, str] | None = None,
+    extra_env: dict[str, str] | None = None,
+):
     # Make ogr2ogr access database tunnel connection open on the host
     # https://stackoverflow.com/a/43541732
     urlobj = urlparse(database_url)
@@ -39,8 +43,18 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
         "gdal",
         "run",
         "--rm",  # Do not leave dead containers
-        "-v",
-        f"{directory}:/home/data",
+    ]
+
+    # Mount the local data directory (local import mode only).
+    if volume is not None:
+        host_dir, container_dir = volume
+        command += ["-v", f"{host_dir}:{container_dir}"]
+
+    # Forward S3 credentials/config to GDAL (S3 streaming import mode only).
+    for key, value in (extra_env or {}).items():
+        command += ["-e", f"{key}={value}"]
+
+    command += [
         "gdal",
         "ogr2ogr",
         # Setup connection to the PostgreSQL database
@@ -50,10 +64,35 @@ def _run_dockerized_ogr2ogr(database_url, directory: Path, path: Path, options: 
         "PostgreSQL",
         f"PG:{database_url_from_container}",
         *options,
-        str(Path("/home/data") / path.relative_to(directory)),
+        source,
     ]
 
     return subprocess.run(command)
+
+
+def _build_s3_env(endpoint: str, region: str) -> dict[str, str]:
+    """Translate the Flysystem/Outscale S3 configuration into GDAL /vsis3/ variables."""
+    urlobj = urlparse(endpoint if "://" in endpoint else f"https://{endpoint}")
+    host = urlobj.netloc or urlobj.path
+
+    access_key = os.environ.get("S3_ACCESS_KEY")
+    secret_key = os.environ.get("S3_SECRET_KEY")
+
+    if not access_key or not secret_key:
+        raise RuntimeError(
+            "S3_ACCESS_KEY and S3_SECRET_KEY must be set for S3 streaming import"
+        )
+
+    return {
+        "AWS_ACCESS_KEY_ID": access_key,
+        "AWS_SECRET_ACCESS_KEY": secret_key,
+        "AWS_S3_ENDPOINT": host,
+        "AWS_REGION": region,
+        "AWS_DEFAULT_REGION": region,
+        # Outscale uses HTTPS and path-style addressing (pathStyleEndpoint: true).
+        "AWS_HTTPS": "NO" if urlobj.scheme == "http" else "YES",
+        "AWS_VIRTUAL_HOSTING": "FALSE",
+    }
 
 
 @dataclass
@@ -71,30 +110,140 @@ class Config:
     tables: list[Table]
 
 
-def main(
-    config: Config, directory: Path, url: str | None, overwrite: bool, yes: bool
-) -> int:
-    if not directory.exists():
-        print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
-        return 1
+@dataclass
+class S3Source:
+    bucket: str
+    key: str
+    endpoint: str
+    region: str
+    entries: list[dict]
 
-    tables_by_name = {table.name: table for table in config.tables}
-    geopackages = []
+
+@dataclass
+class LocalArchive:
+    archive_path: Path
+    entries: list[dict]
+
+
+def _build_local_items(directory: Path, tables_by_name: dict) -> list[dict]:
+    """Build the list of geopackages to import from a locally extracted directory."""
+    items = []
 
     for theme in ("TRANSPORT", "ADRESSES"):
         search_pattern = f"**/1_DONNEES_LIVRAISON_*/*/{theme}/*.gpkg"
 
         for path in directory.glob(search_pattern):
             if path.stem in tables_by_name:
-                geopackages.append({"path": path, "table": tables_by_name[path.stem]})
+                items.append(
+                    {
+                        "table": tables_by_name[path.stem],
+                        "source": str(Path("/home/data") / path.relative_to(directory)),
+                        "volume": (str(directory), "/home/data"),
+                        "env": None,
+                        "size": path.stat().st_size,
+                        "display": str(path),
+                    }
+                )
+
+    return items
+
+
+def _build_s3_items(s3: "S3Source", tables_by_name: dict) -> list[dict]:
+    """Build the list of geopackages to import by streaming from a .7z archive on S3.
+
+    Each source uses GDAL virtual filesystems to read the target geopackage directly
+    inside the (single-volume) 7z archive stored on S3, without any local extraction:
+    /vsi7z//vsis3/<bucket>/<key>/<path inside archive>
+    """
+    env = _build_s3_env(s3.endpoint, s3.region)
+    items = []
+
+    for entry in s3.entries:
+        table = tables_by_name.get(entry["table"])
+
+        if table is None:
+            continue
+
+        source = f"/vsi7z//vsis3/{s3.bucket}/{s3.key}/{entry['path']}"
+        items.append(
+            {
+                "table": table,
+                "source": source,
+                "volume": None,
+                "env": env,
+                "size": entry.get("size"),
+                "display": source,
+            }
+        )
+
+    return items
+
+
+def _build_local_archive_items(
+    archive: "LocalArchive", tables_by_name: dict
+) -> list[dict]:
+    """Build the list of geopackages to import from a local single-volume .7z archive.
+
+    Each source uses GDAL's /vsi7z/ virtual filesystem to read the target geopackage
+    directly inside the concatenated 7z archive, without any local extraction. The
+    archive's directory is mounted into the container as /home/data.
+    """
+    container_archive = f"/home/data/{archive.archive_path.name}"
+    items = []
+
+    for entry in archive.entries:
+        table = tables_by_name.get(entry["table"])
+
+        if table is None:
+            continue
+
+        source = f"/vsi7z/{container_archive}/{entry['path']}"
+        items.append(
+            {
+                "table": table,
+                "source": source,
+                "volume": (str(archive.archive_path.parent), "/home/data"),
+                "env": None,
+                "size": entry.get("size"),
+                "display": source,
+            }
+        )
+
+    return items
+
+
+def main(
+    config: Config,
+    directory: Path | None,
+    url: str | None,
+    overwrite: bool,
+    yes: bool,
+    s3: "S3Source | None" = None,
+    archive: "LocalArchive | None" = None,
+) -> int:
+    tables_by_name = {table.name: table for table in config.tables}
+
+    if s3 is not None:
+        geopackages = _build_s3_items(s3, tables_by_name)
+        source_label = f"s3://{s3.bucket}/{s3.key}"
+    elif archive is not None:
+        geopackages = _build_local_archive_items(archive, tables_by_name)
+        source_label = str(archive.archive_path)
+    else:
+        if directory is None or not directory.exists():
+            print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
+            return 1
+
+        geopackages = _build_local_items(directory, tables_by_name)
+        source_label = str(directory)
 
     if not geopackages:
-        print(f"ERROR: no geopackages found at {directory}", file=sys.stderr)
+        print(f"ERROR: no geopackages found at {source_label}", file=sys.stderr)
         return 1
 
     # Improve pg disk usage by importing smallest packages first.
     # Reason: ogr2ogr runs TRUNCATE *after* importing the 1st package.
-    geopackages = sorted(geopackages, key=lambda t: t["path"].stat().st_size)
+    geopackages = sorted(geopackages, key=lambda t: t["size"] or 0)
 
     with ExitStack() as exit_stack:
         if url is not None:
@@ -166,11 +315,14 @@ def main(
 
         try:
             for gpkg in geopackages:
-                path = gpkg["path"]  # type: Path
                 table = gpkg["table"]  # type: Table
 
-                pretty_size = _sizeof_fmt(path.stat().st_size)
-                print(f"------> Import into {table.name}: {path} ({pretty_size})")
+                pretty_size = (
+                    _sizeof_fmt(gpkg["size"]) if gpkg["size"] else "unknown size"
+                )
+                print(
+                    f"------> Import into {table.name}: {gpkg['display']} ({pretty_size})"
+                )
 
                 options = [
                     # See general ogr2ogr options here:
@@ -216,9 +368,10 @@ def main(
 
                 result = _run_dockerized_ogr2ogr(
                     database_url,
-                    directory=directory,
-                    path=path,
+                    source=gpkg["source"],
                     options=options,
+                    volume=gpkg["volume"],
+                    extra_env=gpkg["env"],
                 )
 
                 if result.returncode:
@@ -276,8 +429,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "directory",
+        nargs="?",
         type=_path_check_exists,
-        help="Path to directory containing BD TOPO data",
+        default=None,
+        help="Path to directory containing BD TOPO data (local import mode)",
     )
     parser.add_argument(
         "--prod", action="store_true", help="Confirm deployment to 'dialog-bdtopo-2025' app"
@@ -298,6 +453,40 @@ if __name__ == "__main__":
         default=Path(__file__).parent / "bdtopo_update.config.json",
         help="Path to config file. Default: ./bdtopo_update.config.json",
     )
+    parser.add_argument(
+        "--s3-archive",
+        default=None,
+        help=(
+            "Stream the import directly from a single-volume .7z archive on S3, "
+            "e.g. s3://my-bucket/bdtopo/bdtopo-latest.7z (no local extraction). "
+            "Requires --manifest, --s3-endpoint and --s3-region."
+        ),
+    )
+    parser.add_argument(
+        "--manifest",
+        type=_path_check_exists,
+        default=None,
+        help="Path to the JSON manifest describing the geopackages inside the S3 archive",
+    )
+    parser.add_argument(
+        "--s3-endpoint",
+        default=None,
+        help="S3 endpoint (e.g. https://oos.cloudgouv-eu-west-1.outscale.com)",
+    )
+    parser.add_argument(
+        "--s3-region",
+        default=None,
+        help="S3 region (e.g. cloudgouv-eu-west-1)",
+    )
+    parser.add_argument(
+        "--archive",
+        type=_path_check_exists,
+        default=None,
+        help=(
+            "Import directly from a local single-volume .7z archive via GDAL /vsi7z/ "
+            "(no local extraction). Requires --manifest."
+        ),
+    )
     args = parser.parse_args()
 
     if args.url is None and not args.prod:
@@ -314,8 +503,60 @@ if __name__ == "__main__":
         tables=[Table(**t) for t in configdata["tables"]],
     )
 
-    # Relative paths are OK but ogr2ogr volume will require an absolute path.
-    directory = args.directory.absolute()
+    s3_source = None
+    local_archive = None
+    directory = None
+
+    if args.s3_archive:
+        if not (args.manifest and args.s3_endpoint and args.s3_region):
+            print(
+                "ERROR: --s3-archive requires --manifest, --s3-endpoint and --s3-region",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        archive_url = urlparse(args.s3_archive)
+
+        if archive_url.scheme != "s3":
+            print(
+                f"ERROR: --s3-archive must be an s3:// URL, received: {args.s3_archive}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        manifest_data = json.loads(args.manifest.read_text())
+
+        s3_source = S3Source(
+            bucket=archive_url.netloc,
+            key=archive_url.path.lstrip("/"),
+            endpoint=args.s3_endpoint,
+            region=args.s3_region,
+            entries=manifest_data["entries"],
+        )
+    elif args.archive:
+        if not args.manifest:
+            print(
+                "ERROR: --archive requires --manifest",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        manifest_data = json.loads(args.manifest.read_text())
+
+        local_archive = LocalArchive(
+            archive_path=args.archive.absolute(),
+            entries=manifest_data["entries"],
+        )
+    else:
+        if args.directory is None:
+            print(
+                "ERROR: please pass a directory (local mode) or --s3-archive (S3 mode)",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        # Relative paths are OK but ogr2ogr volume will require an absolute path.
+        directory = args.directory.absolute()
 
     sys.exit(
         main(
@@ -324,5 +565,7 @@ if __name__ == "__main__":
             url=args.url,
             overwrite=args.overwrite,
             yes=args.yes,
+            s3=s3_source,
+            archive=local_archive,
         )
     )
