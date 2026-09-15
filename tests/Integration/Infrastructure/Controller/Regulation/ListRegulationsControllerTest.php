@@ -24,6 +24,9 @@ final class ListRegulationsControllerTest extends AbstractWebTestCase
         $this->assertSame('Arrêtés de circulation', $crawler->filter('h3')->text());
         $this->assertMetaTitle('Arrêtés de circulation - DiaLog', $crawler);
 
+        // Le bandeau nouveautés ne doit pas s'afficher hors de la page d'accueil.
+        $this->assertCount(0, $crawler->filter('[data-testid="notice-news"]'));
+
         $navLi = $crawler->filter('nav.fr-pagination')->filter('li');
         $this->assertSame('Première page', $navLi->eq(0)->filter('a')->text());
         $this->assertSame('Page précédente', $navLi->eq(1)->filter('a')->text());

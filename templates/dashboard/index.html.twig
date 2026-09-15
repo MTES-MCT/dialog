@@ -12,6 +12,7 @@
 {% block page_class %}app-dashboard-page{% endblock %}
 
 {% block body %}
+    {% include 'common/fragments/_news_notice.html.twig' with { newsNotice } only %}
     {% set organizations = app.user.userOrganizations %}
     {% set hasSeveralOrganizations = organizations|length > 1 %}
 

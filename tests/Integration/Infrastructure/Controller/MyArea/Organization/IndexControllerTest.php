@@ -29,19 +29,9 @@ final class IndexControllerTest extends AbstractWebTestCase
         $this->assertCount(2, $organizations->filter('[data-testid="organization-detail"]'));
         $this->assertSame('Complété Département de Seine-Saint-Denis', $organizations->filter('[data-testid="organization-detail"]')->text());
         $this->assertCount(0, $crawler->filter('[data-testid="admin-link"]'));
-    }
 
-    public function testWithNewsNotice(): void
-    {
-        $client = $this->login('mathieu.marchois@beta.gouv.fr');
-        $crawler = $client->request('GET', '/mon-espace/organizations');
-
-        $this->assertResponseStatusCodeSame(200);
-        $this->assertSecurityHeaders();
-
-        $newsNotice = $crawler->filter('[data-testid="notice-news"]');
-
-        $this->assertSame('Dernières nouveautés Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Exporter mes arrêtés de circulation Masquer le message', $newsNotice->filter('[data-testid="news-notice-content"]')->text());
+        // Le bandeau nouveautés ne doit pas s'afficher hors de la page d'accueil.
+        $this->assertCount(0, $crawler->filter('[data-testid="notice-news"]'));
     }
 
     public function testWithOrganizationCompleted(): void

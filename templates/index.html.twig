@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+    {% include 'common/fragments/_news_notice.html.twig' with { newsNotice } only %}
     <!-- Jumbotron -->
     <div class="fr-container fr-py-4w fr-py-md-6w">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
