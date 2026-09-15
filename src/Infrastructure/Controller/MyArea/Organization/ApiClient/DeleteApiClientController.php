@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class DeleteApiClientController extends AbstractOrganizationController
@@ -44,6 +45,7 @@ final class DeleteApiClientController extends AbstractOrganizationController
         requirements: ['uuid' => Requirement::UUID, 'apiClientUuid' => Requirement::UUID],
         methods: ['DELETE'],
     )]
+    #[IsCsrfTokenValid('delete-api-client')]
     public function __invoke(Request $request, string $uuid, string $apiClientUuid): Response
     {
         $organization = $this->getOrganization($uuid);

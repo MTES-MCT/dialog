@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,12 +27,23 @@ final readonly class ForgotPasswordController
         private CommandBusInterface $commandBus,
         private UrlGeneratorInterface $urlGenerator,
         private TranslatorInterface $translator,
+        private RateLimiterFactoryInterface $passwordResetLimiter,
+        private KernelInterface $kernel,
     ) {
     }
 
     #[Route('/forgot-password', name: 'app_forgot_password', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
+        // Limite dédiée sur les demandes de réinitialisation (envoi d'e-mails),
+        // désactivée en debug comme le rate-limiter global.
+        if ($request->isMethod('POST') && !$this->kernel->isDebug()) {
+            $limiter = $this->passwordResetLimiter->create($request->getClientIp());
+            if (false === $limiter->consume(1)->isAccepted()) {
+                throw new TooManyRequestsHttpException();
+            }
+        }
+
         $command = new SendForgotPasswordMailCommand();
         $form = $this->formFactory->create(ForgotPasswordFormType::class, $command);
         $form->handleRequest($request);

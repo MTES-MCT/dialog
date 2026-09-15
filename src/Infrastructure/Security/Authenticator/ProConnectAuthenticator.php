@@ -6,6 +6,8 @@ namespace App\Infrastructure\Security\Authenticator;
 
 use App\Application\CommandBusInterface;
 use App\Application\User\Command\ProConnect\CreateProConnectUserCommand;
+use Firebase\JWT\JWK;
+use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +27,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class ProConnectAuthenticator extends AbstractAuthenticator
 {
+    // Clés de signature ProConnect, mises en cache le temps de la requête
+    private ?array $signingKeys = null;
+
     public function __construct(
         private HttpClientInterface $httpClient,
         private UrlGeneratorInterface $urlGenerator,
@@ -66,11 +71,27 @@ class ProConnectAuthenticator extends AbstractAuthenticator
                 throw new AuthenticationException('Invalid token response');
             }
 
+            // Vérification cryptographique de l'id_token : signature via la JWKS de
+            // ProConnect, expiration, émetteur et audience
+            $idTokenPayload = $this->decodeAndVerifyJwt($tokenData['id_token']);
+
+            // Vérification du nonce (protection anti-rejeu OIDC) : la claim de
+            // l'id_token doit correspondre au nonce généré avant la redirection
+            $expectedNonce = $session->get('oauth2_nonce');
+            if (empty($expectedNonce) || !hash_equals($expectedNonce, (string) ($idTokenPayload['nonce'] ?? ''))) {
+                throw new AuthenticationException('Invalid nonce');
+            }
+
             // Stockage de l'id_token pour la déconnexion
             $session->set('id_token', $tokenData['id_token']);
 
-            // Récupération des infos utilisateur
+            // Récupération des infos utilisateur (JWT signé, vérifié également)
             $userInfo = $this->getUserInfo($tokenData['access_token']);
+
+            // Le sujet du userinfo doit correspondre à celui de l'id_token (spéc. OIDC)
+            if (!isset($userInfo['sub']) || $userInfo['sub'] !== ($idTokenPayload['sub'] ?? null)) {
+                throw new AuthenticationException('UserInfo subject mismatch');
+            }
 
             // Vérification des données utilisateur
             if (!isset($userInfo['email'])) {
@@ -113,16 +134,46 @@ class ProConnectAuthenticator extends AbstractAuthenticator
         $response = $this->httpClient->request('GET', $this->proConnectDomain . '/userinfo', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $accessToken,
-                'Accept' => 'application/json',
+                'Accept' => 'application/jwt',
             ],
         ]);
         $jwt = $response->getContent();
 
-        // Decodage du JWT
-        $parts = explode('.', $jwt);
-        $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+        return $this->decodeAndVerifyJwt($jwt);
+    }
+
+    /**
+     * Décode un JWT émis par ProConnect en vérifiant sa signature (via la JWKS),
+     * son expiration (exp), son émetteur (iss) et son audience (aud).
+     */
+    private function decodeAndVerifyJwt(string $jwt): array
+    {
+        // Tolérance de 30 s sur exp/iat/nbf pour absorber une dérive d'horloge
+        // entre notre serveur et ProConnect
+        JWT::$leeway = 30;
+
+        // La signature et l'expiration sont vérifiées par JWT::decode
+        $payload = (array) JWT::decode($jwt, $this->getSigningKeys());
+
+        if (($payload['iss'] ?? null) !== $this->proConnectDomain) {
+            throw new AuthenticationException('Invalid token issuer');
+        }
+
+        if (!\in_array($this->proConnectClientId, (array) ($payload['aud'] ?? []), true)) {
+            throw new AuthenticationException('Invalid token audience');
+        }
 
         return $payload;
+    }
+
+    private function getSigningKeys(): array
+    {
+        if ($this->signingKeys === null) {
+            $jwks = $this->httpClient->request('GET', $this->proConnectDomain . '/jwks')->toArray();
+            $this->signingKeys = JWK::parseKeySet($jwks, 'RS256');
+        }
+
+        return $this->signingKeys;
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

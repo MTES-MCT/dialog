@@ -126,4 +126,15 @@ final class PublishRegulationControllerTest extends AbstractWebTestCase
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertSame(['message' => 'Unauthorized'], $data);
     }
+
+    public function testPublishUnauthorizedWithoutCredentials(): void
+    {
+        $client = static::createClient();
+
+        // Sans en-têtes d'authentification, l'accès doit être refusé (401)
+        $client->request('PUT', \sprintf('/api/regulations/publish/%s', RegulationOrderFixture::TYPICAL_IDENTIFIER));
+
+        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+    }
 }

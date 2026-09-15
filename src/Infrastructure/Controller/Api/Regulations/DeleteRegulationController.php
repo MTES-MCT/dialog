@@ -19,6 +19,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class DeleteRegulationController
 {
@@ -35,6 +36,7 @@ final class DeleteRegulationController
         methods: ['DELETE'],
         requirements: ['identifier' => '.+'],
     )]
+    #[IsGranted('ROLE_API')]
     #[OA\Tag(name: 'Private')]
     #[OA\Response(
         response: 204,

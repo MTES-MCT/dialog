@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapUploadedFile;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AddStorageRegulationOrderController
 {
@@ -37,6 +38,7 @@ final class AddStorageRegulationOrderController
         methods: ['POST'],
         requirements: ['identifier' => '.+'],
     )]
+    #[IsGranted('ROLE_API')]
     #[OA\Tag(name: 'Private')]
     #[OA\RequestBody(
         required: true,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command\RegulationOrderTemplate;
 
 use App\Application\DateUtilsInterface;
+use App\Application\HtmlSanitizerInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Regulation\Command\RegulationOrderTemplate\SaveRegulationOrderTemplateCommand;
 use App\Application\Regulation\Command\RegulationOrderTemplate\SaveRegulationOrderTemplateCommandHandler;
@@ -19,12 +20,16 @@ final class SaveRegulationOrderTemplateCommandHandlerTest extends TestCase
     private MockObject $idFactory;
     private MockObject $regulationOrderTemplateRepository;
     private MockObject $dateUtils;
+    private MockObject $htmlSanitizer;
 
     public function setUp(): void
     {
         $this->idFactory = $this->createMock(IdFactoryInterface::class);
         $this->regulationOrderTemplateRepository = $this->createMock(RegulationOrderTemplateRepositoryInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
+        $this->htmlSanitizer = $this->createMock(HtmlSanitizerInterface::class);
+        // Par défaut, le sanitizer restitue le contenu tel quel
+        $this->htmlSanitizer->method('sanitize')->willReturnArgument(0);
     }
 
     public function testAdd(): void
@@ -61,6 +66,7 @@ final class SaveRegulationOrderTemplateCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->regulationOrderTemplateRepository,
             $this->dateUtils,
+            $this->htmlSanitizer,
         );
         $command = new SaveRegulationOrderTemplateCommand($organization);
         $command->name = 'Restriction de vitesse';
@@ -103,6 +109,7 @@ final class SaveRegulationOrderTemplateCommandHandlerTest extends TestCase
             $this->idFactory,
             $this->regulationOrderTemplateRepository,
             $this->dateUtils,
+            $this->htmlSanitizer,
         );
 
         $command = new SaveRegulationOrderTemplateCommand($organization, $regulationOrderTemplate);
@@ -111,6 +118,45 @@ final class SaveRegulationOrderTemplateCommandHandlerTest extends TestCase
         $command->visaContent = 'VU ... updated';
         $command->consideringContent = 'CONSIDERANT ... updated';
         $command->articleContent = 'ARTICLES ... updated';
+
+        $this->assertSame($regulationOrderTemplate, $handler($command));
+    }
+
+    public function testSanitizesHtmlContentBeforeSaving(): void
+    {
+        $organization = $this->createMock(Organization::class);
+        $regulationOrderTemplate = $this->createMock(RegulationOrderTemplate::class);
+
+        // Le sanitizer supprime le HTML malveillant du contenu de l'éditeur riche
+        $htmlSanitizer = $this->createMock(HtmlSanitizerInterface::class);
+        $htmlSanitizer
+            ->method('sanitize')
+            ->willReturnCallback(static fn (?string $html): ?string => $html === null ? null : str_replace('<img src=x onerror="alert(1)">', '', $html));
+
+        $regulationOrderTemplate
+            ->expects(self::once())
+            ->method('update')
+            ->with(
+                'Nom',
+                'Titre',
+                'VU ...',
+                'CONSIDERANT ...',
+                '<p>Article 1</p>',
+            );
+
+        $handler = new SaveRegulationOrderTemplateCommandHandler(
+            $this->idFactory,
+            $this->regulationOrderTemplateRepository,
+            $this->dateUtils,
+            $htmlSanitizer,
+        );
+
+        $command = new SaveRegulationOrderTemplateCommand($organization, $regulationOrderTemplate);
+        $command->name = 'Nom';
+        $command->title = 'Titre';
+        $command->visaContent = 'VU ...';
+        $command->consideringContent = 'CONSIDERANT ...';
+        $command->articleContent = '<p>Article 1</p><img src=x onerror="alert(1)">';
 
         $this->assertSame($regulationOrderTemplate, $handler($command));
     }

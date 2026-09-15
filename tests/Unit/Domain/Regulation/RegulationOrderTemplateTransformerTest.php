@@ -71,10 +71,48 @@ final class RegulationOrderTemplateTransformerTest extends TestCase
         $view = $transformer->transform($template, $generalInfo, $signingAuthority);
 
         $this->assertSame('Arrêté n°ABC/2025 - Ville de Test', $view->title);
-        $this->assertSame('VU Intitulé de l\'arrêté par Le Maire', $view->visaContent);
+        // Les valeurs substituées sont échappées (rendu en HTML brut lors de l'export)
+        $this->assertSame('VU Intitulé de l&#039;arrêté par Le Maire', $view->visaContent);
         $this->assertSame('CONSIDERANT Jean Dupont', $view->consideringContent);
         $this->assertSame('ARTICLE 1: ...', $view->articleContent);
         $this->assertSame(base64_encode('PNG_BYTES'), $view->logo);
         $this->assertSame('image/png', $view->logoMimeType);
+    }
+
+    public function testTransformEscapesHtmlInUserProvidedValues(): void
+    {
+        $storage = $this->createMock(StorageInterface::class);
+
+        $transformer = new RegulationOrderTemplateTransformer($storage);
+
+        $template = (new RegulationOrderTemplate('11111111-1111-1111-1111-111111111111'))
+            ->setTitle('[intitule_arrete]')
+            ->setVisaContent('VU ...')
+            ->setConsideringContent('CONSIDERANT ...')
+            ->setArticleContent('ARTICLE 1: ...');
+
+        $generalInfo = new GeneralInfoView(
+            uuid: '22222222-2222-2222-2222-222222222222',
+            identifier: 'ABC/2025',
+            organizationName: 'Ville de Test',
+            organizationLogo: null,
+            organizationUuid: '33333333-3333-3333-3333-333333333333',
+            organizationAddress: null,
+            status: 'DRAFT',
+            source: RegulationOrderRecordSourceEnum::DIALOG,
+            regulationOrderUuid: '44444444-4444-4444-4444-444444444444',
+            regulationOrderTemplateUuid: '55555555-5555-5555-5555-555555555555',
+            category: 'TEMPORARY_REGULATION',
+            subject: null,
+            otherCategoryText: null,
+            title: '<img src="http://attacker.tld/track.png">',
+            startDate: null,
+            endDate: null,
+        );
+
+        $view = $transformer->transform($template, $generalInfo);
+
+        // Le balisage HTML injecté dans un champ libre ne doit pas être restitué tel quel
+        $this->assertSame('&lt;img src=&quot;http://attacker.tld/track.png&quot;&gt;', $view->title);
     }
 }

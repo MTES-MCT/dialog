@@ -107,8 +107,8 @@ final class GetNearbyStreetsController
             return new JsonResponse(['error' => 'Invalid GeoJSON geometry'], Response::HTTP_BAD_REQUEST);
         }
 
-        $radius = min((int) ($data['radius'] ?? 100), 500);
-        $limit = min((int) ($data['limit'] ?? 10), 50);
+        $radius = max(1, min((int) ($data['radius'] ?? 100), 500));
+        $limit = max(1, min((int) ($data['limit'] ?? 10), 50));
 
         try {
             $streets = $this->queryBus->handle(

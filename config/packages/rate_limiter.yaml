@@ -8,3 +8,9 @@ framework:
             policy: 'sliding_window'
             limit: 5000
             interval: '5 minutes'
+        # Limite dédiée aux demandes de réinitialisation de mot de passe
+        # (envoi d'e-mails), plus stricte que la limite globale.
+        password_reset:
+            policy: 'sliding_window'
+            limit: 5
+            interval: '15 minutes'

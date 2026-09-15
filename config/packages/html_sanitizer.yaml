@@ -1,0 +1,25 @@
+framework:
+    html_sanitizer:
+        sanitizers:
+            # Sanitizer pour le HTML produit par l'éditeur riche (Quill) des
+            # modèles d'arrêté : seules les balises de mise en forme et
+            # l'attribut class (alignement/indentation Quill) sont conservés.
+            app.rich_text_sanitizer:
+                allow_elements:
+                    p: ['class']
+                    br: []
+                    strong: []
+                    b: []
+                    em: []
+                    i: []
+                    u: []
+                    s: []
+                    h1: ['class']
+                    h2: ['class']
+                    h3: ['class']
+                    ol: ['class']
+                    ul: ['class']
+                    li: ['class']
+                    span: ['class']
+                # Les contenus des modèles peuvent être longs (visas, articles...)
+                max_input_length: 100000

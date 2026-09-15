@@ -17,8 +17,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -87,16 +89,25 @@ class ApIExceptionSubscriberTest extends TestCase
         $event = new ExceptionEvent($kernel, $request, KernelInterface::MAIN_REQUEST, $exception);
 
         $this->logger
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('error')
-            ->with(
-                'Empty roadBanId in the command GetNamedStreetGeometryQuery',
-                ['exception' => ''],
+            ->withConsecutive(
+                [
+                    'Empty roadBanId in the command GetNamedStreetGeometryQuery',
+                    ['exception' => ''],
+                ],
+                [
+                    'Unhandled API exception',
+                    ['exception' => $exception],
+                ],
             );
 
         $this->subscriber->onKernelException($event);
 
-        $this->assertNull($event->getResponse());
+        // L'exception non mappée aboutit à une réponse JSON générique 500
+        $response = $event->getResponse();
+        $this->assertNotNull($response);
+        $this->assertEquals(500, $response->getStatusCode());
     }
 
     public function testValidationFailedExceptionReturnsJson(): void
@@ -262,13 +273,55 @@ class ApIExceptionSubscriberTest extends TestCase
         $this->assertEquals('Organization cannot intervene', $data['detail']);
     }
 
-    public function testUnhandledExceptionReturnsNull(): void
+    public function testUnhandledExceptionReturnsGenericJson500(): void
     {
         $kernel = $this->createMock(KernelInterface::class);
         $request = $this->createMock(Request::class);
         $request->expects(self::once())->method('getPathInfo')->willReturn('/api/test');
 
         $exception = new \RuntimeException('Unhandled error');
+        $event = new ExceptionEvent($kernel, $request, KernelInterface::MAIN_REQUEST, $exception);
+
+        $this->logger
+            ->expects(self::once())
+            ->method('error')
+            ->with('Unhandled API exception', ['exception' => $exception]);
+
+        $this->subscriber->onKernelException($event);
+
+        // Réponse JSON générique : pas de page HTML ni de détail interne côté API
+        $response = $event->getResponse();
+        $this->assertNotNull($response);
+        $this->assertEquals(500, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals(['status' => 500, 'detail' => 'Internal Server Error'], $data);
+    }
+
+    public function testHttpExceptionKeepsItsStatusCodeAsJson(): void
+    {
+        $kernel = $this->createMock(KernelInterface::class);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())->method('getPathInfo')->willReturn('/api/test');
+
+        $exception = new NotFoundHttpException('No route found');
+        $event = new ExceptionEvent($kernel, $request, KernelInterface::MAIN_REQUEST, $exception);
+
+        $this->subscriber->onKernelException($event);
+
+        $response = $event->getResponse();
+        $this->assertNotNull($response);
+        $this->assertEquals(404, $response->getStatusCode());
+        $data = json_decode($response->getContent(), true);
+        $this->assertEquals(['status' => 404, 'detail' => 'Not Found'], $data);
+    }
+
+    public function testSecurityExceptionsAreLeftToSecurityComponent(): void
+    {
+        $kernel = $this->createMock(KernelInterface::class);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())->method('getPathInfo')->willReturn('/api/test');
+
+        $exception = new AccessDeniedException();
         $event = new ExceptionEvent($kernel, $request, KernelInterface::MAIN_REQUEST, $exception);
 
         $this->subscriber->onKernelException($event);
