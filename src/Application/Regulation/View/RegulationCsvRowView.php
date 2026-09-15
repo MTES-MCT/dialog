@@ -22,6 +22,7 @@ final readonly class RegulationCsvRowView
         public string $locationType,
         public string $locationLabel,
         public string $geometry,
+        public ?VehicleSetView $vehicleSet = null,
     ) {
     }
 }

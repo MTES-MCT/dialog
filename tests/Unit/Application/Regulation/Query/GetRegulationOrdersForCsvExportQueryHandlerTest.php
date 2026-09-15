@@ -238,6 +238,29 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->assertCount(1, $rows);
     }
 
+    public function testBuildsVehicleSetViewFromMeasure(): void
+    {
+        $record = $this->makeRecord(
+            'uuid-1',
+            [$this->makeLocationWithoutSubEntities()],
+            [VehicleTypeEnum::HAZARDOUS_MATERIALS->value],
+        );
+
+        $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-1']);
+        $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
+        $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([]);
+
+        $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
+
+        $this->assertCount(1, $rows);
+        $this->assertNotNull($rows[0]->vehicleSet);
+        $this->assertSame(
+            [['name' => VehicleTypeEnum::HAZARDOUS_MATERIALS->value]],
+            $rows[0]->vehicleSet->restrictedTypes,
+        );
+    }
+
     public function testBuildsLabelFromNumberedRoadWithAdministrator(): void
     {
         $numberedRoad = $this->createMock(NumberedRoad::class);
