@@ -325,8 +325,8 @@ final class GetRegulationController
                                 type: 'array',
                                 description: 'Emplacements géographiques sur lesquels la mesure s\'applique. '
                                     . 'Chaque emplacement est décrit selon son type de voirie (`roadType`) ; '
-                                    . 'un seul des champs `namedStreet`, `numberedRoad`, `rawGeoJSON` ou '
-                                    . '`storageArea` est renseigné, les autres valent `null`.',
+                                    . 'un seul des champs `namedStreet`, `numberedRoad`, `rawGeoJSON`, '
+                                    . '`storageArea` ou `zone` est renseigné, les autres valent `null`.',
                                 items: new OA\Items(
                                     type: 'object',
                                     properties: [
@@ -338,11 +338,13 @@ final class GetRegulationController
                                         new OA\Property(
                                             property: 'roadType',
                                             type: 'string',
-                                            enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON'],
+                                            enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON', 'zone'],
                                             description: 'Type de voirie : `lane` (voie nommée en milieu '
                                                 . 'urbain), `departmentalRoad` (route départementale), '
                                                 . '`nationalRoad` (route nationale), `rawGeoJSON` '
-                                                . '(géométrie GeoJSON brute fournie par l\'organisation).',
+                                                . '(géométrie GeoJSON brute fournie par l\'organisation), '
+                                                . '`zone` (tracé de zone : les tronçons de rues couverts '
+                                                . 'par le périmètre dessiné).',
                                             example: 'lane',
                                         ),
                                         new OA\Property(
@@ -399,13 +401,27 @@ final class GetRegulationController
                                             ],
                                         ),
                                         new OA\Property(
+                                            property: 'zone',
+                                            type: 'object',
+                                            nullable: true,
+                                            description: 'Tracé de zone. Renseigné lorsque `roadType` vaut '
+                                                . '`zone`. Les tronçons de rues couverts par le périmètre '
+                                                . 'dessiné sont exposés par le champ `geometry`.',
+                                            properties: [
+                                                new OA\Property(property: 'label', type: 'string', description: 'Libellé descriptif de la zone.', example: 'Quartier des Docks'),
+                                            ],
+                                        ),
+                                        new OA\Property(
                                             property: 'geometry',
                                             type: 'string',
                                             nullable: true,
                                             description: 'Géométrie effective de la localisation, '
                                                 . 'sérialisée en GeoJSON (chaîne JSON). Permet à un '
                                                 . 'consommateur d\'afficher la zone sur une carte sans '
-                                                . 'avoir à résoudre lui-même les références de voirie.',
+                                                . 'avoir à résoudre lui-même les références de voirie. '
+                                                . 'Pour un tracé de zone (`roadType` = `zone`), contient '
+                                                . 'l\'ensemble des tronçons de rues couverts par le '
+                                                . 'périmètre dessiné.',
                                         ),
                                     ],
                                 ),

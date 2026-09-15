@@ -147,6 +147,106 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame('17:00:00', (new \DateTimeImmutable($timeSlot['endTime']))->format('H:i:s'));
     }
 
+    public function testAddRegulationWithZone(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'F2025/zone',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Restriction sur une zone',
+            'measures' => [[
+                'type' => 'noEntry',
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => true,
+                ]],
+                'locations' => [[
+                    'roadType' => 'zone',
+                    'zone' => [
+                        'label' => 'Quartier de la Rue Ardoin',
+                        'geometry' => '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}',
+                    ],
+                ]],
+            ]],
+        ];
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_CLIENT_ID' => 'clientId',
+            'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+        ];
+
+        $client->request('POST', '/api/regulations', [], [], $headers, json_encode($payload));
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request('GET', '/api/regulations/F2025/zone', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $location = $data['measures'][0]['locations'][0];
+
+        $this->assertSame('zone', $location['roadType']);
+        $this->assertSame('Quartier de la Rue Ardoin', $location['zone']['label']);
+
+        // La géométrie de la localisation contient les tronçons de rues couverts par le périmètre dessiné.
+        $geometry = json_decode((string) $location['geometry'], true);
+        $this->assertIsArray($geometry);
+        $this->assertNotEmpty($geometry['geometries'] ?? $geometry['coordinates']);
+    }
+
+    public function testAddRegulationZoneWithoutStreets(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'F2025/zone-sans-rue',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Zone sans rue',
+            'measures' => [[
+                'type' => 'noEntry',
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => true,
+                ]],
+                'locations' => [[
+                    'roadType' => 'zone',
+                    'zone' => [
+                        'label' => 'Zone sans rue',
+                        'geometry' => '{"type":"Polygon","coordinates":[[[2.4013,48.943],[2.4027,48.943],[2.4027,48.944],[2.4013,48.944],[2.4013,48.943]]]}',
+                    ],
+                ]],
+            ]],
+        ];
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            json_encode($payload),
+        );
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseHeaderSame('content-type', 'application/json');
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertIsArray($data);
+        $this->assertSame(400, $data['status']);
+        $this->assertSame('Aucune rue n\'a été trouvée à l\'intérieur de la zone dessinée. Modifiez le tracé pour qu\'il contienne au moins une rue.', $data['detail']);
+    }
+
     public function testAddRegulationWithInvalidCredentials(): void
     {
         $client = static::createClient();
@@ -373,7 +473,7 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame(422, $data['status']);
         $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][0]['title']);
         $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][1]['title']);
-        $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale ou GeoJSON brut).', $data['violations'][2]['title']);
+        $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale, GeoJSON brut, ville entière ou tracé de zone).', $data['violations'][2]['title']);
         $this->assertSame('La section de localisation doit correspondre à la valeur de type de voie (roadType).', $data['violations'][3]['title']);
     }
 

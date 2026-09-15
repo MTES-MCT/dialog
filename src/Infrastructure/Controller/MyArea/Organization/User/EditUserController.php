@@ -58,20 +58,18 @@ final class EditUserController
         $organization = $organizationUser->getOrganization();
         $user = $organizationUser->getUser();
 
-        if (!$this->security->isGranted(OrganizationVoter::EDIT, $organization)) {
-            throw new AccessDeniedHttpException();
-        }
-
         $sessionUser = $this->security->getUser();
         $isCurrentUserMandataire = $sessionUser instanceof AbstractAuthenticatedUser
             && $sessionUser->isMandataireOfOrganization($organizationUuid);
+        $isCurrentUserOwner = $this->security->isGranted(OrganizationVoter::OWNER, $organization);
 
-        // Un mandataire ne peut modifier que d'autres mandataires.
-        if ($isCurrentUserMandataire && !$organizationUser->isMandataire()) {
+        $canEdit = $organizationUser->isMandataire()
+            ? $this->security->isGranted(OrganizationVoter::EDIT, $organization)
+            : $isCurrentUserOwner;
+
+        if (!$canEdit) {
             throw new AccessDeniedHttpException();
         }
-
-        $isCurrentUserOwner = $this->security->isGranted(OrganizationVoter::OWNER, $organization);
 
         $command = new SaveOrganizationUserCommand($organization, $organizationUser);
         $form = $this->formFactory->create(UserFormType::class, $command, [

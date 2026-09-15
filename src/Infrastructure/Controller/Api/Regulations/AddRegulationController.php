@@ -117,7 +117,7 @@ final class AddRegulationController
                                 items: new OA\Items(
                                     type: 'object',
                                     properties: [
-                                        new OA\Property(property: 'roadType', type: 'string', enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON'], example: 'lane'),
+                                        new OA\Property(property: 'roadType', type: 'string', enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON', 'zone'], example: 'lane'),
                                         new OA\Property(
                                             property: 'namedStreet',
                                             type: 'object',
@@ -178,6 +178,20 @@ final class AddRegulationController
                                             properties: [
                                                 new OA\Property(property: 'label', type: 'string', nullable: true),
                                                 new OA\Property(property: 'geometry', type: 'string', nullable: true),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'zone',
+                                            type: 'object',
+                                            nullable: true,
+                                            description: 'Tracé de zone. Renseigné lorsque `roadType` vaut `zone`. '
+                                                . 'Le périmètre dessiné (`geometry`) est un polygone GeoJSON ; '
+                                                . 'les tronçons de rues couverts par ce périmètre sont calculés '
+                                                . 'automatiquement et constituent la géométrie effective de la '
+                                                . 'localisation. Une zone ne contenant aucune rue est refusée (erreur 400).',
+                                            properties: [
+                                                new OA\Property(property: 'label', type: 'string', maxLength: 255, nullable: true, description: 'Libellé descriptif de la zone.', example: 'Quartier des Docks'),
+                                                new OA\Property(property: 'geometry', type: 'string', nullable: true, description: 'Polygone GeoJSON sérialisé en chaîne JSON délimitant la zone.', example: '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}'),
                                             ],
                                         ),
                                     ],
