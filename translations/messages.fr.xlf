@@ -2745,6 +2745,14 @@
                 <source>map.filters.title</source>
                 <target>Filtres</target>
             </trans-unit>
+            <trans-unit id="map.filters.collapse">
+                <source>map.filters.collapse</source>
+                <target>Masquer les filtres</target>
+            </trans-unit>
+            <trans-unit id="map.filters.expand">
+                <source>map.filters.expand</source>
+                <target>Filtres</target>
+            </trans-unit>
             <trans-unit id="map.filters.title.restriction">
                 <source>map.filters.title.restriction</source>
                 <target>Restriction</target>

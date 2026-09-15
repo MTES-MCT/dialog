@@ -10,9 +10,23 @@
 {% endblock %}
 
 {% block body %}
-    <div class="fr-x-container--fluid fr-x-h-full">
+    <div class="fr-x-container--fluid fr-x-h-full d-map-layout"
+        data-controller="map-sidebar"
+        data-map-sidebar-collapsed-class="d-map-layout--collapsed"
+    >
         <div class="fr-grid-row fr-x-h-full">
-            <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-pt-2w fr-pb-6w">
+            <div class="fr-col-12 fr-col-sm-4 fr-col-md-3 fr-container fr-pt-2w fr-pb-6w d-map-sidebar" id="map-filters-sidebar">
+                <button type="button"
+                    class="fr-btn fr-btn--md fr-btn--secondary fr-icon-arrow-left-s-line-double d-map-sidebar__collapse-btn"
+                    data-map-sidebar-target="collapseButton"
+                    data-action="map-sidebar#toggle"
+                    aria-controls="map-filters-sidebar"
+                    aria-expanded="true"
+                    title="{{ 'map.filters.collapse'|trans }}"
+                >
+                    <span class="fr-sr-only">{{ 'map.filters.collapse'|trans }}</span>
+                </button>
+
                 {% if not app.request.query.get('embed') %}
                     <h1 class="fr-h4">{{ 'map.title'|trans }}</h1>
                     <div class="fr-my-2w">
@@ -97,6 +111,7 @@
             <d-map
                 id="map"
                 class="fr-col-12 fr-col-sm-8 fr-col-md-9 d-map-with-share"
+                data-map-sidebar-target="map"
                 aria-hidden="true"
                 mapHeight="100%"
                 mapMinHeight="600px"
@@ -118,5 +133,16 @@
                 {% endif %}
             </d-map>
         </div>
+
+        <button type="button"
+            class="fr-btn fr-btn--secondary fr-btn--md fr-icon-arrow-left-s-line-double d-map-sidebar__expand-btn"
+            data-map-sidebar-target="expandButton"
+            data-action="map-sidebar#toggle"
+            aria-controls="map-filters-sidebar"
+            title="{{ 'map.filters.expand'|trans }}"
+            hidden
+        >
+            <span class="fr-sr-only">{{ 'map.filters.expand'|trans }}</span>
+        </button>
     </div>
 {% endblock %}
