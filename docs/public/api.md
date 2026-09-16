@@ -638,6 +638,8 @@ Sans aucun filtre, l'export porte sur **toute la base publiée** (tous statuts c
 | `lien_pdf` | Lien vers le document source (PDF) le cas échéant. |
 | `mesure_uuid` | UUID de la mesure. |
 | `type_restriction` | Type de restriction (`alternateRoad`, `noOvertaking`, `noEntry`, `speedLimitation`, `parkingProhibited`). |
+| `types_vehicules` | Types de véhicules concernés par la restriction (vide si tous les véhicules). |
+| `exceptions` | Types de véhicules exemptés de la restriction. |
 | `emprise_uuid` | UUID de l'emprise. |
 | `emprise_type` | Type d'emprise (voie nommée, route numérotée, ville entière, zone…). |
 | `emprise_libelle` | Libellé lisible de l'emprise. |
