@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
+use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
+use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
+use App\Application\Regulation\Query\Location\GetZoneGeometryQuery;
 use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\WholeCityException;
@@ -23,6 +27,9 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
         // Défaut « Voie » pour afficher le sous-formulaire à l'ajout, mais sans données => incomplet.
         $this->assertSame(RoadTypeEnum::LANE->value, $command->roadType);
         $this->assertNull($command->namedStreet);
+        $this->assertNull($command->departmentalRoad);
+        $this->assertNull($command->nationalRoad);
+        $this->assertNull($command->zone);
         $this->assertNull($command->rawGeoJSON);
         $this->assertFalse($command->isComplete());
         $this->assertNull($command->getActiveRoadCommand());
@@ -211,5 +218,200 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
         $command->rawGeoJSON->label = 'Zone piétonne';
 
         $this->assertSame(['label' => 'Zone piétonne'], $command->toData());
+    }
+
+    public function testHydrateFromDepartmentalRoadException(): void
+    {
+        $exception = new WholeCityException(
+            uuid: 'uuid',
+            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+            label: 'D110',
+            geometry: '<geom>',
+            data: [
+                'administrator' => 'Ardèche',
+                'roadNumber' => 'D110',
+                'fromDepartmentCode' => '07',
+                'fromPointNumber' => '6',
+                'fromAbscissa' => 100,
+                'fromSide' => 'D',
+                'toDepartmentCode' => '07',
+                'toPointNumber' => '15',
+                'toAbscissa' => 650,
+                'toSide' => 'D',
+                'direction' => DirectionEnum::BOTH->value,
+            ],
+        );
+
+        $command = new SaveWholeCityExceptionCommand($exception);
+
+        $this->assertSame(RoadTypeEnum::DEPARTMENTAL_ROAD->value, $command->roadType);
+        $this->assertNotNull($command->departmentalRoad);
+        $this->assertNull($command->nationalRoad);
+        $this->assertSame(RoadTypeEnum::DEPARTMENTAL_ROAD->value, $command->departmentalRoad->roadType);
+        $this->assertSame('Ardèche', $command->departmentalRoad->administrator);
+        $this->assertSame('D110', $command->departmentalRoad->roadNumber);
+        $this->assertSame('6', $command->departmentalRoad->fromPointNumber);
+        $this->assertSame(100, $command->departmentalRoad->fromAbscissa);
+        // Les champs encodés du formulaire doivent être reconstruits pour la ré-édition.
+        $this->assertSame('07##6', $command->departmentalRoad->fromPointNumberWithDepartmentCode);
+        $this->assertSame('07##15', $command->departmentalRoad->toPointNumberWithDepartmentCode);
+        $this->assertTrue($command->isComplete());
+        $this->assertSame('D110', $command->getLabel());
+        $this->assertNull($command->getExcludedRoadBanId());
+        $this->assertInstanceOf(GetNumberedRoadGeometryQuery::class, $command->getGeometryQuery());
+    }
+
+    public function testHydrateFromNationalRoadException(): void
+    {
+        $exception = new WholeCityException(
+            uuid: 'uuid',
+            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            roadType: RoadTypeEnum::NATIONAL_ROAD->value,
+            label: 'N176',
+            geometry: '<geom>',
+            data: [
+                'administrator' => 'DIR Ouest',
+                'roadNumber' => 'N176',
+                'fromDepartmentCode' => null,
+                'fromPointNumber' => '1',
+                'fromAbscissa' => 0,
+                'fromSide' => 'D',
+                'toDepartmentCode' => null,
+                'toPointNumber' => '2',
+                'toAbscissa' => 0,
+                'toSide' => 'D',
+                'direction' => DirectionEnum::BOTH->value,
+            ],
+        );
+
+        $command = new SaveWholeCityExceptionCommand($exception);
+
+        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $command->roadType);
+        $this->assertNull($command->departmentalRoad);
+        $this->assertNotNull($command->nationalRoad);
+        $this->assertSame('DIR Ouest', $command->nationalRoad->administrator);
+        $this->assertSame('N176', $command->nationalRoad->roadNumber);
+        $this->assertTrue($command->isComplete());
+        $this->assertSame('N176', $command->getLabel());
+        $this->assertSame($command->nationalRoad, $command->getActiveRoadCommand());
+    }
+
+    public function testHydrateFromZoneException(): void
+    {
+        $exception = new WholeCityException(
+            uuid: 'uuid',
+            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            roadType: RoadTypeEnum::ZONE->value,
+            label: 'Quartier des Halles',
+            geometry: '<tronçons calculés>',
+            data: [
+                'label' => 'Quartier des Halles',
+                'geometry' => '<polygone dessiné>',
+            ],
+        );
+
+        $command = new SaveWholeCityExceptionCommand($exception);
+
+        $this->assertSame(RoadTypeEnum::ZONE->value, $command->roadType);
+        $this->assertNotNull($command->zone);
+        $this->assertSame('Quartier des Halles', $command->zone->label);
+        // La ré-édition doit repartir du polygone dessiné, pas des tronçons calculés.
+        $this->assertSame('<polygone dessiné>', $command->zone->geometry);
+        $this->assertTrue($command->isComplete());
+        $this->assertSame('Quartier des Halles', $command->getLabel());
+        $this->assertNull($command->getExcludedRoadBanId());
+        $this->assertInstanceOf(GetZoneGeometryQuery::class, $command->getGeometryQuery());
+    }
+
+    public function testCleanDropsInactiveSubCommandsForNumberedRoad(): void
+    {
+        $command = new SaveWholeCityExceptionCommand();
+        $command->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $command->departmentalRoad = new SaveNumberedRoadCommand();
+        $command->departmentalRoad->roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
+        $command->departmentalRoad->roadNumber = 'D110';
+        $command->departmentalRoad->fromPointNumberWithDepartmentCode = '07##6';
+        $command->departmentalRoad->toPointNumberWithDepartmentCode = '07##15';
+        $command->nationalRoad = new SaveNumberedRoadCommand();
+        $command->nationalRoad->roadNumber = 'leftover';
+        $command->namedStreet = new SaveNamedStreetCommand();
+        $command->zone = new SaveZoneCommand();
+        $command->rawGeoJSON = new SaveRawGeoJSONCommand();
+
+        $command->clean();
+
+        $this->assertNotNull($command->departmentalRoad);
+        $this->assertNull($command->nationalRoad);
+        $this->assertNull($command->namedStreet);
+        $this->assertNull($command->zone);
+        $this->assertNull($command->rawGeoJSON);
+        // clean() décode les points de repère saisis via le champ encodé.
+        $this->assertSame('07', $command->departmentalRoad->fromDepartmentCode);
+        $this->assertSame('6', $command->departmentalRoad->fromPointNumber);
+        $this->assertSame('15', $command->departmentalRoad->toPointNumber);
+    }
+
+    public function testCleanDropsInactiveSubCommandsForZone(): void
+    {
+        $command = new SaveWholeCityExceptionCommand();
+        $command->roadType = RoadTypeEnum::ZONE->value;
+        $command->zone = new SaveZoneCommand();
+        $command->zone->geometry = '<polygone>';
+        $command->namedStreet = new SaveNamedStreetCommand();
+        $command->rawGeoJSON = new SaveRawGeoJSONCommand();
+
+        $command->clean();
+
+        $this->assertNotNull($command->zone);
+        $this->assertNull($command->namedStreet);
+        $this->assertNull($command->rawGeoJSON);
+        $this->assertSame($command->zone, $command->getActiveRoadCommand());
+    }
+
+    public function testNumberedRoadRoundTrip(): void
+    {
+        $original = new SaveWholeCityExceptionCommand();
+        $original->roadType = RoadTypeEnum::NATIONAL_ROAD->value;
+        $original->nationalRoad = new SaveNumberedRoadCommand();
+        $original->nationalRoad->roadType = RoadTypeEnum::NATIONAL_ROAD->value;
+        $original->nationalRoad->administrator = 'DIR Ouest';
+        $original->nationalRoad->roadNumber = 'N176';
+        $original->nationalRoad->fromPointNumberWithDepartmentCode = '22##1';
+        $original->nationalRoad->toPointNumberWithDepartmentCode = '22##2';
+        $original->nationalRoad->fromSide = 'D';
+        $original->nationalRoad->toSide = 'D';
+        $original->clean();
+
+        $persisted = new WholeCityException(
+            uuid: 'uuid',
+            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            roadType: RoadTypeEnum::NATIONAL_ROAD->value,
+            label: $original->getLabel(),
+            geometry: '<geom>',
+            data: $original->toData(),
+        );
+
+        $reloaded = new SaveWholeCityExceptionCommand($persisted);
+
+        // La signature (roadType + toData) doit être stable pour éviter les recalculs de géométrie.
+        $this->assertSame($original->toData(), $reloaded->toData());
+        $this->assertSame('22', $reloaded->nationalRoad->fromDepartmentCode);
+        $this->assertSame('1', $reloaded->nationalRoad->fromPointNumber);
+        $this->assertSame('22##1', $reloaded->nationalRoad->fromPointNumberWithDepartmentCode);
+    }
+
+    public function testToDataForZone(): void
+    {
+        $command = new SaveWholeCityExceptionCommand();
+        $command->roadType = RoadTypeEnum::ZONE->value;
+        $command->zone = new SaveZoneCommand();
+        $command->zone->label = 'Quartier des Halles';
+        $command->zone->geometry = '<polygone>';
+
+        $this->assertSame(
+            ['label' => 'Quartier des Halles', 'geometry' => '<polygone>'],
+            $command->toData(),
+        );
     }
 }
