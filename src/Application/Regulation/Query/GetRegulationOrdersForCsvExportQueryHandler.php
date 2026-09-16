@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\View\RegulationCsvRowView;
+use App\Application\Regulation\View\VehicleSetView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -63,6 +64,8 @@ final class GetRegulationOrdersForCsvExportQueryHandler
 
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
+                $vehicleSet = VehicleSetView::fromEntity($measure->getVehicleSet());
+
                 foreach ($measure->getLocations() as $location) {
                     $rows[] = new RegulationCsvRowView(
                         regulationOrderUuid: $record->getUuid(),
@@ -80,6 +83,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         locationType: $location->getRoadType(),
                         locationLabel: $this->buildLocationLabel($location),
                         geometry: $location->getGeometry() ?? '',
+                        vehicleSet: $vehicleSet,
                     );
                 }
             }
