@@ -28,7 +28,7 @@
                 </button>
 
                 {% if not app.request.query.get('embed') %}
-                    <h1 class="fr-h4">{{ 'map.title'|trans }}</h1>
+                    <h1 class="fr-h4 fr-hidden fr-unhidden-sm">{{ 'map.title'|trans }}</h1>
                     <div class="fr-my-2w">
                         <d-map-search-form target="map">
                             {% include 'map/_search_form.html.twig' with {} only %}
@@ -106,6 +106,20 @@
                         </d-map-form>
                     </div>
                 </div>
+                {# Collapse the filters accordion by default on mobile. This runs
+                   synchronously before DSFR initializes, so the panel is rendered
+                   collapsed from the start (no open-then-close flash). Desktop and
+                   no-JS keep the expanded markup above. #}
+                <script>
+                    (function () {
+                        if (window.matchMedia('(max-width: 575.98px)').matches) {
+                            var collapse = document.getElementById('map-filters-accordion');
+                            var button = document.querySelector('[aria-controls="map-filters-accordion"]');
+                            if (collapse) { collapse.classList.remove('fr-collapse--expanded'); }
+                            if (button) { button.setAttribute('aria-expanded', 'false'); }
+                        }
+                    })();
+                </script>
             </div>
 
             <d-map
