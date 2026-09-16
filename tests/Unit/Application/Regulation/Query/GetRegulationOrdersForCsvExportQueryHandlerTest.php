@@ -25,6 +25,7 @@ use App\Domain\Regulation\Repository\StorageRegulationOrderRepositoryInterface;
 use App\Domain\User\Organization;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
 {
@@ -32,6 +33,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
     private StorageRegulationOrderRepositoryInterface&MockObject $storageRegulationOrderRepository;
     private StorageInterface&MockObject $storage;
     private DateUtilsInterface&MockObject $dateUtils;
+    private TranslatorInterface&MockObject $translator;
     private GetRegulationOrdersForCsvExportQueryHandler $handler;
 
     protected function setUp(): void
@@ -41,11 +43,22 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->storage = $this->createMock(StorageInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2025-01-01'));
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->method('trans')->willReturnCallback(
+            function (string $id, array $parameters = []): string {
+                $catalogue = [
+                    'regulation.location.reference_point' => 'du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)',
+                ];
+
+                return strtr($catalogue[$id] ?? $id, $parameters);
+            },
+        );
         $this->handler = new GetRegulationOrdersForCsvExportQueryHandler(
             $this->regulationOrderRecordRepository,
             $this->storageRegulationOrderRepository,
             $this->storage,
             $this->dateUtils,
+            $this->translator,
         );
     }
 
@@ -289,6 +302,27 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $rows = $this->handleSingleLocation($location);
 
         $this->assertSame('D920', $rows[0]->locationLabel);
+    }
+
+    public function testBuildsLabelFromNumberedRoadWithReferencePoints(): void
+    {
+        $numberedRoad = $this->createMock(NumberedRoad::class);
+        $numberedRoad->method('getRoadNumber')->willReturn('D66');
+        $numberedRoad->method('getAdministrator')->willReturn('Lozère');
+        $numberedRoad->method('getFromPointNumber')->willReturn('10');
+        $numberedRoad->method('getFromAbscissa')->willReturn(50);
+        $numberedRoad->method('getFromSide')->willReturn('U');
+        $numberedRoad->method('getToPointNumber')->willReturn('13');
+        $numberedRoad->method('getToAbscissa')->willReturn(0);
+        $numberedRoad->method('getToSide')->willReturn('U');
+
+        $location = $this->makeLocation();
+        $location->method('getNamedStreet')->willReturn(null);
+        $location->method('getNumberedRoad')->willReturn($numberedRoad);
+
+        $rows = $this->handleSingleLocation($location);
+
+        $this->assertSame('D66 (Lozère) du PR 10+50 (côté U) au PR 13+0 (côté U)', $rows[0]->locationLabel);
     }
 
     public function testBuildsLabelFromZone(): void
