@@ -9,7 +9,9 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\GetRegulationOrderTemplatesQuery;
+use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Domain\Regulation\DTO\RegulationOrderTemplateDTO;
+use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
 use App\Infrastructure\Form\Regulation\GeneralInfoFormType;
@@ -29,6 +31,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         private FormFactoryInterface $formFactory,
         private CommandBusInterface $commandBus,
         private RouterInterface $router,
+        private CanDeleteMeasures $canDeleteMeasures,
         Security $security,
         CanOrganizationAccessToRegulation $canOrganizationAccessToRegulation,
         QueryBusInterface $queryBus,
@@ -53,6 +56,7 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $regulationOrderTemplates = $this->queryBus->handle(new GetRegulationOrderTemplatesQuery($dto));
 
         $command = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
+        $initialCategory = $command->category;
 
         $form = $this->formFactory->create(
             type: GeneralInfoFormType::class,
@@ -76,6 +80,10 @@ final class SaveGeneralInfoController extends AbstractRegulationController
             $this->commandBus->handle($command);
 
             $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
+            // La catégorie (permanent/temporaire) conditionne le titre de la page
+            // et les champs de période des formulaires de mesure : ces blocs sont
+            // re-rendus par le stream quand elle change.
+            $categoryChanged = $command->category !== $initialCategory;
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
 
             return new Response(
@@ -85,6 +93,9 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                         'generalInfo' => $generalInfo,
                         'canEdit' => $generalInfo->isSourceDialog(),
                         'regulationOrderRecord' => $regulationOrderRecord,
+                        'categoryChanged' => $categoryChanged,
+                        'measures' => $categoryChanged ? $this->queryBus->handle(new GetMeasuresQuery($uuid)) : [],
+                        'canDelete' => $this->canDeleteMeasures->isSatisfiedBy($regulationOrderRecord),
                     ],
                 ),
             );
