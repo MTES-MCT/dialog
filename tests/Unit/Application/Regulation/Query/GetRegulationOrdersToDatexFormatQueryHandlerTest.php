@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersToDatexFormatQueryHandler;
 use App\Application\Regulation\View\DatexLocationView;
@@ -31,14 +32,21 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
 {
     private $tz;
+    private $numberedRoadLabelMaker;
 
     protected function setUp(): void
     {
         $this->tz = new \DateTimeZone('Etc/GMT-1');
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(
+            fn (string $id, array $parameters = []): string => strtr($id, $parameters),
+        );
+        $this->numberedRoadLabelMaker = new NumberedRoadLabelMaker($translator);
     }
 
     public function testGetAllEmpty(): void
@@ -58,7 +66,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::never())
             ->method('iterateRegulationOrdersForDatexFormatByUuids');
 
-        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository, $this->numberedRoadLabelMaker);
         $regulationOrders = iterator_to_array($handler(new GetRegulationOrdersToDatexFormatQuery()));
 
         $this->assertEquals([], $regulationOrders);
@@ -643,7 +651,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                 $uuid3 => ['uuid' => $uuid3, 'overallStartDate' => $startDate3, 'overallEndDate' => $endDate3],
             ]);
 
-        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository);
+        $handler = new GetRegulationOrdersToDatexFormatQueryHandler($regulationOrderRecordRepository, $this->numberedRoadLabelMaker);
         $regulationOrders = iterator_to_array($handler(new GetRegulationOrdersToDatexFormatQuery()));
 
         $this->assertEquals(
