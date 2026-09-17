@@ -9,3 +9,17 @@
         {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: generalInfo.uuid, regulationOrderRecord, publishLabel: 'regulation.publish_changes'|trans } only %}
     </template>
 </turbo-stream>
+
+{% if permanenceHasChanged %}
+    <turbo-stream action="update" target="regulation-detail">
+        <template>{% include 'regulation/_detail_heading.html.twig' with { isPermanent: generalInfo.isPermanent, identifier: generalInfo.identifier } only %}</template>
+    </turbo-stream>
+
+    {% for measureUuid in measureUuids %}
+        <turbo-stream action="replace" target="block_measure_{{ measureUuid }}">
+            <template>
+                <turbo-frame id="block_measure_{{ measureUuid }}" src="{{ path('fragment_regulations_measure', { regulationOrderRecordUuid: generalInfo.uuid, uuid: measureUuid }) }}" loading="eager"></turbo-frame>
+            </template>
+        </turbo-stream>
+    {% endfor %}
+{% endif %}

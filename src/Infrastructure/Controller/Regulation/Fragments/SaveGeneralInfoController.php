@@ -73,10 +73,22 @@ final class SaveGeneralInfoController extends AbstractRegulationController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $regulationOrder = $regulationOrderRecord->getRegulationOrder();
+            $wasPermanent = $regulationOrder->isPermanent();
+
             $this->commandBus->handle($command);
 
             $generalInfo = $this->queryBus->handle(new GetGeneralInfoQuery($uuid));
             $request->setRequestFormat(TurboBundle::STREAM_FORMAT);
+
+            $permanenceHasChanged = $wasPermanent !== $generalInfo->isPermanent();
+            $measureUuids = [];
+
+            if ($permanenceHasChanged) {
+                foreach ($regulationOrder->getMeasures() as $measure) {
+                    $measureUuids[] = $measure->getUuid();
+                }
+            }
 
             return new Response(
                 $this->twig->render(
@@ -85,6 +97,8 @@ final class SaveGeneralInfoController extends AbstractRegulationController
                         'generalInfo' => $generalInfo,
                         'canEdit' => $generalInfo->isSourceDialog(),
                         'regulationOrderRecord' => $regulationOrderRecord,
+                        'permanenceHasChanged' => $permanenceHasChanged,
+                        'measureUuids' => $measureUuids,
                     ],
                 ),
             );

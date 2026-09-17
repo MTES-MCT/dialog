@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View;
 
+use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\User\OrganizationRegulationAccessInterface;
@@ -38,6 +39,11 @@ readonly class GeneralInfoView implements OrganizationRegulationAccessInterface
     public function isDraft(): bool
     {
         return $this->status === RegulationOrderRecordStatusEnum::DRAFT->value;
+    }
+
+    public function isPermanent(): bool
+    {
+        return $this->category === RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
     }
 
     public function isSourceDialog(): bool
