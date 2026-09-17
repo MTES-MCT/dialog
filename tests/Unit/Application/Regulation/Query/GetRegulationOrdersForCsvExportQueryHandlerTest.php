@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQueryHandler;
 use App\Application\Regulation\View\RegulationCsvRowView;
@@ -58,7 +59,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
             $this->storageRegulationOrderRepository,
             $this->storage,
             $this->dateUtils,
-            $this->translator,
+            new NumberedRoadLabelMaker($this->translator),
         );
     }
 

@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
@@ -31,6 +32,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     private $polylineMaker;
     private $dateUtils;
     private $translator;
+    private $numberedRoadLabelMaker;
 
     protected function setUp(): void
     {
@@ -38,6 +40,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->numberedRoadLabelMaker = new NumberedRoadLabelMaker($this->translator);
     }
 
     public function testGetAllEmpty(): void
@@ -47,7 +50,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -643,7 +646,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 $uuid2 => ['uuid' => $uuid2, 'overallStartDate' => $startDate2, 'overallEndDate' => $endDate2],
             ]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
             [$incident1, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
@@ -664,6 +667,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             $this->polylineMaker,
             $this->dateUtils,
             $this->translator,
+            $this->numberedRoadLabelMaker,
             new CifsFilterSet(
                 allowedSources: ['my_source'],
                 excludedIdentifiers: ['identifier1'],

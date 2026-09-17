@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
-use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\StorageRegulationOrderRepositoryInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetRegulationOrdersForCsvExportQueryHandler
 {
@@ -25,7 +24,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         private StorageRegulationOrderRepositoryInterface $storageRegulationOrderRepository,
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
-        private TranslatorInterface $translator,
+        private NumberedRoadLabelMaker $numberedRoadLabelMaker,
     ) {
     }
 
@@ -140,25 +139,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         }
 
         if ($numberedRoad = $location->getNumberedRoad()) {
-            $roadNumber = $numberedRoad->getRoadNumber() ?? '';
-            $administrator = $numberedRoad->getAdministrator();
-
-            $label = $administrator ? trim(\sprintf('%s (%s)', $roadNumber, $administrator)) : trim($roadNumber);
-
-            if (!NumberedRoad::isPointNumberEmpty($numberedRoad->getFromPointNumber()) && !NumberedRoad::isPointNumberEmpty($numberedRoad->getToPointNumber())) {
-                $referencePoints = $this->translator->trans('regulation.location.reference_point', [
-                    '%fromPointNumber%' => $numberedRoad->getFromPointNumber(),
-                    '%fromAbscissa%' => $numberedRoad->getFromAbscissa(),
-                    '%fromSide%' => $numberedRoad->getFromSide(),
-                    '%toPointNumber%' => $numberedRoad->getToPointNumber(),
-                    '%toAbscissa%' => $numberedRoad->getToAbscissa(),
-                    '%toSide%' => $numberedRoad->getToSide(),
-                ]);
-
-                $label = trim($label . ' ' . $referencePoints);
-            }
-
-            return $label;
+            return $this->numberedRoadLabelMaker->make($numberedRoad);
         }
 
         if ($zone = $location->getZone()) {
