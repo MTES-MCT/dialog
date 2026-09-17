@@ -21,11 +21,13 @@ use App\Application\Regulation\Query\GetGeneralInfoQuery;
 use App\Application\Regulation\Query\Measure\GetMeasureByUuidQuery;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Domain\Regulation\Enum\ActionTypeEnum;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Specification\CanDeleteMeasures;
 use App\Domain\Regulation\Specification\CanOrganizationAccessToRegulation;
 use App\Domain\Regulation\Specification\CanUseRawGeoJSON;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Infrastructure\Controller\Regulation\AbstractRegulationController;
+use App\Infrastructure\Form\Regulation\LocationErrorTargetResolver;
 use App\Infrastructure\Form\Regulation\Measure\MeasureFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -129,7 +131,10 @@ final class UpdateMeasureController extends AbstractRegulationController
             } catch (IntersectionGeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('fromPointType')->addError(
+                // Le champ fautif peut appartenir à la localisation ou à l'une de ses
+                // exceptions : le résolveur cible un champ visible dans les deux cas.
+                $locationForm = $form->get('locations')->get((string) $exc->getLocationIndex());
+                LocationErrorTargetResolver::resolve($locationForm, RoadTypeEnum::LANE->value, ['fromPointType'])->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.intersection_not_found', [], 'validators'),
                     ),
@@ -137,7 +142,8 @@ final class UpdateMeasureController extends AbstractRegulationController
             } catch (LaneGeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('fromPointType')->addError(
+                $locationForm = $form->get('locations')->get((string) $exc->getLocationIndex());
+                LocationErrorTargetResolver::resolve($locationForm, RoadTypeEnum::LANE->value, ['fromPointType'])->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.lane_geocoding_failed', [], 'validators'),
                     ),
@@ -146,7 +152,8 @@ final class UpdateMeasureController extends AbstractRegulationController
                 $commandFailed = true;
                 \Sentry\captureException($exc);
                 $field = $exc instanceof StartAbscissaOutOfRangeException ? 'fromAbscissa' : 'toAbscissa';
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get($exc->roadType)->get($field)->addError(
+                $locationForm = $form->get('locations')->get((string) $exc->getLocationIndex());
+                LocationErrorTargetResolver::resolve($locationForm, $exc->roadType, [$field])->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.abscissa_out_of_range', [], 'validators'),
                     ),
@@ -154,7 +161,8 @@ final class UpdateMeasureController extends AbstractRegulationController
             } catch (RoadGeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get($exc->roadType)->get('roadNumber')->addError(
+                $locationForm = $form->get('locations')->get((string) $exc->getLocationIndex());
+                LocationErrorTargetResolver::resolve($locationForm, $exc->roadType, ['roadNumber'])->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.numbered_road_geocoding_failed', [], 'validators'),
                     ),
@@ -162,7 +170,8 @@ final class UpdateMeasureController extends AbstractRegulationController
             } catch (GeocodingFailureException $exc) {
                 $commandFailed = true;
                 \Sentry\captureException($exc);
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('namedStreet')->get('roadName')->addError(
+                $locationForm = $form->get('locations')->get((string) $exc->getLocationIndex());
+                LocationErrorTargetResolver::resolve($locationForm, RoadTypeEnum::LANE->value, ['roadName'])->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.geocoding_failed', [], 'validators'),
                     ),
@@ -177,7 +186,8 @@ final class UpdateMeasureController extends AbstractRegulationController
                 );
             } catch (ZoneWithoutStreetsException $exc) {
                 $commandFailed = true;
-                $form->get('locations')->get((string) $exc->getLocationIndex())->get('zone')->get('geometry')->addError(
+                $locationForm = $form->get('locations')->get((string) $exc->getLocationIndex());
+                LocationErrorTargetResolver::resolve($locationForm, RoadTypeEnum::ZONE->value, ['geometry'])->addError(
                     new FormError(
                         $this->translator->trans('regulation.location.error.zone_without_streets', [], 'validators'),
                     ),
