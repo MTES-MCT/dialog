@@ -94,10 +94,16 @@ main {
     z-index: 3;
     width: 2rem;
     min-height: 2rem;
-    padding: 0;
+    padding: 0 !important;
     justify-content: center;
     background-color: var(--background-default-grey, #fff);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-default-grey);
+    // Removes DSFR's fr-btn--secondary blue inset box-shadow.
+    box-shadow: none;
+
+    &::before {
+        margin-right: 0 !important;
+    }
 }
 
 // Collapse the filters sidebar to give the map its full width. Especially
@@ -136,14 +142,17 @@ main {
     z-index: 3;
     width: 2rem;
     min-height: 2rem;
-    padding: 0;
+    padding: 0 !important;
     justify-content: center;
     background-color: var(--background-default-grey, #fff);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-default-grey);
+    // Removes DSFR's fr-btn--secondary blue inset box-shadow.
+    box-shadow: none;
 
-    // Same arrow as the collapse handle, pointing the opposite way (to open).
     &::before {
         transform: rotate(180deg);
+        // Reset the DSFR icon spacing so the arrow stays centered (icon-only button).
+        margin-right: 0 !important;
     }
 
     &[hidden] {
