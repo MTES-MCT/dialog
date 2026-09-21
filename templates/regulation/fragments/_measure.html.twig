@@ -87,6 +87,17 @@
                         {% if location.roadType in ['departmentalRoad', 'nationalRoad'] and location.numberedRoad.administrator and location.numberedRoad.roadNumber %}
                             {% set referencePointRoads = referencePointRoads|merge([{ administrator: location.numberedRoad.administrator, roadNumber: location.numberedRoad.roadNumber }]) %}
                         {% endif %}
+                        {# Les exceptions « route numérotée » affichent aussi leurs PR, pour vérifier la section exclue #}
+                        {%- if location.roadType == 'wholeCity' %}{% set locationExceptions = location.wholeCity.exceptions %}
+                        {%- elseif location.roadType == 'zone' %}{% set locationExceptions = location.zone.exceptions %}
+                        {%- elseif location.roadType == 'rawGeoJSON' %}{% set locationExceptions = location.rawGeoJSON.exceptions %}
+                        {%- else %}{% set locationExceptions = [] %}
+                        {%- endif %}
+                        {% for exception in locationExceptions %}
+                            {% if exception.numberedRoad and exception.numberedRoad.administrator and exception.numberedRoad.roadNumber %}
+                                {% set referencePointRoads = referencePointRoads|merge([{ administrator: exception.numberedRoad.administrator, roadNumber: exception.numberedRoad.roadNumber }]) %}
+                            {% endif %}
+                        {% endfor %}
                     {% endfor %}
                     <section class="fr-mt-2w app-preview-map-toggle">
                         <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ previewMapAccordionId }}">
