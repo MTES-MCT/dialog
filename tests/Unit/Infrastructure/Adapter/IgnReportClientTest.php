@@ -336,9 +336,17 @@ final class IgnReportClientTest extends TestCase
             ->method('toArray')
             ->with(false)
             ->willReturn([]);
+        $this->mockResponse
+            ->method('getContent')
+            ->with(false)
+            ->willReturn('{}');
 
         $this->ignReportClient->method('request')->willReturn($this->mockResponse);
         $this->logger->method('info');
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with('IGN API response has no id field while submitting report', $this->anything());
 
         $result = $this->client->submitReport('Comment', 'POINT(0 0)');
         $this->assertNull($result);
@@ -407,6 +415,10 @@ final class IgnReportClientTest extends TestCase
         $this->mockResponse
             ->expects($this->never())
             ->method('toArray');
+        $this->mockResponse
+            ->method('getContent')
+            ->with(false)
+            ->willReturn('Internal Server Error');
 
         $this->ignReportClient
             ->expects($this->once())
@@ -416,6 +428,10 @@ final class IgnReportClientTest extends TestCase
         $this->logger
             ->expects($this->once())
             ->method('info');
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with('IGN API returned an unexpected HTTP status while submitting report', $this->anything());
 
         $result = $this->client->submitReport('Comment', 'POINT(0 0)');
         $this->assertNull($result);

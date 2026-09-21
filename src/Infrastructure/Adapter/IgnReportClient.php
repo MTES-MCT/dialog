@@ -74,6 +74,13 @@ final class IgnReportClient
             ]);
 
             if ($statusCode < 200 || $statusCode >= 300) {
+                $this->logger->error('IGN API returned an unexpected HTTP status while submitting report', [
+                    'statusCode' => $statusCode,
+                    'body' => mb_substr($response->getContent(false), 0, 1000),
+                    'comment' => $comment,
+                    'geometry' => $geometry,
+                ]);
+
                 return null;
             }
 
@@ -81,6 +88,13 @@ final class IgnReportClient
 
             $id = $data['id'] ?? null;
             if ($id === null) {
+                $this->logger->error('IGN API response has no id field while submitting report', [
+                    'statusCode' => $statusCode,
+                    'body' => mb_substr($response->getContent(false), 0, 1000),
+                    'comment' => $comment,
+                    'geometry' => $geometry,
+                ]);
+
                 return null;
             }
 
