@@ -14,6 +14,8 @@
     </field>
     <field name="lastActiveAt" type="datetimetz" column="last_active_at" nullable="true" />
     <field name="inactivityEmailSentAt" type="datetimetz" column="inactivity_email_sent_at" nullable="true" />
+    <field name="emailAuthCode" type="string" column="email_auth_code" nullable="true" />
+    <field name="emailAuthCodeExpiresAt" type="datetimetz" column="email_auth_code_expires_at" nullable="true" />
     <field name="isVerified" type="boolean" nullable="false"/>
     <one-to-one field="proConnectUser" target-entity="App\Domain\User\ProConnectUser" mapped-by="user" />
     <one-to-one field="passwordUser" target-entity="App\Domain\User\PasswordUser" mapped-by="user" />

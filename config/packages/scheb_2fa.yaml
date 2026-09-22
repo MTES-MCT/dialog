@@ -1,0 +1,22 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/7.x/configuration.html
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+    # Persiste le code sur l'entité métier User (le persister Doctrine par défaut ne
+    # fonctionne pas car l'utilisateur de sécurité PasswordUser n'est pas une entité).
+    persister: App\Infrastructure\Security\TwoFactor\EmailAuthCodePersister
+
+    email:
+        enabled: true
+        mailer: App\Infrastructure\Security\TwoFactor\AuthCodeMailer
+        digits: 6
+        template: security/2fa_form.html.twig
+
+    # Permet de ne pas redemander de code sur un appareil de confiance pendant 30 jours.
+    trusted_device:
+        enabled: true
+        lifetime: 2592000 # 30 jours (en secondes)
+        key: '%kernel.secret%'
+        cookie_same_site: 'lax'
