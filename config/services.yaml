@@ -38,6 +38,7 @@ services:
             $tchapAccessToken: '%env(TCHAP_ACCESS_TOKEN)%'
             $tchapRoomId: '%env(TCHAP_ROOM_ID)%'
             $internalAppUrl: '%env(APP_DIALOG_BASE_URL)%'
+            $twoFactorCodeLifetimeMinutes: 15
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

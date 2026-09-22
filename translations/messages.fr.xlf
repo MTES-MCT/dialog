@@ -1886,6 +1886,38 @@
                 <source>login.legend</source>
                 <target>Se connecter avec son compte</target>
             </trans-unit>
+            <trans-unit id="two_factor.meta.title">
+                <source>two_factor.meta.title</source>
+                <target>Double authentification</target>
+            </trans-unit>
+            <trans-unit id="two_factor.title">
+                <source>two_factor.title</source>
+                <target>Double authentification</target>
+            </trans-unit>
+            <trans-unit id="two_factor.intro">
+                <source>two_factor.intro</source>
+                <target>Un code de sécurité vous a été envoyé par e-mail. Saisissez-le ci-dessous pour finaliser votre connexion.</target>
+            </trans-unit>
+            <trans-unit id="two_factor.legend">
+                <source>two_factor.legend</source>
+                <target>Vérification en deux étapes</target>
+            </trans-unit>
+            <trans-unit id="two_factor.code">
+                <source>two_factor.code</source>
+                <target>Code de sécurité</target>
+            </trans-unit>
+            <trans-unit id="two_factor.trusted">
+                <source>two_factor.trusted</source>
+                <target>Faire confiance à cet appareil (ne plus demander de code pendant 30 jours)</target>
+            </trans-unit>
+            <trans-unit id="two_factor.submit">
+                <source>two_factor.submit</source>
+                <target>Vérifier</target>
+            </trans-unit>
+            <trans-unit id="two_factor.cancel">
+                <source>two_factor.cancel</source>
+                <target>Annuler et revenir à la connexion</target>
+            </trans-unit>
             <trans-unit id="forgot_password.title">
                 <source>forgot_password.title</source>
                 <target>Mot de passe oublié ?</target>
