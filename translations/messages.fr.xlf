@@ -1850,6 +1850,10 @@
                 <source>login.proconnect.link.title</source>
                 <target>Qu'est-ce que ProConnect ? - nouvelle fenêtre</target>
             </trans-unit>
+            <trans-unit id="login.proconnect.two_factor_required">
+                <source>login.proconnect.two_factor_required</source>
+                <target>La connexion a échoué : vous devez activer et utiliser la double authentification (2FA) sur votre compte ProConnect pour accéder à DiaLog.</target>
+            </trans-unit>
             <trans-unit id="login.email">
                 <source>login.email</source>
                 <target>Adresse e-mail</target>

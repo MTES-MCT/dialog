@@ -15,11 +15,13 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Se référer à la documentation technique
@@ -34,6 +36,7 @@ class ProConnectAuthenticator extends AbstractAuthenticator
         private HttpClientInterface $httpClient,
         private UrlGeneratorInterface $urlGenerator,
         private CommandBusInterface $commandBus,
+        private TranslatorInterface $translator,
         private string $proConnectClientId,
         private string $proConnectClientSecret,
         private string $proConnectDomain,
@@ -82,6 +85,14 @@ class ProConnectAuthenticator extends AbstractAuthenticator
                 throw new AuthenticationException('Invalid nonce');
             }
 
+            // Exige que l'utilisateur se soit authentifié en double facteur côté ProConnect.
+            // Le claim `amr` (demandé via le paramètre `claims` à l'authorize) doit contenir
+            // la valeur `mfa`, sinon on refuse la connexion.
+            $amr = (array) ($idTokenPayload['amr'] ?? []);
+            if (!\in_array('mfa', $amr, true)) {
+                throw new CustomUserMessageAuthenticationException('login.proconnect.two_factor_required');
+            }
+
             // Stockage de l'id_token pour la déconnexion
             $session->set('id_token', $tokenData['id_token']);
 
@@ -109,6 +120,9 @@ class ProConnectAuthenticator extends AbstractAuthenticator
             );
 
             return new SelfValidatingPassport(new UserBadge($userInfo['email']));
+        } catch (CustomUserMessageAuthenticationException $e) {
+            // Message déjà destiné à l'utilisateur (ex. 2FA requise) : on le laisse remonter tel quel.
+            throw $e;
         } catch (\Exception $e) {
             throw new AuthenticationException('Authentication failed: ' . $e->getMessage(), 0, $e);
         }
@@ -192,7 +206,14 @@ class ProConnectAuthenticator extends AbstractAuthenticator
         $session = $request->getSession();
         $session->remove('oauth2_state');
         $session->remove('oauth2_nonce');
-        $session->getFlashBag()->add('error', $exception->getMessage());
+
+        // Les CustomUserMessageAuthenticationException portent un message destiné à
+        // l'utilisateur (clé de traduction) ; les autres restent des messages techniques.
+        $message = $exception instanceof CustomUserMessageAuthenticationException
+            ? $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
+            : $exception->getMessage();
+
+        $session->getFlashBag()->add('error', $message);
 
         return new RedirectResponse(
             $this->urlGenerator->generate('app_login'),

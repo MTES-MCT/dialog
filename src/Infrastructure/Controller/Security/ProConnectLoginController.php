@@ -34,6 +34,7 @@ final class ProConnectLoginController
             'response_type' => 'code',
             'client_id' => $this->proConnectClientId,
             'scope' => 'openid email given_name usual_name siret',
+            'claims' => json_encode(['id_token' => ['amr' => ['essential' => true]]]),
             'state' => $state,
             'nonce' => $nonce,
             'redirect_uri' => $this->urlGenerator->generate('pro_connect_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
