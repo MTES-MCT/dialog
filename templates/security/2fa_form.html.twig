@@ -1,0 +1,74 @@
+{% extends 'layouts/layout.html.twig' %}
+
+{% block title %}
+    {{ 'two_factor.meta.title'|trans }} - {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="fr-container fr-container--fluid fr-mt-md-10v fr-mb-md-14v">
+        <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                <div class="fr-container fr-background-alt--grey fr-px-md-0 fr-py-10v">
+                    <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
+                            <h1>{{ 'two_factor.title'|trans }}</h1>
+                            <p>{{ 'two_factor.intro'|trans }}</p>
+                            <form action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}" method="post">
+                                <fieldset class="fr-fieldset" aria-labelledby="two-factor-fieldset-legend">
+                                    <legend id="two-factor-fieldset-legend" class="fr-fieldset__legend">
+                                        <h6>{{ 'two_factor.legend'|trans }}</h6>
+                                    </legend>
+                                    <div class="fr-fieldset__element">
+                                        <div class="fr-input-group{% if authenticationError %} fr-input-group--error{% endif %}">
+                                            <label class="fr-label" for="_auth_code">
+                                                {{ 'two_factor.code'|trans }}
+                                            </label>
+                                            <input
+                                                class="fr-input{% if authenticationError %} fr-input--error{% endif %}"
+                                                id="_auth_code"
+                                                type="text"
+                                                name="{{ authCodeParameterName }}"
+                                                autocomplete="one-time-code"
+                                                inputmode="numeric"
+                                                pattern="[0-9]*"
+                                                autofocus
+                                                required
+                                            />
+                                            {% if authenticationError %}
+                                                <p id="_auth_code-error" class="fr-message fr-message--error">
+                                                    {{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if displayTrustedOption %}
+                                        <div class="fr-fieldset__element">
+                                            <div class="fr-checkbox-group">
+                                                <input type="checkbox" id="_trusted" name="{{ trustedParameterName }}"/>
+                                                <label class="fr-label" for="_trusted">{{ 'two_factor.trusted'|trans }}</label>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    {% if isCsrfProtectionEnabled %}
+                                        <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+                                    {% endif %}
+                                    <div class="fr-fieldset__element">
+                                        <ul class="fr-btns-group">
+                                            <li>
+                                                <button class="fr-btn" type="submit">{{ 'two_factor.submit'|trans }}</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </fieldset>
+                            </form>
+                            <hr>
+                            <p class="fr-text--sm">
+                                <a href="{{ logoutPath }}" class="fr-link">{{ 'two_factor.cancel'|trans }}</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

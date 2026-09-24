@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Security\Provider;
 
+use App\Application\DateUtilsInterface;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
@@ -17,6 +18,7 @@ final class LocalPasswordUserProvider implements UserProviderInterface
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private OrganizationUserRepositoryInterface $organizationUserRepositoryInterface,
+        private DateUtilsInterface $dateUtils,
     ) {
     }
 
@@ -30,7 +32,7 @@ final class LocalPasswordUserProvider implements UserProviderInterface
 
         $userOrganizations = $this->organizationUserRepositoryInterface->findByUserUuid($user->getUuid());
 
-        return new PasswordUser($user, $userOrganizations);
+        return new PasswordUser($user, $userOrganizations, $this->dateUtils->getNow());
     }
 
     public function refreshUser(UserInterface $user): UserInterface

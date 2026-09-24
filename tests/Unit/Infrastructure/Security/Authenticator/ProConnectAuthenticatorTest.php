@@ -17,16 +17,19 @@ use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class ProConnectAuthenticatorTest extends TestCase
 {
     private HttpClientInterface|MockObject $httpClient;
     private UrlGeneratorInterface|MockObject $urlGenerator;
     private CommandBusInterface|MockObject $commandBus;
+    private TranslatorInterface|MockObject $translator;
     private ProConnectAuthenticator $authenticator;
     private string $clientId = 'test_client_id';
     private string $clientSecret = 'test_client_secret';
@@ -44,11 +47,13 @@ final class ProConnectAuthenticatorTest extends TestCase
         $this->httpClient = $this->createMock(HttpClientInterface::class);
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->authenticator = new ProConnectAuthenticator(
             $this->httpClient,
             $this->urlGenerator,
             $this->commandBus,
+            $this->translator,
             $this->clientId,
             $this->clientSecret,
             $this->domain,
@@ -99,6 +104,7 @@ final class ProConnectAuthenticatorTest extends TestCase
             'exp' => time() + 300,
             'sub' => '1234567890',
             'nonce' => 'valid_nonce',
+            'amr' => ['pwd', 'mfa'],
         ], $overrides));
     }
 
@@ -306,11 +312,32 @@ final class ProConnectAuthenticatorTest extends TestCase
         $this->authenticator->authenticate($this->request);
     }
 
-    public function testAuthenticateWithInvalidNonce(): void
+    public function testAuthenticateWithMissingMfa(): void
     {
         $this->request->query->set('state', 'valid_state');
         $this->request->query->set('code', 'valid_code');
 
+        $this->mockValidStateAndNonce();
+        $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
+
+        // L'utilisateur ne s'est pas authentifié en double facteur côté ProConnect :
+        // le claim `amr` ne contient pas la valeur `mfa`.
+        $this->mockHttpEndpoints(
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken(['amr' => ['pwd']])],
+            $this->makeUserInfoJwt(),
+        );
+
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $this->expectException(CustomUserMessageAuthenticationException::class);
+        $this->expectExceptionMessage('login.proconnect.two_factor_required');
+        $this->authenticator->authenticate($this->request);
+    }
+
+    public function testAuthenticateWithInvalidNonce(): void
+    {
+        $this->request->query->set('state', 'valid_state');
+        $this->request->query->set('code', 'valid_code');
         $this->mockValidStateAndNonce();
         $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
 
@@ -447,6 +474,41 @@ final class ProConnectAuthenticatorTest extends TestCase
             ->expects(self::once())
             ->method('add')
             ->with('error', 'Auth failed');
+
+        $this->urlGenerator
+            ->expects(self::once())
+            ->method('generate')
+            ->with('app_login')
+            ->willReturn('/login');
+
+        $result = $this->authenticator->onAuthenticationFailure($this->request, $exception);
+
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals('/login', $result->getTargetUrl());
+    }
+
+    public function testOnAuthenticationFailureTranslatesUserMessage(): void
+    {
+        $exception = new CustomUserMessageAuthenticationException('login.proconnect.two_factor_required');
+
+        $this->session
+            ->expects(self::exactly(2))
+            ->method('remove')
+            ->withConsecutive(
+                ['oauth2_state'],
+                ['oauth2_nonce'],
+            );
+
+        $this->translator
+            ->expects(self::once())
+            ->method('trans')
+            ->with('login.proconnect.two_factor_required', [])
+            ->willReturn('Vous devez activer la double authentification sur ProConnect.');
+
+        $this->flashBag
+            ->expects(self::once())
+            ->method('add')
+            ->with('error', 'Vous devez activer la double authentification sur ProConnect.');
 
         $this->urlGenerator
             ->expects(self::once())
