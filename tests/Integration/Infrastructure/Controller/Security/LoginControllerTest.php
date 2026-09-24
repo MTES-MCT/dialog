@@ -25,10 +25,10 @@ final class LoginControllerTest extends AbstractWebTestCase
         $client->submit($form);
 
         // Le mot de passe est validé mais le jeton est mis « en attente 2FA » :
-        // l'authentification classique redirige vers la cible, et l'accès au formulaire /2fa
+        // la connexion redirige directement vers le formulaire /2fa, dont l'accès
         // déclenche la génération et l'envoi du code.
-        $this->assertResponseRedirects('http://localhost/', 302);
-        $client->request('GET', '/2fa');
+        $this->assertResponseRedirects('http://localhost/2fa', 302);
+        $client->followRedirect();
         $this->assertResponseIsSuccessful();
         $this->assertSame('Double authentification', $client->getCrawler()->filter('h1')->text());
     }

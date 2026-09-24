@@ -25,8 +25,6 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
         $this->password = $user->getPasswordUser()->getPassword();
         $this->isVerified = $user->isVerified();
 
-        // Un code expiré est considéré comme absent : l'utilisateur devra en demander un nouveau.
-        // L'horloge est injectée (via le provider) pour rester cohérente avec la date de génération.
         $now ??= new \DateTimeImmutable();
         $expiresAt = $user->getEmailAuthCodeExpiresAt();
         $this->emailAuthCode = ($expiresAt !== null && $expiresAt < $now) ? null : $user->getEmailAuthCode();
