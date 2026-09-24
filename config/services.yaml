@@ -65,6 +65,15 @@ services:
         resource: '../src/Infrastructure/Symfony/Command/'
         tags: ['console.command']
 
+    # ------------
+    # Security / 2FA
+    # ------------
+    App\Infrastructure\Security\TwoFactor\TwoFactorAuthenticationSuccessHandler:
+        arguments:
+            $twoFactorFirewallConfig: '@security.firewall_config.two_factor.main'
+            $firewallName: 'main'
+            $defaultTargetPath: 'app_landing'
+
     # -------------------
     # Command & Query bus
     # -------------------
