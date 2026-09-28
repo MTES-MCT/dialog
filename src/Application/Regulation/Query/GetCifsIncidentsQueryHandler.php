@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Query;
 use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
@@ -27,6 +28,7 @@ final class GetCifsIncidentsQueryHandler
         private PolylineMakerInterface $polylineMaker,
         private DateUtilsInterface $dateUtils,
         private TranslatorInterface $translator,
+        private NumberedRoadLabelMaker $numberedRoadLabelMaker,
         private CifsFilterSet $cifsFilterSet = new CifsFilterSet(),
     ) {
     }
@@ -133,7 +135,10 @@ final class GetCifsIncidentsQueryHandler
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
                     $locationId = $location->getUuid();
-                    $street = $location->getCifsStreetLabel();
+                    $numberedRoad = $location->getNumberedRoad();
+                    $street = $numberedRoad
+                        ? $this->numberedRoadLabelMaker->make($numberedRoad)
+                        : $location->getCifsStreetLabel();
 
                     $geometry = $location->getGeometry();
                     if ($geometry === null) {

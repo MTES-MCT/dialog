@@ -73,6 +73,91 @@ main {
 
 .d-map-with-share {
     position: relative;
+    transition: flex-basis 0.3s ease, max-width 0.3s ease, width 0.3s ease;
+}
+
+.d-map-sidebar {
+    position: relative;
+    transition: flex-basis 0.3s ease, max-width 0.3s ease, width 0.3s ease,
+        padding 0.3s ease, opacity 0.2s ease, visibility 0s;
+}
+
+// The collapse handle overflows past the right edge of the sidebar column so it
+// stays visible over the map border. Its vertical position is aligned with the
+// search bar from JS (map-sidebar controller); the value below is the fallback
+// used before alignment and in embed mode (no search bar).
+.d-map-sidebar__collapse-btn {
+    position: absolute;
+    top: var(--3w);
+    right: 0;
+    transform: translateX(100%);
+    z-index: 3;
+    width: 2rem;
+    min-height: 2rem;
+    padding: 0 !important;
+    justify-content: center;
+    background-color: var(--background-default-grey, #fff);
+    border: 1px solid var(--border-default-grey);
+    // Removes DSFR's fr-btn--secondary blue inset box-shadow.
+    box-shadow: none;
+
+    &::before {
+        margin-right: 0 !important;
+    }
+}
+
+// Collapse the filters sidebar to give the map its full width. Especially
+// useful when the map is embedded in an iframe. We animate the column widths
+// (rather than toggling `display`) so the transition stays smooth.
+.d-map-layout {
+    position: relative;
+}
+
+.d-map-layout--collapsed .d-map-sidebar {
+    flex-basis: 0;
+    max-width: 0;
+    width: 0;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 0;
+    overflow: hidden;
+    // Remove the hidden filter controls from the tab order / a11y tree, but only
+    // once the collapse animation is done (delayed visibility).
+    visibility: hidden;
+    transition: flex-basis 0.3s ease, max-width 0.3s ease, width 0.3s ease,
+        padding 0.3s ease, opacity 0.2s ease, visibility 0s linear 0.3s;
+}
+
+.d-map-layout--collapsed .d-map-with-share {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+}
+
+.d-map-sidebar__expand-btn {
+    position: absolute;
+    top: var(--3w);
+    left: 0;
+    z-index: 3;
+    width: 2rem;
+    min-height: 2rem;
+    padding: 0 !important;
+    justify-content: center;
+    background-color: var(--background-default-grey, #fff);
+    border: 1px solid var(--border-default-grey);
+    // Removes DSFR's fr-btn--secondary blue inset box-shadow.
+    box-shadow: none;
+
+    &::before {
+        transform: rotate(180deg);
+        // Reset the DSFR icon spacing so the arrow stays centered (icon-only button).
+        margin-right: 0 !important;
+    }
+
+    &[hidden] {
+        display: none;
+    }
 }
 
 .d-map-share {

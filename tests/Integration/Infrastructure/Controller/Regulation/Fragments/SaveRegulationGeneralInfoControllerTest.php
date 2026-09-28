@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
+use App\Infrastructure\Persistence\Doctrine\Fixtures\MeasureFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\OrganizationFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
@@ -32,8 +33,74 @@ final class SaveRegulationGeneralInfoControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
 
+        // Sans changement de catégorie, les blocs de mesures ne sont pas re-rendus
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertEquals([
+            ['replace', 'block_general_info'],
+            ['update', 'regulation-detail'],
+            ['update', 'block_publication'],
+        ], $streams);
+        $this->assertSame('Arrêté permanent FO3/2023', $crawler->filter('turbo-stream[target="regulation-detail"]')->text());
+
         $crawler = $client->request('GET', '/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT);
         $this->assertSame('Modifié le 09/06/2023 à 01h00 par Mathieu MARCHOIS', $crawler->filter('[data-testid="history"]')->text());
+    }
+
+    public function testEditCategoryChangeUpdatesTitleAndMeasures(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_PERMANENT);
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value;
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertEquals([
+            ['replace', 'block_general_info'],
+            ['update', 'regulation-detail'],
+            ['replace', 'block_measure_' . MeasureFixture::UUID_PERMANENT_ONLY_ONE],
+            ['replace', 'block_measure'],
+            ['update', 'block_publication'],
+        ], $streams);
+        $this->assertSame('Arrêté temporaire FO3/2023', $crawler->filter('turbo-stream[target="regulation-detail"]')->text());
+
+        $addMeasureBtn = $crawler->filter('turbo-stream[target="block_measure"]')->selectButton('Ajouter une mesure');
+        $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
+    }
+
+    public function testEditCategoryChangeWithoutMeasureRendersAddMeasureForm(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/general_info/form/' . RegulationOrderRecordFixture::UUID_NO_LOCATIONS);
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['general_info_form']['category'] = RegulationOrderCategoryEnum::PERMANENT_REGULATION->value;
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertEquals([
+            ['replace', 'block_general_info'],
+            ['update', 'regulation-detail'],
+            ['replace', 'block_measure'],
+            ['update', 'block_publication'],
+        ], $streams);
+        $this->assertSame('Arrêté permanent F2023/no-locations', $crawler->filter('turbo-stream[target="regulation-detail"]')->text());
+
+        // Sans mesure existante, le formulaire d'ajout est re-rendu avec la nouvelle catégorie
+        $this->assertCount(1, $crawler->filter('turbo-stream[target="block_measure"] turbo-frame#block_measure form'));
     }
 
     public function testEditWithAnAlreadyExistingIdentifier(): void

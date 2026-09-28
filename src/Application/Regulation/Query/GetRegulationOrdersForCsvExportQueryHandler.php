@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Application\StorageInterface;
@@ -23,6 +24,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         private StorageRegulationOrderRepositoryInterface $storageRegulationOrderRepository,
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
+        private NumberedRoadLabelMaker $numberedRoadLabelMaker,
     ) {
     }
 
@@ -137,10 +139,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         }
 
         if ($numberedRoad = $location->getNumberedRoad()) {
-            $roadNumber = $numberedRoad->getRoadNumber() ?? '';
-            $administrator = $numberedRoad->getAdministrator();
-
-            return $administrator ? trim(\sprintf('%s (%s)', $roadNumber, $administrator)) : trim($roadNumber);
+            return $this->numberedRoadLabelMaker->make($numberedRoad);
         }
 
         if ($zone = $location->getZone()) {
