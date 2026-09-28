@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query;
 
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\View\DatexLocationView;
 use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexValidityConditionView;
@@ -19,6 +20,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
 {
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
+        private NumberedRoadLabelMaker $numberedRoadLabelMaker,
     ) {
     }
 
@@ -100,15 +102,17 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
                     $roadType = $location->getRoadType();
+                    $numberedRoad = $location->getNumberedRoad();
 
                     $locationConditions[] = new DatexLocationView(
                         roadType: $roadType,
                         roadName: $location->getNamedStreet()?->getRoadName(),
-                        roadNumber: $location->getNumberedRoad()?->getRoadNumber(),
+                        roadNumber: $numberedRoad?->getRoadNumber(),
                         rawGeoJSONLabel: $location->getRawGeoJSON()?->getLabel(),
                         geometry: $location->getGeometry(),
                         wholeCityLabel: $location->getCityLabel(),
                         zoneLabel: $location->getZone()?->getLabel(),
+                        referencePoints: $numberedRoad ? ($this->numberedRoadLabelMaker->makeReferencePoints($numberedRoad) ?: null) : null,
                     );
 
                     $storageArea = $location->getStorageArea();

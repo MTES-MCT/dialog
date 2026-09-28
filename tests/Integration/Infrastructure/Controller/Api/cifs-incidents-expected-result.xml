@@ -59,7 +59,7 @@
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Circulation interdite</description>
-        <street>D14</street>
+        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
         <starttime>2023-06-04T23:00:00+00:00</starttime>
@@ -77,7 +77,7 @@
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Circulation interdite</description>
-        <street>D14</street>
+        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
         <starttime>2023-06-01T23:00:00+00:00</starttime>
@@ -95,7 +95,7 @@
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Circulation interdite</description>
-        <street>D14</street>
+        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
         <starttime>2023-06-03T08:00:00+00:00</starttime>
