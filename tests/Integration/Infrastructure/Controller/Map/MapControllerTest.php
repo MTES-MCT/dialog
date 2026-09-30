@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Map;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use App\Tests\Mock\IgnGeocoderMockClient;
 
 final class MapControllerTest extends AbstractWebTestCase
 {
@@ -231,6 +232,115 @@ final class MapControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+    }
+
+    public function testGetWithDepartmentCodeFiltersAndZoomsOnDepartment(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?departmentCode=93&embed=1');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // La carte est centrée sur le contour du département.
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertEquals(['minLon' => 2.28, 'minLat' => 48.8, 'maxLon' => 2.6, 'maxLat' => 49.01], $decoded);
+
+        // Le code est repris dans un champ caché du formulaire de filtres, donc dans l'URL des tuiles.
+        $this->assertSame('93', $crawler->filter('d-map-form form input[type=hidden][name=departmentCode]')->attr('value'));
+
+        // Le filtre n'apparaissant pas parmi les cases à cocher, la collectivité est indiquée.
+        $boundaries = $crawler->filter('#map-administrative-boundaries');
+        $this->assertStringContainsString('Carte limitée à', $boundaries->text());
+        $this->assertSame('Seine-Saint-Denis', $boundaries->filter('.fr-tag')->text());
+    }
+
+    public function testGetWithSeveralAdministrativeBoundaryCodes(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?inseeCode=93070&epciCode=200054781&regionCode=11');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $form = $crawler->filter('d-map-form form');
+        $this->assertSame('93070', $form->filter('input[type=hidden][name=inseeCode]')->attr('value'));
+        $this->assertSame('200054781', $form->filter('input[type=hidden][name=epciCode]')->attr('value'));
+        $this->assertSame('11', $form->filter('input[type=hidden][name=regionCode]')->attr('value'));
+
+        $this->assertSame(
+            ['Saint-Ouen-sur-Seine', 'Métropole du Grand Paris', 'Île-de-France'],
+            $crawler->filter('#map-administrative-boundaries .fr-tag')->each(fn ($tag) => $tag->text()),
+        );
+
+        // La carte est centrée sur la première collectivité (la commune).
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertEquals(['minLon' => 2.31, 'minLat' => 48.89, 'maxLon' => 2.36, 'maxLat' => 48.92], $decoded);
+    }
+
+    public function testGetWithAdministrativeBoundaryCodeTakesPrecedenceOverOrganizationUuid(): void
+    {
+        $client = static::createClient();
+        // seineSaintDenisOrg, mais la carte est limitée aux Ardennes.
+        $crawler = $client->request('GET', '/carte?organizationUuid=8f9164ed-dc0f-4c98-ac18-2f590a1cfd22&departmentCode=08');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertEquals(['minLon' => 4.0, 'minLat' => 49.2, 'maxLon' => 5.4, 'maxLat' => 50.2], $decoded);
+    }
+
+    /**
+     * @dataProvider provideUnusableAdministrativeBoundaryCodes
+     */
+    public function testGetIgnoresUnusableAdministrativeBoundaryCode(string $query): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?' . $query);
+
+        // La carte s'affiche sans filtre plutôt que de renvoyer une erreur.
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('#map-administrative-boundaries'));
+        $this->assertCount(0, $crawler->filter('d-map-form form input[type=hidden][name=departmentCode]'));
+        $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+    }
+
+    public function provideUnusableAdministrativeBoundaryCodes(): array
+    {
+        return [
+            'code inconnu du COG' => ['departmentCode=99'],
+            'code mal formé' => ['departmentCode=abc'],
+            'code vide' => ['departmentCode='],
+            'source des contours indisponible' => ['departmentCode=' . IgnGeocoderMockClient::UNAVAILABLE_DEPARTMENT_CODE],
+        ];
+    }
+
+    public function testGetWithoutAdministrativeBoundaryCodeHasNoBoundaryFilter(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('#map-administrative-boundaries'));
+        $this->assertCount(0, $crawler->filter('d-map-form form input[type=hidden]:not([name^="map_filter_form"])'));
+    }
+
+    public function testShareModalExposesOrganizationAdministrativeBoundaryCode(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/carte');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        // department93User appartient à seineSaintDenisOrg (département 93) : le code d'intégration
+        // de l'iframe limitera la carte à ce département.
+        $option = $crawler->filter('#map-share-org-select option[value="8f9164ed-dc0f-4c98-ac18-2f590a1cfd22"]');
+        $this->assertSame('departmentCode', $option->attr('data-boundary-parameter'));
+        $this->assertSame('93', $option->attr('data-boundary-code'));
+
+        // ...et à dialogOrg, qui n'a pas de code : pas de filtre par collectivité.
+        $option = $crawler->filter('#map-share-org-select option[value="e0d93630-acf7-4722-81e8-ff7d5fa64b66"]');
+        $this->assertCount(1, $option);
+        $this->assertNull($option->attr('data-boundary-parameter'));
+        $this->assertNull($option->attr('data-boundary-code'));
     }
 
     public function testGetEmbedHidesHeaderAndFooter(): void

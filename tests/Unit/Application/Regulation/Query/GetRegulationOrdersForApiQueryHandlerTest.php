@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
+use App\Application\AdministrativeBoundaryFetcherInterface;
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\AdministrativeBoundaryNotFoundException;
+use App\Application\Geography\AdministrativeBoundaryResolver;
+use App\Application\Geography\View\AdministrativeBoundaryView;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQueryHandler;
 use App\Application\Regulation\View\RegulationOrderForApiView;
 use App\Application\StorageInterface;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Geography\Repository\AdministrativeBoundaryRepositoryInterface;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
@@ -27,6 +32,8 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
     private StorageRegulationOrderRepositoryInterface&MockObject $storageRepository;
     private StorageInterface&MockObject $storage;
     private DateUtilsInterface&MockObject $dateUtils;
+    private AdministrativeBoundaryRepositoryInterface&MockObject $administrativeBoundaryRepository;
+    private AdministrativeBoundaryFetcherInterface&MockObject $administrativeBoundaryFetcher;
     private GetRegulationOrdersForApiQueryHandler $handler;
 
     protected function setUp(): void
@@ -36,11 +43,18 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->storage = $this->createMock(StorageInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2025-01-01'));
+        $this->administrativeBoundaryRepository = $this->createMock(AdministrativeBoundaryRepositoryInterface::class);
+        $this->administrativeBoundaryFetcher = $this->createMock(AdministrativeBoundaryFetcherInterface::class);
         $this->handler = new GetRegulationOrdersForApiQueryHandler(
             $this->repository,
             $this->storageRepository,
             $this->storage,
             $this->dateUtils,
+            new AdministrativeBoundaryResolver(
+                $this->administrativeBoundaryRepository,
+                $this->administrativeBoundaryFetcher,
+                $this->dateUtils,
+            ),
         );
     }
 
@@ -176,5 +190,51 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
         $this->assertSame(3, $result->totalItems);
         $this->assertCount(1, $result->items);
         $this->assertSame('F/3', $result->items[0]->identifier);
+    }
+
+    public function testFiltersOnResolvedAdministrativeBoundaries(): void
+    {
+        // Les contours sont déjà en base : ils ne sont pas re-téléchargés.
+        $this->administrativeBoundaryRepository
+            ->method('findOneByCode')
+            ->willReturnCallback(static fn (string $codeType, string $code) => new AdministrativeBoundaryView($codeType, $code, 'Nom'));
+        $this->administrativeBoundaryFetcher->expects(self::never())->method('fetch');
+
+        $this->repository
+            ->expects(self::once())
+            ->method('findUuidsForApi')
+            ->with(
+                GetRegulationOrdersForApiQuery::STATUS_CURRENT,
+                null,
+                null,
+                null,
+                null,
+                null,
+                new \DateTimeImmutable('2025-01-01'),
+                // Les codes sont normalisés (Corse en majuscules) et indexés par type de collectivité.
+                ['departement' => '2A', 'epci' => '244400404', 'region' => '52'],
+            )
+            ->willReturn([]);
+
+        $result = $this->handler->__invoke(new GetRegulationOrdersForApiQuery(
+            departmentCode: '2a',
+            epciCode: '244400404',
+            regionCode: '52',
+        ));
+
+        $this->assertSame(0, $result->totalItems);
+    }
+
+    public function testThrowsWhenAdministrativeBoundaryIsUnknown(): void
+    {
+        $this->expectException(AdministrativeBoundaryNotFoundException::class);
+
+        $this->administrativeBoundaryRepository->method('findOneByCode')->willReturn(null);
+        $this->administrativeBoundaryFetcher
+            ->method('fetch')
+            ->willThrowException(new AdministrativeBoundaryNotFoundException('departement', '99'));
+        $this->repository->expects(self::never())->method('findUuidsForApi');
+
+        $this->handler->__invoke(new GetRegulationOrdersForApiQuery(departmentCode: '99'));
     }
 }

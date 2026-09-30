@@ -17,9 +17,12 @@ interface LocationRepositoryInterface
     public function findOneByUuid(string $uuid): ?Location;
 
     /**
-     * @param string[] $organizationUuids when non-empty, restricts the result to the regulation
-     *                                    orders owned by these organizations (used to display an
-     *                                    organization's own drafts on the map)
+     * @param string[]              $organizationUuids           when non-empty, restricts the result to the regulation
+     *                                                           orders owned by these organizations (used to display an
+     *                                                           organization's own drafts on the map)
+     * @param array<string, string> $administrativeBoundaryCodes codes de collectivités indexés par type (valeur de
+     *                                                           OrganizationCodeTypeEnum) : ne retient que les emprises
+     *                                                           qui intersectent le contour de chacune de ces collectivités
      */
     public function findAllForMapAsGeoJSON(
         bool $includePermanentRegulations = false,
@@ -30,6 +33,7 @@ interface LocationRepositoryInterface
         RegulationOrderRecordStatusEnum $status = RegulationOrderRecordStatusEnum::PUBLISHED,
         array $organizationUuids = [],
         bool $includeHeavyGoodsVehicles = true,
+        array $administrativeBoundaryCodes = [],
     ): string;
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array;
@@ -45,6 +49,10 @@ interface LocationRepositoryInterface
      * Returns a Mapbox Vector Tile (MVT) binary blob with the locations of the
      * published regulation orders matching the given filters, restricted to the
      * geographical extent of the (z, x, y) tile.
+     *
+     * @param array<string, string> $administrativeBoundaryCodes codes de collectivités indexés par type (valeur de
+     *                                                           OrganizationCodeTypeEnum) : ne retient que les emprises
+     *                                                           qui intersectent le contour de chacune de ces collectivités
      */
     public function findRestrictionsAsMVT(
         int $z,
@@ -56,6 +64,7 @@ interface LocationRepositoryInterface
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
         bool $includeHeavyGoodsVehicles = true,
+        array $administrativeBoundaryCodes = [],
     ): string;
 
     /**

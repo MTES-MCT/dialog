@@ -28,6 +28,10 @@ final readonly class GetRegulationOrdersForApiQuery implements QueryInterface
      * @param string|null $measureType              Type de restriction (mesure) recherché.
      * @param bool        $includeHeavyGoodsVehicle Si false, exclut les arrêtés dont au moins une mesure
      *                                              restreint les poids lourds.
+     * @param string|null $departmentCode           Code INSEE de département : ne retourne que les arrêtés
+     *                                              dont au moins une emprise intersecte son contour.
+     * @param string|null $epciCode                 Code SIREN d'EPCI (même principe).
+     * @param string|null $regionCode               Code INSEE de région (même principe).
      */
     public function __construct(
         public string $vigueurStatus = self::STATUS_CURRENT,
@@ -39,6 +43,9 @@ final readonly class GetRegulationOrdersForApiQuery implements QueryInterface
         public bool $includeHeavyGoodsVehicle = true,
         public int $page = 1,
         public int $pageSize = 20,
+        public ?string $departmentCode = null,
+        public ?string $epciCode = null,
+        public ?string $regionCode = null,
     ) {
     }
 }

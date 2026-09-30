@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Api\Regulations;
 
+use App\Application\Exception\AdministrativeBoundaryNotFoundException;
+use App\Application\Exception\AdministrativeBoundaryUnavailableException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Infrastructure\Controller\AdministrativeBoundaryQueryParameters;
 use App\Infrastructure\DTO\Regulation\RegulationApiView;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -90,6 +93,12 @@ final class SearchRegulationsController
             ### Comportement par défaut
             Sans aucun filtre, seuls les arrêtés **en vigueur** (`status=current`) sont retournés.
 
+            ### Filtrer par collectivité
+            Les paramètres `inseeCode` (commune), `epciCode`, `departmentCode` et `regionCode` restreignent
+            la recherche à une collectivité, identifiée par son code du COG (code officiel géographique).
+            Pour un EPCI, un département ou une région, un arrêté est retenu dès qu'une de ses emprises
+            intersecte le contour officiel de la collectivité (référentiel ADMIN EXPRESS COG de l'IGN).
+
             ### Authentification
             Cette route est publique : aucune authentification n'est requise.
 
@@ -114,6 +123,30 @@ final class SearchRegulationsController
         description: "Code INSEE exact d'une commune. Ne retourne que les arrêtés dont au moins une "
             . 'emprise concerne cette commune (voie nommée ou ville entière).',
         schema: new OA\Schema(type: 'string'),
+    )]
+    #[OA\Parameter(
+        name: 'departmentCode',
+        in: 'query',
+        required: false,
+        description: "Code INSEE d'un département (ex. `44`, `2A`, `974`). Ne retourne que les arrêtés dont au "
+            . 'moins une emprise, quel que soit son type, intersecte le contour officiel du département.',
+        schema: new OA\Schema(type: 'string', example: '44'),
+    )]
+    #[OA\Parameter(
+        name: 'epciCode',
+        in: 'query',
+        required: false,
+        description: "Code SIREN d'un EPCI (métropole, communauté urbaine, d'agglomération ou de communes). "
+            . "Ne retourne que les arrêtés dont au moins une emprise intersecte le contour officiel de l'EPCI.",
+        schema: new OA\Schema(type: 'string', example: '244400404'),
+    )]
+    #[OA\Parameter(
+        name: 'regionCode',
+        in: 'query',
+        required: false,
+        description: "Code INSEE d'une région (ex. `52`). Ne retourne que les arrêtés dont au moins une emprise "
+            . 'intersecte le contour officiel de la région.',
+        schema: new OA\Schema(type: 'string', example: '52'),
     )]
     #[OA\Parameter(
         name: 'dateStart',
@@ -205,6 +238,10 @@ final class SearchRegulationsController
             ],
         ),
     )]
+    #[OA\Response(
+        response: 503,
+        description: "Le contour de la collectivité demandée n'a pas pu être récupéré. Réessayez plus tard.",
+    )]
     public function __invoke(
         #[MapQueryParameter]
         string $status = GetRegulationOrdersForApiQuery::STATUS_CURRENT,
@@ -224,6 +261,12 @@ final class SearchRegulationsController
         int $page = 1,
         #[MapQueryParameter]
         int $pageSize = 20,
+        #[MapQueryParameter]
+        ?string $departmentCode = null,
+        #[MapQueryParameter]
+        ?string $epciCode = null,
+        #[MapQueryParameter]
+        ?string $regionCode = null,
     ): JsonResponse {
         if (!\in_array($status, self::ALLOWED_STATUSES, true)) {
             return $this->badRequest('Invalid "status" parameter');
@@ -250,20 +293,33 @@ final class SearchRegulationsController
         $page = max(1, $page);
         $pageSize = min(max(1, $pageSize), self::MAX_PAGE_SIZE);
 
-        /** @var Pagination $pagination */
-        $pagination = $this->queryBus->handle(
-            new GetRegulationOrdersForApiQuery(
-                vigueurStatus: $status,
-                inseeCode: $inseeCode,
-                dateStart: $parsedDateStart,
-                dateEnd: $parsedDateEnd,
-                category: $category,
-                measureType: $measureType,
-                includeHeavyGoodsVehicle: $includeHeavyGoodsVehicle,
-                page: $page,
-                pageSize: $pageSize,
-            ),
-        );
+        try {
+            /** @var Pagination $pagination */
+            $pagination = $this->queryBus->handle(
+                new GetRegulationOrdersForApiQuery(
+                    vigueurStatus: $status,
+                    inseeCode: $inseeCode,
+                    dateStart: $parsedDateStart,
+                    dateEnd: $parsedDateEnd,
+                    category: $category,
+                    measureType: $measureType,
+                    includeHeavyGoodsVehicle: $includeHeavyGoodsVehicle,
+                    page: $page,
+                    pageSize: $pageSize,
+                    departmentCode: $departmentCode,
+                    epciCode: $epciCode,
+                    regionCode: $regionCode,
+                ),
+            );
+        } catch (AdministrativeBoundaryNotFoundException $exc) {
+            // Code mal formé ou inconnu du COG.
+            return $this->badRequest(\sprintf('Invalid "%s" parameter', AdministrativeBoundaryQueryParameters::NAMES[$exc->getCodeType()]));
+        } catch (AdministrativeBoundaryUnavailableException) {
+            return new JsonResponse(
+                ['error' => 'Administrative boundaries are temporarily unavailable, please retry later'],
+                Response::HTTP_SERVICE_UNAVAILABLE,
+            );
+        }
 
         $regulations = $this->normalizer->normalize(
             array_map(RegulationApiView::fromApiView(...), $pagination->items),

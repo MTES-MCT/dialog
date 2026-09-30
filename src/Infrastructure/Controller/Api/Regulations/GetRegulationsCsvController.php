@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Controller\Api\Regulations;
 
+use App\Application\Exception\AdministrativeBoundaryNotFoundException;
+use App\Application\Exception\AdministrativeBoundaryUnavailableException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\RegulationExportCsvGeneratorInterface;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
+use App\Infrastructure\Controller\AdministrativeBoundaryQueryParameters;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,6 +85,27 @@ final class GetRegulationsCsvController
         schema: new OA\Schema(type: 'string'),
     )]
     #[OA\Parameter(
+        name: 'departmentCode',
+        in: 'query',
+        required: false,
+        description: "Code INSEE d'un département (ex. `44`, `2A`, `974`).",
+        schema: new OA\Schema(type: 'string', example: '44'),
+    )]
+    #[OA\Parameter(
+        name: 'epciCode',
+        in: 'query',
+        required: false,
+        description: "Code SIREN d'un EPCI.",
+        schema: new OA\Schema(type: 'string', example: '244400404'),
+    )]
+    #[OA\Parameter(
+        name: 'regionCode',
+        in: 'query',
+        required: false,
+        description: "Code INSEE d'une région (ex. `52`).",
+        schema: new OA\Schema(type: 'string', example: '52'),
+    )]
+    #[OA\Parameter(
         name: 'dateStart',
         in: 'query',
         required: false,
@@ -125,6 +149,10 @@ final class GetRegulationsCsvController
         response: 400,
         description: 'Paramètre de filtre invalide.',
     )]
+    #[OA\Response(
+        response: 503,
+        description: "Le contour de la collectivité demandée n'a pas pu être récupéré. Réessayez plus tard.",
+    )]
     public function __invoke(
         Request $request,
         #[MapQueryParameter]
@@ -141,6 +169,12 @@ final class GetRegulationsCsvController
         ?string $measureType = null,
         #[MapQueryParameter]
         bool $includeHeavyGoodsVehicle = true,
+        #[MapQueryParameter]
+        ?string $departmentCode = null,
+        #[MapQueryParameter]
+        ?string $epciCode = null,
+        #[MapQueryParameter]
+        ?string $regionCode = null,
     ): Response {
         if (!\in_array($status, self::ALLOWED_STATUSES, true)) {
             return $this->badRequest('Invalid "status" parameter');
@@ -175,7 +209,10 @@ final class GetRegulationsCsvController
             && $parsedDateEnd === null
             && $category === null
             && $measureType === null
-            && $includeHeavyGoodsVehicle;
+            && $includeHeavyGoodsVehicle
+            && $departmentCode === null
+            && $epciCode === null
+            && $regionCode === null;
 
         // Export complet : servi depuis le cache pré-généré pour un téléchargement rapide.
         if ($isFullExport) {
@@ -196,18 +233,31 @@ final class GetRegulationsCsvController
             return new Response('', Response::HTTP_OK, $headers);
         }
 
-        /** @var \App\Application\Regulation\View\RegulationCsvRowView[] $rows */
-        $rows = $this->queryBus->handle(
-            new GetRegulationOrdersForCsvExportQuery(
-                vigueurStatus: $status,
-                inseeCode: $inseeCode,
-                dateStart: $parsedDateStart,
-                dateEnd: $parsedDateEnd,
-                category: $category,
-                measureType: $measureType,
-                includeHeavyGoodsVehicle: $includeHeavyGoodsVehicle,
-            ),
-        );
+        try {
+            /** @var \App\Application\Regulation\View\RegulationCsvRowView[] $rows */
+            $rows = $this->queryBus->handle(
+                new GetRegulationOrdersForCsvExportQuery(
+                    vigueurStatus: $status,
+                    inseeCode: $inseeCode,
+                    dateStart: $parsedDateStart,
+                    dateEnd: $parsedDateEnd,
+                    category: $category,
+                    measureType: $measureType,
+                    includeHeavyGoodsVehicle: $includeHeavyGoodsVehicle,
+                    departmentCode: $departmentCode,
+                    epciCode: $epciCode,
+                    regionCode: $regionCode,
+                ),
+            );
+        } catch (AdministrativeBoundaryNotFoundException $exc) {
+            // Code mal formé ou inconnu du COG.
+            return $this->badRequest(\sprintf('Invalid "%s" parameter', AdministrativeBoundaryQueryParameters::NAMES[$exc->getCodeType()]));
+        } catch (AdministrativeBoundaryUnavailableException) {
+            return $this->errorResponse(
+                'Administrative boundaries are temporarily unavailable, please retry later',
+                Response::HTTP_SERVICE_UNAVAILABLE,
+            );
+        }
 
         return new StreamedResponse(
             function () use ($rows): void {
@@ -235,9 +285,14 @@ final class GetRegulationsCsvController
 
     private function badRequest(string $message): Response
     {
+        return $this->errorResponse($message, Response::HTTP_BAD_REQUEST);
+    }
+
+    private function errorResponse(string $message, int $status): Response
+    {
         return new Response(
             json_encode(['error' => $message]),
-            Response::HTTP_BAD_REQUEST,
+            $status,
             ['Content-Type' => 'application/json'],
         );
     }

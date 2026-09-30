@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="App\Domain\Geography\AdministrativeBoundary" table="administrative_boundary">
+    <id name="codeType" type="string" column="code_type" length="15"/>
+    <id name="code" type="string" column="code" length="10"/>
+    <field name="name" type="string" column="name" nullable="false"/>
+    <field name="geometry" type="geojson_geometry" column="geometry" nullable="false">
+      <options>
+        <option name="geometry_type">GEOMETRY</option>
+        <option name="srid">4326</option>
+      </options>
+    </field>
+    <field name="updatedAt" type="datetimetz" column="updated_at" nullable="false"/>
+  </entity>
+</doctrine-mapping>

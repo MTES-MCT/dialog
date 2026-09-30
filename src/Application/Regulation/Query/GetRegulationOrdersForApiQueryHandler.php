@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Geography\AdministrativeBoundaryResolver;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Application\Regulation\View\RegulationOrderForApiView;
 use App\Application\StorageInterface;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Pagination;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
@@ -22,11 +24,19 @@ final class GetRegulationOrdersForApiQueryHandler
         private StorageRegulationOrderRepositoryInterface $storageRegulationOrderRepository,
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
+        private AdministrativeBoundaryResolver $administrativeBoundaryResolver,
     ) {
     }
 
     public function __invoke(GetRegulationOrdersForApiQuery $query): Pagination
     {
+        // Les contours des collectivités demandées doivent être en base avant de filtrer dessus.
+        $administrativeBoundaryCodes = $this->administrativeBoundaryResolver->resolveCodes([
+            OrganizationCodeTypeEnum::DEPARTMENT->value => $query->departmentCode,
+            OrganizationCodeTypeEnum::EPCI->value => $query->epciCode,
+            OrganizationCodeTypeEnum::REGION->value => $query->regionCode,
+        ]);
+
         $uuids = $this->regulationOrderRecordRepository->findUuidsForApi(
             vigueurStatus: $query->vigueurStatus,
             inseeCode: $query->inseeCode,
@@ -35,6 +45,7 @@ final class GetRegulationOrdersForApiQueryHandler
             category: $query->category,
             measureType: $query->measureType,
             now: $this->dateUtils->getNow(),
+            administrativeBoundaryCodes: $administrativeBoundaryCodes,
         );
 
         if ($uuids === []) {

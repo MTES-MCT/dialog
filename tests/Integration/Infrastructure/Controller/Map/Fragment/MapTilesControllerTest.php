@@ -86,6 +86,44 @@ final class MapTilesControllerTest extends AbstractWebTestCase
         $this->assertNotSame('', $client->getResponse()->getContent());
     }
 
+    public function testRespectsAdministrativeBoundaryFilter(): void
+    {
+        $client = static::createClient();
+        $filters = '?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes';
+
+        // Le chargement de la carte met en base les contours des collectivités demandées.
+        $client->request('GET', '/carte?departmentCode=93');
+        $client->request('GET', '/carte?departmentCode=59');
+
+        // La tuile de Paris contient des restrictions situées en Seine-Saint-Denis...
+        $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt' . $filters . '&departmentCode=93');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseHeaderSame('Content-Type', 'application/vnd.mapbox-vector-tile');
+        $this->assertNotSame('', $client->getResponse()->getContent());
+
+        // ...mais aucune située dans le Nord.
+        $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt' . $filters . '&departmentCode=59');
+        $this->assertResponseStatusCodeSame(204);
+
+        // Les filtres par collectivité se cumulent : le contour de la région n'étant pas en base,
+        // aucune emprise n'est retenue.
+        $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt' . $filters . '&departmentCode=93&regionCode=11');
+        $this->assertResponseStatusCodeSame(204);
+
+        $client->request('GET', '/carte?regionCode=11');
+        $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt' . $filters . '&departmentCode=93&regionCode=11');
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    public function testReturnsNoContentWhenAdministrativeBoundaryIsNotStored(): void
+    {
+        $client = static::createClient();
+        // Les tuiles ne téléchargent jamais un contour : sans contour en base, rien n'est affiché.
+        $client->request('GET', '/carte/tiles/' . self::PARIS_TILE . '.mvt?map_filter_form[measureTypes][]=noEntry&map_filter_form[displayPermanentRegulations]=yes&map_filter_form[displayTemporaryRegulations]=yes&departmentCode=93');
+
+        $this->assertResponseStatusCodeSame(204);
+    }
+
     public function testRespectsMeasureDatesFilter(): void
     {
         $client = static::createClient();

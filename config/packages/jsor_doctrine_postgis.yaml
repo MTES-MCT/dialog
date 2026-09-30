@@ -18,4 +18,5 @@ doctrine:
         dql:
             string_functions:
                 ST_AsGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_AsGeoJSON'
+                ST_Intersects: 'Jsor\Doctrine\PostGIS\Functions\ST_Intersects'
                 ST_ApproximateMedialAxis: 'App\Infrastructure\Persistence\Doctrine\PostGIS\Functions\ST_ApproximateMedialAxis'

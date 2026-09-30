@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Map\Fragments;
 
 use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Infrastructure\Controller\AdministrativeBoundaryQueryParameters;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -52,6 +53,7 @@ final class MapDataController
             $dto->startDate,
             $dto->endDate,
             includeHeavyGoodsVehicles: $dto->displayHeavyGoodsVehicles,
+            administrativeBoundaryCodes: AdministrativeBoundaryQueryParameters::fromRequest($request),
         );
 
         return new Response(

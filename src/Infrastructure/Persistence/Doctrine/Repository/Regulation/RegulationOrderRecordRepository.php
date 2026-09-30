@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\View\GeneralInfoView;
+use App\Domain\Geography\AdministrativeBoundary;
 use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\DTO\RegulationListFiltersDTO;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
@@ -521,6 +522,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         ?string $category,
         ?string $measureType,
         \DateTimeInterface $now,
+        array $administrativeBoundaryCodes = [],
     ): array {
         $overallStartDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_START_DATE_QUERY_TEMPLATE));
         $overallEndDateExpr = static fn (int $n): string => \sprintf('(%s)', str_replace('%%n', (string) $n, self::OVERALL_END_DATE_QUERY_TEMPLATE));
@@ -548,9 +550,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             $parameters['measureType'] = $measureType;
         }
 
+        if ($inseeCode !== null || $administrativeBoundaryCodes !== []) {
+            $qb->innerJoin('m.locations', 'loc');
+        }
+
         if ($inseeCode !== null) {
-            $qb->innerJoin('m.locations', 'loc')
-                ->leftJoin('loc.namedStreet', 'ns')
+            $qb->leftJoin('loc.namedStreet', 'ns')
                 ->andWhere('(ns.cityCode = :inseeCode OR loc.cityCode = :inseeCode OR roc.organization IN (
                     SELECT _org.uuid
                     FROM App\Domain\User\Organization _org
@@ -558,6 +563,28 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ))');
             $parameters['inseeCode'] = $inseeCode;
             $parameters['inseeCodeType'] = OrganizationCodeTypeEnum::INSEE->value;
+        }
+
+        // Filtre par collectivité : l'emprise doit intersecter le contour de la collectivité.
+        // Contrairement au code INSEE, ce filtre spatial couvre tous les types d'emprises
+        // (routes numérotées, GeoJSON bruts, zones...), qui n'ont pas de code commune.
+        $boundaryIndex = 0;
+
+        foreach ($administrativeBoundaryCodes as $codeType => $code) {
+            $qb->andWhere(\sprintf(
+                'EXISTS (
+                    SELECT _ab%1$d.code
+                    FROM %2$s _ab%1$d
+                    WHERE _ab%1$d.codeType = :boundaryCodeType%1$d
+                    AND _ab%1$d.code = :boundaryCode%1$d
+                    AND ST_Intersects(loc.geometry, _ab%1$d.geometry) = true
+                )',
+                $boundaryIndex,
+                AdministrativeBoundary::class,
+            ));
+            $parameters['boundaryCodeType' . $boundaryIndex] = $codeType;
+            $parameters['boundaryCode' . $boundaryIndex] = $code;
+            ++$boundaryIndex;
         }
 
         if ($vigueurStatus === GetRegulationOrdersForApiQuery::STATUS_CURRENT) {

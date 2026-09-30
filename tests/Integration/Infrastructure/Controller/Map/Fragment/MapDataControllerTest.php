@@ -32,6 +32,32 @@ final class MapDataControllerTest extends AbstractWebTestCase
         $this->assertContains(LocationFixture::UUID_LITTERALIS, $locationUuids);
     }
 
+    public function testAdministrativeBoundaryFilter(): void
+    {
+        $client = static::createClient();
+
+        // Le chargement de la carte met en base les contours des collectivités demandées.
+        $client->request('GET', '/carte?departmentCode=93');
+        $client->request('GET', '/carte?departmentCode=59');
+
+        // Seine-Saint-Denis : les deux emprises de l'arrêté CIFS, dont une route départementale.
+        $client->request('GET', '/carte/data.geojson?departmentCode=93');
+        $this->assertResponseStatusCodeSame(200);
+        $locationUuids = array_map(fn ($f) => $f['properties']['location_uuid'], json_decode($client->getResponse()->getContent(), true)['features']);
+        $this->assertEqualsCanonicalizing([LocationFixture::UUID_CIFS_NAMED_STREET, LocationFixture::UUID_CIFS_DEPARTMENTAL_ROAD], $locationUuids);
+
+        // Nord : l'emprise Litteralis (GeoJSON brut).
+        $client->request('GET', '/carte/data.geojson?departmentCode=59');
+        $this->assertResponseStatusCodeSame(200);
+        $locationUuids = array_map(fn ($f) => $f['properties']['location_uuid'], json_decode($client->getResponse()->getContent(), true)['features']);
+        $this->assertSame([LocationFixture::UUID_LITTERALIS], $locationUuids);
+
+        // Contour absent de la base : aucune emprise.
+        $client->request('GET', '/carte/data.geojson?departmentCode=08');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, json_decode($client->getResponse()->getContent(), true)['features']);
+    }
+
     public function testMeasureTypesFilter(): void
     {
         $client = static::createClient();

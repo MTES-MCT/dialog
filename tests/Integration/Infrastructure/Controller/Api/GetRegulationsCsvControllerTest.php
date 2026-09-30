@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Api;
 
+use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use App\Tests\Mock\IgnGeocoderMockClient;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
@@ -76,6 +78,45 @@ final class GetRegulationsCsvControllerTest extends AbstractWebTestCase
         $this->assertSame(200, $status);
         $this->assertSame('text/csv; charset=UTF-8', $contentType);
         $this->assertStringContainsString('arrete_uuid;arrete_titre;arrete_categorie', $content);
+    }
+
+    public function testExportFilteredByAdministrativeBoundary(): void
+    {
+        // Seul l'arrêté Litteralis a une emprise dans le Nord.
+        [$status, $content, $contentType] = $this->export(['status' => 'all', 'departmentCode' => '59']);
+
+        $this->assertSame(200, $status);
+        $this->assertSame('text/csv; charset=UTF-8', $contentType);
+
+        // L'en-tête et l'unique emprise de cet arrêté.
+        $lines = array_values(array_filter(explode("\n", trim($content))));
+        $this->assertCount(2, $lines);
+        $this->assertStringContainsString(RegulationOrderRecordFixture::UUID_LITTERALIS, $lines[1]);
+
+        // Les filtres par EPCI et par région sont également disponibles.
+        [$status, $content] = $this->export(['status' => 'all', 'epciCode' => '200054781', 'regionCode' => '11']);
+
+        $this->assertSame(200, $status);
+        $this->assertStringContainsString(RegulationOrderRecordFixture::UUID_PUBLISHED, $content);
+        $this->assertStringNotContainsString(RegulationOrderRecordFixture::UUID_LITTERALIS, $content);
+    }
+
+    public function testExportRejectsUnknownAdministrativeBoundary(): void
+    {
+        [$status, $content, $contentType] = $this->export(['departmentCode' => '99']);
+
+        $this->assertSame(400, $status);
+        $this->assertSame('application/json', $contentType);
+        $this->assertSame(['error' => 'Invalid "departmentCode" parameter'], json_decode($content, true));
+    }
+
+    public function testExportReturns503WhenAdministrativeBoundaryIsUnavailable(): void
+    {
+        [$status, $content, $contentType] = $this->export(['departmentCode' => IgnGeocoderMockClient::UNAVAILABLE_DEPARTMENT_CODE]);
+
+        $this->assertSame(503, $status);
+        $this->assertSame('application/json', $contentType);
+        $this->assertArrayHasKey('error', json_decode($content, true));
     }
 
     public function testHeadFullExportReturnsContentLength(): void

@@ -2733,6 +2733,10 @@
                 <source>map.loading</source>
                 <target>Chargement de la carte en cours...</target>
             </trans-unit>
+            <trans-unit id="map.administrative_boundaries.label">
+                <source>map.administrative_boundaries.label</source>
+                <target>Carte limitée à&#160;:</target>
+            </trans-unit>
             <trans-unit id="map.search_form.search">
                 <source>map.search_form.search</source>
                 <target>Rechercher un lieu</target>
@@ -2871,7 +2875,7 @@
             </trans-unit>
             <trans-unit id="map.share.embed.description">
                 <source>map.share.embed.description</source>
-                <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur l’organisation sélectionnée.</target>
+                <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur l’organisation sélectionnée et n’affichera que les restrictions situées sur son territoire.</target>
             </trans-unit>
             <trans-unit id="map.share.embed.organization.label">
                 <source>map.share.embed.organization.label</source>

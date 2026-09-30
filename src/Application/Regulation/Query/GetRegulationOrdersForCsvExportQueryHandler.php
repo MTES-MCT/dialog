@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Geography\AdministrativeBoundaryResolver;
 use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Application\StorageInterface;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
@@ -25,6 +27,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
         private NumberedRoadLabelMaker $numberedRoadLabelMaker,
+        private AdministrativeBoundaryResolver $administrativeBoundaryResolver,
     ) {
     }
 
@@ -33,6 +36,13 @@ final class GetRegulationOrdersForCsvExportQueryHandler
      */
     public function __invoke(GetRegulationOrdersForCsvExportQuery $query): array
     {
+        // Les contours des collectivités demandées doivent être en base avant de filtrer dessus.
+        $administrativeBoundaryCodes = $this->administrativeBoundaryResolver->resolveCodes([
+            OrganizationCodeTypeEnum::DEPARTMENT->value => $query->departmentCode,
+            OrganizationCodeTypeEnum::EPCI->value => $query->epciCode,
+            OrganizationCodeTypeEnum::REGION->value => $query->regionCode,
+        ]);
+
         $uuids = $this->regulationOrderRecordRepository->findUuidsForApi(
             vigueurStatus: $query->vigueurStatus,
             inseeCode: $query->inseeCode,
@@ -41,6 +51,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
             category: $query->category,
             measureType: $query->measureType,
             now: $this->dateUtils->getNow(),
+            administrativeBoundaryCodes: $administrativeBoundaryCodes,
         );
 
         if ($uuids === []) {

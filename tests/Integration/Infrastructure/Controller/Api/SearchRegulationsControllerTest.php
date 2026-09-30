@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Infrastructure\Controller\Api;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use App\Tests\Mock\IgnGeocoderMockClient;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class SearchRegulationsControllerTest extends AbstractWebTestCase
@@ -106,6 +107,114 @@ final class SearchRegulationsControllerTest extends AbstractWebTestCase
         [$status, $data] = $this->search(['status' => 'all', 'inseeCode' => '00000']);
         $this->assertSame(200, $status);
         $this->assertSame(0, $data['metadata']['totalItems']);
+    }
+
+    public function testSearchFilterByDepartmentCode(): void
+    {
+        // Seine-Saint-Denis : les arrêtés dont une emprise se trouve à Saint-Ouen-sur-Seine.
+        [$status, $data] = $this->search(['status' => 'all', 'departmentCode' => '93']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+
+        // Ardennes : FO2/2023 y a une route départementale, emprise sans code commune
+        // que le filtre par code INSEE ne sait pas retrouver.
+        [$status, $data] = $this->search(['status' => 'all', 'departmentCode' => '08']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertNotContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+
+        // Nord : seul l'arrêté Litteralis (GeoJSON brut) s'y trouve.
+        [$status, $data] = $this->search(['status' => 'all', 'departmentCode' => '59']);
+
+        $this->assertSame(200, $status);
+        $this->assertSame(['117374#24-A-0473'], array_column($data['regulations'], 'identifier'));
+    }
+
+    public function testSearchFilterByEpciCode(): void
+    {
+        // Métropole du Grand Paris.
+        [$status, $data] = $this->search(['status' => 'all', 'epciCode' => '200054781']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+    }
+
+    public function testSearchFilterByRegionCode(): void
+    {
+        // Île-de-France.
+        [$status, $data] = $this->search(['status' => 'all', 'regionCode' => '11']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertContains('F/CIFS/2023', $identifiers);
+        $this->assertNotContains('117374#24-A-0473', $identifiers);
+    }
+
+    public function testSearchCombinesAdministrativeBoundaryFilters(): void
+    {
+        // Une même emprise doit se trouver à la fois en Île-de-France et en Seine-Saint-Denis...
+        [$status, $data] = $this->search(['status' => 'all', 'regionCode' => '11', 'departmentCode' => '93']);
+
+        $this->assertSame(200, $status);
+        $identifiers = array_column($data['regulations'], 'identifier');
+        $this->assertContains('FO2/2023', $identifiers);
+        $this->assertContains('F/CIFS/2023', $identifiers);
+
+        // ...or aucune emprise n'est à la fois en Île-de-France et dans le Nord.
+        [$status, $data] = $this->search(['status' => 'all', 'regionCode' => '11', 'departmentCode' => '59']);
+
+        $this->assertSame(200, $status);
+        $this->assertSame(0, $data['metadata']['totalItems']);
+
+        // Le filtre par collectivité se combine aussi avec le code INSEE de commune.
+        [$status, $data] = $this->search(['status' => 'all', 'inseeCode' => '93070', 'departmentCode' => '08']);
+
+        $this->assertSame(200, $status);
+        $this->assertSame(0, $data['metadata']['totalItems']);
+    }
+
+    public function testSearchUnknownAdministrativeBoundaryReturns400(): void
+    {
+        // Code bien formé mais inconnu du COG.
+        [$status, $data] = $this->search(['status' => 'all', 'departmentCode' => '99']);
+        $this->assertSame(400, $status);
+        $this->assertSame(['error' => 'Invalid "departmentCode" parameter'], $data);
+
+        // Codes mal formés.
+        [$status, $data] = $this->search(['status' => 'all', 'epciCode' => 'abc']);
+        $this->assertSame(400, $status);
+        $this->assertSame(['error' => 'Invalid "epciCode" parameter'], $data);
+
+        [$status, $data] = $this->search(['status' => 'all', 'regionCode' => '1']);
+        $this->assertSame(400, $status);
+        $this->assertSame(['error' => 'Invalid "regionCode" parameter'], $data);
+    }
+
+    public function testSearchReturns503WhenAdministrativeBoundaryIsUnavailable(): void
+    {
+        [$status, $data] = $this->search(['status' => 'all', 'departmentCode' => IgnGeocoderMockClient::UNAVAILABLE_DEPARTMENT_CODE]);
+
+        $this->assertSame(503, $status);
+        $this->assertArrayHasKey('error', $data);
+    }
+
+    public function testSearchIgnoresEmptyAdministrativeBoundaryCode(): void
+    {
+        [$status, $data] = $this->search(['status' => 'all', 'departmentCode' => '']);
+
+        $this->assertSame(200, $status);
+        $this->assertGreaterThanOrEqual(3, $data['metadata']['totalItems']);
     }
 
     public function testSearchStatusExpired(): void
