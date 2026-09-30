@@ -104,6 +104,7 @@ final class ProConnectAuthenticatorTest extends TestCase
             'exp' => time() + 300,
             'sub' => '1234567890',
             'nonce' => 'valid_nonce',
+            'acr' => 'eidas1-mfa',
             'amr' => ['pwd', 'mfa'],
         ], $overrides));
     }
@@ -321,9 +322,9 @@ final class ProConnectAuthenticatorTest extends TestCase
         $this->urlGenerator->method('generate')->willReturn('https://example.com/callback');
 
         // L'utilisateur ne s'est pas authentifié en double facteur côté ProConnect :
-        // le claim `amr` ne contient pas la valeur `mfa`.
+        // le claim `acr` ne correspond pas à un niveau eidas impliquant une MFA.
         $this->mockHttpEndpoints(
-            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken(['amr' => ['pwd']])],
+            ['access_token' => 'test_access_token', 'id_token' => $this->makeIdToken(['acr' => 'eidas1'])],
             $this->makeUserInfoJwt(),
         );
 
