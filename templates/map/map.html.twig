@@ -143,6 +143,8 @@
                     {% include 'map/_share.html.twig' with {
                         organizations: app.user.userOrganizations,
                         carteUrl: url('app_carto'),
+                        startDateParam: form.startDate.vars.full_name,
+                        defaultStartDate: defaultStartDate,
                     } only %}
                 {% endif %}
             </d-map>
