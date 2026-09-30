@@ -29,6 +29,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProConnectAuthenticator extends AbstractAuthenticator
 {
+    private const REQUIRED_MFA_ACR_VALUES = ['eidas0-mfa', 'eidas1-mfa', 'eidas2', 'eidas3'];
+
     // Clés de signature ProConnect, mises en cache le temps de la requête
     private ?array $signingKeys = null;
 
@@ -86,10 +88,10 @@ class ProConnectAuthenticator extends AbstractAuthenticator
             }
 
             // Exige que l'utilisateur se soit authentifié en double facteur côté ProConnect.
-            // Le claim `amr` (demandé via le paramètre `claims` à l'authorize) doit contenir
-            // la valeur `mfa`, sinon on refuse la connexion.
-            $amr = (array) ($idTokenPayload['amr'] ?? []);
-            if (!\in_array('mfa', $amr, true)) {
+            // Le claim `acr` (demandé via le paramètre `claims` à l'authorize) doit contenir
+            // l'un des niveaux eidas impliquant une MFA, sinon on refuse la connexion.
+            $acr = (string) ($idTokenPayload['acr'] ?? '');
+            if (!\in_array($acr, self::REQUIRED_MFA_ACR_VALUES, true)) {
                 throw new CustomUserMessageAuthenticationException('login.proconnect.two_factor_required');
             }
 

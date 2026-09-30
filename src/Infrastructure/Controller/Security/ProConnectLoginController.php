@@ -34,7 +34,14 @@ final class ProConnectLoginController
             'response_type' => 'code',
             'client_id' => $this->proConnectClientId,
             'scope' => 'openid email given_name usual_name siret',
-            'claims' => json_encode(['id_token' => ['amr' => ['essential' => true]]]),
+            'claims' => json_encode([
+                'id_token' => [
+                    'acr' => [
+                        'essential' => true,
+                        'values' => ['eidas0-mfa', 'eidas1-mfa', 'eidas2', 'eidas3'],
+                    ],
+                ],
+            ]),
             'state' => $state,
             'nonce' => $nonce,
             'redirect_uri' => $this->urlGenerator->generate('pro_connect_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
