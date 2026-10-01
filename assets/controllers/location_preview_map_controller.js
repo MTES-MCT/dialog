@@ -6,7 +6,10 @@ import { addHouseNumbersLayer, addMeasureLineLayer, addReferencePointsLayer } fr
 import { boundsFromGeoJSON, extractFirstGeometry, toFeatureCollection } from '../maps/geojson';
 
 export default class extends Controller {
-    static targets = ['container', 'loader', 'message'];
+    // panel/toggleButton : repli/dépliage géré ici (et non par le collapse DSFR, qui ne
+    // s'instancie pas dans les lignes de collection ajoutées dynamiquement — exceptions).
+    // Facultatifs : sans eux (récapitulatif de mesure), l'aperçu se charge directement.
+    static targets = ['container', 'loader', 'message', 'panel', 'toggleButton'];
     static values = {
         url: String,
         referencePointsUrl: String,
@@ -46,6 +49,28 @@ export default class extends Controller {
         this.#boundDebouncedLoad = () => this.#debouncedLoad();
         this.#observeFieldChanges();
         this.#tryLoadGeometry();
+    }
+
+    toggle() {
+        if (!this.hasToggleButtonTarget || !this.hasPanelTarget) {
+            return;
+        }
+
+        const expanded = this.toggleButtonTarget.getAttribute('aria-expanded') === 'true';
+        this.toggleButtonTarget.setAttribute('aria-expanded', String(!expanded));
+        this.panelTarget.hidden = expanded;
+
+        if (!expanded) {
+            // La carte a pu être créée dans un conteneur sans dimensions : on la recale.
+            if (this.#map) {
+                requestAnimationFrame(() => this.#map?.resize());
+            }
+            this.#tryLoadGeometry();
+        }
+    }
+
+    #isCollapsed() {
+        return this.hasPanelTarget && this.panelTarget.hidden;
     }
 
     disconnect() {
@@ -114,6 +139,11 @@ export default class extends Controller {
     }
 
     #tryLoadGeometry() {
+        // Aperçu replié : pas de géocodage inutile, le dépliage rechargera.
+        if (this.#isCollapsed()) {
+            return;
+        }
+
         const section = this.element.closest('[data-form-reveal-target="section"]');
         if (section?.hidden) {
             this.#hideMap();
@@ -130,7 +160,30 @@ export default class extends Controller {
             this.#loadForRawGeoJSON();
         } else if (roadType === 'wholeCity') {
             this.#loadForWholeCity();
+        } else if (roadType === 'zone') {
+            this.#loadForZone();
         }
+    }
+
+    #loadForZone() {
+        const geometry = document.getElementById(this.geometryFieldValue)?.value?.trim();
+
+        if (!geometry) {
+            this.#hideMap();
+            return;
+        }
+
+        const params = new URLSearchParams({ roadType: 'zone', geometry });
+
+        // Même approximation que « Ville entière » : les voies entières en exception
+        // (identifiant BAN) sont soustraites de l'aperçu ; la soustraction exacte
+        // (tronçons, tracés libres, zones) reste faite côté serveur à l'enregistrement.
+        const excluded = this.#collectExceptionRoadBanIds();
+        if (excluded.length) {
+            params.set('excludedRoadBanIds', excluded.join(','));
+        }
+
+        this.#fetchAndDisplay(params);
     }
 
     #loadForWholeCity() {

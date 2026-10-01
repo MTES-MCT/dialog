@@ -52,6 +52,7 @@ final class GetLocationGeometryController
         #[MapQueryParameter] int $fromAbscissa = 0,
         #[MapQueryParameter] int $toAbscissa = 0,
         #[MapQueryParameter] ?string $excludedRoadBanIds = null,
+        #[MapQueryParameter] ?string $geometry = null,
     ): Response {
         try {
             $geometry = match ($roadType) {
@@ -59,6 +60,7 @@ final class GetLocationGeometryController
                 RoadTypeEnum::DEPARTMENTAL_ROAD,
                 RoadTypeEnum::NATIONAL_ROAD => $this->getNumberedRoadGeometry($roadType, $administrator, $roadNumber, $fromPointNumber, $toPointNumber, $fromSide, $toSide, $fromAbscissa, $toAbscissa, $direction ?? DirectionEnum::BOTH->value),
                 RoadTypeEnum::WHOLE_CITY => $this->getWholeCityGeometry($cityCode ?? '', $excludedRoadBanIds),
+                RoadTypeEnum::ZONE => $this->getZoneGeometry($geometry, $excludedRoadBanIds),
                 default => throw new BadRequestHttpException(\sprintf('Unsupported roadType: %s', $roadType->value)),
             };
         } catch (GeocodingAddressNotFoundException) {
@@ -128,6 +130,51 @@ final class GetLocationGeometryController
             $this->logger->error('Failed to compute city geometry', ['cityCode' => $cityCode, 'exception' => $e]);
 
             return null;
+        }
+    }
+
+    /**
+     * Aperçu d'un « Tracé de zone » : les tronçons de rues couverts par le périmètre dessiné.
+     * Comme pour « Ville entière », les voies entières en exception (identifiant BAN) sont
+     * soustraites en approximation ; la soustraction exacte (tronçons, tracés libres, zones)
+     * reste faite côté serveur à l'enregistrement.
+     */
+    private function getZoneGeometry(?string $geometry, ?string $excludedRoadBanIds): ?string
+    {
+        if (!$geometry || !json_validate($geometry)) {
+            return null;
+        }
+
+        try {
+            $sections = $this->roadGeocoder->findSectionsInArea(
+                $geometry,
+                excludeTypes: [$this->roadGeocoder::HIGHWAY],
+                clipToArea: true,
+            );
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to compute zone sections', ['exception' => $e]);
+
+            return null;
+        }
+
+        $excluded = array_values(array_filter(array_map('trim', explode(',', (string) $excludedRoadBanIds))));
+
+        if (!$excluded) {
+            return $sections;
+        }
+
+        try {
+            $excludedLines = array_map(
+                fn (string $roadBanId) => $this->roadGeocoder->computeRoadLine($roadBanId),
+                $excluded,
+            );
+
+            return $this->roadGeocoder->subtractGeometries($sections, $excludedLines);
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to subtract zone exceptions', ['exception' => $e]);
+
+            // L'aperçu reste utile sans la soustraction des exceptions.
+            return $sections;
         }
     }
 

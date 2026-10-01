@@ -52,6 +52,10 @@ export default class extends Controller {
     persisted: { type: Boolean, default: false },
     measureType: { type: String, default: '' },
     searchApiUrl: { type: String, default: '' },
+    // Ids des champs ville de la localisation parente (exception d'une « Ville entière ») :
+    // tant que rien n'est tracé, la carte s'ouvre centrée sur la ville choisie
+    cityLabelField: { type: String, default: '' },
+    cityCodeField: { type: String, default: '' },
     // 'LineString' (tracé libre) ou 'Polygon' (périmètre d'une zone, anneau fermé automatiquement)
     geometryType: { type: String, default: 'LineString' },
     start: {
@@ -94,6 +98,8 @@ export default class extends Controller {
   #searchResults = [];
   #searchActiveIndex = -1;
   #searchBlurTimer = null;
+  #boundCityChange = null;
+  #cityChangeDebounceTimer = null;
 
   connect() {
     if (!this.hasGeometryFieldTarget) {
@@ -105,6 +111,20 @@ export default class extends Controller {
 
     this.#boundKeydown = (e) => this.#handleKeydown(e);
     document.addEventListener('keydown', this.#boundKeydown);
+
+    // Si la ville parente change avant tout tracé, la carte se recentre dessus
+    const cityLabelEl = this.#cityLabelElement();
+
+    if (cityLabelEl) {
+      this.#boundCityChange = () => {
+        clearTimeout(this.#cityChangeDebounceTimer);
+        this.#cityChangeDebounceTimer = setTimeout(
+          () => this.#centerOnCityIfBlank(),
+          300,
+        );
+      };
+      cityLabelEl.addEventListener('change', this.#boundCityChange);
+    }
 
     this.#hiddenAncestor = this.element.closest('[hidden]');
 
@@ -130,9 +150,17 @@ export default class extends Controller {
       document.removeEventListener('keydown', this.#boundKeydown);
     }
 
+    if (this.#boundCityChange) {
+      this.#cityLabelElement()?.removeEventListener(
+        'change',
+        this.#boundCityChange,
+      );
+    }
+
     this.#searchAbortController?.abort();
     clearTimeout(this.#searchDebounceTimer);
     clearTimeout(this.#searchBlurTimer);
+    clearTimeout(this.#cityChangeDebounceTimer);
 
     this.#map?.remove();
     this.#map = null;
@@ -384,6 +412,84 @@ export default class extends Controller {
     this.#writeFieldFromCoordinates();
   }
 
+  #cityLabelElement() {
+    return this.cityLabelFieldValue
+      ? document.getElementById(this.cityLabelFieldValue)
+      : null;
+  }
+
+  // Exception d'une « Ville entière » : tant que rien n'est tracé, la carte s'ouvre
+  // centrée sur la ville choisie plutôt que sur la vue par défaut (France entière ou
+  // étendue de l'organisation).
+  async #centerOnCityIfBlank() {
+    if (
+      !this.#map ||
+      this.#coordinates.length > 0 ||
+      !this.searchApiUrlValue ||
+      !this.cityLabelFieldValue
+    ) {
+      return;
+    }
+
+    const label = this.#cityLabelElement()?.value?.trim();
+
+    if (!label) {
+      return;
+    }
+
+    // « Saint-Ouen-sur-Seine (93400) » → requête sans le code postal entre parenthèses
+    const query = label.replace(/\s*\([^)]*\)\s*$/, '').trim() || label;
+    const cityCode = this.cityCodeFieldValue
+      ? document.getElementById(this.cityCodeFieldValue)?.value?.trim()
+      : '';
+
+    const url = new URL(this.searchApiUrlValue);
+    url.searchParams.set('q', query);
+    url.searchParams.set('type', 'municipality');
+    url.searchParams.set('limit', '1');
+
+    if (cityCode) {
+      url.searchParams.set('citycode', cityCode);
+    }
+
+    try {
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = await response.json();
+      const feature = data?.features?.[0];
+
+      // L'utilisateur a pu commencer à tracer pendant la requête
+      if (!feature || this.#coordinates.length > 0 || !this.#map) {
+        return;
+      }
+
+      if (Array.isArray(feature.bbox) && feature.bbox.length === 4) {
+        const [minLng, minLat, maxLng, maxLat] = feature.bbox;
+        this.#map.fitBounds(
+          [
+            [minLng, minLat],
+            [maxLng, maxLat],
+          ],
+          { padding: 40, maxZoom: 16, animate: false },
+        );
+      } else if (
+        Array.isArray(feature.geometry?.coordinates) &&
+        feature.geometry.coordinates.length === 2
+      ) {
+        this.#map.jumpTo({
+          center: feature.geometry.coordinates,
+          zoom: SEARCH_ZOOM_BY_TYPE.municipality,
+        });
+      }
+    } catch {
+      // La vue par défaut reste utilisable sans centrage.
+    }
+  }
+
   // Retourne l'étendue de l'organisation sous forme [[minLon, minLat], [maxLon, maxLat]],
   // ou null si elle est absente ou invalide (la carte retombe alors sur centre/zoom)
   #organizationBounds() {
@@ -471,6 +577,7 @@ export default class extends Controller {
         this.#setupLineLayer();
         this.#map.on('click', (e) => this.#handleMapClick(e));
         this.#loadFromField();
+        this.#centerOnCityIfBlank();
       });
 
       this.#map.on('error', (e) => console.error('MapLibre error:', e));
