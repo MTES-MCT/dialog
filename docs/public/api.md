@@ -681,6 +681,7 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/cifs.xml' -H 'Accept: a
 #### Limitations
 
 - En raison des limites du format propriétaire CIFS (Waze), seules les interdictions de circulation temporaires s'appliquant à tous les véhicules sont exposées. Les autres cas (ex. zone 30, restrictions poids lourds, permanentes, etc.) ne sont pas inclus.
+- Une `<polyline>` CIFS décrit un seul tracé continu. Une emprise composée de plusieurs tronçons disjoints est donc exposée sous la forme d'un incident par tronçon, dont l'`id` est suffixé par le rang du tronçon (`:1`, `:2`, ...).
 
 ### Géométries des organisations (statistiques)
 
