@@ -2871,7 +2871,7 @@
             </trans-unit>
             <trans-unit id="map.share.embed.description">
                 <source>map.share.embed.description</source>
-                <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur l’organisation sélectionnée.</target>
+                <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur l’organisation sélectionnée et reprendra les filtres actuels.</target>
             </trans-unit>
             <trans-unit id="map.share.embed.organization.label">
                 <source>map.share.embed.organization.label</source>
