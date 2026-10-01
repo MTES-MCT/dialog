@@ -818,7 +818,7 @@
             </trans-unit>
             <trans-unit id="regulation.location.wholeCity.exceptions.description">
                 <source>regulation.location.wholeCity.exceptions.description</source>
-                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à toute la commune sauf ces voies.</target>
+                <target>Ajoutez les voies, routes, zones ou tracés à exclure de la restriction. La mesure s'appliquera à toute la commune sauf ces emprises.</target>
             </trans-unit>
             <trans-unit id="regulation.location.wholeCity.exceptions.add">
                 <source>regulation.location.wholeCity.exceptions.add</source>
@@ -862,7 +862,11 @@
             </trans-unit>
             <trans-unit id="regulation.location.zone.exceptions.description">
                 <source>regulation.location.zone.exceptions.description</source>
-                <target>Ajoutez les voies à exclure de la restriction. La mesure s'appliquera à toute la zone sauf ces voies.</target>
+                <target>Ajoutez les voies, routes, zones ou tracés à exclure de la restriction. La mesure s'appliquera à toute la zone sauf ces emprises.</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.exceptions.description">
+                <source>regulation.location.raw_geojson.exceptions.description</source>
+                <target>Ajoutez les voies, routes, zones ou tracés à exclure de la restriction. La mesure s'appliquera à tout le tracé sauf ces emprises.</target>
             </trans-unit>
             <trans-unit id="regulation.location.zone.draw_polygon_map.draw.start">
                 <source>regulation.location.zone.draw_polygon_map.draw.start</source>

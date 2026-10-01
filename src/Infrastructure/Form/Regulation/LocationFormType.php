@@ -42,13 +42,17 @@ final class LocationFormType extends AbstractType
             ->add('rawGeoJSON', RawGeoJSONFormType::class, [
                 'label' => false,
                 'with_exceptions' => true,
+                'administrators' => $options['administrators'],
             ])
             ->add('wholeCity', WholeCityFormType::class, [
                 'label' => false,
                 'organization' => $options['organization'],
+                'administrators' => $options['administrators'],
             ])
             ->add('zone', ZoneFormType::class, [
                 'label' => false,
+                'with_exceptions' => true,
+                'administrators' => $options['administrators'],
             ])
         ;
 

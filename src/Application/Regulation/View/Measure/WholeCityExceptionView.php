@@ -13,6 +13,8 @@ final readonly class WholeCityExceptionView
         public ?string $fromRoadName = null,
         public ?string $toHouseNumber = null,
         public ?string $toRoadName = null,
+        // Renseigné pour une exception « Route départementale » ou « Route nationale ».
+        public ?NumberedRoadView $numberedRoad = null,
     ) {
     }
 }

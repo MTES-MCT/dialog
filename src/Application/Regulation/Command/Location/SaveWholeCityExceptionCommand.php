@@ -10,8 +10,10 @@ use App\Domain\Regulation\Location\WholeCityException;
 
 /**
  * Une exception à une restriction « Ville entière », « Tracé de zone » ou « Tracé libre » :
- * une voie (entière ou tronçon) ou un tracé libre, saisi avec les MÊMES sous-formulaires
- * qu'une localisation classique (réutilisation).
+ * une voie (entière ou tronçon), une route départementale ou nationale, un tracé de zone ou
+ * un tracé libre, saisi avec les MÊMES sous-formulaires qu'une localisation classique
+ * (réutilisation). Seule « Ville entière » n'est pas proposée : une exception ne peut pas
+ * être elle-même une ville entière.
  */
 final class SaveWholeCityExceptionCommand
 {
@@ -19,7 +21,15 @@ final class SaveWholeCityExceptionCommand
     // son sous-formulaire (le prototype est rendu avec ce type pré-sélectionné).
     public ?string $roadType = RoadTypeEnum::LANE->value;
     public ?SaveNamedStreetCommand $namedStreet = null;
+    public ?SaveNumberedRoadCommand $departmentalRoad = null;
+    public ?SaveNumberedRoadCommand $nationalRoad = null;
+    public ?SaveZoneCommand $zone = null;
     public ?SaveRawGeoJSONCommand $rawGeoJSON = null;
+
+    // Mémo intra-requête : la géométrie calculée par la requête de géométrie parente
+    // (soustraction) est réutilisée à l'enregistrement de l'exception, pour ne géocoder
+    // qu'une seule fois. Ne fait pas partie des données persistées ni de la signature.
+    public ?string $computedGeometry = null;
 
     public function __construct(
         public readonly ?WholeCityException $exception = null,
@@ -33,6 +43,12 @@ final class SaveWholeCityExceptionCommand
 
         if ($this->roadType === RoadTypeEnum::LANE->value) {
             $this->namedStreet = self::hydrateNamedStreet($data);
+        } elseif ($this->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value) {
+            $this->departmentalRoad = SaveNumberedRoadCommand::fromData($data, $this->roadType);
+        } elseif ($this->roadType === RoadTypeEnum::NATIONAL_ROAD->value) {
+            $this->nationalRoad = SaveNumberedRoadCommand::fromData($data, $this->roadType);
+        } elseif ($this->roadType === RoadTypeEnum::ZONE->value) {
+            $this->zone = self::hydrateZone($data);
         } elseif ($this->roadType === RoadTypeEnum::RAW_GEOJSON->value) {
             $this->rawGeoJSON = self::hydrateRawGeoJSON($data, $exception->getGeometry());
         }
@@ -40,20 +56,26 @@ final class SaveWholeCityExceptionCommand
 
     public function clean(): void
     {
-        if ($this->roadType === RoadTypeEnum::LANE->value) {
-            $this->rawGeoJSON = null;
-            $this->namedStreet?->clean();
+        $active = $this->getActiveRoadCommand();
+
+        // On ne conserve que le sous-formulaire du type sélectionné, et on le nettoie
+        // (décodage des points de repère saisis, notamment).
+        foreach (['namedStreet', 'departmentalRoad', 'nationalRoad', 'zone', 'rawGeoJSON'] as $field) {
+            if ($this->$field !== $active) {
+                $this->$field = null;
+            }
         }
 
-        if ($this->roadType === RoadTypeEnum::RAW_GEOJSON->value) {
-            $this->namedStreet = null;
-        }
+        $active?->clean();
     }
 
     public function getActiveRoadCommand(): ?RoadCommandInterface
     {
         return match ($this->roadType) {
             RoadTypeEnum::LANE->value => $this->namedStreet,
+            RoadTypeEnum::DEPARTMENTAL_ROAD->value => $this->departmentalRoad,
+            RoadTypeEnum::NATIONAL_ROAD->value => $this->nationalRoad,
+            RoadTypeEnum::ZONE->value => $this->zone,
             RoadTypeEnum::RAW_GEOJSON->value => $this->rawGeoJSON,
             default => null,
         };
@@ -66,8 +88,8 @@ final class SaveWholeCityExceptionCommand
 
     /**
      * Une exception « voie entière » se soustrait exactement de la géométrie de la ville par
-     * son identifiant BAN (voir RoadGeocoder::computeCityGeometry). Les tronçons et tracés
-     * libres doivent être soustraits géométriquement.
+     * son identifiant BAN (voir RoadGeocoder::computeCityGeometry). Les tronçons, routes
+     * numérotées, tracés de zone et tracés libres doivent être soustraits géométriquement.
      */
     public function getExcludedRoadBanId(): ?string
     {
@@ -81,19 +103,30 @@ final class SaveWholeCityExceptionCommand
     public function isComplete(): bool
     {
         return match ($this->roadType) {
-            RoadTypeEnum::LANE->value => !empty($this->namedStreet?->roadBanId),
-            RoadTypeEnum::RAW_GEOJSON->value => !empty($this->rawGeoJSON?->geometry),
+            RoadTypeEnum::LANE->value => self::isFilled($this->namedStreet?->roadBanId),
+            RoadTypeEnum::DEPARTMENTAL_ROAD->value => self::isFilled($this->departmentalRoad?->roadNumber),
+            RoadTypeEnum::NATIONAL_ROAD->value => self::isFilled($this->nationalRoad?->roadNumber),
+            RoadTypeEnum::ZONE->value => self::isFilled($this->zone?->geometry),
+            RoadTypeEnum::RAW_GEOJSON->value => self::isFilled($this->rawGeoJSON?->geometry),
             default => false,
         };
     }
 
+    // « 0 » est une valeur renseignée : pas de test de vérité PHP (empty('0') vaut true).
+    private static function isFilled(?string $value): bool
+    {
+        return $value !== null && $value !== '';
+    }
+
     public function getLabel(): string
     {
-        if ($this->roadType === RoadTypeEnum::RAW_GEOJSON->value) {
-            return (string) $this->rawGeoJSON?->label;
-        }
-
-        return (string) $this->namedStreet?->roadName;
+        return match ($this->roadType) {
+            RoadTypeEnum::DEPARTMENTAL_ROAD->value => (string) $this->departmentalRoad?->roadNumber,
+            RoadTypeEnum::NATIONAL_ROAD->value => (string) $this->nationalRoad?->roadNumber,
+            RoadTypeEnum::ZONE->value => (string) $this->zone?->label,
+            RoadTypeEnum::RAW_GEOJSON->value => (string) $this->rawGeoJSON?->label,
+            default => (string) $this->namedStreet?->roadName,
+        };
     }
 
     /**
@@ -101,6 +134,23 @@ final class SaveWholeCityExceptionCommand
      */
     public function toData(): array
     {
+        if ($this->roadType === RoadTypeEnum::DEPARTMENTAL_ROAD->value) {
+            return $this->departmentalRoad?->toData() ?? [];
+        }
+
+        if ($this->roadType === RoadTypeEnum::NATIONAL_ROAD->value) {
+            return $this->nationalRoad?->toData() ?? [];
+        }
+
+        if ($this->roadType === RoadTypeEnum::ZONE->value) {
+            return [
+                'label' => $this->zone?->label,
+                // Périmètre dessiné, conservé pour ré-édition (la géométrie de l'exception
+                // stockée par ailleurs contient les tronçons de rues couverts).
+                'geometry' => $this->zone?->geometry,
+            ];
+        }
+
         if ($this->roadType === RoadTypeEnum::RAW_GEOJSON->value) {
             return [
                 'label' => $this->rawGeoJSON?->label,
@@ -146,6 +196,19 @@ final class SaveWholeCityExceptionCommand
         $command->toRoadBanId = $data['toRoadBanId'] ?? null;
         $command->toRoadName = $data['toRoadName'] ?? null;
         $command->direction = $data['direction'] ?? \App\Domain\Regulation\Enum\DirectionEnum::BOTH->value;
+
+        return $command;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private static function hydrateZone(array $data): SaveZoneCommand
+    {
+        $command = new SaveZoneCommand();
+        $command->roadType = RoadTypeEnum::ZONE->value;
+        $command->label = $data['label'] ?? null;
+        $command->geometry = $data['geometry'] ?? null;
 
         return $command;
     }
