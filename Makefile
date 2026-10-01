@@ -116,6 +116,16 @@ bdtopo_migrate: ## Run db migrations for bdtopo
 bdtopo_setup_indexes: ## Create BD TOPO indexes, extensions, and functions
 	${BIN_CONSOLE} app:bdtopo:setup_indexes ${ARGS}
 
+bdtopo_update_local: ## Télécharge, concatène et importe la BD TOPO dans la base locale (mode archive locale, sans S3)
+	./tools/bdtopo_download_and_update \
+		--local-archive \
+		--url "postgresql://dialog:dialog@localhost:5432/dialog_bdtopo" \
+		--overwrite \
+		-y \
+		$$([ "$(SKIP_DOWNLOAD)" = "true" ] && echo "--skip-download") \
+		$$([ "$(SKIP_IMPORT)" = "true" ] && echo "--skip-import") \
+		$$([ "$(KEEP_ARCHIVES)" = "true" ] && echo "--keep-archives")
+
 metabase_migration: ## Generate new migration for metabase
 	${BIN_CONSOLE} doctrine:migrations:generate --configuration ./config/packages/metabase/doctrine_migrations.yaml
 
@@ -250,6 +260,14 @@ test_unit: ## Run unit tests only
 test_integration: ## Run integration tests only
 	${BIN_PHP} ./bin/phpunit --testsuite=Integration ${ARGS}
 
+test_reset_db: ## Reset test database and run the test suite
+	$(MAKE) droptestdb
+	$(MAKE) console CMD="doctrine:database:create --env=test --if-not-exists"
+	$(MAKE) dbmigrate ARGS="--env=test"
+	$(MAKE) metabase_migrate ARGS="--env=test"
+	$(MAKE) data_install ARGS="--env=test"
+	$(MAKE) dbfixtures
+
 test_all: ## Run the test suite (with coverage)
 	make test_cov
 
@@ -304,24 +322,26 @@ ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	make bdtopo_migrate
 
-ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow
+ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow (upload S3 + import en flux)
 	make composer CMD="install -n --prefer-dist"
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
-	# Créer le tunnel vers la base BDTOPO
-	# On utilise scalingo db-tunnel directement car scalingodbtunnel nécessite Docker
-	scalingo --app dialog-bdtopo-2025 db-tunnel -p 10002 DATABASE_URL > /dev/null 2>&1 & \
-	TUNNEL_PID=$$!; \
-	sleep 3; \
-	# Récupérer les credentials depuis l'URL du secret et construire l'URL du tunnel
-	# Compatible macOS et Linux (sed fonctionne de la même manière pour ces patterns)
-	if [ -n "$$BDTOPO_2025_2_DATABASE_URL" ]; then \
-		# Construire la nouvelle URL avec localhost:10002
-		# Utiliser une substitution compatible macOS et Linux
-		BDTOPO_TUNNEL_URL=$$(echo "$$BDTOPO_2025_2_DATABASE_URL" | sed 's|@[^/]*|@127.0.0.1:10002|'); \
-		export BDTOPO_2025_2_DATABASE_URL="$$BDTOPO_TUNNEL_URL"; \
+	# Ouvre un tunnel vers la base BDTOPO cible puis lance le pipeline S3.
+	# On utilise `scalingo db-tunnel` directement car scalingodbtunnel nécessite Docker.
+	# BDTOPO_TARGET vaut 2025 (défaut) ou 2025_2.
+	if [ "$(BDTOPO_TARGET)" = "2025_2" ]; then \
+		BDTOPO_APP="dialog-bdtopo-2025-2"; \
+		SOURCE_URL="$$BDTOPO_2025_2_DATABASE_URL"; \
+	else \
+		BDTOPO_APP="dialog-bdtopo-2025"; \
+		SOURCE_URL="$$BDTOPO_2025_DATABASE_URL"; \
 	fi; \
+	scalingo --app $$BDTOPO_APP db-tunnel -p 10002 DATABASE_URL > /dev/null 2>&1 & \
+	TUNNEL_PID=$$!; \
 	./tools/wait-for-it.sh 127.0.0.1:10002; \
+	BDTOPO_TUNNEL_URL=$$(echo "$$SOURCE_URL" | sed 's|@[^/]*|@127.0.0.1:10002|'); \
 	./tools/bdtopo_download_and_update \
+		--s3 \
+		--url "$$BDTOPO_TUNNEL_URL" \
 		--overwrite \
 		-y \
 		$$([ "$(SKIP_DOWNLOAD)" = "true" ] && echo "--skip-download") \
