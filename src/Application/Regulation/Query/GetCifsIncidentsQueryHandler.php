@@ -23,6 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetCifsIncidentsQueryHandler
 {
+    private const DEFAULT_SOURCE_REFERENCE = 'dialog.beta.gouv.fr';
+
     public function __construct(
         private RegulationOrderRecordRepositoryInterface $repository,
         private PolylineMakerInterface $polylineMaker,
@@ -58,6 +60,12 @@ final class GetCifsIncidentsQueryHandler
             $regulationOrder = $regulationOrderRecord->getRegulationOrder();
             $identifier = $regulationOrder->getIdentifier();
             $regulationSubject = $regulationOrder->getSubject();
+
+            // La source de l'incident est l'organisation émettrice de l'arrêté, identifiée par son code
+            // (code INSEE pour une commune). À défaut de code, on retombe sur la référence de DiaLog.
+            $organization = $regulationOrderRecord->getOrganization();
+            $sourceReference = $organization->getCode() ?: self::DEFAULT_SOURCE_REFERENCE;
+            $sourceName = \sprintf('%s (DiaLog)', $organization->getName());
 
             $incidentCreationTime = $regulationOrderRecord->getCreatedAt();
             $regulationStart = $overallDates[$uuid]['overallStartDate'];
@@ -184,6 +192,9 @@ final class GetCifsIncidentsQueryHandler
                             polyline: $polyline,
                             startTime: $incidentPeriod['start'],
                             endTime: $incidentPeriod['end'],
+                            sourceReference: $sourceReference,
+                            sourceName: $sourceName,
+                            regulationOrderRecordUuid: $uuid,
                             schedule: $incidentPeriod['schedule'],
                         );
                     }
