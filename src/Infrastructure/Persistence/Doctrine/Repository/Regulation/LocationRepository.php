@@ -79,6 +79,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         RegulationOrderRecordStatusEnum $status = RegulationOrderRecordStatusEnum::PUBLISHED,
         array $organizationUuids = [],
         bool $includeHeavyGoodsVehicles = true,
+        array $administrativeBoundaryCodes = [],
     ): string {
         [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
             $includePermanentRegulations,
@@ -89,6 +90,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             $status,
             $organizationUuids,
             $includeHeavyGoodsVehicles,
+            $administrativeBoundaryCodes,
         );
 
         $rows = $this->getEntityManager()->getConnection()->fetchAllAssociative(
@@ -156,6 +158,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         ?\DateTimeInterface $startDate = null,
         ?\DateTimeInterface $endDate = null,
         bool $includeHeavyGoodsVehicles = true,
+        array $administrativeBoundaryCodes = [],
     ): string {
         [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types] = $this->buildMapFilterSql(
             $includePermanentRegulations,
@@ -166,6 +169,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             RegulationOrderRecordStatusEnum::PUBLISHED,
             [],
             $includeHeavyGoodsVehicles,
+            $administrativeBoundaryCodes,
         );
 
         $extraWhere = \sprintf(
@@ -256,7 +260,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
     }
 
     /**
-     * @param string[] $organizationUuids
+     * @param string[]              $organizationUuids
+     * @param array<string, string> $administrativeBoundaryCodes
      *
      * @return array{0: string, 1: string, 2: array<string, mixed>, 3: array<string, mixed>}
      */
@@ -269,6 +274,7 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         RegulationOrderRecordStatusEnum $status,
         array $organizationUuids,
         bool $includeHeavyGoodsVehicles = true,
+        array $administrativeBoundaryCodes = [],
     ): array {
         $parameters = [
             'status' => $status->value,
@@ -311,6 +317,25 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 WHERE vs.measure_uuid = m.uuid
                 AND vs.restricted_types LIKE \'%"heavyGoodsVehicle"%\'
             )';
+        }
+
+        // Filtre par collectivité (#2112) : on ne garde que les emprises qui intersectent le contour
+        // de la collectivité. Si le contour n'est pas (encore) en base, aucune emprise n'est retenue.
+        $boundaryIndex = 0;
+
+        foreach ($administrativeBoundaryCodes as $codeType => $code) {
+            $regulationTypeWhereClause .= \sprintf(
+                ' AND EXISTS (
+                    SELECT 1 FROM administrative_boundary AS ab%1$d
+                    WHERE ab%1$d.code_type = :boundaryCodeType%1$d
+                    AND ab%1$d.code = :boundaryCode%1$d
+                    AND ST_Intersects(l.geometry, ab%1$d.geometry)
+                )',
+                $boundaryIndex,
+            );
+            $parameters['boundaryCodeType' . $boundaryIndex] = $codeType;
+            $parameters['boundaryCode' . $boundaryIndex] = $code;
+            ++$boundaryIndex;
         }
 
         $measureDatesCondition = '';

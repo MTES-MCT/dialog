@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Controller\Api\Regulations;
 
+use App\Application\Exception\AdministrativeBoundaryNotFoundException;
+use App\Application\Exception\AdministrativeBoundaryUnavailableException;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\View\RegulationOrderForApiView;
@@ -134,5 +136,49 @@ final class SearchRegulationsControllerTest extends TestCase
 
         $this->assertSame(1, $captured->page);
         $this->assertSame(100, $captured->pageSize);
+    }
+
+    public function testPassesAdministrativeBoundaryCodesToQuery(): void
+    {
+        $captured = null;
+        $this->queryBus
+            ->method('handle')
+            ->willReturnCallback(function (GetRegulationOrdersForApiQuery $query) use (&$captured) {
+                $captured = $query;
+
+                return new Pagination([], 0, 1, 20);
+            });
+        $this->normalizer->method('normalize')->willReturn([]);
+
+        $response = ($this->controller)('all', departmentCode: '44', epciCode: '244400404', regionCode: '52');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('44', $captured->departmentCode);
+        $this->assertSame('244400404', $captured->epciCode);
+        $this->assertSame('52', $captured->regionCode);
+    }
+
+    public function testRejectsUnknownAdministrativeBoundary(): void
+    {
+        $this->queryBus
+            ->method('handle')
+            ->willThrowException(new AdministrativeBoundaryNotFoundException('epci', '200000000'));
+
+        $response = ($this->controller)('all', epciCode: '200000000');
+
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(['error' => 'Invalid "epciCode" parameter'], json_decode($response->getContent(), true));
+    }
+
+    public function testReturnsServiceUnavailableWhenAdministrativeBoundaryCannotBeFetched(): void
+    {
+        $this->queryBus
+            ->method('handle')
+            ->willThrowException(new AdministrativeBoundaryUnavailableException('WFS down'));
+
+        $response = ($this->controller)('all', regionCode: '52');
+
+        $this->assertSame(503, $response->getStatusCode());
+        $this->assertArrayHasKey('error', json_decode($response->getContent(), true));
     }
 }

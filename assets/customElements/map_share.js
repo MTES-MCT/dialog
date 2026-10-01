@@ -101,6 +101,12 @@ customElements.define('d-map-share', class extends HTMLElement {
         const organizationUuid = this.#orgSelect.value;
         const absoluteCarteUrl = new URL(this.#carteUrl, window.location.origin);
         absoluteCarteUrl.searchParams.set('organizationUuid', organizationUuid);
+        // Limite la carte intégrée au territoire de l'organisation, identifié par son code du COG
+        // (inseeCode, epciCode, departmentCode ou regionCode selon le type de collectivité).
+        const { boundaryParameter, boundaryCode } = this.#orgSelect.selectedOptions[0]?.dataset ?? {};
+        if (boundaryParameter && boundaryCode) {
+            absoluteCarteUrl.searchParams.set(boundaryParameter, boundaryCode);
+        }
         absoluteCarteUrl.searchParams.set('embed', '1');
         const src = absoluteCarteUrl.toString();
         this.#embedInput.value = `<iframe src="${src}" width="1280" height="600" frameborder="0" title="DiaLog"></iframe>`;

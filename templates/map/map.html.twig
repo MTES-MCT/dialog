@@ -36,6 +36,16 @@
                     </div>
                 {% endif %}
 
+                {% if administrativeBoundaries %}
+                    {# Filtre par collectivité passé dans l'URL : on l'indique, car il n'apparaît pas dans les filtres ci-dessous. #}
+                    <p class="fr-text--sm fr-mb-2w" id="map-administrative-boundaries">
+                        {{ 'map.administrative_boundaries.label'|trans }}
+                        {% for boundary in administrativeBoundaries %}
+                            <span class="fr-tag fr-tag--sm">{{ boundary.name }}</span>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+
                 <div class="fr-accordion">
                     <h2 class="fr-accordion__title">
                         <button class="fr-accordion__btn" aria-expanded="true" aria-controls="map-filters-accordion">
@@ -51,6 +61,11 @@
                                     style: '--stack-gap: var(--1w)',
                                 },
                             }) }}
+                            {# Filtre par collectivité : ces champs, hors formulaire Symfony, sont repris tels quels
+                               dans l'URL des tuiles par <d-map-form>, qui sérialise tous les champs du <form>. #}
+                            {% for boundary in administrativeBoundaries %}
+                                <input type="hidden" name="{{ administrativeBoundaryParameterNames[boundary.codeType] }}" value="{{ boundary.code }}">
+                            {% endfor %}
                             <fieldset class="fr-fieldset" id="measureTypes" aria-labelledby="measureTypes-legend">
                                 {{ form_label(form.measureTypes, null, {
                                     element: 'legend',
@@ -143,6 +158,7 @@
                     {% include 'map/_share.html.twig' with {
                         organizations: app.user.userOrganizations,
                         carteUrl: url('app_carto'),
+                        administrativeBoundaryParameterNames: administrativeBoundaryParameterNames,
                     } only %}
                 {% endif %}
             </d-map>

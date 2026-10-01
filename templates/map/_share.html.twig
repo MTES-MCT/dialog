@@ -84,7 +84,13 @@
                                     data-share-role="orgSelect"
                                 >
                                     {% for org in organizations %}
-                                        <option value="{{ org.uuid }}"{% if loop.first %} selected{% endif %}>{{ org.name }}</option>
+                                        {# Le code du COG de l'organisation permet de limiter la carte intégrée à son territoire. #}
+                                        {% set boundaryParameter = org.code and org.codeType ? administrativeBoundaryParameterNames[org.codeType]|default(null) : null %}
+                                        <option
+                                            value="{{ org.uuid }}"
+                                            {% if boundaryParameter %}data-boundary-parameter="{{ boundaryParameter }}" data-boundary-code="{{ org.code }}"{% endif %}
+                                            {% if loop.first %}selected{% endif %}
+                                        >{{ org.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query;
 
+use App\Application\AdministrativeBoundaryFetcherInterface;
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\AdministrativeBoundaryNotFoundException;
+use App\Application\Geography\AdministrativeBoundaryResolver;
+use App\Application\Geography\View\AdministrativeBoundaryView;
 use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQueryHandler;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use App\Application\StorageInterface;
 use App\Domain\Condition\VehicleSet;
+use App\Domain\Geography\Repository\AdministrativeBoundaryRepositoryInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
@@ -35,6 +40,8 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
     private StorageInterface&MockObject $storage;
     private DateUtilsInterface&MockObject $dateUtils;
     private TranslatorInterface&MockObject $translator;
+    private AdministrativeBoundaryRepositoryInterface&MockObject $administrativeBoundaryRepository;
+    private AdministrativeBoundaryFetcherInterface&MockObject $administrativeBoundaryFetcher;
     private GetRegulationOrdersForCsvExportQueryHandler $handler;
 
     protected function setUp(): void
@@ -54,12 +61,19 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
                 return strtr($catalogue[$id] ?? $id, $parameters);
             },
         );
+        $this->administrativeBoundaryRepository = $this->createMock(AdministrativeBoundaryRepositoryInterface::class);
+        $this->administrativeBoundaryFetcher = $this->createMock(AdministrativeBoundaryFetcherInterface::class);
         $this->handler = new GetRegulationOrdersForCsvExportQueryHandler(
             $this->regulationOrderRecordRepository,
             $this->storageRegulationOrderRepository,
             $this->storage,
             $this->dateUtils,
             new NumberedRoadLabelMaker($this->translator),
+            new AdministrativeBoundaryResolver(
+                $this->administrativeBoundaryRepository,
+                $this->administrativeBoundaryFetcher,
+                $this->dateUtils,
+            ),
         );
     }
 
@@ -107,6 +121,48 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->regulationOrderRecordRepository->expects(self::never())->method('iterateRegulationOrdersForApiByUuids');
 
         $this->assertSame([], $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery()));
+    }
+
+    public function testFiltersOnResolvedAdministrativeBoundaries(): void
+    {
+        // Les contours sont déjà en base : ils ne sont pas re-téléchargés.
+        $this->administrativeBoundaryRepository
+            ->method('findOneByCode')
+            ->willReturnCallback(static fn (string $codeType, string $code) => new AdministrativeBoundaryView($codeType, $code, 'Nom'));
+        $this->administrativeBoundaryFetcher->expects(self::never())->method('fetch');
+
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('findUuidsForApi')
+            ->with(
+                'all',
+                null,
+                null,
+                null,
+                null,
+                null,
+                new \DateTimeImmutable('2025-01-01'),
+                ['departement' => '44', 'region' => '52'],
+            )
+            ->willReturn([]);
+
+        $this->assertSame([], $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery(
+            departmentCode: '44',
+            regionCode: '52',
+        )));
+    }
+
+    public function testThrowsWhenAdministrativeBoundaryIsUnknown(): void
+    {
+        $this->expectException(AdministrativeBoundaryNotFoundException::class);
+
+        $this->administrativeBoundaryRepository->method('findOneByCode')->willReturn(null);
+        $this->administrativeBoundaryFetcher
+            ->method('fetch')
+            ->willThrowException(new AdministrativeBoundaryNotFoundException('epci', '200000000'));
+        $this->regulationOrderRecordRepository->expects(self::never())->method('findUuidsForApi');
+
+        $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery(epciCode: '200000000'));
     }
 
     public function testBuildsRowWithNamedStreetLabelAndPdfUrl(): void

@@ -650,6 +650,9 @@ Les mêmes filtres que l'API JSON de recherche (`GET /api/regulations/json`) son
 
 - `status` (`current` | `expired` | `upcoming` | `all`, défaut `all`): statut de vigueur.
 - `inseeCode` (string): code INSEE exact d'une commune.
+- `epciCode` (string): code SIREN d'un EPCI (métropole, communauté urbaine, d'agglomération ou de communes).
+- `departmentCode` (string): code INSEE d'un département (ex. `44`, `2A`, `974`).
+- `regionCode` (string): code INSEE d'une région (ex. `52`).
 - `dateStart` / `dateEnd` (date ISO 8601): plage de dates de vigueur.
 - `category` (`permanentRegulation` | `temporaryRegulation`): nature de l'arrêté.
 - `measureType` (string): type de restriction.
@@ -663,7 +666,20 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv' -o restrictions.cs
 
 # Uniquement les arrêtés en vigueur d'une commune
 curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv?status=current&inseeCode=75056' -o restrictions.csv
+
+# Uniquement les arrêtés en vigueur d'un département
+curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv?status=current&departmentCode=44' -o restrictions.csv
 ```
+
+#### Filtrer par collectivité
+
+Les paramètres `inseeCode`, `epciCode`, `departmentCode` et `regionCode` restreignent l'export (et la recherche JSON) à une collectivité, identifiée par son code du COG (code officiel géographique). Ils peuvent être combinés.
+
+- Pour un EPCI, un département ou une région, un arrêté est retenu dès qu'une de ses emprises, quel que soit son type (voie nommée, route numérotée, zone, tracé libre…), intersecte le contour officiel de la collectivité (référentiel ADMIN EXPRESS COG de l'IGN). Une voie située en limite de territoire peut donc ressortir pour les deux collectivités voisines.
+- Un code mal formé ou inconnu du COG renvoie une erreur `400`.
+- Si le contour d'une collectivité demandée pour la première fois ne peut pas être récupéré, l'API renvoie une erreur `503` : réessayez plus tard.
+
+Les mêmes paramètres sont acceptés dans l'URL de la carte (`/carte?departmentCode=44`), y compris en mode intégré (`embed=1`) : la carte est alors centrée sur la collectivité et n'affiche que les restrictions situées sur son territoire.
 
 ### Export CIFS (Waze)
 

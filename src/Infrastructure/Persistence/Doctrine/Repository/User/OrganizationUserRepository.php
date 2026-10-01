@@ -43,7 +43,9 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
                         ELSE false
                     END,
                     ou.isOwner,
-                    ou.isMandataire
+                    ou.isMandataire,
+                    o.code,
+                    o.codeType
                 )',
                 UserOrganizationView::class,
             ))

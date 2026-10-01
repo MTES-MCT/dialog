@@ -7,6 +7,7 @@ namespace App\Infrastructure\Controller\Map\Fragments;
 use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Infrastructure\Controller\AdministrativeBoundaryQueryParameters;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
@@ -69,6 +70,7 @@ final class MapDraftsDataController
             RegulationOrderRecordStatusEnum::DRAFT,
             $organizationUuids,
             $dto->displayHeavyGoodsVehicles,
+            AdministrativeBoundaryQueryParameters::fromRequest($request),
         );
 
         return $this->jsonResponse($locationsAsGeoJson);

@@ -29,6 +29,9 @@ final readonly class GetRegulationOrdersForCsvExportQuery implements QueryInterf
         public ?string $category = null,
         public ?string $measureType = null,
         public bool $includeHeavyGoodsVehicle = true,
+        public ?string $departmentCode = null,
+        public ?string $epciCode = null,
+        public ?string $regionCode = null,
     ) {
     }
 }

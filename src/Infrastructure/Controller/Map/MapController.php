@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Map;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Exception\AdministrativeBoundaryNotFoundException;
+use App\Application\Exception\AdministrativeBoundaryUnavailableException;
+use App\Application\Geography\AdministrativeBoundaryResolver;
+use App\Application\Geography\View\AdministrativeBoundaryView;
+use App\Domain\Geography\Repository\AdministrativeBoundaryRepositoryInterface;
+use App\Domain\Organization\Enum\OrganizationCodeTypeEnum;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
+use App\Infrastructure\Controller\AdministrativeBoundaryQueryParameters;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use App\Infrastructure\Security\User\AbstractAuthenticatedUser;
@@ -27,6 +34,8 @@ final class MapController
         private Security $security,
         private OrganizationRepositoryInterface $organizationRepository,
         private LocationRepositoryInterface $locationRepository,
+        private AdministrativeBoundaryResolver $administrativeBoundaryResolver,
+        private AdministrativeBoundaryRepositoryInterface $administrativeBoundaryRepository,
     ) {
     }
 
@@ -70,8 +79,13 @@ final class MapController
         $user = $this->security->getUser();
         $userUuid = $user instanceof AbstractAuthenticatedUser ? $user->getUuid() : null;
 
+        // Filtre par collectivité : les codes du COG sont passés dans l'URL (inseeCode, epciCode,
+        // departmentCode, regionCode), à côté de organizationUuid et embed.
+        $administrativeBoundaries = $this->resolveAdministrativeBoundaries($request);
+
         $initialBbox = match (true) {
             $regulationOrderRecordUuid !== null => $this->locationRepository->findMapBboxByRegulationOrderRecordUuid($regulationOrderRecordUuid->toString()),
+            $administrativeBoundaries !== [] => $this->administrativeBoundaryRepository->findMapBbox($administrativeBoundaries[0]->codeType, $administrativeBoundaries[0]->code),
             $organizationUuid !== null => $this->organizationRepository->findMapBboxByOrganizationUuid($organizationUuid->toString()),
             default => $this->organizationRepository->findInitialMapBbox($userUuid),
         };
@@ -83,8 +97,29 @@ final class MapController
                     'form' => $form->createView(),
                     'tilesUrlTemplate' => $tilesUrl,
                     'initialBbox' => $initialBbox,
+                    'administrativeBoundaries' => $administrativeBoundaries,
+                    'administrativeBoundaryParameterNames' => AdministrativeBoundaryQueryParameters::NAMES,
                 ],
             ),
         );
+    }
+
+    /**
+     * @return AdministrativeBoundaryView[]
+     */
+    private function resolveAdministrativeBoundaries(Request $request): array
+    {
+        $boundaries = [];
+
+        foreach (AdministrativeBoundaryQueryParameters::fromRequest($request) as $codeType => $code) {
+            try {
+                $boundaries[] = $this->administrativeBoundaryResolver->resolve(OrganizationCodeTypeEnum::from($codeType), $code);
+            } catch (AdministrativeBoundaryNotFoundException|AdministrativeBoundaryUnavailableException) {
+                // Collectivité inconnue ou contour indisponible : on affiche la carte sans ce filtre
+                // plutôt qu'une page d'erreur (la carte peut être intégrée en iframe dans un site tiers).
+            }
+        }
+
+        return $boundaries;
     }
 }

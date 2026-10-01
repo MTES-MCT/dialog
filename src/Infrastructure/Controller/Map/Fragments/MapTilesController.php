@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Map\Fragments;
 
 use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
+use App\Infrastructure\Controller\AdministrativeBoundaryQueryParameters;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
 use App\Infrastructure\Form\Map\MapFilterFormType;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -60,6 +61,9 @@ final class MapTilesController
             $dto->startDate,
             $dto->endDate,
             $dto->displayHeavyGoodsVehicles,
+            // Le contour est mis en base par MapController au chargement de la page : ici on ne fait
+            // que filtrer dessus, sans jamais appeler la source externe à chaque tuile.
+            AdministrativeBoundaryQueryParameters::fromRequest($request),
         );
 
         if ($mvt === '') {

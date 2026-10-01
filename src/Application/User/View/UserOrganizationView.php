@@ -12,6 +12,8 @@ final readonly class UserOrganizationView
         public bool $completed = false,
         public bool $isOwner = false,
         public bool $isMandataire = false,
+        public ?string $code = null,
+        public ?string $codeType = null,
     ) {
     }
 }

@@ -43,6 +43,18 @@ DiaLog s'interface avec l'[API WFS de l'IGN](https://geoservices.ign.fr/document
 * [Documentation de la BDTOPO] (https://geoservices.ign.fr/sites/default/files/2023-10/DC_BDTOPO_3-3.pdf)
 * [Fonctions de filtrage qui peuvent être utilisées dans le filtrage WFS] (https://docs.geoserver.org/main/en/user/filter/function_reference.html)
 
+### Contours des collectivités (ADMIN EXPRESS COG)
+
+Le filtre par collectivité de l'API publique et de la carte (`inseeCode`, `epciCode`, `departmentCode`, `regionCode`) s'appuie sur les contours officiels des collectivités, récupérés via ce même service WFS dans le référentiel [ADMIN EXPRESS COG](https://geoservices.ign.fr/adminexpress) (couches `ADMINEXPRESS-COG-CARTO.LATEST:commune`, `epci`, `departement` et `region`). Une restriction concerne une collectivité lorsque son emprise intersecte ce contour.
+
+* Un contour est téléchargé la première fois qu'une collectivité est demandée, puis conservé dans la table `administrative_boundary` : les requêtes suivantes n'appellent plus le service.
+* L'URL du service est celle de la variable d'environnement `APP_IGN_GEOCODER_BASE_URL`.
+* Les contours déjà en base ne sont pas rafraîchis automatiquement. Pour suivre les évolutions annuelles du COG (fusions de communes, périmètres des EPCI), lancer cette commande à la main une fois le nouveau millésime publié :
+
+```bash
+make console CMD="app:administrative-boundaries:refresh"
+```
+
 ## Signalements adresse vers l'IGN (Espace collaboratif / GCMS)
 
 Les signalements d'adresses non reconnues sont envoyés à l'[Espace collaboratif IGN](https://espacecollaboratif.ign.fr) (API GCMS). DiaLog enregistre l'identifiant et le statut, reçoit les mises à jour de statut via un webhook et notifie l'équipe support par email.

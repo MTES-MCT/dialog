@@ -41,6 +41,11 @@ interface RegulationOrderRecordRepositoryInterface
     /**
      * Retourne les UUID des arrêtés publiés de toutes les organisations correspondant aux filtres de l'API publique.
      *
+     * @param array<string, string> $administrativeBoundaryCodes Codes de collectivités indexés par type
+     *                                                           (valeur de OrganizationCodeTypeEnum) : ne retient que
+     *                                                           les arrêtés dont au moins une emprise intersecte le
+     *                                                           contour de chacune de ces collectivités
+     *
      * @return string[]
      */
     public function findUuidsForApi(
@@ -51,6 +56,7 @@ interface RegulationOrderRecordRepositoryInterface
         ?string $category,
         ?string $measureType,
         \DateTimeInterface $now,
+        array $administrativeBoundaryCodes = [],
     ): array;
 
     public function iterateRegulationOrdersForApiByUuids(array $uuids): iterable;

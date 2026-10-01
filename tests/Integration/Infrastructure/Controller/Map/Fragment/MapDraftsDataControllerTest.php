@@ -51,6 +51,27 @@ final class MapDraftsDataControllerTest extends AbstractWebTestCase
         $this->assertNotContains(LocationFixture::UUID_PUBLISHED, $locationUuids);
     }
 
+    public function testDraftsAreFilteredByAdministrativeBoundary(): void
+    {
+        $client = $this->login(UserFixture::DEPARTMENT_93_USER_EMAIL);
+
+        // Le chargement de la carte met en base les contours des collectivités demandées.
+        $client->request('GET', '/carte?departmentCode=93');
+        $client->request('GET', '/carte?departmentCode=59');
+
+        // Le brouillon de l'organisation se trouve en Seine-Saint-Denis...
+        $client->request('GET', self::QUERY . '&departmentCode=93');
+        $this->assertResponseStatusCodeSame(200);
+        $locationUuids = array_map(fn ($f) => $f['properties']['location_uuid'], json_decode($client->getResponse()->getContent(), true)['features']);
+        $this->assertContains(LocationFixture::UUID_TYPICAL, $locationUuids);
+
+        // ...et pas dans le Nord.
+        $client->request('GET', self::QUERY . '&departmentCode=59');
+        $this->assertResponseStatusCodeSame(200);
+        $locationUuids = array_map(fn ($f) => $f['properties']['location_uuid'], json_decode($client->getResponse()->getContent(), true)['features']);
+        $this->assertNotContains(LocationFixture::UUID_TYPICAL, $locationUuids);
+    }
+
     public function testOtherOrganizationDoesNotSeeForeignDrafts(): void
     {
         // otherOrgUser belongs to regionIdfOrg / saintOuenOrg, not to the draft's organization:
