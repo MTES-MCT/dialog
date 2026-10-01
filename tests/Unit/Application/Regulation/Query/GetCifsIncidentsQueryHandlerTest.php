@@ -62,6 +62,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $polyline2 = '44.0256652 1.359310 44.1545432 1.34541242';
         $polyline1Merged = '44.0289961 1.362275 44.0256652 1.359310 44.1545432 1.34541242';
         $polyline1bis = '44.028906 1.3621753 44.045665 1.3533105';
+        $polyline1bisDisjoint = '44.128906 1.4621753 44.145665 1.4533105';
         $polyline3 = '44.028996 1.3622753 44.025665 1.3593105';
 
         $geometry1 = json_encode([
@@ -113,8 +114,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             subType: 'ROAD_BLOCKED_HAZARD',
         );
 
+        // Emprise faite de deux lignes disjointes : un incident par ligne, avec le rang de la ligne en suffixe de l'ID.
         $incident1bis = new CifsIncidentView(
-            id: '2024T1:066e98a9-0ce0-7e4b-8000-677c1eafc53d:0',
+            id: '2024T1:066e98a9-0ce0-7e4b-8000-677c1eafc53d:0:1',
             creationTime: $incident1->creationTime,
             type: $incident1->type,
             description: $descriptionNoEntry,
@@ -125,6 +127,20 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
             schedule: $incident1->schedule,
             subType: $incident1->subType,
+        );
+
+        $incident1bisDisjoint = new CifsIncidentView(
+            id: '2024T1:066e98a9-0ce0-7e4b-8000-677c1eafc53d:0:2',
+            creationTime: $incident1bis->creationTime,
+            type: $incident1bis->type,
+            description: $incident1bis->description,
+            street: $incident1bis->street,
+            direction: $incident1bis->direction,
+            polyline: $polyline1bisDisjoint,
+            startTime: $incident1bis->startTime,
+            endTime: $incident1bis->endTime,
+            schedule: $incident1bis->schedule,
+            subType: $incident1bis->subType,
         );
 
         $incident3 = new CifsIncidentView(
@@ -293,7 +309,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn(new \DateTimeImmutable('2023-11-07 00:00:00'));
 
         $this->translator
-            ->expects(self::exactly(7))
+            ->expects(self::exactly(8))
             ->method('trans')
             ->with(self::logicalOr(
                 self::equalTo('regulation.measure.type.noEntry'),
@@ -623,9 +639,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 
         $this->polylineMaker
             ->expects(self::exactly(3))
-            ->method('getMergedPolyline')
+            ->method('getPolylines')
             ->withConsecutive([$geometry1], ['mergedGeometry1bis'], [$geometry2])
-            ->willReturnOnConsecutiveCalls($polyline1Merged, $polyline1bis, $polyline3);
+            ->willReturnOnConsecutiveCalls([$polyline1Merged], [$polyline1bis, $polyline1bisDisjoint], [$polyline3]);
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
@@ -649,7 +665,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
-            [$incident1, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
+            [$incident1, $incident1bis, $incident1bisDisjoint, $incident3, $incident4, $incident5, $incident6, $incident7],
             $incidents,
         );
     }
