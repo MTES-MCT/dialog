@@ -73,6 +73,16 @@ export default class extends Controller {
         return this.hasPanelTarget && this.panelTarget.hidden;
     }
 
+    // Aperçu dépliable (formulaire) ouvert mais localisation incomplète : un message
+    // vaut mieux qu'un panneau vide qui donne l'impression que rien ne se passe.
+    #showIncomplete() {
+        if (this.hasToggleButtonTarget && !this.#isCollapsed()) {
+            this.#showMessage("Renseignez d'abord la localisation pour afficher l'aperçu");
+        } else {
+            this.#hideMap();
+        }
+    }
+
     disconnect() {
         this.#abortController?.abort();
         this.#referencePointsAbortController?.abort();
@@ -169,7 +179,7 @@ export default class extends Controller {
         const geometry = document.getElementById(this.geometryFieldValue)?.value?.trim();
 
         if (!geometry) {
-            this.#hideMap();
+            this.#showIncomplete();
             return;
         }
 
@@ -190,7 +200,7 @@ export default class extends Controller {
         const cityCode = this.#getFieldValue('cityCode');
 
         if (!cityCode) {
-            this.#hideMap();
+            this.#showIncomplete();
             return;
         }
 
@@ -222,7 +232,7 @@ export default class extends Controller {
         const roadBanId = this.#getFieldValue('roadBanId');
 
         if (!roadBanId) {
-            this.#hideMap();
+            this.#showIncomplete();
             return;
         }
 
@@ -239,7 +249,7 @@ export default class extends Controller {
         const roadNumber = this.#getFieldValue('roadNumber');
 
         if (!administrator || !roadNumber) {
-            this.#hideMap();
+            this.#showIncomplete();
             return;
         }
 

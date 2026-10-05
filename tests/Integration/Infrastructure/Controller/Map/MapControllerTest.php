@@ -168,6 +168,11 @@ final class MapControllerTest extends AbstractWebTestCase
         $share = $crawler->filter('d-map-share');
         $this->assertCount(1, $share);
 
+        // Le composant connaît le paramètre et la valeur par défaut de la date de début,
+        // pour ne pas figer « aujourd'hui » dans le code d'intégration.
+        $this->assertSame('map_filter_form[startDate]', $share->attr('startdateparam'));
+        $this->assertSame('2023-06-09', $share->attr('defaultstartdate'));
+
         // The organization select must contain the user's organizations.
         $options = $crawler->filter('#map-share-org-select option');
         $this->assertGreaterThan(0, $options->count());
@@ -246,5 +251,67 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertCount(1, $crawler->filter('d-map'));
         // The "share" button is also hidden inside the iframe.
         $this->assertCount(0, $crawler->filter('d-map-share'));
+    }
+
+    public function testGetEmbedRestoresFiltersFromQueryString(): void
+    {
+        // Le code d'intégration généré par le partage reprend les filtres de l'URL :
+        // la carte intégrée doit les appliquer, en plus du centrage sur l'organisation.
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => [
+                'displayTemporaryRegulations' => 'yes',
+                'displayHeavyGoodsVehicles' => 'yes',
+                'measureTypes' => ['speedLimitation'],
+            ],
+            'organizationUuid' => '8f9164ed-dc0f-4c98-ac18-2f590a1cfd22',
+            'embed' => '1',
+        ]));
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('header.fr-header'));
+        $this->assertNotNull($crawler->filter('d-map')->attr('initialbbox'));
+
+        $this->assertNull($crawler->filter('[name="map_filter_form[displayPermanentRegulations]"]')->attr('checked'));
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[displayTemporaryRegulations]"]')->attr('checked'));
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[displayHeavyGoodsVehicles]"]')->attr('checked'));
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[measureTypes][]"][value="speedLimitation"]')->attr('checked'));
+        $this->assertNull($crawler->filter('[name="map_filter_form[measureTypes][]"][value="noEntry"]')->attr('checked'));
+
+        // Le code d'intégration ne fige pas la date de début par défaut : absente, elle vaut « aujourd'hui ».
+        $this->assertSame('2023-06-09', $crawler->filter('[name="map_filter_form[startDate]"]')->attr('value'));
+    }
+
+    public function testGetEmbedKeepsStartDateFromQueryString(): void
+    {
+        $client = static::createClient();
+
+        // Une date de début choisie par l'utilisateur est conservée telle quelle...
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => ['measureTypes' => ['noEntry'], 'startDate' => '2023-07-14'],
+            'embed' => '1',
+        ]));
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame('2023-07-14', $crawler->filter('[name="map_filter_form[startDate]"]')->attr('value'));
+
+        // ...et une date volontairement vidée (transmise vide) n'est pas remplacée par aujourd'hui.
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => ['measureTypes' => ['noEntry'], 'startDate' => ''],
+            'embed' => '1',
+        ]));
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertEmpty($crawler->filter('[name="map_filter_form[startDate]"]')->attr('value'));
+    }
+
+    public function testGetWithoutEmbedKeepsMissingStartDateEmpty(): void
+    {
+        // Hors mode intégré, un lien partagé sans date de début (date effacée) reste sans date de début.
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => ['measureTypes' => ['noEntry']],
+        ]));
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertEmpty($crawler->filter('[name="map_filter_form[startDate]"]')->attr('value'));
     }
 }
