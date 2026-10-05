@@ -58,10 +58,21 @@ final class MapController
             ],
         );
 
+        // Date de début par défaut (aujourd'hui), telle qu'elle apparaît dans l'URL de la carte.
+        $defaultStartDate = $form->get('startDate')->getViewData();
+
         $submittedParams = $request->query->all($form->getName());
         if ($submittedParams !== [] && !\array_key_exists('statusFilterActive', $submittedParams)) {
             $submittedParams['displayPublished'] = 'yes';
             $submittedParams['statusFilterActive'] = '1';
+            $request->query->set($form->getName(), $submittedParams);
+        }
+
+        // Le code d'intégration ne fige pas la date de début par défaut : en mode intégré, une date de
+        // début absente signifie « à partir d'aujourd'hui » (une date volontairement vidée est transmise vide).
+        // Sans cela, la carte intégrée dans un site tiers resterait bloquée au jour où le code a été copié.
+        if ($submittedParams !== [] && $request->query->get('embed') && !\array_key_exists('startDate', $submittedParams)) {
+            $submittedParams['startDate'] = $defaultStartDate;
             $request->query->set($form->getName(), $submittedParams);
         }
 
@@ -83,6 +94,7 @@ final class MapController
                     'form' => $form->createView(),
                     'tilesUrlTemplate' => $tilesUrl,
                     'initialBbox' => $initialBbox,
+                    'defaultStartDate' => $defaultStartDate,
                 ],
             ),
         );
