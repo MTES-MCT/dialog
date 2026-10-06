@@ -163,6 +163,23 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
             recurrenceType: PeriodRecurrenceTypeEnum::EVERY_DAY->value,
         );
 
+        // Mêmes dates que la période du tracé libre : l'arrêté F2024/RAWGEOJSON garde ses dates de début et de fin
+        $wholeCityPeriod = new Period(
+            uuid: '1a7c3e52-9b0d-4f6e-8a21-5c4d3b2e1f00',
+            measure: $this->getReference('wholeCityMeasure', Measure::class),
+            startDateTime: new \DateTimeImmutable('2020-06-02 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2020-06-10 23:59:00', $tz),
+            recurrenceType: 'everyDay',
+        );
+
+        $zonePeriod = new Period(
+            uuid: '2b8d4f63-ac1e-4a7f-9b32-6d5e4c3f2a11',
+            measure: $this->getReference('zoneMeasure', Measure::class),
+            startDateTime: new \DateTimeImmutable('2020-06-02 00:00:00', $tz),
+            endDateTime: new \DateTimeImmutable('2020-06-10 23:59:00', $tz),
+            recurrenceType: 'everyDay',
+        );
+
         $manager->persist($typicalPeriod);
         $manager->persist($publishedPeriod);
         $manager->persist($publishedPeriod2);
@@ -184,6 +201,8 @@ final class PeriodFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($litteralisPeriod);
         $manager->persist($winterMaintenancePeriod);
         $manager->persist($parkingProhibitedPeriod);
+        $manager->persist($wholeCityPeriod);
+        $manager->persist($zonePeriod);
 
         $manager->flush();
     }
