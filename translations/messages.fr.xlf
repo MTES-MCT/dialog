@@ -1850,6 +1850,10 @@
                 <source>login.proconnect.link.title</source>
                 <target>Qu'est-ce que ProConnect ? - nouvelle fenêtre</target>
             </trans-unit>
+            <trans-unit id="login.proconnect.two_factor_required">
+                <source>login.proconnect.two_factor_required</source>
+                <target>La connexion a échoué : vous devez activer et utiliser la double authentification (2FA) sur votre compte ProConnect pour accéder à DiaLog.</target>
+            </trans-unit>
             <trans-unit id="login.email">
                 <source>login.email</source>
                 <target>Adresse e-mail</target>
@@ -1885,6 +1889,38 @@
             <trans-unit id="login.legend">
                 <source>login.legend</source>
                 <target>Se connecter avec son compte</target>
+            </trans-unit>
+            <trans-unit id="two_factor.meta.title">
+                <source>two_factor.meta.title</source>
+                <target>Double authentification</target>
+            </trans-unit>
+            <trans-unit id="two_factor.title">
+                <source>two_factor.title</source>
+                <target>Double authentification</target>
+            </trans-unit>
+            <trans-unit id="two_factor.intro">
+                <source>two_factor.intro</source>
+                <target>Un code de sécurité vous a été envoyé par e-mail. Saisissez-le ci-dessous pour finaliser votre connexion.</target>
+            </trans-unit>
+            <trans-unit id="two_factor.legend">
+                <source>two_factor.legend</source>
+                <target>Vérification en deux étapes</target>
+            </trans-unit>
+            <trans-unit id="two_factor.code">
+                <source>two_factor.code</source>
+                <target>Code de sécurité</target>
+            </trans-unit>
+            <trans-unit id="two_factor.trusted">
+                <source>two_factor.trusted</source>
+                <target>Faire confiance à cet appareil (ne plus demander de code pendant 30 jours)</target>
+            </trans-unit>
+            <trans-unit id="two_factor.submit">
+                <source>two_factor.submit</source>
+                <target>Vérifier</target>
+            </trans-unit>
+            <trans-unit id="two_factor.cancel">
+                <source>two_factor.cancel</source>
+                <target>Annuler et revenir à la connexion</target>
             </trans-unit>
             <trans-unit id="forgot_password.title">
                 <source>forgot_password.title</source>

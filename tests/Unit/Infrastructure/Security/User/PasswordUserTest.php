@@ -43,5 +43,45 @@ class PasswordUserTest extends TestCase
         $this->assertFalse($passwordUser->isVerified());
         $this->assertSame('local', $passwordUser->getAuthOrigin());
         $this->assertTrue($passwordUser->isOrganizationsCompleted());
+        $this->assertTrue($passwordUser->isEmailAuthEnabled());
+        $this->assertSame('mathieu.marchois@beta.gouv.fr', $passwordUser->getEmailAuthRecipient());
+        $this->assertSame(0, $passwordUser->getTrustedTokenVersion());
+    }
+
+    public function testEmailAuthCodeIsExposedWhenNotExpired(): void
+    {
+        $now = new \DateTimeImmutable('2024-01-01 10:00:00');
+
+        $userPasswordUser = $this->createMock(UserPasswordUser::class);
+        $userPasswordUser->method('getPassword')->willReturn('password');
+
+        $user = $this->createMock(User::class);
+        $user->method('getPasswordUser')->willReturn($userPasswordUser);
+        $user->method('getEmailAuthCode')->willReturn('123456');
+        $user->method('getEmailAuthCodeExpiresAt')->willReturn(new \DateTimeImmutable('2024-01-01 10:05:00'));
+
+        $passwordUser = new PasswordUser($user, [], $now);
+
+        $this->assertSame('123456', $passwordUser->getEmailAuthCode());
+    }
+
+    public function testExpiredEmailAuthCodeIsHiddenAndCanBeReplaced(): void
+    {
+        $now = new \DateTimeImmutable('2024-01-01 10:06:00');
+
+        $userPasswordUser = $this->createMock(UserPasswordUser::class);
+        $userPasswordUser->method('getPassword')->willReturn('password');
+
+        $user = $this->createMock(User::class);
+        $user->method('getPasswordUser')->willReturn($userPasswordUser);
+        $user->method('getEmailAuthCode')->willReturn('123456');
+        $user->method('getEmailAuthCodeExpiresAt')->willReturn(new \DateTimeImmutable('2024-01-01 10:05:00'));
+
+        $passwordUser = new PasswordUser($user, [], $now);
+
+        $this->assertNull($passwordUser->getEmailAuthCode());
+
+        $passwordUser->setEmailAuthCode('654321');
+        $this->assertSame('654321', $passwordUser->getEmailAuthCode());
     }
 }
