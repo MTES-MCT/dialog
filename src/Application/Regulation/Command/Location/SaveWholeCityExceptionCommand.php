@@ -103,7 +103,9 @@ final class SaveWholeCityExceptionCommand
     public function isComplete(): bool
     {
         return match ($this->roadType) {
-            RoadTypeEnum::LANE->value => self::isFilled($this->namedStreet?->roadBanId),
+            // Le formulaire fournit l'identifiant BAN (autocomplétion) ; l'API fournit le nom
+            // de voie, résolu en identifiant BAN au géocodage (GetNamedStreetGeometryQueryHandler).
+            RoadTypeEnum::LANE->value => self::isFilled($this->namedStreet?->roadBanId) || self::isFilled($this->namedStreet?->roadName),
             RoadTypeEnum::DEPARTMENTAL_ROAD->value => self::isFilled($this->departmentalRoad?->roadNumber),
             RoadTypeEnum::NATIONAL_ROAD->value => self::isFilled($this->nationalRoad?->roadNumber),
             RoadTypeEnum::ZONE->value => self::isFilled($this->zone?->geometry),

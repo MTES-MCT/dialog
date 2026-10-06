@@ -37,6 +37,17 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
         $this->assertNull($command->getExcludedRoadBanId());
     }
 
+    public function testLaneIsCompleteWithRoadNameOnly(): void
+    {
+        // Cas de l'API : pas d'identifiant BAN fourni, la voie est géocodée par son nom.
+        $command = new SaveWholeCityExceptionCommand();
+        $command->roadType = RoadTypeEnum::LANE->value;
+        $command->namedStreet = new SaveNamedStreetCommand();
+        $command->namedStreet->roadName = 'Rue Ardoin';
+
+        $this->assertTrue($command->isComplete());
+    }
+
     public function testHydrateFromNamedStreetException(): void
     {
         $exception = new WholeCityException(
