@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Organization\View\MapBboxView;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
@@ -35,6 +36,48 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->expectExceptionMessageMatches('/no result found/');
 
         $this->roadGeocoder->computeRoadLine('12345_6789');
+    }
+
+    public function testFindCityBbox(): void
+    {
+        // Valenciennes : emprise de ses voies nommées, lon ~[3.476, 3.545], lat ~[50.338, 50.380].
+        $bbox = $this->roadGeocoder->findCityBbox('59606');
+
+        $this->assertInstanceOf(MapBboxView::class, $bbox);
+        $this->assertEqualsWithDelta(3.476, $bbox->minLon, 0.01);
+        $this->assertEqualsWithDelta(50.338, $bbox->minLat, 0.01);
+        $this->assertEqualsWithDelta(3.545, $bbox->maxLon, 0.01);
+        $this->assertEqualsWithDelta(50.380, $bbox->maxLat, 0.01);
+    }
+
+    public function testFindCityBboxExpandsParisLyonMarseilleToArrondissements(): void
+    {
+        // BD TOPO ne connaît que les arrondissements : le code de la commune doit tout de même aboutir.
+        $paris = $this->roadGeocoder->findCityBbox('75056');
+        $this->assertInstanceOf(MapBboxView::class, $paris);
+        $this->assertEqualsWithDelta(2.226, $paris->minLon, 0.01);
+        $this->assertEqualsWithDelta(48.816, $paris->minLat, 0.01);
+        $this->assertEqualsWithDelta(2.470, $paris->maxLon, 0.01);
+        $this->assertEqualsWithDelta(48.902, $paris->maxLat, 0.01);
+
+        $lyon = $this->roadGeocoder->findCityBbox('69123');
+        $this->assertInstanceOf(MapBboxView::class, $lyon);
+        $this->assertEqualsWithDelta(4.772, $lyon->minLon, 0.01);
+        $this->assertEqualsWithDelta(45.711, $lyon->minLat, 0.01);
+        $this->assertEqualsWithDelta(4.898, $lyon->maxLon, 0.01);
+        $this->assertEqualsWithDelta(45.808, $lyon->maxLat, 0.01);
+
+        $marseille = $this->roadGeocoder->findCityBbox('13055');
+        $this->assertInstanceOf(MapBboxView::class, $marseille);
+        $this->assertEqualsWithDelta(5.282, $marseille->minLon, 0.01);
+        $this->assertEqualsWithDelta(43.212, $marseille->minLat, 0.01);
+        $this->assertEqualsWithDelta(5.532, $marseille->maxLon, 0.01);
+        $this->assertEqualsWithDelta(43.389, $marseille->maxLat, 0.01);
+    }
+
+    public function testFindCityBboxUnknownCity(): void
+    {
+        $this->assertNull($this->roadGeocoder->findCityBbox('00000'));
     }
 
     private function provideTestFindRoads(): array

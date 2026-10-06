@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Map;
 
 use App\Application\DateUtilsInterface;
+use App\Application\RoadGeocoderInterface;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use App\Infrastructure\Controller\DTO\MapFilterDTO;
@@ -27,6 +28,7 @@ final class MapController
         private Security $security,
         private OrganizationRepositoryInterface $organizationRepository,
         private LocationRepositoryInterface $locationRepository,
+        private RoadGeocoderInterface $roadGeocoder,
     ) {
     }
 
@@ -39,6 +41,7 @@ final class MapController
         Request $request,
         #[MapQueryParameter] ?Uuid $organizationUuid,
         #[MapQueryParameter] ?Uuid $regulationOrderRecordUuid,
+        #[MapQueryParameter] ?string $insee,
     ): Response {
         $dto = new MapFilterDTO($this->dateUtils->getNow());
 
@@ -81,8 +84,12 @@ final class MapController
         $user = $this->security->getUser();
         $userUuid = $user instanceof AbstractAuthenticatedUser ? $user->getUuid() : null;
 
+        $cityCode = self::normalizeInseeCode($insee);
+
+        // Du plus précis au plus général : un arrêté, puis une commune, puis une organisation.
         $initialBbox = match (true) {
             $regulationOrderRecordUuid !== null => $this->locationRepository->findMapBboxByRegulationOrderRecordUuid($regulationOrderRecordUuid->toString()),
+            $cityCode !== null => $this->roadGeocoder->findCityBbox($cityCode),
             $organizationUuid !== null => $this->organizationRepository->findMapBboxByOrganizationUuid($organizationUuid->toString()),
             default => $this->organizationRepository->findInitialMapBbox($userUuid),
         };
@@ -98,5 +105,20 @@ final class MapController
                 ],
             ),
         );
+    }
+
+    /**
+     * Code INSEE d'une commune : 5 chiffres, ou 2A/2B suivi de 3 chiffres pour la Corse.
+     * Un code mal formé est ignoré : la carte s'affiche alors à sa position par défaut.
+     */
+    private static function normalizeInseeCode(?string $insee): ?string
+    {
+        if ($insee === null) {
+            return null;
+        }
+
+        $insee = strtoupper(trim($insee));
+
+        return preg_match('/^(\d{5}|2[AB]\d{3})$/', $insee) === 1 ? $insee : null;
     }
 }

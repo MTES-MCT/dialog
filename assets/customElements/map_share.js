@@ -117,9 +117,10 @@ customElements.define('d-map-share', class extends HTMLElement {
             params.append(key, value);
         }
         this.#unfreezeDefaultStartDate(params);
-        // La carte intégrée est centrée sur l'organisation sélectionnée : le zoom sur un arrêté,
-        // prioritaire côté serveur, ne doit pas prendre le dessus.
+        // La carte intégrée est centrée sur l'organisation sélectionnée : le zoom sur un arrêté
+        // ou sur une commune, prioritaires côté serveur, ne doivent pas prendre le dessus.
         params.delete('regulationOrderRecordUuid');
+        params.delete('insee');
         params.set('organizationUuid', organizationUuid);
         params.set('embed', '1');
         const src = absoluteCarteUrl.toString();
