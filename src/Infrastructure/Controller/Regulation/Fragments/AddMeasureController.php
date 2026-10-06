@@ -186,6 +186,11 @@ final class AddMeasureController extends AbstractRegulationController
                     'regulationOrderRecord' => $regulationOrderRecord,
                     'measure' => null,
                     'organizationBbox' => $organizationBbox,
+                    // Repli de centrage des cartes de dessin quand l'étendue administrative
+                    // de l'organisation n'est pas disponible.
+                    'organizationCityLabel' => $organization->getEstablishment()
+                        ? \sprintf('%s (%s)', $organization->getEstablishment()->getCity(), $organization->getEstablishment()->getZipCode())
+                        : null,
                 ],
             ),
             status: ($form->isSubmitted() && !$form->isValid()) || $commandFailed

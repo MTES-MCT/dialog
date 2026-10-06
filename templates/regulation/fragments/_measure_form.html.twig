@@ -1446,7 +1446,9 @@
 {% endmacro %}
 
 <turbo-frame id="{{ frame }}">
-    <div class="app-card app-card--raised app-card--with-full-background fr-mt-3w" data-testid="measure">
+    {# Ville de l'établissement de l'organisation : repli de centrage des cartes de dessin
+       quand l'étendue administrative de l'organisation n'est pas disponible. #}
+    <div class="app-card app-card--raised app-card--with-full-background fr-mt-3w" data-testid="measure" data-organization-city-label="{{ organizationCityLabel|default('') }}">
         <div class="app-card__header">
             <h3 class="app-card__title fr-h4 fr-mb-0">
                 {{ 'regulation.measure.card.title'|trans }}

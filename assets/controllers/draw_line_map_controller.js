@@ -422,16 +422,26 @@ export default class extends Controller {
   // centrée sur la ville choisie plutôt que sur la vue par défaut (France entière ou
   // étendue de l'organisation).
   async #centerOnCityIfBlank() {
-    if (
-      !this.#map ||
-      this.#coordinates.length > 0 ||
-      !this.searchApiUrlValue ||
-      !this.cityLabelFieldValue
-    ) {
+    if (!this.#map || this.#coordinates.length > 0 || !this.searchApiUrlValue) {
       return;
     }
 
-    const label = this.#cityLabelElement()?.value?.trim();
+    let label = this.cityLabelFieldValue
+      ? this.#cityLabelElement()?.value?.trim()
+      : '';
+    let cityCode = '';
+
+    if (label) {
+      cityCode = this.cityCodeFieldValue
+        ? document.getElementById(this.cityCodeFieldValue)?.value?.trim()
+        : '';
+    } else if (!this.#organizationBounds()) {
+      // Repli quand l'étendue administrative de l'organisation n'est pas disponible :
+      // la ville de son établissement (posée sur la racine du formulaire de mesure).
+      label = this.element
+        .closest('[data-organization-city-label]')
+        ?.dataset.organizationCityLabel?.trim();
+    }
 
     if (!label) {
       return;
@@ -439,9 +449,6 @@ export default class extends Controller {
 
     // « Saint-Ouen-sur-Seine (93400) » → requête sans le code postal entre parenthèses
     const query = label.replace(/\s*\([^)]*\)\s*$/, '').trim() || label;
-    const cityCode = this.cityCodeFieldValue
-      ? document.getElementById(this.cityCodeFieldValue)?.value?.trim()
-      : '';
 
     const url = new URL(this.searchApiUrlValue);
     url.searchParams.set('q', query);
