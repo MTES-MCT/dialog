@@ -731,6 +731,14 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/csv?status=current&inse
 curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/cifs.xml' -H 'Accept: application/xml'
 ```
 
+#### Source des incidents
+
+Chaque incident identifie l'organisation émettrice de l'arrêté dans l'élément `<source>` :
+
+- `reference` : code de l'organisation (code INSEE pour une commune), ou `dialog.beta.gouv.fr` si l'organisation n'a pas de code.
+- `name` : nom de l'organisation suivi de `(DiaLog)`, par exemple `Métropole Européenne de Lille (DiaLog)`.
+- `url` : URL de l'arrêté sur DiaLog.
+
 #### Limitations
 
 - En raison des limites du format propriétaire CIFS (Waze), seules les interdictions de circulation temporaires s'appliquant à tous les véhicules sont exposées. Les autres cas (ex. zone 30, restrictions poids lourds, permanentes, etc.) ne sont pas inclus.
