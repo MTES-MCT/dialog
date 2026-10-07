@@ -98,6 +98,7 @@
                 >
                     <ul
                         class="app-timeslot-list fr-raw-list fr-mb-2w"
+                        id="{{ form.timeSlots.vars.id }}-list"
                         data-testid="timeslot-list"
                         data-form-collection-target="collectionContainer"
                         {% if form.timeSlots|length == 0 %}data-empty{% endif %}
@@ -148,7 +149,7 @@
                         type="button"
                         class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line"
                         data-action="form-collection#addCollectionElement"
-                        aria-controls="period-list"
+                        aria-controls="{{ form.parent.vars.id }}-list"
                         aria-label="{{ 'regulation.timeSlots.add'|trans }}"
                     >
                     </button>
@@ -158,8 +159,10 @@
     </li>
 {% endmacro %}
 
-{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject, regulationOrderRecord, measureType) %}
+{% macro numbered_road_form(form, roadType, regulationSubject, regulationOrderRecord, measureType) %}
     {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
+    {# Préfixe des identifiants HTML : dérivé de l'id du sous-formulaire, donc propre à la mesure et à la localisation #}
+    {% set idPrefix = form[roadType].vars.id %}
 
     <div
         data-controller="reset"
@@ -230,8 +233,8 @@
                 </ul>
         </div>
 
-        {% set reportModalId = 'create-report-address-form-modal-' ~ locationIndex ~ '-' ~ roadType %}
-        {% set reportFrameId = 'create-report-address-form-frame-' ~ locationIndex ~ '-' ~ roadType %}
+        {% set reportModalId = idPrefix ~ '-report-modal' %}
+        {% set reportFrameId = idPrefix ~ '-report-frame' %}
         <div data-controller="report-address-modal">
             <d-modal-trigger modal="{{ reportModalId }}" submitvalue="upload">
                 <button
@@ -256,22 +259,22 @@
 
         <hr class="fr-mt-3w" />
         <fieldset
-            aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point"
+            aria-labelledby="{{ idPrefix }}-reference-point"
             data-reset-target="element"
             data-reset-keys="{{ ['administrator', 'roadNumber']|json_encode }}"
             data-form-reveal-target="formControl"
             data-value="{{ roadType }}"
             {% if not isThisTypeOfNumberedRoad %}disabled{% endif %}
         >
-            <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point">
+            <legend id="{{ idPrefix }}-reference-point">
                 {{ 'regulation.location.referencePoint'|trans }}
             </legend>
             <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
             <fieldset
                 class="fr-mt-2w"
-                aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-start-legend"
+                aria-labelledby="{{ idPrefix }}-reference-point-start-legend"
             >
-                <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-start-legend" class="fr-fieldset__legend">
+                <legend id="{{ idPrefix }}-reference-point-start-legend" class="fr-fieldset__legend">
                     {{ 'regulation.location.referencePoint.from'|trans }}
                 </legend>
                 <div class="fr-grid-row fr-grid-row--gutters">
@@ -287,9 +290,9 @@
             </fieldset>
             <fieldset
                 class="fr-mt-2w fr-mb-2w"
-                aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-end-legend"
+                aria-labelledby="{{ idPrefix }}-reference-point-end-legend"
             >
-                <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-end-legend" class="fr-fieldset__legend">
+                <legend id="{{ idPrefix }}-reference-point-end-legend" class="fr-fieldset__legend">
                     {{ 'regulation.location.referencePoint.to'|trans }}
                 </legend>
                 <div class="fr-grid-row fr-grid-row--gutters">
@@ -359,7 +362,7 @@
             {% endif %}
         </fieldset>
 
-        {% set previewMapAccordionId = 'location-preview-map-' ~ locationIndex ~ '-' ~ roadType %}
+        {% set previewMapAccordionId = idPrefix ~ '-preview-map' %}
         <section class="fr-mt-2w app-preview-map-toggle">
             <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ previewMapAccordionId }}">
                 <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
@@ -425,8 +428,8 @@
                     },
                 }) }}
 
-                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject, regulationOrderRecord, measureType) }}
-                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject, regulationOrderRecord, measureType) }}
+                {{ _self.numbered_road_form(form, 'departmentalRoad', regulationSubject, regulationOrderRecord, measureType) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', regulationSubject, regulationOrderRecord, measureType) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
@@ -572,8 +575,8 @@
                                 }
                             }) }}
 
-                            {% set reportModalIdLane = 'create-report-address-form-modal-' ~ index ~ '-lane' %}
-                            {% set reportFrameIdLane = 'create-report-address-form-frame-' ~ index ~ '-lane' %}
+                            {% set reportModalIdLane = form.namedStreet.vars.id ~ '-report-modal' %}
+                            {% set reportFrameIdLane = form.namedStreet.vars.id ~ '-report-frame' %}
                             <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line">
                                 <li data-controller="report-address-modal">
                                     <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
@@ -632,7 +635,7 @@
                         </div>
                     </fieldset>
 
-                    {% set lanePreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-lane' %}
+                    {% set lanePreviewMapAccordionId = form.namedStreet.vars.id ~ '-preview-map' %}
                     <section class="fr-mt-2w app-preview-map-toggle">
                         <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ lanePreviewMapAccordionId }}">
                             <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
@@ -945,7 +948,7 @@
                         </div>
                     </fieldset>
 
-                    {% set wholeCityPreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-wholeCity' %}
+                    {% set wholeCityPreviewMapAccordionId = form.wholeCity.vars.id ~ '-preview-map' %}
                     <section class="fr-mt-2w app-preview-map-toggle">
                         <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ wholeCityPreviewMapAccordionId }}">
                             <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
@@ -1419,8 +1422,9 @@
             style="--card-padding: 0.5rem 1.5rem 1.5rem 1.5rem"
         >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
+            {# L'id du formulaire et ceux de ses champs dérivent de son nom, propre à chaque mesure (voir MeasureFormType::getName) #}
             {{ form_start(form, {attr: {
-                id: 'measure-form',
+                id: form.vars.id,
                 'data-controller': 'unsaved-changes',
                 'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
                 'data-unsaved-changes-tracking-name-value': 'mesure',
@@ -1483,7 +1487,7 @@
                                 element: 'legend',
                                 required: false,
                                 label_attr: {
-                                    id: 'periods-legend',
+                                    id: form.periods.vars.id ~ '-legend',
                                 },
                                 label_content_attr: {
                                     class: 'fr-h4 fr-mb-0'
@@ -1507,10 +1511,10 @@
                         >
                             <fieldset
                                 class="fr-fieldset fr-mb-0"
-                                aria-labelledby="periods-legend"
+                                aria-labelledby="{{ form.periods.vars.id }}-legend"
                             >
                                 <ul
-                                    id="period-list"
+                                    id="{{ form.periods.vars.id }}-list"
                                     class="fr-raw-list fr-fieldset__element"
                                     data-testid="period-list"
                                     data-form-collection-target="collectionContainer"
@@ -1527,7 +1531,7 @@
                                 type="button"
                                 class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
                                 data-action="form-collection#addCollectionElement"
-                                aria-controls="period-list"
+                                aria-controls="{{ form.periods.vars.id }}-list"
                             >
                                 {{ 'regulation.period.add'|trans }}
                             </button>
@@ -1590,7 +1594,7 @@
                         </a>
                     </li>
                     <li>
-                        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn-load', form: 'measure-form'}}) }}
+                        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn-load', form: form.vars.id}}) }}
                     </li>
                 </ul>
             {{ form_end(form) }}

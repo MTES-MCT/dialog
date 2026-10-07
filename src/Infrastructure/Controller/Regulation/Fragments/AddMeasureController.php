@@ -76,7 +76,7 @@ final class AddMeasureController extends AbstractRegulationController
             $command->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
         }
 
-        $form = $this->formFactory->create(MeasureFormType::class, $command, [
+        $form = $this->formFactory->createNamed(MeasureFormType::getName(), MeasureFormType::class, $command, [
             'action' => $this->router->generate('fragment_regulations_measure_add', ['uuid' => $uuid]),
             'administrators' => $administrators,
             'storage_areas' => $storageAreas,
