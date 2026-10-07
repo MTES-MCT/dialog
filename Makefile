@@ -327,6 +327,7 @@ ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow (upload S3 + impor
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
 	# Ouvre un tunnel vers la base BDTOPO cible puis lance le pipeline S3.
 	# On utilise `scalingo db-tunnel` directement car scalingodbtunnel nécessite Docker.
+	# --bind 0.0.0.0 : le conteneur gdal joint le tunnel via host.docker.internal (loopback non routé sous Linux).
 	# BDTOPO_TARGET vaut 2025 (défaut) ou 2025_2.
 	if [ "$(BDTOPO_TARGET)" = "2025_2" ]; then \
 		BDTOPO_APP="dialog-bdtopo-2025-2"; \
@@ -335,7 +336,7 @@ ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow (upload S3 + impor
 		BDTOPO_APP="dialog-bdtopo-2025"; \
 		SOURCE_URL="$$BDTOPO_2025_DATABASE_URL"; \
 	fi; \
-	scalingo --app $$BDTOPO_APP db-tunnel -p 10002 DATABASE_URL > /dev/null 2>&1 & \
+	scalingo --app $$BDTOPO_APP db-tunnel --bind 0.0.0.0 -p 10002 DATABASE_URL > /dev/null 2>&1 & \
 	TUNNEL_PID=$$!; \
 	./tools/wait-for-it.sh 127.0.0.1:10002; \
 	BDTOPO_TUNNEL_URL=$$(echo "$$SOURCE_URL" | sed 's|@[^/]*|@127.0.0.1:10002|'); \
