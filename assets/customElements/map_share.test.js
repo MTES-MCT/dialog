@@ -161,4 +161,15 @@ describe('d-map-share', () => {
         expect(url.searchParams.getAll('organizationUuid')).toEqual([ORG_A]);
         expect(url.searchParams.has('regulationOrderRecordUuid')).toBe(false);
     });
+
+    it('remplace le centrage sur une commune de l’URL courante par l’organisation sélectionnée', () => {
+        window.history.replaceState(null, '', '/carte?insee=93070&map_filter_form[displayTemporaryRegulations]=yes');
+        mount();
+        openModal();
+
+        const url = getEmbedUrl();
+        expect(url.searchParams.has('insee')).toBe(false);
+        expect(url.searchParams.getAll('organizationUuid')).toEqual([ORG_A]);
+        expect(url.searchParams.get('map_filter_form[displayTemporaryRegulations]')).toBe('yes');
+    });
 });

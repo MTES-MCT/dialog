@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
+use App\Application\Organization\View\MapBboxView;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
 use Doctrine\DBAL\Connection;
@@ -33,6 +34,48 @@ final class BdTopoRoadGeocoderTest extends TestCase
             ->willThrowException(new \RuntimeException('Some network error'));
 
         $this->roadGeocoder->computeRoadLine('01234');
+    }
+
+    public function testFindCityBboxUnexpectedError(): void
+    {
+        $this->expectException(GeocodingFailureException::class);
+
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->willThrowException(new \RuntimeException('Some network error'));
+
+        $this->roadGeocoder->findCityBbox('59606');
+    }
+
+    public function testFindCityBboxNoResult(): void
+    {
+        // ST_Extent vaut NULL quand la commune n'a aucune voie nommée dans BD TOPO.
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->with(self::anything(), ['city_codes' => ['59606']], self::anything())
+            ->willReturn(['min_lon' => null, 'min_lat' => null, 'max_lon' => null, 'max_lat' => null]);
+
+        $this->assertNull($this->roadGeocoder->findCityBbox('59606'));
+    }
+
+    public function testFindCityBboxExpandsLyonToArrondissements(): void
+    {
+        $this->conn
+            ->expects(self::once())
+            ->method('fetchAssociative')
+            ->with(
+                self::anything(),
+                ['city_codes' => ['69381', '69382', '69383', '69384', '69385', '69386', '69387', '69388', '69389']],
+                self::anything(),
+            )
+            ->willReturn(['min_lon' => '4.772', 'min_lat' => '45.711', 'max_lon' => '4.898', 'max_lat' => '45.808']);
+
+        $this->assertEquals(
+            new MapBboxView(minLon: 4.772, minLat: 45.711, maxLon: 4.898, maxLat: 45.808),
+            $this->roadGeocoder->findCityBbox('69123'),
+        );
     }
 
     public function testfindRoadsUnexpectedError(): void
