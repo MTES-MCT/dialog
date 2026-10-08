@@ -10,6 +10,8 @@ use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
+use App\Domain\Regulation\Location\WholeCityException;
+use App\Domain\Regulation\Location\Zone;
 use App\Domain\Regulation\Measure;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -34,6 +36,8 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
     public const UUID_CIFS_DEPARTMENTAL_ROAD = '065f94ef-ea0a-7ab5-8000-bd5686102151';
     public const UUID_OUTDATED_CIFS = 'ad7b675a-92d8-4556-a0e6-09cc66eb259a';
     public const UUID_LITTERALIS = '066e984f-4746-78f8-8000-dce555b28604';
+    public const UUID_WHOLE_CITY = '5eb07c96-df41-4da2-8e65-9a8b7f6c5d44';
+    public const UUID_ZONE = '6fc18da7-e052-4eb3-9f76-ab9c8a7d6e55';
 
     public function load(ObjectManager $manager): void
     {
@@ -328,6 +332,63 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
             geometry: '{"type":"MultiLineString","coordinates":[[[1.34352783,44.01741201],[1.34351021,44.01728842],[1.34344305,44.01672388]],[[1.34361127,44.01827476],[1.34363309,44.01855416],[1.34367982,44.01909228],[1.34373623,44.01964046],[1.34376444,44.02004327]],[[1.34355908,44.01762403],[1.34352783,44.01741201]],[[1.34361127,44.01827476],[1.34359579,44.01799187],[1.34355908,44.01762403]]]}',
         );
 
+        // Ville entière (Saint-Ouen-sur-Seine) avec une voie exclue
+        $wholeCityLocation = new Location(
+            self::UUID_WHOLE_CITY,
+            $this->getReference('wholeCityMeasure', Measure::class),
+            roadType: RoadTypeEnum::WHOLE_CITY->value,
+            geometry: '{"type":"MultiLineString","coordinates":[[[2.3285,48.9135],[2.3295,48.9142]],[[2.33,48.912],[2.331,48.913]]]}',
+            cityCode: '93070',
+            cityLabel: 'Saint-Ouen-sur-Seine',
+        );
+
+        $wholeCityLocationException = new WholeCityException(
+            uuid: '8be3afc9-0274-4ad5-9b98-cdbeac9f8a77',
+            location: $wholeCityLocation,
+            roadType: RoadTypeEnum::LANE->value,
+            label: 'Rue Ardoin',
+            geometry: '{"type":"LineString","coordinates":[[2.327,48.913],[2.329,48.9145]]}',
+            data: [
+                'cityCode' => '93070',
+                'cityLabel' => 'Saint-Ouen-sur-Seine',
+                'roadBanId' => '93070_0074',
+                'roadName' => 'Rue Ardoin',
+                'fromPointType' => null,
+                'fromHouseNumber' => null,
+                'fromRoadBanId' => null,
+                'fromRoadName' => null,
+                'toPointType' => null,
+                'toHouseNumber' => null,
+                'toRoadBanId' => null,
+                'toRoadName' => null,
+                'direction' => DirectionEnum::BOTH->value,
+            ],
+        );
+
+        // Tracé de zone autour de la Rue Ardoin (Saint-Ouen-sur-Seine) avec un tracé libre exclu
+        $zoneLocation = new Location(
+            self::UUID_ZONE,
+            $this->getReference('zoneMeasure', Measure::class),
+            roadType: RoadTypeEnum::ZONE->value,
+            geometry: '{"type":"MultiLineString","coordinates":[[[2.326,48.913],[2.33,48.914]]]}',
+        );
+
+        $zoneLocationZone = new Zone(
+            uuid: '7ad29eb8-f163-4fc4-8a87-bcad9b8e7f66',
+            location: $zoneLocation,
+            label: 'Quartier de la Rue Ardoin',
+            geometry: '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}',
+        );
+
+        $zoneLocationException = new WholeCityException(
+            uuid: '9cf4b0da-1385-4be6-8ca9-decfbdaa9b88',
+            location: $zoneLocation,
+            roadType: RoadTypeEnum::RAW_GEOJSON->value,
+            label: 'Parvis de la mairie',
+            geometry: '{"type":"LineString","coordinates":[[2.327,48.9132],[2.328,48.9138]]}',
+            data: ['label' => 'Parvis de la mairie'],
+        );
+
         $manager->persist($namedStreetTypicalMeasureLocation1);
         $manager->persist($namedStreetTypicalMeasureLocation2);
         $manager->persist($namedStreetTypicalMeasureLocation3);
@@ -361,6 +422,11 @@ final class LocationFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($winterMaintenanceLocation);
         $manager->persist($winterMaintenanceLocationNumberedRoad);
         $manager->persist($parkingProhibitedLocation);
+        $manager->persist($wholeCityLocation);
+        $manager->persist($wholeCityLocationException);
+        $manager->persist($zoneLocation);
+        $manager->persist($zoneLocationZone);
+        $manager->persist($zoneLocationException);
         $manager->flush();
 
         $this->addReference('typicalMeasureLocation1', $typicalMeasureLocation1);
