@@ -28,6 +28,46 @@ final class DuplicateMeasureFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame($streams->eq(0)->attr('target'), 'measure_list');
     }
 
+    public function testDuplicateWholeCity(): void
+    {
+        $client = $this->login();
+
+        $crawler = $client->request('POST', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_WHOLE_CITY . '/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-measure'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+        $streams = $crawler->filter('turbo-stream');
+
+        $this->assertSame('append', $streams->eq(0)->attr('action'));
+        $this->assertSame('measure_list', $streams->eq(0)->attr('target'));
+
+        // La ville et sa voie exclue sont recopiées sur la mesure dupliquée
+        $content = $client->getResponse()->getContent();
+        $this->assertStringContainsString('Saint-Ouen-sur-Seine', $content);
+        $this->assertStringContainsString('Rue Ardoin', $content);
+    }
+
+    public function testDuplicateZone(): void
+    {
+        $client = $this->login();
+
+        $crawler = $client->request('POST', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_ZONE . '/duplicate', [
+            '_token' => $this->generateCsrfToken($client, 'duplicate-measure'),
+        ]);
+
+        $this->assertResponseStatusCodeSame(200);
+        $streams = $crawler->filter('turbo-stream');
+
+        $this->assertSame('append', $streams->eq(0)->attr('action'));
+        $this->assertSame('measure_list', $streams->eq(0)->attr('target'));
+
+        // La zone et son tracé exclu sont recopiés sur la mesure dupliquée
+        $content = $client->getResponse()->getContent();
+        $this->assertStringContainsString('Quartier de la Rue Ardoin', $content);
+        $this->assertStringContainsString('Parvis de la mairie', $content);
+    }
+
     public function testMeasureNotFound(): void
     {
         $client = $this->login();

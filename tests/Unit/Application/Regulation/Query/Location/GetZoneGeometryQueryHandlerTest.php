@@ -59,6 +59,22 @@ final class GetZoneGeometryQueryHandlerTest extends TestCase
         $this->assertSame('<sections>', $handler(new GetZoneGeometryQuery($command)));
     }
 
+    public function testReturnsProvidedSectionsGeometry(): void
+    {
+        $roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
+        $roadGeocoder->expects(self::never())->method('findSectionsInArea');
+        $roadGeocoder->expects(self::never())->method('subtractGeometries');
+        $this->queryBus->expects(self::never())->method('handle');
+
+        $command = new SaveZoneCommand();
+        $command->geometry = '<polygon>';
+        $command->exceptions = [$this->makeRawGeoJSONException('Rue exclue', '<exception>')];
+
+        $handler = new GetZoneGeometryQueryHandler($roadGeocoder, $this->queryBus);
+
+        $this->assertSame('<sections>', $handler(new GetZoneGeometryQuery($command, null, '<sections>')));
+    }
+
     public function testComputeSubtractsExceptions(): void
     {
         $roadGeocoder = $this->createMock(RoadGeocoderInterface::class);

@@ -58,6 +58,54 @@ final class SaveNumberedRoadCommand implements RoadCommandInterface
         $this->prepareReferencePoints();
     }
 
+    /**
+     * Reconstruit la commande depuis les données dénormalisées d'une exception « Ville
+     * entière » (WholeCityException::data). Tenu en miroir de toData() : la stabilité du
+     * couple conditionne la signature qui évite les recalculs de géométrie.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function fromData(array $data, string $roadType): self
+    {
+        $command = new self();
+        $command->roadType = $roadType;
+        $command->administrator = $data['administrator'] ?? null;
+        $command->roadNumber = $data['roadNumber'] ?? null;
+        $command->fromDepartmentCode = $data['fromDepartmentCode'] ?? null;
+        $command->fromPointNumber = $data['fromPointNumber'] ?? null;
+        $command->fromAbscissa = $data['fromAbscissa'] ?? null;
+        $command->fromSide = $data['fromSide'] ?? null;
+        $command->toDepartmentCode = $data['toDepartmentCode'] ?? null;
+        $command->toPointNumber = $data['toPointNumber'] ?? null;
+        $command->toAbscissa = $data['toAbscissa'] ?? null;
+        $command->toSide = $data['toSide'] ?? null;
+        $command->direction = $data['direction'] ?? DirectionEnum::BOTH->value;
+        // Ré-encode les champs de points de repère utilisés par le formulaire.
+        $command->prepareReferencePoints();
+
+        return $command;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toData(): array
+    {
+        return [
+            'administrator' => $this->administrator,
+            'roadNumber' => $this->roadNumber,
+            'fromDepartmentCode' => $this->fromDepartmentCode,
+            'fromPointNumber' => $this->fromPointNumber,
+            'fromAbscissa' => $this->fromAbscissa,
+            'fromSide' => $this->fromSide,
+            'toDepartmentCode' => $this->toDepartmentCode,
+            'toPointNumber' => $this->toPointNumber,
+            'toAbscissa' => $this->toAbscissa,
+            'toSide' => $this->toSide,
+            'direction' => $this->direction,
+        ];
+    }
+
     public static function encodePointNumberWithDepartmentCode(?string $departmentCode, ?string $pointNumber): ?string
     {
         // WARNING (1): empty($pointNumber) ne convient pas car '0' est un PR valide mais empty('0') renvoie true en PHP.

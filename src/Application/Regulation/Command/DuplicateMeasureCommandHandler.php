@@ -9,10 +9,15 @@ use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
 use App\Application\Regulation\Command\VehicleSet\SaveVehicleSetCommand;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
 
 final class DuplicateMeasureCommandHandler
@@ -100,7 +105,27 @@ final class DuplicateMeasureCommandHandler
                 $cmd->rawGeoJSON = new SaveRawGeoJSONCommand();
                 $cmd->rawGeoJSON->roadType = $location->getRoadType();
                 $cmd->rawGeoJSON->label = $rawGeoJSON->getLabel();
-                $cmd->rawGeoJSON->geometry = $location->getGeometry();
+                // Tracé dessiné, dont les exceptions sont soustraites à l'enregistrement. Repli sur
+                // la géométrie de la localisation pour les tracés antérieurs aux exceptions.
+                $cmd->rawGeoJSON->geometry = $rawGeoJSON->getGeometry() ?? $location->getGeometry();
+                $cmd->rawGeoJSON->exceptions = $this->duplicateExceptions($location);
+            } elseif ($zone = $location->getZone()) {
+                $cmd->zone = new SaveZoneCommand();
+                $cmd->zone->roadType = $location->getRoadType();
+                $cmd->zone->label = $zone->getLabel();
+                $cmd->zone->geometry = $zone->getGeometry();
+                // Tronçons déjà calculés pour ce périmètre : évite une nouvelle recherche dans la BD TOPO.
+                $cmd->zone->sectionsGeometry = $location->getGeometry();
+                $cmd->zone->exceptions = $this->duplicateExceptions($location);
+            } elseif ($location->getRoadType() === RoadTypeEnum::WHOLE_CITY->value) {
+                // « Ville entière » n'a pas de sous-entité dédiée : ses données vivent sur la localisation.
+                $cmd->wholeCity = new SaveWholeCityCommand();
+                $cmd->wholeCity->roadType = $location->getRoadType();
+                $cmd->wholeCity->cityCode = $location->getCityCode();
+                $cmd->wholeCity->cityLabel = $location->getCityLabel();
+                // Géométrie déjà calculée : évite de recalculer celle de toute la ville.
+                $cmd->wholeCity->geometry = $location->getGeometry();
+                $cmd->wholeCity->exceptions = $this->duplicateExceptions($location);
             }
 
             $locationCommands[] = $cmd;
@@ -119,5 +144,32 @@ final class DuplicateMeasureCommandHandler
         $measureCommand->locations = $locationCommands;
 
         return $this->commandBus->handle($measureCommand);
+    }
+
+    /**
+     * Recopie les exceptions (voies ou tracés exclus) d'une localisation « Ville entière »,
+     * « Tracé de zone » ou « Tracé libre ».
+     *
+     * @return SaveWholeCityExceptionCommand[]
+     */
+    private function duplicateExceptions(Location $location): array
+    {
+        $commands = [];
+
+        foreach ($location->getExceptions() as $exception) {
+            // La commande se réhydrate depuis les données structurées de l'exception d'origine.
+            // Les exceptions sont toujours recréées à l'enregistrement : la référence à l'entité
+            // d'origine ne sert pas à une mise à jour.
+            $exceptionCommand = new SaveWholeCityExceptionCommand($exception);
+
+            // On reprend la géométrie déjà calculée pour éviter un nouveau géocodage.
+            if ($exceptionCommand->namedStreet) {
+                $exceptionCommand->namedStreet->geometry = $exception->getGeometry();
+            }
+
+            $commands[] = $exceptionCommand;
+        }
+
+        return $commands;
     }
 }

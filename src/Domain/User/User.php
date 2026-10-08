@@ -12,6 +12,8 @@ class User
     private \DateTimeInterface $registrationDate;
     private ?\DateTimeInterface $lastActiveAt = null;
     private ?\DateTimeInterface $inactivityEmailSentAt = null;
+    private ?string $emailAuthCode = null;
+    private ?\DateTimeInterface $emailAuthCodeExpiresAt = null;
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
     private bool $isVerified = false;
@@ -94,6 +96,30 @@ class User
     public function setInactivityEmailSentAt(?\DateTimeInterface $date): self
     {
         $this->inactivityEmailSentAt = $date;
+
+        return $this;
+    }
+
+    public function getEmailAuthCode(): ?string
+    {
+        return $this->emailAuthCode;
+    }
+
+    public function setEmailAuthCode(?string $emailAuthCode): self
+    {
+        $this->emailAuthCode = $emailAuthCode;
+
+        return $this;
+    }
+
+    public function getEmailAuthCodeExpiresAt(): ?\DateTimeInterface
+    {
+        return $this->emailAuthCodeExpiresAt;
+    }
+
+    public function setEmailAuthCodeExpiresAt(?\DateTimeInterface $emailAuthCodeExpiresAt): self
+    {
+        $this->emailAuthCodeExpiresAt = $emailAuthCodeExpiresAt;
 
         return $this;
     }

@@ -326,7 +326,7 @@ final class GetRegulationController
                                 description: 'Emplacements géographiques sur lesquels la mesure s\'applique. '
                                     . 'Chaque emplacement est décrit selon son type de voirie (`roadType`) ; '
                                     . 'un seul des champs `namedStreet`, `numberedRoad`, `rawGeoJSON`, '
-                                    . '`storageArea` ou `zone` est renseigné, les autres valent `null`.',
+                                    . '`storageArea`, `zone` ou `wholeCity` est renseigné, les autres valent `null`.',
                                 items: new OA\Items(
                                     type: 'object',
                                     properties: [
@@ -338,13 +338,14 @@ final class GetRegulationController
                                         new OA\Property(
                                             property: 'roadType',
                                             type: 'string',
-                                            enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON', 'zone'],
+                                            enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON', 'zone', 'wholeCity'],
                                             description: 'Type de voirie : `lane` (voie nommée en milieu '
                                                 . 'urbain), `departmentalRoad` (route départementale), '
                                                 . '`nationalRoad` (route nationale), `rawGeoJSON` '
                                                 . '(géométrie GeoJSON brute fournie par l\'organisation), '
                                                 . '`zone` (tracé de zone : les tronçons de rues couverts '
-                                                . 'par le périmètre dessiné).',
+                                                . 'par le périmètre dessiné), `wholeCity` (toutes les '
+                                                . 'voies d\'une commune).',
                                             example: 'lane',
                                         ),
                                         new OA\Property(
@@ -388,6 +389,7 @@ final class GetRegulationController
                                                 . 'effective est exposée par le champ `geometry`).',
                                             properties: [
                                                 new OA\Property(property: 'label', type: 'string', description: 'Libellé descriptif de la zone.'),
+                                                new OA\Property(property: 'exceptions', type: 'array', description: 'Emprises exclues de la restriction (« Sauf... »).', items: new OA\Items(ref: '#/components/schemas/WholeCityExceptionView')),
                                             ],
                                         ),
                                         new OA\Property(
@@ -409,6 +411,21 @@ final class GetRegulationController
                                                 . 'dessiné sont exposés par le champ `geometry`.',
                                             properties: [
                                                 new OA\Property(property: 'label', type: 'string', description: 'Libellé descriptif de la zone.', example: 'Quartier des Docks'),
+                                                new OA\Property(property: 'exceptions', type: 'array', description: 'Emprises exclues de la restriction (« Sauf... »).', items: new OA\Items(ref: '#/components/schemas/WholeCityExceptionView')),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'wholeCity',
+                                            type: 'object',
+                                            nullable: true,
+                                            description: 'Ville entière. Renseigné lorsque `roadType` vaut '
+                                                . '`wholeCity` : la restriction s\'applique à toutes les '
+                                                . 'voies de la commune, sauf les emprises listées dans '
+                                                . '`exceptions`.',
+                                            properties: [
+                                                new OA\Property(property: 'cityCode', type: 'string', nullable: true, description: 'Code INSEE de la commune.', example: '93070'),
+                                                new OA\Property(property: 'cityLabel', type: 'string', nullable: true, example: 'Saint-Ouen-sur-Seine'),
+                                                new OA\Property(property: 'exceptions', type: 'array', description: 'Emprises exclues de la restriction (« Sauf... »).', items: new OA\Items(ref: '#/components/schemas/WholeCityExceptionView')),
                                             ],
                                         ),
                                         new OA\Property(
