@@ -136,14 +136,30 @@ readonly class MeasureView
         return array_map(
             function ($exception) {
                 $data = $exception->getData();
+                $roadType = $exception->getRoadType();
+
+                $numberedRoad = null;
+                if (\in_array($roadType, [RoadTypeEnum::DEPARTMENTAL_ROAD->value, RoadTypeEnum::NATIONAL_ROAD->value], true)) {
+                    $numberedRoad = new NumberedRoadView(
+                        administrator: $data['administrator'] ?? null,
+                        roadNumber: $data['roadNumber'] ?? null,
+                        fromPointNumber: $data['fromPointNumber'] ?? null,
+                        fromAbscissa: $data['fromAbscissa'] ?? 0,
+                        fromSide: $data['fromSide'] ?? null,
+                        toPointNumber: $data['toPointNumber'] ?? null,
+                        toAbscissa: $data['toAbscissa'] ?? 0,
+                        toSide: $data['toSide'] ?? null,
+                    );
+                }
 
                 return new WholeCityExceptionView(
-                    roadType: $exception->getRoadType(),
+                    roadType: $roadType,
                     label: $exception->getLabel(),
                     fromHouseNumber: $data['fromHouseNumber'] ?? null,
                     fromRoadName: $data['fromRoadName'] ?? null,
                     toHouseNumber: $data['toHouseNumber'] ?? null,
                     toRoadName: $data['toRoadName'] ?? null,
+                    numberedRoad: $numberedRoad,
                 );
             },
             $location->getExceptions(),

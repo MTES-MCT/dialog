@@ -6,7 +6,8 @@
                 {%- for exception in exceptions -%}
                     <li>
                         {{- exception.label -}}
-                        {%- if exception.roadType == 'lane' %} {% include 'location/named_street/points.html.twig' with { location: exception } only %}{% endif -%}
+                        {%- if exception.roadType == 'lane' %} {% include 'location/named_street/points.html.twig' with { location: exception } only %}
+                        {%- elseif exception.numberedRoad %}{% if exception.numberedRoad.administrator %} ({{ exception.numberedRoad.administrator }}){% endif %} {% include 'regulation/_reference_points.html.twig' with { location: exception.numberedRoad } only %}{% endif -%}
                     </li>
                 {%- endfor -%}
             </ul>

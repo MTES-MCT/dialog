@@ -16,6 +16,7 @@ final readonly class LocationApiView
         public ?RawGeoJSONApiView $rawGeoJSON,
         public ?StorageAreaApiView $storageArea,
         public ?ZoneApiView $zone,
+        public ?WholeCityApiView $wholeCity,
         public ?string $geometry,
     ) {
     }
@@ -30,6 +31,7 @@ final readonly class LocationApiView
             rawGeoJSON: $view->rawGeoJSON ? RawGeoJSONApiView::fromView($view->rawGeoJSON) : null,
             storageArea: $view->storageArea ? StorageAreaApiView::fromView($view->storageArea) : null,
             zone: $view->zone ? ZoneApiView::fromView($view->zone) : null,
+            wholeCity: $view->wholeCity ? WholeCityApiView::fromView($view->wholeCity) : null,
             geometry: $view->geometry,
         );
     }

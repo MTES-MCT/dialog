@@ -39,7 +39,10 @@ final class WholeCityFormType extends AbstractType
                 CollectionType::class,
                 options: [
                     'entry_type' => WholeCityExceptionFormType::class,
-                    'entry_options' => ['label' => false],
+                    'entry_options' => [
+                        'label' => false,
+                        'administrators' => $options['administrators'],
+                    ],
                     'allow_add' => true,
                     'allow_delete' => true,
                     'by_reference' => false,
@@ -114,10 +117,15 @@ final class WholeCityFormType extends AbstractType
             'validation_groups' => ['Default', 'html_form'],
             'data_class' => SaveWholeCityCommand::class,
             'organization' => null,
+            'administrators' => [
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value => [],
+                RoadTypeEnum::NATIONAL_ROAD->value => [],
+            ],
             'error_mapping' => [
                 'cityCode' => 'cityLabel',
             ],
         ]);
         $resolver->setAllowedTypes('organization', ['null', Organization::class]);
+        $resolver->setAllowedTypes('administrators', 'array');
     }
 }

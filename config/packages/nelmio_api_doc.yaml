@@ -5,6 +5,104 @@ nelmio_api_doc:
             description: Intégration de la réglementation de circulation dans les solutions numériques.
             version: 1.0.0
         components:
+            schemas:
+                # Exception (« Sauf... ») d'une localisation « Ville entière », « Tracé de zone »
+                # ou « Tracé libre » : emprise exclue de la restriction. Seul le sous-objet
+                # correspondant à roadType est pris en compte.
+                WholeCityException:
+                    type: object
+                    description: >-
+                        Emprise exclue de la restriction (« Sauf... »). Renseigner `roadType`
+                        et le sous-objet du même nom (`namedStreet` pour `lane`). Les exceptions
+                        imbriquées d'un sous-objet `zone` ou `rawGeoJSON` sont ignorées.
+                    properties:
+                        roadType:
+                            type: string
+                            enum: [lane, departmentalRoad, nationalRoad, rawGeoJSON, zone]
+                            example: lane
+                        namedStreet:
+                            type: object
+                            nullable: true
+                            description: >-
+                                Voie exclue (roadType = lane). Pour une exception de « Ville
+                                entière », `cityCode`/`cityLabel` sont hérités de la localisation
+                                parente s'ils sont omis.
+                            properties:
+                                cityCode: { type: string, nullable: true }
+                                cityLabel: { type: string, nullable: true }
+                                roadName: { type: string, nullable: true }
+                                fromPointType: { type: string, nullable: true, enum: [houseNumber, intersection] }
+                                fromHouseNumber: { type: string, nullable: true }
+                                fromRoadName: { type: string, nullable: true }
+                                toPointType: { type: string, nullable: true, enum: [houseNumber, intersection] }
+                                toHouseNumber: { type: string, nullable: true }
+                                toRoadName: { type: string, nullable: true }
+                                direction: { type: string, nullable: true, enum: [BOTH, A_TO_B, B_TO_A] }
+                        departmentalRoad:
+                            $ref: '#/components/schemas/NumberedRoadException'
+                        nationalRoad:
+                            $ref: '#/components/schemas/NumberedRoadException'
+                        zone:
+                            type: object
+                            nullable: true
+                            description: Zone exclue (roadType = zone), périmètre en polygone GeoJSON.
+                            properties:
+                                label: { type: string, nullable: true }
+                                geometry: { type: string, nullable: true, description: Polygone GeoJSON sérialisé en chaîne JSON. }
+                        rawGeoJSON:
+                            type: object
+                            nullable: true
+                            description: Tracé libre exclu (roadType = rawGeoJSON).
+                            properties:
+                                label: { type: string, nullable: true }
+                                geometry: { type: string, nullable: true, description: Géométrie GeoJSON sérialisée en chaîne JSON. }
+                # Représentation en lecture d'une exception (réponses GET).
+                WholeCityExceptionView:
+                    type: object
+                    description: Emprise exclue de la restriction (« Sauf... »).
+                    properties:
+                        roadType:
+                            type: string
+                            enum: [lane, departmentalRoad, nationalRoad, rawGeoJSON, zone]
+                        label:
+                            type: string
+                            description: Nom de la voie, numéro de route ou libellé du tracé exclu.
+                            example: Rue Ardoin
+                        fromHouseNumber: { type: string, nullable: true, description: Numéro de début (exception de type lane). }
+                        fromRoadName: { type: string, nullable: true, description: Voie transversale de début (exception de type lane). }
+                        toHouseNumber: { type: string, nullable: true, description: Numéro de fin (exception de type lane). }
+                        toRoadName: { type: string, nullable: true, description: Voie transversale de fin (exception de type lane). }
+                        numberedRoad:
+                            type: object
+                            nullable: true
+                            description: Détail de la section exclue (exception de type departmentalRoad ou nationalRoad).
+                            properties:
+                                administrator: { type: string, nullable: true }
+                                roadNumber: { type: string, nullable: true }
+                                fromPointNumber: { type: string, nullable: true }
+                                fromAbscissa: { type: integer, nullable: true }
+                                fromSide: { type: string, nullable: true }
+                                toPointNumber: { type: string, nullable: true }
+                                toAbscissa: { type: integer, nullable: true }
+                                toSide: { type: string, nullable: true }
+                NumberedRoadException:
+                    type: object
+                    nullable: true
+                    description: >-
+                        Section de route numérotée exclue (roadType = departmentalRoad ou
+                        nationalRoad). Gestionnaire, numéro de route et PR de début/fin requis.
+                    properties:
+                        administrator: { type: string, nullable: true }
+                        roadNumber: { type: string, nullable: true }
+                        fromDepartmentCode: { type: string, nullable: true }
+                        fromPointNumber: { type: string, nullable: true }
+                        fromAbscissa: { type: integer, nullable: true }
+                        fromSide: { type: string, nullable: true }
+                        toDepartmentCode: { type: string, nullable: true }
+                        toPointNumber: { type: string, nullable: true }
+                        toAbscissa: { type: integer, nullable: true }
+                        toSide: { type: string, nullable: true }
+                        direction: { type: string, nullable: true, enum: [BOTH, A_TO_B, B_TO_A] }
             securitySchemes:
                 ApiClientIdHeader:
                     type: apiKey

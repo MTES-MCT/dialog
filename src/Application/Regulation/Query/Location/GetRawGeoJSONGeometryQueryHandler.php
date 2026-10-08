@@ -36,7 +36,10 @@ final class GetRawGeoJSONGeometryQueryHandler implements QueryInterface
         foreach ($command->exceptions as $exception) {
             $geometryQuery = $exception->getGeometryQuery();
             if ($geometryQuery) {
-                $subtractGeometries[] = $this->queryBus->handle($geometryQuery);
+                // Mémorisée sur la commande pour que l'enregistrement de l'exception
+                // (syncExceptions) ne re-géocode pas.
+                $exception->computedGeometry = $this->queryBus->handle($geometryQuery);
+                $subtractGeometries[] = $exception->computedGeometry;
             }
         }
 
