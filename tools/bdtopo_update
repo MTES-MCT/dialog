@@ -20,6 +20,17 @@ def _sizeof_fmt(num: float, suffix: str = "B") -> str:
     return f"{num:.1f} Yi{suffix}"
 
 
+def _redact_url(url: str) -> str:
+    """Hide the password of a database URL before printing it (CI logs are public)."""
+    urlobj = urlparse(url)
+    if urlobj.password is None:
+        return url
+    host = urlobj.hostname or ""
+    if urlobj.port:
+        host = f"{host}:{urlobj.port}"
+    return urlobj._replace(netloc=f"{urlobj.username}:***@{host}").geturl()
+
+
 def _run_dockerized_ogr2ogr(
     database_url,
     source: str,
@@ -304,7 +315,7 @@ def main(
         database_url = database_url.replace("postgres://", "postgresql://")
 
         print("===> Import info:")
-        print("Database URL:", database_url)
+        print("Database URL:", _redact_url(database_url))
         print("Import mode:", "overwrite" if overwrite else "append")
 
         if not yes and input("------> Proceed? (y/N) ") != "y":

@@ -490,6 +490,22 @@ def _part_sort_key(path: Path) -> int:
     return int(match.group(1)) if match else 0
 
 
+def _redact_url(url: str) -> str:
+    """Hide the password of a database URL before printing it (CI logs are public)."""
+    urlobj = urlparse(url)
+    if urlobj.password is None:
+        return url
+    host = urlobj.hostname or ""
+    if urlobj.port:
+        host = f"{host}:{urlobj.port}"
+    return urlobj._replace(netloc=f"{urlobj.username}:***@{host}").geturl()
+
+
+def _manifest_key(archive_key: str) -> str:
+    """S3 key of the manifest stored next to the archive."""
+    return f"{archive_key}.manifest.json"
+
+
 def _region_from_endpoint(endpoint: str | None) -> str | None:
     """Derive the Outscale region from an endpoint, e.g.
     https://oos.cloudgouv-eu-west-1.outscale.com -> cloudgouv-eu-west-1
@@ -568,6 +584,88 @@ def _list_archive_gpkgs(first_part: Path, table_names: list[str]) -> list[dict]:
     return entries
 
 
+def _aws_env(region: str) -> dict[str, str]:
+    """Build the AWS CLI environment from the Flysystem/Outscale S3 configuration."""
+    env = os.environ.copy()
+    env["AWS_ACCESS_KEY_ID"] = os.environ["S3_ACCESS_KEY"]
+    env["AWS_SECRET_ACCESS_KEY"] = os.environ["S3_SECRET_KEY"]
+    env["AWS_DEFAULT_REGION"] = region
+    env["AWS_REGION"] = region
+
+    # Outscale is configured with path-style addressing (pathStyleEndpoint: true).
+    subprocess.run(
+        ["aws", "configure", "set", "default.s3.addressing_style", "path"],
+        env=env,
+        check=False,
+    )
+
+    return env
+
+
+def _endpoint_url(endpoint: str) -> str:
+    return endpoint if "://" in endpoint else f"https://{endpoint}"
+
+
+def _upload_manifest_to_s3(
+    manifest_path: Path, bucket: str, archive_key: str, endpoint: str, region: str
+) -> int:
+    """Store the manifest next to the archive so that a later run can reuse both
+    without re-downloading the IGN parts (--skip-download)."""
+    key = _manifest_key(archive_key)
+    result = subprocess.run(
+        [
+            "aws",
+            "s3",
+            "cp",
+            str(manifest_path),
+            f"s3://{bucket}/{key}",
+            "--endpoint-url",
+            _endpoint_url(endpoint),
+        ],
+        env=_aws_env(region),
+    )
+
+    if result.returncode == 0:
+        print(f"✓ Manifest uploadé: s3://{bucket}/{key}")
+
+    return result.returncode
+
+
+def _download_manifest_from_s3(
+    manifest_path: Path, bucket: str, archive_key: str, endpoint: str, region: str
+) -> list[dict] | None:
+    """Fetch the manifest stored next to the archive; None if unavailable."""
+    if not _check_command_exists("aws"):
+        print("ERROR: l'AWS CLI est requis pour lire le manifest S3", file=sys.stderr)
+        return None
+
+    key = _manifest_key(archive_key)
+    print(f"Lecture du manifest s3://{bucket}/{key}")
+    result = subprocess.run(
+        [
+            "aws",
+            "s3",
+            "cp",
+            f"s3://{bucket}/{key}",
+            str(manifest_path),
+            "--endpoint-url",
+            _endpoint_url(endpoint),
+        ],
+        env=_aws_env(region),
+    )
+
+    if result.returncode != 0:
+        return None
+
+    try:
+        entries = json.loads(manifest_path.read_text(encoding="utf-8"))["entries"]
+    except (OSError, ValueError, KeyError) as e:
+        print(f"ERROR: manifest S3 illisible: {e}", file=sys.stderr)
+        return None
+
+    return entries if isinstance(entries, list) and entries else None
+
+
 def _stream_upload_to_s3(
     parts: list[Path],
     bucket: str,
@@ -588,20 +686,8 @@ def _stream_upload_to_s3(
         print("ERROR: l'AWS CLI est requis pour l'upload S3", file=sys.stderr)
         return 1
 
-    env = os.environ.copy()
-    env["AWS_ACCESS_KEY_ID"] = os.environ["S3_ACCESS_KEY"]
-    env["AWS_SECRET_ACCESS_KEY"] = os.environ["S3_SECRET_KEY"]
-    env["AWS_DEFAULT_REGION"] = region
-    env["AWS_REGION"] = region
+    env = _aws_env(region)
 
-    # Outscale is configured with path-style addressing (pathStyleEndpoint: true).
-    subprocess.run(
-        ["aws", "configure", "set", "default.s3.addressing_style", "path"],
-        env=env,
-        check=False,
-    )
-
-    endpoint_url = endpoint if "://" in endpoint else f"https://{endpoint}"
     cmd = [
         "aws",
         "s3",
@@ -609,7 +695,7 @@ def _stream_upload_to_s3(
         "-",
         f"s3://{bucket}/{key}",
         "--endpoint-url",
-        endpoint_url,
+        _endpoint_url(endpoint),
         "--expected-size",
         str(total_size),
     ]
@@ -686,7 +772,7 @@ def _run_bdtopo_update(
     if args.yes:
         cmd.append("-y")
 
-    print(f"Exécution de: {' '.join(cmd)}")
+    print(f"Exécution de: {' '.join(_redact_url(arg) for arg in cmd)}")
     try:
         result = subprocess.run(cmd)
     finally:
@@ -720,29 +806,7 @@ def _run_s3_pipeline(
     print("MODE S3: téléchargement, upload de l'archive, import en flux")
     print("=" * 60)
 
-    # 1. Téléchargement des parties (sauf --skip-download)
-    if not args.skip_download:
-        archives_dir.mkdir(parents=True, exist_ok=True)
-        download_urls = args.urls or _get_download_urls_from_page()
-        parts = []
-        for url in download_urls:
-            filename = Path(urlparse(url).path).name
-            dest_path = archives_dir / filename
-            _download_file(url, dest_path)
-            parts.append(dest_path)
-    else:
-        parts = list(archives_dir.glob("*.7z.*"))
-        if not parts:
-            print(
-                f"ERROR: aucune partie .7z trouvée dans {archives_dir}",
-                file=sys.stderr,
-            )
-            return 1
-
-    parts = sorted(parts, key=_part_sort_key)
-    first_part = parts[0]
-
-    # 2. Résolution de la configuration S3
+    # 1. Résolution de la configuration S3
     bucket = args.s3_bucket or os.environ.get("S3_BUCKET")
     endpoint = args.s3_endpoint or os.environ.get("S3_ENDPOINT")
     region = args.s3_region or _region_from_endpoint(endpoint)
@@ -765,6 +829,44 @@ def _run_s3_pipeline(
             file=sys.stderr,
         )
         return 1
+
+    download_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = download_dir / "bdtopo_manifest.json"
+
+    # 2. Téléchargement des parties (sauf --skip-download)
+    if not args.skip_download:
+        archives_dir.mkdir(parents=True, exist_ok=True)
+        download_urls = args.urls or _get_download_urls_from_page()
+        parts = []
+        for url in download_urls:
+            filename = Path(urlparse(url).path).name
+            dest_path = archives_dir / filename
+            _download_file(url, dest_path)
+            parts.append(dest_path)
+    else:
+        parts = list(archives_dir.glob("*.7z.*"))
+
+    if args.skip_download and not parts:
+        # Aucune partie locale (cas typique de la CI) : on réutilise l'archive et le
+        # manifest déjà présents sur S3, sans re-télécharger ni re-uploader.
+        print(f"Aucune partie .7z locale dans {archives_dir}, réutilisation de S3")
+        entries = _download_manifest_from_s3(manifest_path, bucket, key, endpoint, region)
+        if entries is None:
+            print(
+                f"ERROR: manifest introuvable sur s3://{bucket}/{_manifest_key(key)}. "
+                "Lancez d'abord un run complet (sans --skip-download).",
+                file=sys.stderr,
+            )
+            return 1
+
+        print(f"✓ {len(entries)} table(s) listée(s) dans le manifest S3:")
+        for entry in entries:
+            print(f"   - {entry['table']}: {entry['path']}")
+
+        return _run_s3_import(args, entries, manifest_path, bucket, key, endpoint, region)
+
+    parts = sorted(parts, key=_part_sort_key)
+    first_part = parts[0]
 
     # 3. Énumération des geopackages cibles dans l'archive
     config_path = Path(__file__).parent / "bdtopo_update.config.json"
@@ -799,14 +901,30 @@ def _run_s3_pipeline(
 
     print(f"✓ Archive uploadée: s3://{bucket}/{key}")
 
-    # 5. Écriture du manifest
-    manifest_path = download_dir / "bdtopo_manifest.json"
+    # 5. Écriture du manifest, en local et à côté de l'archive sur S3
     manifest_path.write_text(
         json.dumps({"entries": entries}, indent=2), encoding="utf-8"
     )
     print(f"✓ Manifest écrit: {manifest_path}")
 
-    # 6. Import en flux (sauf --skip-import)
+    manifest_ret = _upload_manifest_to_s3(manifest_path, bucket, key, endpoint, region)
+    if manifest_ret != 0:
+        print("ERROR: échec de l'upload du manifest S3", file=sys.stderr)
+        return manifest_ret
+
+    return _run_s3_import(args, entries, manifest_path, bucket, key, endpoint, region)
+
+
+def _run_s3_import(
+    args: argparse.Namespace,
+    entries: list[dict],
+    manifest_path: Path,
+    bucket: str,
+    key: str,
+    endpoint: str,
+    region: str,
+) -> int:
+    """Stream import from the archive on S3 (unless --skip-import)."""
     if args.skip_import:
         print("⏭ Import ignoré (--skip-import)")
         return 0
