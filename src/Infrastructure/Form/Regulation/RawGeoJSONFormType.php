@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -48,7 +49,11 @@ final class RawGeoJSONFormType extends AbstractType
                 CollectionType::class,
                 options: [
                     'entry_type' => WholeCityExceptionFormType::class,
-                    'entry_options' => ['label' => false, 'with_city' => true],
+                    'entry_options' => [
+                        'label' => false,
+                        'with_city' => true,
+                        'administrators' => $options['administrators'],
+                    ],
                     'allow_add' => true,
                     'allow_delete' => true,
                     'by_reference' => false,
@@ -74,8 +79,13 @@ final class RawGeoJSONFormType extends AbstractType
     {
         $resolver->setDefaults([
             'with_exceptions' => false,
+            'administrators' => [
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value => [],
+                RoadTypeEnum::NATIONAL_ROAD->value => [],
+            ],
             'data_class' => SaveRawGeoJSONCommand::class,
         ]);
         $resolver->setAllowedTypes('with_exceptions', 'bool');
+        $resolver->setAllowedTypes('administrators', 'array');
     }
 }

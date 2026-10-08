@@ -76,7 +76,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `startTime` (string, date-time ISO, nullable)
     - `endTime` (string, date-time ISO, nullable)
   - `locations` (array<object>, nullable)
-    - `roadType` (string) — enum: `lane` | `departmentalRoad` | `nationalRoad` | `rawGeoJSON`
+    - `roadType` (string) — enum: `lane` | `departmentalRoad` | `nationalRoad` | `rawGeoJSON` | `zone` | `wholeCity`
     - `namedStreet` (object, nullable) — utilisé avec `roadType = lane`
       - `cityCode` (string, nullable) — code INSEE de la commune
       - `cityLabel`, `roadName` (string, nullable)
@@ -95,11 +95,39 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `rawGeoJSON` (object, nullable) — utilisé avec `roadType = rawGeoJSON`
       - `label` (string, nullable)
       - `geometry` (string GeoJSON, nullable)
+      - `exceptions` (array<object>, nullable) — voir « Exceptions » ci-dessous
+    - `zone` (object, nullable) — utilisé avec `roadType = zone`
+      - `label` (string, nullable)
+      - `geometry` (string GeoJSON, nullable) — polygone délimitant la zone ; les tronçons de rues couverts sont calculés automatiquement (une zone sans rue est refusée, erreur 400)
+      - `exceptions` (array<object>, nullable) — voir « Exceptions » ci-dessous
+    - `wholeCity` (object, nullable) — utilisé avec `roadType = wholeCity` : la restriction s'applique à toutes les voies de la commune
+      - `cityCode` (string, nullable) — code INSEE de la commune
+      - `cityLabel` (string, nullable)
+      - `exceptions` (array<object>, nullable) — voir « Exceptions » ci-dessous
+
+##### Exceptions (« Sauf... »)
+
+Les localisations `wholeCity`, `zone` et `rawGeoJSON` acceptent une liste `exceptions` :
+des emprises **exclues** de la restriction, soustraites de sa géométrie. Chaque exception
+porte un `roadType` (`lane` | `departmentalRoad` | `nationalRoad` | `rawGeoJSON` | `zone`)
+et le sous-objet du même nom, avec les mêmes champs que la localisation correspondante :
+
+- `roadType = lane` → `namedStreet` (voie entière ou tronçon). Pour une exception de
+  `wholeCity`, `cityCode`/`cityLabel` sont hérités de la commune de la localisation
+  s'ils sont omis.
+- `roadType = departmentalRoad` ou `nationalRoad` → `departmentalRoad`/`nationalRoad`
+  (gestionnaire, numéro de route et PR de début/fin requis).
+- `roadType = zone` → `zone` (polygone GeoJSON ; les rues couvertes sont exclues).
+- `roadType = rawGeoJSON` → `rawGeoJSON` (géométrie soustraite telle quelle).
+
+Les exceptions imbriquées (champ `exceptions` d'un sous-objet `zone` ou `rawGeoJSON`
+d'une exception) sont ignorées. Une exception incomplète est ignorée silencieusement.
 
 ##### Enums détaillés
 
 - `measures[*].type` (MeasureTypeEnum): `alternateRoad`, `noEntry`, `speedLimitation`, `parkingProhibited`
-- `locations[*].roadType` (RoadTypeEnum): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`
+- `locations[*].roadType` (RoadTypeEnum): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`, `zone`, `wholeCity`
+- `exceptions[*].roadType` (RoadTypeEnum, sous-ensemble): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`, `zone`
 - `namedStreet.direction`, `departmentalRoad.direction`, `nationalRoad.direction` (DirectionEnum): `BOTH`, `A_TO_B`, `B_TO_A`
 - `periods[*].recurrenceType`, `dailyRange.recurrenceType` (PeriodRecurrenceTypeEnum): `everyDay`, `certainDays`
 - `dailyRange.applicableDays` (ApplicableDayEnum): `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`
@@ -161,6 +189,53 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
             "toPointType": "houseNumber",
             "toHouseNumber": "20",
             "direction": "BOTH"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### Exemple : ville entière avec exceptions (« Sauf... »)
+
+Restriction sur toute la commune, sauf une voie entière et une section de route départementale :
+
+```json
+{
+  "identifier": "F2025/VILLE-001",
+  "category": "temporaryRegulation",
+  "title": "Circulation interdite dans toute la commune",
+  "measures": [
+    {
+      "type": "noEntry",
+      "vehicleSet": { "allVehicles": true },
+      "periods": [
+        { "startDate": "2025-10-10T00:00:00Z", "startTime": "2025-10-10T08:00:00Z", "endDate": "2025-10-20T00:00:00Z", "endTime": "2025-10-20T18:00:00Z", "recurrenceType": "everyDay" }
+      ],
+      "locations": [
+        {
+          "roadType": "wholeCity",
+          "wholeCity": {
+            "cityCode": "93070",
+            "cityLabel": "Saint-Ouen-sur-Seine",
+            "exceptions": [
+              {
+                "roadType": "lane",
+                "namedStreet": { "roadName": "Rue Ardoin" }
+              },
+              {
+                "roadType": "departmentalRoad",
+                "departmentalRoad": {
+                  "administrator": "Seine-Saint-Denis",
+                  "roadNumber": "D22",
+                  "fromPointNumber": "1",
+                  "fromSide": "D",
+                  "toPointNumber": "2",
+                  "toSide": "D"
+                }
+              }
+            ]
           }
         }
       ]

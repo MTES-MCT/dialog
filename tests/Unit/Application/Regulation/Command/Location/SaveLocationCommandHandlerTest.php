@@ -17,16 +17,21 @@ use App\Application\Regulation\Command\Location\SaveLocationCommandHandler;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
+use App\Application\Regulation\Query\Location\GetWholeCityGeometryQuery;
 use App\Application\Regulation\Query\Location\GetZoneGeometryQuery;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
+use App\Domain\Regulation\Location\WholeCityException;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -795,5 +800,87 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $result = $handler($command);
 
         $this->assertSame($location, $result);
+    }
+
+    public function testUpdateWholeCityReusesUnchangedExceptionGeometry(): void
+    {
+        $this->organization
+            ->method('getUuid')
+            ->willReturn('71d3dd7c-c6e9-4058-8948-0b4d8c6f15de');
+
+        $location = $this->createMock(Location::class);
+        $measure = $this->createMock(Measure::class);
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $location->method('getMeasure')->willReturn($measure);
+        $measure->method('getRegulationOrder')->willReturn($regulationOrder);
+        $regulationOrder->method('getRegulationOrderRecord')->willReturn($regulationOrderRecord);
+        $regulationOrderRecord->method('getOrganization')->willReturn($this->organization);
+
+        // Ordre des clés identique à SaveNumberedRoadCommand::toData() pour une signature stable.
+        $data = [
+            'administrator' => 'Ardèche',
+            'roadNumber' => 'D906',
+            'fromDepartmentCode' => null,
+            'fromPointNumber' => '34',
+            'fromAbscissa' => 100,
+            'fromSide' => 'U',
+            'toDepartmentCode' => null,
+            'toPointNumber' => '35',
+            'toAbscissa' => 650,
+            'toSide' => 'U',
+            'direction' => DirectionEnum::BOTH->value,
+        ];
+        $existingException = new WholeCityException(
+            uuid: '3d0e8281-daaa-4179-9c17-11e88d1c721c',
+            location: $location,
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+            label: 'D906',
+            geometry: '<géométrie exception>',
+            data: $data,
+        );
+
+        $location->method('getExceptions')->willReturn([$existingException]);
+        $location->expects(self::once())->method('removeException')->with($existingException);
+        $location->expects(self::once())->method('update')->with(RoadTypeEnum::WHOLE_CITY->value, '<géométrie ville>');
+        $location->expects(self::once())->method('setWholeCity')->with('93070', 'Saint-Ouen-sur-Seine');
+        // La géométrie stockée de l'exception inchangée est réutilisée telle quelle.
+        $location->expects(self::once())->method('addException')->with(self::callback(
+            fn (WholeCityException $exception) => $exception->getGeometry() === '<géométrie exception>'
+                && $exception->getRoadType() === RoadTypeEnum::DEPARTMENTAL_ROAD->value
+                && $exception->getData() === $data,
+        ));
+
+        $wholeCityCommand = new SaveWholeCityCommand();
+        $wholeCityCommand->roadType = RoadTypeEnum::WHOLE_CITY->value;
+        $wholeCityCommand->cityCode = '93070';
+        $wholeCityCommand->cityLabel = 'Saint-Ouen-sur-Seine';
+        $wholeCityCommand->exceptions = [new SaveWholeCityExceptionCommand($existingException)];
+
+        $command = new SaveLocationCommand($location);
+        $command->roadType = RoadTypeEnum::WHOLE_CITY->value;
+        $command->wholeCity = $wholeCityCommand;
+
+        // Un seul géocodage : celui de la géométrie de la ville. L'exception inchangée
+        // (même signature) ne repasse pas par le bus de requêtes.
+        $this->queryBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with(self::isInstanceOf(GetWholeCityGeometryQuery::class))
+            ->willReturn('<géométrie ville>');
+
+        $this->canOrganizationInterveneOnGeometry->method('isSatisfiedBy')->willReturn(true);
+        $this->idFactory->method('make')->willReturn('20438789-1e79-4f60-b8c9-4cb6ecd2a9dd');
+        $this->commandBus->expects(self::never())->method('handle');
+
+        $handler = new SaveLocationCommandHandler(
+            $this->commandBus,
+            $this->queryBus,
+            $this->locationRepository,
+            $this->idFactory,
+            $this->canOrganizationInterveneOnGeometry,
+        );
+
+        $this->assertSame($location, $handler($command));
     }
 }
