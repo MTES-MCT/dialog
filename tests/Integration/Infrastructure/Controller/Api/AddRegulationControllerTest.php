@@ -524,4 +524,174 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $paths = array_map(static fn (array $v) => $v['propertyPath'], $data['violations']);
         $this->assertContains('periods', $paths);
     }
+
+    public function testAddRegulationWithWholeCityAndExceptions(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'F2025/VILLE-001',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Circulation interdite dans toute la commune',
+            'measures' => [[
+                'type' => 'noEntry',
+                'vehicleSet' => ['allVehicles' => true],
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'startTime' => '2025-10-16T13:01:02.887Z',
+                    'endDate' => '2025-10-17T13:01:02.887Z',
+                    'endTime' => '2025-10-17T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                ]],
+                'locations' => [[
+                    'roadType' => 'wholeCity',
+                    'wholeCity' => [
+                        'cityCode' => '93070',
+                        'cityLabel' => 'Saint-Ouen-sur-Seine',
+                        'exceptions' => [
+                            [
+                                // Voie entière : la ville est héritée de la localisation parente
+                                'roadType' => 'lane',
+                                'namedStreet' => ['roadName' => 'Rue Ardoin'],
+                            ],
+                            [
+                                'roadType' => 'departmentalRoad',
+                                'departmentalRoad' => [
+                                    'administrator' => 'Ardèche',
+                                    'roadNumber' => 'D906',
+                                    'fromPointNumber' => '34',
+                                    'fromSide' => 'U',
+                                    'toPointNumber' => '35',
+                                    'toSide' => 'U',
+                                ],
+                            ],
+                        ],
+                    ],
+                ]],
+            ]],
+        ];
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            json_encode($payload),
+        );
+
+        $this->assertResponseStatusCodeSame(201);
+
+        // Aller-retour : les exceptions sont restituées par l'API de lecture.
+        $client->request(
+            'GET',
+            '/api/regulations/F2025/VILLE-001',
+            [],
+            [],
+            [
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+        );
+
+        $this->assertResponseStatusCodeSame(200);
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $location = $data['measures'][0]['locations'][0];
+        $this->assertSame('wholeCity', $location['roadType']);
+        $this->assertSame('93070', $location['wholeCity']['cityCode']);
+
+        $exceptions = $location['wholeCity']['exceptions'];
+        $this->assertCount(2, $exceptions);
+        $this->assertSame('lane', $exceptions[0]['roadType']);
+        $this->assertSame('Rue Ardoin', $exceptions[0]['label']);
+        $this->assertSame('departmentalRoad', $exceptions[1]['roadType']);
+        $this->assertSame('D906', $exceptions[1]['label']);
+        $this->assertSame('Ardèche', $exceptions[1]['numberedRoad']['administrator']);
+        $this->assertSame('34', $exceptions[1]['numberedRoad']['fromPointNumber']);
+    }
+
+    public function testAddRegulationWithZoneExceptions(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'F2025/ZONE-001',
+            'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Restriction de zone avec exception',
+            'measures' => [[
+                'type' => 'noEntry',
+                'vehicleSet' => ['allVehicles' => true],
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'startTime' => '2025-10-16T13:01:02.887Z',
+                    'endDate' => '2025-10-17T13:01:02.887Z',
+                    'endTime' => '2025-10-17T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                ]],
+                'locations' => [[
+                    'roadType' => 'zone',
+                    'zone' => [
+                        'label' => 'Quartier de la Rue Ardoin',
+                        // Périmètre englobant la Rue Ardoin à Saint-Ouen-sur-Seine (93070)
+                        'geometry' => '{"type":"Polygon","coordinates":[[[2.3215,48.9075],[2.331,48.9075],[2.331,48.916],[2.3215,48.916],[2.3215,48.9075]]]}',
+                        'exceptions' => [[
+                            // Pour une zone, la ville de l'exception doit être renseignée
+                            'roadType' => 'lane',
+                            'namedStreet' => [
+                                'cityCode' => '93070',
+                                'cityLabel' => 'Saint-Ouen-sur-Seine',
+                                'roadName' => 'Rue Ardoin',
+                            ],
+                        ]],
+                    ],
+                ]],
+            ]],
+        ];
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            json_encode($payload),
+        );
+
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request(
+            'GET',
+            '/api/regulations/F2025/ZONE-001',
+            [],
+            [],
+            [
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+        );
+
+        $this->assertResponseStatusCodeSame(200);
+        $data = json_decode($client->getResponse()->getContent(), true);
+
+        $location = $data['measures'][0]['locations'][0];
+        $this->assertSame('zone', $location['roadType']);
+
+        $exceptions = $location['zone']['exceptions'];
+        $this->assertCount(1, $exceptions);
+        $this->assertSame('lane', $exceptions[0]['roadType']);
+        $this->assertSame('Rue Ardoin', $exceptions[0]['label']);
+    }
 }
