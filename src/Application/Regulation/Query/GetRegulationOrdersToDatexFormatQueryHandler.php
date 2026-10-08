@@ -91,7 +91,14 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                                 isExempted: true,
                             );
                         } else {
-                            $vehicleConditions[] = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
+                            $exemptedVehicleCondition = new DatexVehicleConditionView($exemptedVehicleType, isExempted: true);
+
+                            // Plusieurs types DiaLog peuvent donner la même condition DATEX (ex. police et véhicules
+                            // d'urgence) : on ne l'expose qu'une fois. La comparaison non stricte est voulue, elle
+                            // compare les objets par valeur.
+                            if (!\in_array($exemptedVehicleCondition, $vehicleConditions)) {
+                                $vehicleConditions[] = $exemptedVehicleCondition;
+                            }
                         }
                     }
                 }
