@@ -17,6 +17,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testInvalidBlank(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -24,68 +25,72 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[type]'] = ''; // reset
+        $form[$formName . '[type]'] = ''; // reset
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
 
-        $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#measure_form_type_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide. Cette valeur doit être l\'un des choix proposés.', $crawler->filter('#' . $formName . '_type_error')->text());
     }
 
     public function testWithNegativeMaxSpeed(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[type]'] = 'speedLimitation';
-        $form['measure_form[maxSpeed]'] = '-10';
+        $form[$formName . '[type]'] = 'speedLimitation';
+        $form[$formName . '[maxSpeed]'] = '-10';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#measure_form_maxSpeed_error')->text());
+        $this->assertSame('Cette valeur doit être strictement positive.', $crawler->filter('#' . $formName . '_maxSpeed_error')->text());
     }
 
     public function testWithMaxSpeedTooHigh(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[type]'] = 'speedLimitation';
-        $form['measure_form[maxSpeed]'] = '150';
+        $form[$formName . '[type]'] = 'speedLimitation';
+        $form[$formName . '[maxSpeed]'] = '150';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur doit être inférieure ou égale à 130.', $crawler->filter('#measure_form_maxSpeed_error')->text());
+        $this->assertSame('Cette valeur doit être inférieure ou égale à 130.', $crawler->filter('#' . $formName . '_maxSpeed_error')->text());
     }
 
     public function testWithoutMaxSpeed(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[type]'] = 'speedLimitation';
-        $form['measure_form[maxSpeed]'] = '';
+        $form[$formName . '[type]'] = 'speedLimitation';
+        $form[$formName . '[maxSpeed]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_maxSpeed_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#' . $formName . '_maxSpeed_error')->text());
     }
 
     public function testAddAndRemoveLocation(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -96,18 +101,18 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         // Edit measure
-        $values['measure_form']['locations'][0] = []; // Remove first
+        $values[$formName]['locations'][0] = []; // Remove first
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         // Add
-        $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
-        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
-        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_0074';
-        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
+        $values[$formName]['locations'][0]['roadType'] = 'lane';
+        $values[$formName]['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values[$formName]['locations'][0]['namedStreet']['cityCode'] = '93070';
+        $values[$formName]['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values[$formName]['locations'][0]['namedStreet']['roadBanId'] = '93070_0074';
+        $values[$formName]['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
@@ -121,6 +126,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testRemoveManyLocations(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -130,11 +136,11 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $values = $form->getPhpValues();
 
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         // Keep only 3rd location
-        $values['measure_form']['locations'] = [$values['measure_form']['locations'][2]];
+        $values[$formName]['locations'] = [$values[$formName]['locations'][2]];
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
 
@@ -156,6 +162,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $client = $this->login();
 
+        $formName = 'measure_form_' . MeasureFixture::UUID_CIFS;
+
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_CIFS . '/measure/' . MeasureFixture::UUID_CIFS);
         $this->assertSame(
             'du 05/06/2023 à 00h00 au 10/06/2023 à 23h59, du lundi au dimanche (19h00-23h00) du 02/06/2023 à 00h00 au 06/06/2023 à 23h59, le mardi (13h00-15h00 et 20h00-22h00) du 03/06/2023 à 09h00 au 05/06/2023 à 11h00, le mardi et le jeudi (09h00-11h00)',
@@ -170,7 +178,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        unset($values['measure_form']['periods'][0]); // Remove period
+        unset($values[$formName]['periods'][0]); // Remove period
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(200);
@@ -185,27 +193,28 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testRemoveDailyRange(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $values = $form->getPhpValues();
         // Add complete dailyRange
-        $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['endDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['endTime']['hour'] = '16';
-        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
-        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['recurrenceType'] = 'certainDays';
+        $values[$formName]['periods'][0]['startDate'] = '2023-10-30';
+        $values[$formName]['periods'][0]['startTime']['hour'] = '8';
+        $values[$formName]['periods'][0]['startTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['endDate'] = '2023-10-30';
+        $values[$formName]['periods'][0]['endTime']['hour'] = '16';
+        $values[$formName]['periods'][0]['endTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values[$formName]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values[$formName]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
+        $values[$formName]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(200);
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
@@ -215,10 +224,10 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values[$formName]['periods'][0]['recurrenceType'] = 'everyDay';
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(200);
@@ -228,29 +237,30 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testRemoveTimeSlots(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
 
         $values = $form->getPhpValues();
         // Add complete dailyRange
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['periods'][0]['recurrenceType'] = 'certainDays';
-        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['periods'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['endDate'] = '2023-10-30';
-        $values['measure_form']['periods'][0]['endTime']['hour'] = '16';
-        $values['measure_form']['periods'][0]['endTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
-        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
-        $values['measure_form']['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
-        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
-        $values['measure_form']['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
+        $values[$formName]['type'] = 'noEntry';
+        $values[$formName]['vehicleSet']['allVehicles'] = 'yes';
+        $values[$formName]['periods'][0]['recurrenceType'] = 'certainDays';
+        $values[$formName]['periods'][0]['startDate'] = '2023-10-30';
+        $values[$formName]['periods'][0]['startTime']['hour'] = '8';
+        $values[$formName]['periods'][0]['startTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['endDate'] = '2023-10-30';
+        $values[$formName]['periods'][0]['endTime']['hour'] = '16';
+        $values[$formName]['periods'][0]['endTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['dailyRange']['applicableDays'] = ['monday'];
+        $values[$formName]['periods'][0]['timeSlots'][0]['startTime']['hour'] = '8';
+        $values[$formName]['periods'][0]['timeSlots'][0]['startTime']['minute'] = '0';
+        $values[$formName]['periods'][0]['timeSlots'][0]['endTime']['hour'] = '18';
+        $values[$formName]['periods'][0]['timeSlots'][0]['endTime']['minute'] = '0';
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertSame('du 30/10/2023 à 08h00 au 30/10/2023 à 16h00, le lundi (08h00-18h00)', $crawler->filter('li')->eq(1)->text());
 
@@ -259,10 +269,10 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['periods'][0]['timeSlots'] = [];
+        $values[$formName]['periods'][0]['timeSlots'] = [];
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(200);
@@ -272,67 +282,70 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testGeocodingFailureFullRoad(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
-        $form['measure_form[locations][0][namedStreet][cityCode]'] = '59368';
-        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
-        $form['measure_form[locations][0][namedStreet][roadBanId]'] = '12345_6789';
-        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue inconnue';
-        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
-        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
+        $form[$formName . '[locations][0][namedStreet][roadType]'] = 'lane';
+        $form[$formName . '[locations][0][namedStreet][cityCode]'] = '59368';
+        $form[$formName . '[locations][0][namedStreet][cityLabel]'] = 'La Madeleine (59110)';
+        $form[$formName . '[locations][0][namedStreet][roadBanId]'] = '12345_6789';
+        $form[$formName . '[locations][0][namedStreet][roadName]'] = 'Rue inconnue';
+        $form[$formName . '[locations][0][namedStreet][fromHouseNumber]'] = '';
+        $form[$formName . '[locations][0][namedStreet][toHouseNumber]'] = '';
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
         $values = $form->getPhpValues();
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#measure_form_locations_0_namedStreet_roadName_error')->text());
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.', $crawler->filter('#' . $formName . '_locations_0_namedStreet_roadName_error')->text());
     }
 
     public function testLaneWithBlankHouseNumbers(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        unset($form['measure_form[locations][1][namedStreet][isEntireStreet]']);
-        $form['measure_form[locations][1][namedStreet][fromHouseNumber]'] = '';
-        $form['measure_form[locations][1][namedStreet][toHouseNumber]'] = '';
+        unset($form[$formName . '[locations][1][namedStreet][isEntireStreet]']);
+        $form[$formName . '[locations][1][namedStreet][fromHouseNumber]'] = '';
+        $form[$formName . '[locations][1][namedStreet][toHouseNumber]'] = '';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(422);
 
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_1_namedStreet_fromHouseNumber_error')->text());
-        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#measure_form_locations_1_namedStreet_toHouseNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#' . $formName . '_locations_1_namedStreet_fromHouseNumber_error')->text());
+        $this->assertSame('Cette valeur ne doit pas être vide.', $crawler->filter('#' . $formName . '_locations_1_namedStreet_toHouseNumber_error')->text());
     }
 
     public function testUpdateLaneWithIntersections(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['locations'][2]['namedStreet']['cityCode'] = '93070';
-        $values['measure_form']['locations'][2]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
-        $values['measure_form']['locations'][2]['namedStreet']['roadBanId'] = '93070_4185';
-        $values['measure_form']['locations'][2]['namedStreet']['roadName'] = 'Rue Des Graviers';
-        unset($values['measure_form']['locations'][2]['namedStreet']['isEntireStreet']);
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadBanId'] = '93070_0013';
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Rue Adrien Lesesne';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadBanId'] = '93070_7170';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Rue Des Poissonniers';
-        $values['measure_form']['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
+        $values[$formName]['locations'][2]['namedStreet']['cityCode'] = '93070';
+        $values[$formName]['locations'][2]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values[$formName]['locations'][2]['namedStreet']['roadBanId'] = '93070_4185';
+        $values[$formName]['locations'][2]['namedStreet']['roadName'] = 'Rue Des Graviers';
+        unset($values[$formName]['locations'][2]['namedStreet']['isEntireStreet']);
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadBanId'] = '93070_0013';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Rue Adrien Lesesne';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadBanId'] = '93070_7170';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Rue Des Poissonniers';
+        $values[$formName]['locations'][0]['namedStreet']['direction'] = DirectionEnum::BOTH->value;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -341,30 +354,31 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testUpdateAddressFullRoad(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         // Inspect existing full road location
         $existingFullRoadLocation = $crawler->filter('[data-testid=measure_form_location_1]');
-        $pointsFieldset1 = $existingFullRoadLocation->filter('[aria-labelledby=measure_form_locations_1_namedStreet-points-legend]')->first();
+        $pointsFieldset1 = $existingFullRoadLocation->filter('[aria-labelledby=' . $formName . '_locations_1_namedStreet-points-legend]')->first();
         $this->assertNull($pointsFieldset1->attr('hidden'), 'not_present'); // Attr must be present but its value will be null
         $this->assertNull($pointsFieldset1->attr('disabled'), 'not_present'); // Attr must be present but its value will be null
 
         // Convert location to full road
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][namedStreet][roadType]'] = 'lane';
-        $form['measure_form[locations][0][namedStreet][cityCode]'] = '93070';
-        $form['measure_form[locations][0][namedStreet][cityLabel]'] = 'Saint-Ouen-sur-Seine';
-        $form['measure_form[locations][0][namedStreet][roadBanId]'] = '93070_3185';
-        $form['measure_form[locations][0][namedStreet][roadName]'] = 'Rue Eugène Berthoud';
-        $form['measure_form[locations][0][namedStreet][isEntireStreet]'] = '1';
-        $form['measure_form[locations][0][namedStreet][fromHouseNumber]'] = '';
-        $form['measure_form[locations][0][namedStreet][toHouseNumber]'] = '';
+        $form[$formName . '[locations][0][namedStreet][roadType]'] = 'lane';
+        $form[$formName . '[locations][0][namedStreet][cityCode]'] = '93070';
+        $form[$formName . '[locations][0][namedStreet][cityLabel]'] = 'Saint-Ouen-sur-Seine';
+        $form[$formName . '[locations][0][namedStreet][roadBanId]'] = '93070_3185';
+        $form[$formName . '[locations][0][namedStreet][roadName]'] = 'Rue Eugène Berthoud';
+        $form[$formName . '[locations][0][namedStreet][isEntireStreet]'] = '1';
+        $form[$formName . '[locations][0][namedStreet][fromHouseNumber]'] = '';
+        $form[$formName . '[locations][0][namedStreet][toHouseNumber]'] = '';
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
         $values = $form->getPhpValues();
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -373,6 +387,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testDepartmentalRoadWithUnknownPointNumbers(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -382,34 +397,35 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locations'][0]['namedStreet'] = [];
-        $values['measure_form']['locations'][0]['nationalRoad'] = [];
-        $values['measure_form']['locations'][0]['rawGeoJSON'] = [];
-        $values['measure_form']['locations'][0]['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
-        $values['measure_form']['locations'][0]['departmentalRoad']['administrator'] = 'Ardèche';
-        $values['measure_form']['locations'][0]['departmentalRoad']['roadNumber'] = 'D110';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromPointNumber'] = '6';
-        $values['measure_form']['locations'][0]['departmentalRoad']['toPointNumber'] = '15';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromSide'] = 'D';
-        $values['measure_form']['locations'][0]['departmentalRoad']['toSide'] = 'D';
-        $values['measure_form']['locations'][0]['departmentalRoad']['fromAbscissa'] = 100;
-        $values['measure_form']['locations'][0]['departmentalRoad']['toAbscissa'] = 650;
+        $values[$formName]['type'] = 'noEntry';
+        $values[$formName]['vehicleSet']['allVehicles'] = 'yes';
+        $values[$formName]['locations'][0]['namedStreet'] = [];
+        $values[$formName]['locations'][0]['nationalRoad'] = [];
+        $values[$formName]['locations'][0]['rawGeoJSON'] = [];
+        $values[$formName]['locations'][0]['roadType'] = 'departmentalRoad';
+        $values[$formName]['locations'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
+        $values[$formName]['locations'][0]['departmentalRoad']['administrator'] = 'Ardèche';
+        $values[$formName]['locations'][0]['departmentalRoad']['roadNumber'] = 'D110';
+        $values[$formName]['locations'][0]['departmentalRoad']['fromPointNumber'] = '6';
+        $values[$formName]['locations'][0]['departmentalRoad']['toPointNumber'] = '15';
+        $values[$formName]['locations'][0]['departmentalRoad']['fromSide'] = 'D';
+        $values[$formName]['locations'][0]['departmentalRoad']['toSide'] = 'D';
+        $values[$formName]['locations'][0]['departmentalRoad']['fromAbscissa'] = 100;
+        $values[$formName]['locations'][0]['departmentalRoad']['toAbscissa'] = 650;
         // Road name is initially empty because its choices are managed via client-side JS. Need to set it back for the test.
-        $values['measure_form']['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
-        $values['measure_form']['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
+        $values[$formName]['locations'][2]['namedStreet']['fromRoadName'] = 'Allée Isabeau';
+        $values[$formName]['locations'][2]['namedStreet']['toRoadName'] = 'Avenue Du Cimetière';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('La géolocalisation de la route entre ces points de repère a échoué', $crawler->filter('#measure_form_locations_0_departmentalRoad_roadNumber_error')->text());
+        $this->assertStringStartsWith('La géolocalisation de la route entre ces points de repère a échoué', $crawler->filter('#' . $formName . '_locations_0_departmentalRoad_roadNumber_error')->text());
     }
 
     /*
     public function testChangeDepartmentalRoadToNationalRoadAndBack(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_CIFS;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_CIFS . '/measure/' . MeasureFixture::UUID_CIFS . '/form');
         $this->assertResponseStatusCodeSame(200);
 
@@ -418,17 +434,17 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         // Get the raw values.
         $values = $form->getPhpValues();
         $initialValues = $values;
-        $this->assertSame(RoadTypeEnum::DEPARTMENTAL_ROAD->value, $values['measure_form']['locations'][2]['roadType']);
-        $values['measure_form']['locations'][2]['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
-        $values['measure_form']['locations'][2]['nationalRoad']['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
-        $values['measure_form']['locations'][2]['nationalRoad']['administrator'] = 'DIR Ouest';
-        $values['measure_form']['locations'][2]['nationalRoad']['roadNumber'] = 'N176';
-        $values['measure_form']['locations'][2]['nationalRoad']['fromPointNumber'] = '1';
-        $values['measure_form']['locations'][2]['nationalRoad']['fromSide'] = 'D';
-        $values['measure_form']['locations'][2]['nationalRoad']['fromAbscissa'] = 0;
-        $values['measure_form']['locations'][2]['nationalRoad']['toPointNumber'] = '2';
-        $values['measure_form']['locations'][2]['nationalRoad']['toSide'] = 'D';
-        $values['measure_form']['locations'][2]['nationalRoad']['toAbscissa'] = 50;
+        $this->assertSame(RoadTypeEnum::DEPARTMENTAL_ROAD->value, $values[$formName]['locations'][2]['roadType']);
+        $values[$formName]['locations'][2]['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
+        $values[$formName]['locations'][2]['nationalRoad']['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
+        $values[$formName]['locations'][2]['nationalRoad']['administrator'] = 'DIR Ouest';
+        $values[$formName]['locations'][2]['nationalRoad']['roadNumber'] = 'N176';
+        $values[$formName]['locations'][2]['nationalRoad']['fromPointNumber'] = '1';
+        $values[$formName]['locations'][2]['nationalRoad']['fromSide'] = 'D';
+        $values[$formName]['locations'][2]['nationalRoad']['fromAbscissa'] = 0;
+        $values[$formName]['locations'][2]['nationalRoad']['toPointNumber'] = '2';
+        $values[$formName]['locations'][2]['nationalRoad']['toSide'] = 'D';
+        $values[$formName]['locations'][2]['nationalRoad']['toAbscissa'] = 50;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -440,23 +456,24 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testNumberedRoadPointNumberZero(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $this->assertSame(RoadTypeEnum::LANE->value, $values['measure_form']['locations'][2]['roadType']);
-        $values['measure_form']['locations'][2]['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
-        $values['measure_form']['locations'][2]['nationalRoad']['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
-        $values['measure_form']['locations'][2]['nationalRoad']['administrator'] = 'DIR Ouest';
-        $values['measure_form']['locations'][2]['nationalRoad']['roadNumber'] = 'N12';
-        $values['measure_form']['locations'][2]['nationalRoad']['fromPointNumber'] = '0';
-        $values['measure_form']['locations'][2]['nationalRoad']['fromSide'] = 'U';
-        $values['measure_form']['locations'][2]['nationalRoad']['fromAbscissa'] = 0;
-        $values['measure_form']['locations'][2]['nationalRoad']['toPointNumber'] = '1';
-        $values['measure_form']['locations'][2]['nationalRoad']['toSide'] = 'U';
-        $values['measure_form']['locations'][2]['nationalRoad']['toAbscissa'] = 0;
+        $this->assertSame(RoadTypeEnum::LANE->value, $values[$formName]['locations'][2]['roadType']);
+        $values[$formName]['locations'][2]['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
+        $values[$formName]['locations'][2]['nationalRoad']['roadType'] = RoadTypeEnum::NATIONAL_ROAD->value;
+        $values[$formName]['locations'][2]['nationalRoad']['administrator'] = 'DIR Ouest';
+        $values[$formName]['locations'][2]['nationalRoad']['roadNumber'] = 'N12';
+        $values[$formName]['locations'][2]['nationalRoad']['fromPointNumber'] = '0';
+        $values[$formName]['locations'][2]['nationalRoad']['fromSide'] = 'U';
+        $values[$formName]['locations'][2]['nationalRoad']['fromAbscissa'] = 0;
+        $values[$formName]['locations'][2]['nationalRoad']['toPointNumber'] = '1';
+        $values[$formName]['locations'][2]['nationalRoad']['toSide'] = 'U';
+        $values[$formName]['locations'][2]['nationalRoad']['toAbscissa'] = 0;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -466,25 +483,26 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testNationalRoadWinterMaintenanceSetAndClearStorageArea(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_WINTER_MAINTENANCE;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/' . MeasureFixture::UUID_WINTER_MAINTENANCE . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values['measure_form']['locations'][0]['roadType']);
-        $choices = $crawler->filter('select[name="measure_form[locations][0][nationalRoad][storageArea]"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
+        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values[$formName]['locations'][0]['roadType']);
+        $choices = $crawler->filter('select[name="' . $formName . '[locations][0][nationalRoad][storageArea]"] > option')->each(fn ($node) => [$node->attr('value'), $node->text()]);
 
         $this->assertEquals([
             ['', 'Sélectionner une aire de stockage'],
             [StorageAreaFixture::UUID_DIRO_N176, 'Zone de stockage 18-22 N176 Voie de droite'],
         ], $choices);
-        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
+        $values[$formName]['locations'][0]['nationalRoad']['storageArea'] = StorageAreaFixture::UUID_DIRO_N176;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
 
-        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = '';
+        $values[$formName]['locations'][0]['nationalRoad']['storageArea'] = '';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -493,28 +511,30 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testNationalRoadWinterMaintenanceInvalidStorageArea(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_WINTER_MAINTENANCE;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_WINTER_MAINTENANCE . '/measure/' . MeasureFixture::UUID_WINTER_MAINTENANCE . '/form');
         $this->assertResponseStatusCodeSame(200);
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values['measure_form']['locations'][0]['roadType']);
-        $values['measure_form']['locations'][0]['nationalRoad']['storageArea'] = '8d32e8c4-ee98-4183-aea1-b03d341d971d';
+        $this->assertSame(RoadTypeEnum::NATIONAL_ROAD->value, $values[$formName]['locations'][0]['roadType']);
+        $values[$formName]['locations'][0]['nationalRoad']['storageArea'] = '8d32e8c4-ee98-4183-aea1-b03d341d971d';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_nationalRoad_storageArea_error')->text());
+        $this->assertStringStartsWith('Le choix sélectionné est invalide.', $crawler->filter('#' . $formName . '_locations_0_nationalRoad_storageArea_error')->text());
     }
 
     public function testEditAsUserRawGeoJSONShown(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
+        $rawGeoJSONOption = $crawler->filter('#' . $formName . '_locations_0_roadType')->filter('option')->eq(4);
         $this->assertSame('Tracé de linéaire (voie)', $rawGeoJSONOption->innerText());
         $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
         $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
@@ -523,11 +543,12 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testEditAsAdminRawGeoJSONShown(): void
     {
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $formName = 'measure_form_' . MeasureFixture::UUID_TYPICAL;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
 
-        $rawGeoJSONOption = $crawler->filter('#measure_form_locations_0_roadType')->filter('option')->eq(4);
+        $rawGeoJSONOption = $crawler->filter('#' . $formName . '_locations_0_roadType')->filter('option')->eq(4);
         $this->assertSame('Tracé de linéaire (voie)', $rawGeoJSONOption->innerText());
         $this->assertSame(null, $rawGeoJSONOption->attr('hidden'));
         $this->assertSame(null, $rawGeoJSONOption->attr('disabled'));
@@ -536,6 +557,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testEditExistingRawGeoJSONAsUser(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_RAWGEOJSON;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -549,8 +571,8 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
-        $form['measure_form[locations][0][rawGeoJSON][label]'] = 'New label';
-        $form['measure_form[locations][0][rawGeoJSON][geometry]'] = '{"type": "Point", "coordinates": [2.346603289433233, 48.90376697673585]}';
+        $form[$formName . '[locations][0][rawGeoJSON][label]'] = 'New label';
+        $form[$formName . '[locations][0][rawGeoJSON][geometry]'] = '{"type": "Point", "coordinates": [2.346603289433233, 48.90376697673585]}';
 
         $crawler = $client->submit($form);
         $this->assertResponseStatusCodeSame(200);
@@ -559,6 +581,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testReplaceRawGeoJSONWithLane(): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_RAWGEOJSON;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -566,14 +589,14 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $saveButton = $crawler->selectButton('Valider');
         $form = $saveButton->form();
         $values = $form->getPhpValues();
-        $values['measure_form']['locations'][0]['roadType'] = 'lane';
-        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = ''; // Simulate effect of changing road type: old fields become disabled and submitted as empty
-        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = '';
-        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
-        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
-        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_3185';
-        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Eugène Berthoud';
-        $values['measure_form']['locations'][0]['namedStreet']['isEntireStreet'] = '1';
+        $values[$formName]['locations'][0]['roadType'] = 'lane';
+        $values[$formName]['locations'][0]['rawGeoJSON']['label'] = ''; // Simulate effect of changing road type: old fields become disabled and submitted as empty
+        $values[$formName]['locations'][0]['rawGeoJSON']['geometry'] = '';
+        $values[$formName]['locations'][0]['namedStreet']['cityCode'] = '93070';
+        $values[$formName]['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values[$formName]['locations'][0]['namedStreet']['roadBanId'] = '93070_3185';
+        $values[$formName]['locations'][0]['namedStreet']['roadName'] = 'Rue Eugène Berthoud';
+        $values[$formName]['locations'][0]['namedStreet']['isEntireStreet'] = '1';
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
         $this->assertResponseStatusCodeSame(200);
@@ -593,6 +616,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
     public function testEditRawGeoJSONWithInvalidJSON(string $geometry): void
     {
         $client = $this->login();
+        $formName = 'measure_form_' . MeasureFixture::UUID_RAWGEOJSON;
         $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_RAWGEOJSON . '/measure/' . MeasureFixture::UUID_RAWGEOJSON . '/form');
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
@@ -602,16 +626,16 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
 
         // Get the raw values.
         $values = $form->getPhpValues();
-        $values['measure_form']['type'] = 'noEntry';
-        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
-        $values['measure_form']['locations'][0]['roadType'] = 'rawGeoJSON';
-        $values['measure_form']['locations'][0]['rawGeoJSON']['label'] = 'Invalide';
-        $values['measure_form']['locations'][0]['rawGeoJSON']['geometry'] = $geometry;
+        $values[$formName]['type'] = 'noEntry';
+        $values[$formName]['vehicleSet']['allVehicles'] = 'yes';
+        $values[$formName]['locations'][0]['roadType'] = 'rawGeoJSON';
+        $values[$formName]['locations'][0]['rawGeoJSON']['label'] = 'Invalide';
+        $values[$formName]['locations'][0]['rawGeoJSON']['geometry'] = $geometry;
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
 
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringStartsWith('Cette valeur doit être une géométrie GeoJSON valide', $crawler->filter('#measure_form_locations_0_rawGeoJSON_geometry_error')->text());
+        $this->assertStringStartsWith('Cette valeur doit être une géométrie GeoJSON valide', $crawler->filter('#' . $formName . '_locations_0_rawGeoJSON_geometry_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
@@ -661,5 +685,33 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $client = static::createClient();
         $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
         $this->assertResponseRedirects('http://localhost/login', 302);
+    }
+
+    public function testHtmlIdsDoNotCollideWithAddMeasureForm(): void
+    {
+        // Un formulaire de modification et le formulaire d'ajout peuvent être ouverts en même temps
+        // sur la page d'un arrêté : leurs identifiants HTML ne doivent pas se recouper, sinon les labels
+        // et le bouton « Valider » du second agissent sur le premier (#2131).
+        $client = $this->login();
+
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form');
+        $this->assertResponseStatusCodeSame(200);
+        $updateForm = $crawler->filter('form')->first();
+        $this->assertSame('measure_form_' . MeasureFixture::UUID_TYPICAL, $updateForm->attr('name'));
+        $this->assertSame('measure_form_' . MeasureFixture::UUID_TYPICAL, $updateForm->attr('id'));
+        $this->assertSame($updateForm->attr('id'), $crawler->selectButton('Valider')->attr('form'));
+        $updateIds = $crawler->filter('[id]')->extract(['id']);
+
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+        $addForm = $crawler->filter('form')->first();
+        $this->assertSame('measure_form', $addForm->attr('name'));
+        $this->assertSame('measure_form', $addForm->attr('id'));
+        $this->assertSame($addForm->attr('id'), $crawler->selectButton('Valider')->attr('form'));
+        $addIds = $crawler->filter('[id]')->extract(['id']);
+
+        $this->assertNotEmpty($updateIds);
+        $this->assertNotEmpty($addIds);
+        $this->assertSame([], array_values(array_intersect($addIds, $updateIds)));
     }
 }

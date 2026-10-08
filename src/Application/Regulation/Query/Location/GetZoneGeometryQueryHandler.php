@@ -18,6 +18,11 @@ final class GetZoneGeometryQueryHandler implements QueryInterface
 
     public function __invoke(GetZoneGeometryQuery $query): string
     {
+        // Tronçons fournis (ex. duplication d'une mesure) : rien à recalculer.
+        if ($query->sectionsGeometry) {
+            return $query->sectionsGeometry;
+        }
+
         // Périmètre et exceptions inchangés : on réutilise les tronçons déjà calculés.
         $zone = $query->location?->getZone();
         if ($zone && $query->location->getGeometry()
@@ -47,7 +52,10 @@ final class GetZoneGeometryQueryHandler implements QueryInterface
         foreach ($query->command->exceptions as $exception) {
             $geometryQuery = $exception->getGeometryQuery();
             if ($geometryQuery) {
-                $subtractGeometries[] = $this->queryBus->handle($geometryQuery);
+                // Mémorisée sur la commande pour que l'enregistrement de l'exception
+                // (syncExceptions) ne re-géocode pas.
+                $exception->computedGeometry = $this->queryBus->handle($geometryQuery);
+                $subtractGeometries[] = $exception->computedGeometry;
             }
         }
 

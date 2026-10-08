@@ -98,6 +98,7 @@
                 >
                     <ul
                         class="app-timeslot-list fr-raw-list fr-mb-2w"
+                        id="{{ form.timeSlots.vars.id }}-list"
                         data-testid="timeslot-list"
                         data-form-collection-target="collectionContainer"
                         {% if form.timeSlots|length == 0 %}data-empty{% endif %}
@@ -148,7 +149,7 @@
                         type="button"
                         class="app-timeslot-list-add fr-btn fr-btn--sm fr-btn--secondary fr-icon-add-line"
                         data-action="form-collection#addCollectionElement"
-                        aria-controls="period-list"
+                        aria-controls="{{ form.parent.vars.id }}-list"
                         aria-label="{{ 'regulation.timeSlots.add'|trans }}"
                     >
                     </button>
@@ -158,8 +159,36 @@
     </li>
 {% endmacro %}
 
-{% macro numbered_road_form(form, roadType, locationIndex, regulationSubject, regulationOrderRecord, measureType) %}
+{# Bouton + panneau d'un aperçu carte, repliés par défaut. Le repli est géré par le
+   contrôleur location-preview-map (cible/action Stimulus) et non par le collapse DSFR,
+   qui ne s'instancie pas dans les lignes de collection ajoutées dynamiquement.
+   À placer dans l'élément portant data-controller="location-preview-map". #}
+{% macro preview_map_panel(accordionId) %}
+    <button
+        type="button"
+        class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn"
+        aria-expanded="false"
+        aria-controls="{{ accordionId }}"
+        data-location-preview-map-target="toggleButton"
+        data-action="location-preview-map#toggle"
+    >
+        <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
+        <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
+    </button>
+    <div id="{{ accordionId }}" hidden data-location-preview-map-target="panel">
+        <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
+            <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
+            <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro numbered_road_form(form, roadType, regulationSubject, regulationOrderRecord, measureType) %}
     {% set isThisTypeOfNumberedRoad = form.roadType.vars.value == roadType %}
+    {# Préfixe des identifiants HTML : dérivé de l'id du sous-formulaire, donc propre à la mesure et à la localisation #}
+    {% set idPrefix = form[roadType].vars.id %}
+    {# Absent dans le sous-formulaire d'exception (option with_storage_area désactivée) #}
+    {% set withStorageArea = form[roadType].storageArea is defined %}
 
     <div
         data-controller="reset"
@@ -188,7 +217,7 @@
 
         <div
             class="fr-x-autocomplete-wrapper"
-            data-controller="autocomplete fetch"
+            data-controller="autocomplete{% if withStorageArea %} fetch{% endif %}"
             data-autocomplete-url-value="{{ path('fragment_road_number_completion') }}"
             data-autocomplete-query-param-value="search"
             data-autocomplete-extra-query-params-value="{{ {
@@ -199,12 +228,14 @@
             data-autocomplete-delay-value="500"
             data-autocomplete-loading-status-value="{{ 'common.autocomplete.status.loading'|trans }}"
             data-autocomplete-empty-status-value="{{ 'common.autocomplete.status.min_chars'|trans({ '%minChars%': 2 }) }}"
+            {% if withStorageArea %}
             data-fetch-url-value="{{ url('fragment_storage_area_options') }}"
             data-fetch-extra-query-params-value="{{ {
                 roadNumber: '#' ~ form[roadType].roadNumber.vars.id,
                 targetId: form[roadType].storageArea.vars.id,
             }|json_encode }}"
-            data-action="autocomplete.change->reset#reset autocomplete.change->fetch#fetch"
+            {% endif %}
+            data-action="autocomplete.change->reset#reset{% if withStorageArea %} autocomplete.change->fetch#fetch{% endif %}"
             data-reset-key-param="roadNumber"
         >
             {{ form_row(form[roadType].roadNumber, {
@@ -230,8 +261,8 @@
                 </ul>
         </div>
 
-        {% set reportModalId = 'create-report-address-form-modal-' ~ locationIndex ~ '-' ~ roadType %}
-        {% set reportFrameId = 'create-report-address-form-frame-' ~ locationIndex ~ '-' ~ roadType %}
+        {% set reportModalId = idPrefix ~ '-report-modal' %}
+        {% set reportFrameId = idPrefix ~ '-report-frame' %}
         <div data-controller="report-address-modal">
             <d-modal-trigger modal="{{ reportModalId }}" submitvalue="upload">
                 <button
@@ -256,25 +287,27 @@
 
         <hr class="fr-mt-3w" />
         <fieldset
-            aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point"
+            aria-labelledby="{{ idPrefix }}-reference-point"
             data-reset-target="element"
             data-reset-keys="{{ ['administrator', 'roadNumber']|json_encode }}"
             data-form-reveal-target="formControl"
             data-value="{{ roadType }}"
             {% if not isThisTypeOfNumberedRoad %}disabled{% endif %}
         >
-            <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point">
+            <legend id="{{ idPrefix }}-reference-point">
                 {{ 'regulation.location.referencePoint'|trans }}
             </legend>
             <div class="fr-hint-text help-text">{{ 'regulation.location.referencePoint.help'|trans }}</div>
             <fieldset
                 class="fr-mt-2w"
-                aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-start-legend"
+                aria-labelledby="{{ idPrefix }}-reference-point-start-legend"
             >
-                <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-start-legend" class="fr-fieldset__legend">
+                <legend id="{{ idPrefix }}-reference-point-start-legend" class="fr-fieldset__legend">
                     {{ 'regulation.location.referencePoint.from'|trans }}
                 </legend>
-                <div class="fr-grid-row fr-grid-row--gutters">
+                {# --bottom : garde les champs PR / côté / abscisse alignés quand les libellés
+                   se replient (largeur réduite du sous-formulaire d'exception) #}
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                     {% include 'regulation/_reference_point_fields.html.twig' with {
                         administrator: form[roadType].administrator,
                         roadNumber: form[roadType].roadNumber,
@@ -287,12 +320,12 @@
             </fieldset>
             <fieldset
                 class="fr-mt-2w fr-mb-2w"
-                aria-labelledby="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-end-legend"
+                aria-labelledby="{{ idPrefix }}-reference-point-end-legend"
             >
-                <legend id="regulation-location-{{ locationIndex }}-{{ roadType }}-reference-point-end-legend" class="fr-fieldset__legend">
+                <legend id="{{ idPrefix }}-reference-point-end-legend" class="fr-fieldset__legend">
                     {{ 'regulation.location.referencePoint.to'|trans }}
                 </legend>
-                <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                     {% include 'regulation/_reference_point_fields.html.twig' with {
                         administrator: form[roadType].administrator,
                         roadNumber: form[roadType].roadNumber,
@@ -302,10 +335,10 @@
                         abscissa: form[roadType].toAbscissa,
                     } only %}
                 </div>
-            </fieldset>.
+            </fieldset>
             {{ form_row(form[roadType].direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
 
-            {% if regulationSubject == 'winterMaintenance' %}
+            {% if withStorageArea and regulationSubject == 'winterMaintenance' %}
                 <hr class="fr-mt-3w">
 
                 <div
@@ -354,41 +387,167 @@
 
                     </div>
                 </div>
-            {% else %}
+            {% elseif withStorageArea %}
                 {% do form[roadType].storageArea.setRendered %}
             {% endif %}
         </fieldset>
 
-        {% set previewMapAccordionId = 'location-preview-map-' ~ locationIndex ~ '-' ~ roadType %}
-        <section class="fr-mt-2w app-preview-map-toggle">
-            <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ previewMapAccordionId }}">
-                <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
-                <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
-            </button>
-            <div class="fr-collapse" id="{{ previewMapAccordionId }}">
-                <div
-                    data-controller="location-preview-map"
-                    data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
-                    data-location-preview-map-reference-points-url-value="{{ path('fragment_reference_points') }}"
-                    data-location-preview-map-road-type-value="{{ roadType }}"
-                    data-location-preview-map-administrator-field-value="{{ form[roadType].administrator.vars.id }}"
-                    data-location-preview-map-road-number-field-value="{{ form[roadType].roadNumber.vars.id }}"
-                    data-location-preview-map-from-point-number-field-value="{{ form[roadType].fromPointNumber.vars.id }}"
-                    data-location-preview-map-from-side-field-value="{{ form[roadType].fromSide.vars.id }}"
-                    data-location-preview-map-from-abscissa-field-value="{{ form[roadType].fromAbscissa.vars.id }}"
-                    data-location-preview-map-to-point-number-field-value="{{ form[roadType].toPointNumber.vars.id }}"
-                    data-location-preview-map-to-side-field-value="{{ form[roadType].toSide.vars.id }}"
-                    data-location-preview-map-to-abscissa-field-value="{{ form[roadType].toAbscissa.vars.id }}"
-                    data-location-preview-map-direction-field-value="{{ form[roadType].direction.vars.id }}"
-                    data-location-preview-map-measure-type-value="{{ measureType }}"
-                >
-                    <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
-                        <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
-                        <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
-                    </div>
-                </div>
-            </div>
+        {% set previewMapAccordionId = idPrefix ~ '-preview-map' %}
+        <section
+            class="fr-mt-2w app-preview-map-toggle"
+            data-controller="location-preview-map"
+            data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+            data-location-preview-map-reference-points-url-value="{{ path('fragment_reference_points') }}"
+            data-location-preview-map-road-type-value="{{ roadType }}"
+            data-location-preview-map-administrator-field-value="{{ form[roadType].administrator.vars.id }}"
+            data-location-preview-map-road-number-field-value="{{ form[roadType].roadNumber.vars.id }}"
+            data-location-preview-map-from-point-number-field-value="{{ form[roadType].fromPointNumber.vars.id }}"
+            data-location-preview-map-from-side-field-value="{{ form[roadType].fromSide.vars.id }}"
+            data-location-preview-map-from-abscissa-field-value="{{ form[roadType].fromAbscissa.vars.id }}"
+            data-location-preview-map-to-point-number-field-value="{{ form[roadType].toPointNumber.vars.id }}"
+            data-location-preview-map-to-side-field-value="{{ form[roadType].toSide.vars.id }}"
+            data-location-preview-map-to-abscissa-field-value="{{ form[roadType].toAbscissa.vars.id }}"
+            data-location-preview-map-direction-field-value="{{ form[roadType].direction.vars.id }}"
+            data-location-preview-map-measure-type-value="{{ measureType }}"
+        >
+            {{ _self.preview_map_panel(previewMapAccordionId) }}
         </section>
+    </div>
+{% endmacro %}
+
+{# Champs d'un « Tracé de zone » (type, nom, carte de dessin, géométrie), partagés entre la
+   localisation et le sous-formulaire d'exception. `form` doit exposer `zone` et `roadType`. #}
+{% macro zone_form_fields(form, isZone, measureType, organizationBbox, locationPersisted, cityLabelFieldId = null, cityCodeFieldId = null) %}
+    {{ form_row(form.zone.roadType, {
+        attr: {
+            'data-form-reveal-target': 'formControl',
+            'data-value': 'zone',
+            'disabled': not isZone,
+        }
+    }) }}
+
+    {{ form_row(form.zone.label, {
+        group_class: 'fr-input-group',
+        widget_class: 'fr-input',
+        attr: {
+            'data-form-reveal-target': 'formControl',
+            'data-value': 'zone',
+            'disabled': not isZone,
+        },
+    }) }}
+
+    <div
+        data-controller="draw-line-map"
+        data-draw-line-map-geometry-type-value="Polygon"
+        data-draw-line-map-center-json-value='[2.725, 47.16]'
+        data-draw-line-map-zoom-value="5"
+        {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
+        {# Exception d'une « Ville entière » : la carte s'ouvre centrée sur la ville choisie #}
+        {% if cityLabelFieldId %}data-draw-line-map-city-label-field-value="{{ cityLabelFieldId }}" data-draw-line-map-city-code-field-value="{{ cityCodeFieldId }}"{% endif %}
+        data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
+        data-draw-line-map-measure-type-value="{{ measureType }}"
+        data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
+        data-draw-line-map-start-value='{{ {
+            "label": "regulation.location.zone.draw_polygon_map.draw.start"|trans,
+            "icon": "fr-icon-x-draw-zone"
+        }|json_encode }}'
+        data-draw-line-map-finish-value='{{ {
+            "label": "regulation.location.zone.draw_polygon_map.draw.finish"|trans,
+            "icon": "fr-icon-checkbox-line"
+        }|json_encode }}'
+        data-draw-line-map-edit-value='{{ {
+            "label": "regulation.location.zone.draw_polygon_map.draw.edit"|trans,
+            "icon": "fr-icon-edit-line"
+        }|json_encode }}'
+        class="draw-line-map-wrapper fr-mb-3w"
+    >
+        <p class="fr-mb-1w">
+            {{ 'regulation.location.zone.map.label'|trans }}
+            <span class="fr-hint-text">{{ 'regulation.location.zone.map.description'|trans }}</span>
+        </p>
+        <div
+            data-draw-line-map-target="warning"
+            class="draw-line-map-warning fr-mb-1w"
+            hidden
+        >
+            {{ 'regulation.location.zone.draw_polygon_map.warning'|trans }}
+        </div>
+        <div class="draw-line-map-canvas">
+            <div class="draw-line-map-search">
+                <div class="draw-line-map-search__input-wrapper">
+                    <span class="draw-line-map-search__icon fr-icon-search-line" aria-hidden="true"></span>
+                    <input
+                        type="search"
+                        class="fr-input fr-input--sm draw-line-map-search__input"
+                        placeholder="{{ 'regulation.location.raw_geojson.draw_line_map.search.placeholder'|trans }}"
+                        aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.search.aria_label'|trans }}"
+                        autocomplete="off"
+                        data-draw-line-map-target="searchInput"
+                        data-action="input->draw-line-map#onSearchInput keydown->draw-line-map#onSearchKeydown focus->draw-line-map#onSearchFocus blur->draw-line-map#onSearchBlur"
+                    >
+                </div>
+                <ul
+                    class="draw-line-map-search__results"
+                    role="listbox"
+                    data-draw-line-map-target="searchResults"
+                    hidden
+                ></ul>
+            </div>
+            <div class="draw-line-map-controls draw-line-map-controls--top">
+                <button
+                    type="button"
+                    class="fr-btn fr-btn--secondary fr-icon-x-draw-zone fr-btn--icon-left"
+                    data-draw-line-map-target="drawBtn"
+                    data-action="click->draw-line-map#toggleDraw"
+                    aria-pressed="false"
+                >
+                    {{ 'regulation.location.zone.draw_polygon_map.draw.start'|trans }}
+                </button>
+            </div>
+            <div class="draw-line-map-controls draw-line-map-controls--bottom">
+                <button
+                    type="button"
+                    class="fr-btn fr-btn--md fr-btn--secondary fr-icon-arrow-go-back-line"
+                    data-draw-line-map-target="undoBtn"
+                    data-action="click->draw-line-map#undo"
+                    title="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"
+                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"
+                >
+                </button>
+                <button
+                    type="button"
+                    class="fr-btn fr-btn--md fr-btn--secondary fr-icon-delete-bin-line"
+                    data-draw-line-map-target="clearBtn"
+                    data-action="click->draw-line-map#clear"
+                    title="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"
+                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"
+                >
+                </button>
+            </div>
+            <div
+                data-draw-line-map-target="container"
+                class="draw-line-map-container"
+            ></div>
+        </div>
+
+        <details class="draw-line-map-geojson" open>
+            <summary class="draw-line-map-geojson__summary">
+                {{ 'regulation.location.zone.geometry'|trans }}
+                <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
+            </summary>
+            {{ form_row(form.zone.geometry, {
+                group_class: 'fr-input-group',
+                widget_class: 'fr-input draw-line-map-geometry-field',
+                label_attr: { class: 'fr-sr-only' },
+                attr: {
+                    'data-form-reveal-target': 'formControl',
+                    'data-value': 'zone',
+                    'disabled': not isZone,
+                    'data-draw-line-map-target': 'geometryField',
+                    'rows': 5,
+                },
+            }) }}
+        </details>
     </div>
 {% endmacro %}
 
@@ -425,8 +584,8 @@
                     },
                 }) }}
 
-                {{ _self.numbered_road_form(form, 'departmentalRoad', index, regulationSubject, regulationOrderRecord, measureType) }}
-                {{ _self.numbered_road_form(form, 'nationalRoad', index, regulationSubject, regulationOrderRecord, measureType) }}
+                {{ _self.numbered_road_form(form, 'departmentalRoad', regulationSubject, regulationOrderRecord, measureType) }}
+                {{ _self.numbered_road_form(form, 'nationalRoad', regulationSubject, regulationOrderRecord, measureType) }}
 
                 {% set isLane = form.roadType.vars.value == 'lane' %}
                 <div
@@ -572,8 +731,8 @@
                                 }
                             }) }}
 
-                            {% set reportModalIdLane = 'create-report-address-form-modal-' ~ index ~ '-lane' %}
-                            {% set reportFrameIdLane = 'create-report-address-form-frame-' ~ index ~ '-lane' %}
+                            {% set reportModalIdLane = form.namedStreet.vars.id ~ '-report-modal' %}
+                            {% set reportFrameIdLane = form.namedStreet.vars.id ~ '-report-frame' %}
                             <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-error-warning-line">
                                 <li data-controller="report-address-modal">
                                     <d-modal-trigger modal="{{ reportModalIdLane }}" submitvalue="upload">
@@ -632,34 +791,24 @@
                         </div>
                     </fieldset>
 
-                    {% set lanePreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-lane' %}
-                    <section class="fr-mt-2w app-preview-map-toggle">
-                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ lanePreviewMapAccordionId }}">
-                            <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
-                            <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
-                        </button>
-                        <div class="fr-collapse" id="{{ lanePreviewMapAccordionId }}">
-                            <div
-                                data-controller="location-preview-map"
-                                data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
-                                data-location-preview-map-road-type-value="lane"
-                                data-location-preview-map-road-ban-id-field-value="{{ form.namedStreet.roadBanId.vars.id }}"
-                                data-location-preview-map-road-name-field-value="{{ form.namedStreet.roadName.vars.id }}"
-                                data-location-preview-map-city-code-field-value="{{ form.namedStreet.cityCode.vars.id }}"
-                                data-location-preview-map-from-house-number-field-value="{{ form.namedStreet.fromHouseNumber.vars.id }}"
-                                data-location-preview-map-from-road-ban-id-field-value="{{ form.namedStreet.fromRoadBanId.vars.id }}"
-                                data-location-preview-map-to-house-number-field-value="{{ form.namedStreet.toHouseNumber.vars.id }}"
-                                data-location-preview-map-to-road-ban-id-field-value="{{ form.namedStreet.toRoadBanId.vars.id }}"
-                                data-location-preview-map-direction-field-value="{{ form.namedStreet.direction.vars.id }}"
-                                data-location-preview-map-is-entire-street-field-value="{{ form.namedStreet.isEntireStreet.vars.id }}"
-                                data-location-preview-map-measure-type-value="{{ measureType }}"
-                            >
-                                <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
-                                    <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
-                                    <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
-                                </div>
-                            </div>
-                        </div>
+                    {% set lanePreviewMapAccordionId = form.namedStreet.vars.id ~ '-preview-map' %}
+                    <section
+                        class="fr-mt-2w app-preview-map-toggle"
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="lane"
+                        data-location-preview-map-road-ban-id-field-value="{{ form.namedStreet.roadBanId.vars.id }}"
+                        data-location-preview-map-road-name-field-value="{{ form.namedStreet.roadName.vars.id }}"
+                        data-location-preview-map-city-code-field-value="{{ form.namedStreet.cityCode.vars.id }}"
+                        data-location-preview-map-from-house-number-field-value="{{ form.namedStreet.fromHouseNumber.vars.id }}"
+                        data-location-preview-map-from-road-ban-id-field-value="{{ form.namedStreet.fromRoadBanId.vars.id }}"
+                        data-location-preview-map-to-house-number-field-value="{{ form.namedStreet.toHouseNumber.vars.id }}"
+                        data-location-preview-map-to-road-ban-id-field-value="{{ form.namedStreet.toRoadBanId.vars.id }}"
+                        data-location-preview-map-direction-field-value="{{ form.namedStreet.direction.vars.id }}"
+                        data-location-preview-map-is-entire-street-field-value="{{ form.namedStreet.isEntireStreet.vars.id }}"
+                        data-location-preview-map-measure-type-value="{{ measureType }}"
+                    >
+                        {{ _self.preview_map_panel(lanePreviewMapAccordionId) }}
                     </section>
                 </div>
 
@@ -817,7 +966,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.rawGeoJSON.exceptions|length > 0 ? form.rawGeoJSON.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.rawGeoJSON.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.rawGeoJSON.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted, regulationOrderRecord)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -826,7 +975,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.rawGeoJSON.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted, regulationOrderRecord) }}
                                 {%- else -%}
                                     {%- do form.rawGeoJSON.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -920,7 +1069,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.wholeCity.exceptions|length > 0 ? form.wholeCity.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, false, organizationBbox, locationPersisted)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.wholeCity.exceptions.vars.prototype, '__exception_name__', measureType, false, organizationBbox, locationPersisted, regulationOrderRecord, form.wholeCity.cityLabel.vars.id, form.wholeCity.cityCode.vars.id)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -929,7 +1078,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.wholeCity.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, false, organizationBbox, locationPersisted) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, false, organizationBbox, locationPersisted, regulationOrderRecord, form.wholeCity.cityLabel.vars.id, form.wholeCity.cityCode.vars.id) }}
                                 {%- else -%}
                                     {%- do form.wholeCity.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -945,26 +1094,16 @@
                         </div>
                     </fieldset>
 
-                    {% set wholeCityPreviewMapAccordionId = 'location-preview-map-' ~ index ~ '-wholeCity' %}
-                    <section class="fr-mt-2w app-preview-map-toggle">
-                        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-arrow-down-s-line fr-icon--lg app-preview-map-toggle__btn" aria-expanded="true" aria-controls="{{ wholeCityPreviewMapAccordionId }}">
-                            <span class="app-preview-map-toggle__label-display">{{ 'regulation.location.preview_map.display'|trans }}</span>
-                            <span class="app-preview-map-toggle__label-hide">{{ 'regulation.location.preview_map.hide'|trans }}</span>
-                        </button>
-                        <div class="fr-collapse" id="{{ wholeCityPreviewMapAccordionId }}">
-                            <div
-                                data-controller="location-preview-map"
-                                data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
-                                data-location-preview-map-road-type-value="wholeCity"
-                                data-location-preview-map-city-code-field-value="{{ form.wholeCity.cityCode.vars.id }}"
-                                data-location-preview-map-measure-type-value="{{ measureType }}"
-                            >
-                                <div data-location-preview-map-target="container" hidden class="location-preview-map-container">
-                                    <div data-location-preview-map-target="loader" hidden class="location-preview-map-loader" aria-hidden="true"></div>
-                                    <div data-location-preview-map-target="message" hidden class="location-preview-map-message"></div>
-                                </div>
-                            </div>
-                        </div>
+                    {% set wholeCityPreviewMapAccordionId = form.wholeCity.vars.id ~ '-preview-map' %}
+                    <section
+                        class="fr-mt-2w app-preview-map-toggle"
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="wholeCity"
+                        data-location-preview-map-city-code-field-value="{{ form.wholeCity.cityCode.vars.id }}"
+                        data-location-preview-map-measure-type-value="{{ measureType }}"
+                    >
+                        {{ _self.preview_map_panel(wholeCityPreviewMapAccordionId) }}
                     </section>
                 </div>
 
@@ -975,135 +1114,7 @@
                     data-value="zone"
                     {% if not isZone %}hidden{% endif %}
                 >
-                    {{ form_row(form.zone.roadType, {
-                        attr: {
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'zone',
-                            'disabled': not isZone,
-                        }
-                    }) }}
-
-                    {{ form_row(form.zone.label, {
-                        group_class: 'fr-input-group',
-                        widget_class: 'fr-input',
-                        attr: {
-                            'data-form-reveal-target': 'formControl',
-                            'data-value': 'zone',
-                            'disabled': not isZone,
-                        },
-                    }) }}
-
-                    <div
-                        data-controller="draw-line-map"
-                        data-draw-line-map-geometry-type-value="Polygon"
-                        data-draw-line-map-center-json-value='[2.725, 47.16]'
-                        data-draw-line-map-zoom-value="5"
-                        {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
-                        data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
-                        data-draw-line-map-measure-type-value="{{ measureType }}"
-                        data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
-                        data-draw-line-map-start-value='{{ {
-                            "label": "regulation.location.zone.draw_polygon_map.draw.start"|trans,
-                            "icon": "fr-icon-x-draw-zone"
-                        }|json_encode }}'
-                        data-draw-line-map-finish-value='{{ {
-                            "label": "regulation.location.zone.draw_polygon_map.draw.finish"|trans,
-                            "icon": "fr-icon-checkbox-line"
-                        }|json_encode }}'
-                        data-draw-line-map-edit-value='{{ {
-                            "label": "regulation.location.zone.draw_polygon_map.draw.edit"|trans,
-                            "icon": "fr-icon-edit-line"
-                        }|json_encode }}'
-                        class="draw-line-map-wrapper fr-mb-3w"
-                    >
-                        <p class="fr-mb-1w">
-                            {{ 'regulation.location.zone.map.label'|trans }}
-                            <span class="fr-hint-text">{{ 'regulation.location.zone.map.description'|trans }}</span>
-                        </p>
-                        <div
-                            data-draw-line-map-target="warning"
-                            class="draw-line-map-warning fr-mb-1w"
-                            hidden
-                        >
-                            {{ 'regulation.location.zone.draw_polygon_map.warning'|trans }}
-                        </div>
-                        <div class="draw-line-map-canvas">
-                            <div class="draw-line-map-search">
-                                <div class="draw-line-map-search__input-wrapper">
-                                    <span class="draw-line-map-search__icon fr-icon-search-line" aria-hidden="true"></span>
-                                    <input
-                                        type="search"
-                                        class="fr-input fr-input--sm draw-line-map-search__input"
-                                        placeholder="{{ 'regulation.location.raw_geojson.draw_line_map.search.placeholder'|trans }}"
-                                        aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.search.aria_label'|trans }}"
-                                        autocomplete="off"
-                                        data-draw-line-map-target="searchInput"
-                                        data-action="input->draw-line-map#onSearchInput keydown->draw-line-map#onSearchKeydown focus->draw-line-map#onSearchFocus blur->draw-line-map#onSearchBlur"
-                                    >
-                                </div>
-                                <ul
-                                    class="draw-line-map-search__results"
-                                    role="listbox"
-                                    data-draw-line-map-target="searchResults"
-                                    hidden
-                                ></ul>
-                            </div>
-                            <div class="draw-line-map-controls draw-line-map-controls--top">
-                                <button
-                                    type="button"
-                                    class="fr-btn fr-btn--secondary fr-icon-x-draw-zone fr-btn--icon-left"
-                                    data-draw-line-map-target="drawBtn"
-                                    data-action="click->draw-line-map#toggleDraw"
-                                    aria-pressed="false"
-                                >
-                                    {{ 'regulation.location.zone.draw_polygon_map.draw.start'|trans }}
-                                </button>
-                            </div>
-                            <div class="draw-line-map-controls draw-line-map-controls--bottom">
-                                <button
-                                    type="button"
-                                    class="fr-btn fr-btn--md fr-btn--secondary fr-icon-arrow-go-back-line"
-                                    data-draw-line-map-target="undoBtn"
-                                    data-action="click->draw-line-map#undo"
-                                    title="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"
-                                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.undo.title'|trans }}"
-                                >
-                                </button>
-                                <button
-                                    type="button"
-                                    class="fr-btn fr-btn--md fr-btn--secondary fr-icon-delete-bin-line"
-                                    data-draw-line-map-target="clearBtn"
-                                    data-action="click->draw-line-map#clear"
-                                    title="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"
-                                    aria-label="{{ 'regulation.location.raw_geojson.draw_line_map.clear.title'|trans }}"
-                                >
-                                </button>
-                            </div>
-                            <div
-                                data-draw-line-map-target="container"
-                                class="draw-line-map-container"
-                            ></div>
-                        </div>
-
-                        <details class="draw-line-map-geojson" open>
-                            <summary class="draw-line-map-geojson__summary">
-                                {{ 'regulation.location.zone.geometry'|trans }}
-                                <span class="fr-icon-arrow-down-s-line draw-line-map-geojson__chevron" aria-hidden="true"></span>
-                            </summary>
-                            {{ form_row(form.zone.geometry, {
-                                group_class: 'fr-input-group',
-                                widget_class: 'fr-input draw-line-map-geometry-field',
-                                label_attr: { class: 'fr-sr-only' },
-                                attr: {
-                                    'data-form-reveal-target': 'formControl',
-                                    'data-value': 'zone',
-                                    'disabled': not isZone,
-                                    'data-draw-line-map-target': 'geometryField',
-                                    'rows': 5,
-                                },
-                            }) }}
-                        </details>
-                    </div>
+                    {{ _self.zone_form_fields(form, isZone, measureType, organizationBbox, locationPersisted) }}
 
                     <fieldset
                         aria-labelledby="{{ form.zone.vars.id }}-exceptions-legend"
@@ -1123,7 +1134,7 @@
                             data-form-collection-prototype-key-value="exception"
                             data-form-collection-trigger-conditionals-value="true"
                             data-form-collection-next-index-value="{{ form.zone.exceptions|length > 0 ? form.zone.exceptions|last.vars.name + 1 : 0 }}"
-                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.zone.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted)|e('html_attr') }}"
+                            data-form-collection-prototype-value="{{ _self.whole_city_exception_item(form.zone.exceptions.vars.prototype, '__exception_name__', measureType, true, organizationBbox, locationPersisted, regulationOrderRecord)|e('html_attr') }}"
                         >
                             <ul
                                 class="fr-raw-list fr-mb-1w"
@@ -1132,7 +1143,7 @@
                                 aria-label="{{ 'regulation.location.wholeCity.exceptions'|trans }}"
                             >
                                 {%- for item in form.zone.exceptions -%}
-                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted) }}
+                                    {{ _self.whole_city_exception_item(item, loop.index, measureType, true, organizationBbox, locationPersisted, regulationOrderRecord) }}
                                 {%- else -%}
                                     {%- do form.zone.exceptions.setRendered -%}
                                 {%- endfor -%}
@@ -1147,15 +1158,28 @@
                             </button>
                         </div>
                     </fieldset>
+
+                    {% set zonePreviewMapAccordionId = form.zone.vars.id ~ '-preview-map' %}
+                    <section
+                        class="fr-mt-2w app-preview-map-toggle"
+                        data-controller="location-preview-map"
+                        data-location-preview-map-url-value="{{ path('fragment_location_geometry') }}"
+                        data-location-preview-map-road-type-value="zone"
+                        data-location-preview-map-geometry-field-value="{{ form.zone.geometry.vars.id }}"
+                        data-location-preview-map-measure-type-value="{{ measureType }}"
+                    >
+                        {{ _self.preview_map_panel(zonePreviewMapAccordionId) }}
+                    </section>
                 </div>
             </div>
         </div>
     </li>
 {% endmacro %}
 
-{% macro whole_city_exception_item(form, index, measureType, withCity, organizationBbox, locationPersisted) %}
+{% macro whole_city_exception_item(form, index, measureType, withCity, organizationBbox, locationPersisted, regulationOrderRecord, cityLabelFieldId = null, cityCodeFieldId = null) %}
     {% set isLane = form.roadType.vars.value == 'lane' %}
     {% set isRawGeoJSON = form.roadType.vars.value == 'rawGeoJSON' %}
+    {% set isZone = form.roadType.vars.value == 'zone' %}
     <li
         class="app-card app-card--no-header app-whole-city-exception fr-mb-2w"
         data-controller="remove"
@@ -1177,6 +1201,11 @@
                 widget_class: 'fr-select',
                 row_attr: { 'data-action': 'change->form-reveal#openByValue' },
             }) }}
+
+            {# --- Routes départementale et nationale --- #}
+            {# Pas de sujet d'arrêté transmis : une exception ne définit pas d'aire de stockage. #}
+            {{ _self.numbered_road_form(form, 'departmentalRoad', null, regulationOrderRecord, measureType) }}
+            {{ _self.numbered_road_form(form, 'nationalRoad', null, regulationOrderRecord, measureType) }}
 
             {# --- Voie --- #}
             <div
@@ -1340,6 +1369,8 @@
                     data-draw-line-map-center-json-value='[2.725, 47.16]'
                     data-draw-line-map-zoom-value="5"
                     {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
+                    {# Exception d'une « Ville entière » : la carte s'ouvre centrée sur la ville choisie #}
+                    {% if cityLabelFieldId %}data-draw-line-map-city-label-field-value="{{ cityLabelFieldId }}" data-draw-line-map-city-code-field-value="{{ cityCodeFieldId }}"{% endif %}
                     data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
                     data-draw-line-map-measure-type-value="{{ measureType }}"
                     data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
@@ -1403,12 +1434,24 @@
                     </details>
                 </div>
             </div>
+
+            {# --- Tracé de zone --- #}
+            <div
+                data-controller="reset"
+                data-form-reveal-target="section"
+                data-value="zone"
+                {% if not isZone %}hidden{% endif %}
+            >
+                {{ _self.zone_form_fields(form, isZone, measureType, organizationBbox, locationPersisted, cityLabelFieldId, cityCodeFieldId) }}
+            </div>
         </div>
     </li>
 {% endmacro %}
 
 <turbo-frame id="{{ frame }}">
-    <div class="app-card app-card--raised app-card--with-full-background fr-mt-3w" data-testid="measure">
+    {# Ville de l'établissement de l'organisation : repli de centrage des cartes de dessin
+       quand l'étendue administrative de l'organisation n'est pas disponible. #}
+    <div class="app-card app-card--raised app-card--with-full-background fr-mt-3w" data-testid="measure" data-organization-city-label="{{ organizationCityLabel|default('') }}">
         <div class="app-card__header">
             <h3 class="app-card__title fr-h4 fr-mb-0">
                 {{ 'regulation.measure.card.title'|trans }}
@@ -1419,8 +1462,9 @@
             style="--card-padding: 0.5rem 1.5rem 1.5rem 1.5rem"
         >
             <p>{{ 'regulation.measure.card.description'|trans }}</p>
+            {# L'id du formulaire et ceux de ses champs dérivent de son nom, propre à chaque mesure (voir MeasureFormType::getName) #}
             {{ form_start(form, {attr: {
-                id: 'measure-form',
+                id: form.vars.id,
                 'data-controller': 'unsaved-changes',
                 'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
                 'data-unsaved-changes-tracking-name-value': 'mesure',
@@ -1483,7 +1527,7 @@
                                 element: 'legend',
                                 required: false,
                                 label_attr: {
-                                    id: 'periods-legend',
+                                    id: form.periods.vars.id ~ '-legend',
                                 },
                                 label_content_attr: {
                                     class: 'fr-h4 fr-mb-0'
@@ -1507,10 +1551,10 @@
                         >
                             <fieldset
                                 class="fr-fieldset fr-mb-0"
-                                aria-labelledby="periods-legend"
+                                aria-labelledby="{{ form.periods.vars.id }}-legend"
                             >
                                 <ul
-                                    id="period-list"
+                                    id="{{ form.periods.vars.id }}-list"
                                     class="fr-raw-list fr-fieldset__element"
                                     data-testid="period-list"
                                     data-form-collection-target="collectionContainer"
@@ -1527,7 +1571,7 @@
                                 type="button"
                                 class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-calendar-line"
                                 data-action="form-collection#addCollectionElement"
-                                aria-controls="period-list"
+                                aria-controls="{{ form.periods.vars.id }}-list"
                             >
                                 {{ 'regulation.period.add'|trans }}
                             </button>
@@ -1590,7 +1634,7 @@
                         </a>
                     </li>
                     <li>
-                        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn-load', form: 'measure-form'}}) }}
+                        {{ form_widget(form.save, {attr: {class: 'fr-btn fr-btn-load', form: form.vars.id}}) }}
                     </li>
                 </ul>
             {{ form_end(form) }}

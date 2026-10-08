@@ -16,6 +16,9 @@ final class SaveZoneCommand implements RoadCommandInterface
     // Périmètre dessiné (polygone GeoJSON). La géométrie de la localisation (les tronçons
     // de rues couverts par la zone) est calculée à partir de ce périmètre à l'enregistrement.
     public ?string $geometry = null;
+    // Tronçons déjà calculés pour ce périmètre (ex. duplication d'une mesure) : évite de
+    // les rechercher à nouveau dans la BD TOPO à l'enregistrement.
+    public ?string $sectionsGeometry = null;
     /** @var SaveWholeCityExceptionCommand[] */
     public array $exceptions = [];
     public ?Location $location = null;
@@ -44,7 +47,7 @@ final class SaveZoneCommand implements RoadCommandInterface
 
     public function getGeometryQuery(): QueryInterface
     {
-        return new GetZoneGeometryQuery($this, $this->location);
+        return new GetZoneGeometryQuery($this, $this->location, $this->sectionsGeometry);
     }
 
     public function clean(): void

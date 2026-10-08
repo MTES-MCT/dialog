@@ -209,6 +209,166 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertContains(['append', 'measure_list'], $streams);
     }
 
+    public function testAddWholeCityWithDepartmentalRoadException(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['wholeCity']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['administrator'] = 'Ardèche';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['roadNumber'] = 'D906';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['fromPointNumber'] = '34';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['fromSide'] = 'U';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['fromAbscissa'] = '100';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['toPointNumber'] = '35';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['toSide'] = 'U';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['toAbscissa'] = '650';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertContains(['append', 'measure_list'], $streams);
+        $this->assertStringContainsString(
+            'D906 (Ardèche) du PR 34+100 (côté U) au PR 35+650 (côté U)',
+            $crawler->filter('.app-whole-city-exceptions')->text(),
+        );
+    }
+
+    public function testAddWholeCityWithZoneException(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['wholeCity']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['zone']['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['zone']['label'] = 'Quartier de la Rue Ardoin';
+        // Périmètre autour de la Rue Ardoin à Saint-Ouen-sur-Seine (93070)
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['zone']['geometry'] = '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $streams = $crawler->filter('turbo-stream')->extract(['action', 'target']);
+        $this->assertContains(['append', 'measure_list'], $streams);
+        $this->assertStringContainsString(
+            'Quartier de la Rue Ardoin',
+            $crawler->filter('.app-whole-city-exceptions')->text(),
+        );
+    }
+
+    public function testAddWholeCityWithFailingNumberedRoadExceptionShowsVisibleError(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['wholeCity']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['roadType'] = 'departmentalRoad';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['administrator'] = 'Ardèche';
+        // Section non géolocalisable (mêmes données que le cas d'échec au niveau localisation)
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['roadNumber'] = 'D110';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['fromPointNumber'] = '6';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['fromSide'] = 'D';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['fromAbscissa'] = 100;
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['toPointNumber'] = '15';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['toSide'] = 'D';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['departmentalRoad']['toAbscissa'] = 650;
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        // L'erreur doit être visible sur le champ de l'exception, pas sur le sous-formulaire
+        // masqué de la localisation.
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringStartsWith(
+            'La géolocalisation de la route entre ces points de repère a échoué',
+            $crawler->filter('#measure_form_locations_0_wholeCity_exceptions_0_departmentalRoad_roadNumber_error')->text(),
+        );
+    }
+
+    public function testAddWholeCityWithZoneExceptionWithoutStreets(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        $saveButton = $crawler->selectButton('Valider');
+        $form = $saveButton->form();
+
+        $values = $form->getPhpValues();
+        $values['measure_form']['type'] = 'noEntry';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+
+        $values['measure_form']['locations'][0]['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['roadType'] = 'wholeCity';
+        $values['measure_form']['locations'][0]['wholeCity']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['wholeCity']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['zone']['roadType'] = 'zone';
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['zone']['label'] = 'Zone sans rue';
+        // Périmètre au milieu d'un lac du parc Georges-Valbon (La Courneuve) : aucun tronçon BD TOPO.
+        $values['measure_form']['locations'][0]['wholeCity']['exceptions'][0]['zone']['geometry'] = '{"type":"Polygon","coordinates":[[[2.4013,48.943],[2.4027,48.943],[2.4027,48.944],[2.4013,48.944],[2.4013,48.943]]]}';
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        // Une zone d'exception sans rue ne soustrairait rien : refus visible, comme au niveau localisation.
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertStringContainsString(
+            'Aucune rue n\'a été trouvée à l\'intérieur de la zone dessinée.',
+            $crawler->filter('#measure_form_locations_0_wholeCity_exceptions_0_zone_geometry_error')->text(),
+        );
+    }
+
     public function testAddZone(): void
     {
         $client = $this->login();
