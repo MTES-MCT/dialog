@@ -220,7 +220,7 @@ scalingo login --ssh
   - Défaut : `./dump` en local (évite les problèmes de RAM sur Linux où `/tmp` est monté en RAM)
   - Dans la CI GitHub Actions : `/tmp/bdtopo_download` (plus d'espace disponible)
 - `--keep-archives` : Conserver les parties .7z après l'upload S3 / le dézippage
-- `--skip-download` : Ignorer le téléchargement (utiliser fichiers existants)
+- `--skip-download` : Ignorer le téléchargement (utiliser les parties `.7z` locales si présentes ; en mode `--s3` sans parties locales, l'archive et le manifest déjà sur S3 sont réutilisés directement, sans re-upload)
 - `--skip-import` : Ignorer l'import (uniquement télécharger, et uploader sur S3 en mode `--s3`)
 - `--prod [2025|2025_2]` : Déployer vers l'environnement de production (`dialog-bdtopo-2025` ou `dialog-bdtopo-2025-2`)
 - `--overwrite` : Réécrire les tables au lieu d'ajouter
@@ -230,7 +230,7 @@ scalingo login --ssh
 **Options du mode streaming S3** :
 - `--s3` : Activer le pipeline S3 (upload de l'archive concaténée + import en flux via `/vsi7z//vsis3/`, sans extraction locale)
 - `--s3-bucket` : Bucket S3 cible (défaut : variable d'environnement `S3_BUCKET`)
-- `--s3-key` : Clé de l'objet S3 (défaut : `bdtopo/bdtopo-latest.7z`)
+- `--s3-key` : Clé de l'objet S3 (défaut : `bdtopo/bdtopo-latest.7z`). Le manifest des geopackages est stocké à côté, sous `<clé>.manifest.json`.
 - `--s3-endpoint` : Endpoint S3 (défaut : variable d'environnement `S3_ENDPOINT`)
 - `--s3-region` : Région S3 (défaut : déduite de l'endpoint Outscale, ex. `cloudgouv-eu-west-1`)
 
