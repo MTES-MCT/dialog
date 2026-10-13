@@ -591,6 +591,12 @@ def _aws_env(region: str) -> dict[str, str]:
     env["AWS_SECRET_ACCESS_KEY"] = os.environ["S3_SECRET_KEY"]
     env["AWS_DEFAULT_REGION"] = region
     env["AWS_REGION"] = region
+    # L'AWS CLI v2.23+ ajoute par défaut un checksum "trailing" (CRC32) aux parts
+    # multipart, que l'endpoint S3 d'Outscale ne supporte pas
+    # ("trailing checksum is not supported"). On ne calcule le checksum que lorsque
+    # l'opération l'exige réellement pour rétablir la compatibilité.
+    env["AWS_REQUEST_CHECKSUM_CALCULATION"] = "WHEN_REQUIRED"
+    env["AWS_RESPONSE_CHECKSUM_VALIDATION"] = "WHEN_REQUIRED"
 
     # Outscale is configured with path-style addressing (pathStyleEndpoint: true).
     subprocess.run(
