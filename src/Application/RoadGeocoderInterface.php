@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application;
 
+use App\Application\Organization\View\MapBboxView;
 use App\Domain\Geography\Coordinates;
 
 interface RoadGeocoderInterface
@@ -19,6 +20,13 @@ interface RoadGeocoderInterface
      * @param string[] $subtractGeometries Géométries GeoJSON soustraites géométriquement (ST_Difference avec un petit buffer)
      */
     public function computeCityGeometry(string $cityCode, array $excludedRoadBanIds = [], array $subtractGeometries = []): string;
+
+    /**
+     * Calcule l'emprise (bbox) des voies nommées d'une commune (code INSEE), pour y centrer une carte.
+     *
+     * Retourne null si la commune est inconnue de BD TOPO.
+     */
+    public function findCityBbox(string $cityCode): ?MapBboxView;
 
     /**
      * Soustrait géométriquement des géométries GeoJSON d'une géométrie de base
