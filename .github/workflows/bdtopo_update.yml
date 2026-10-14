@@ -12,17 +12,17 @@ on:
           - '2025'
           - '2025_2'
       skip_download:
-        description: "Ne pas re-télécharger : réutiliser l'archive et le manifest déjà sur S3 (nécessite un run complet préalable)"
+        description: "Ne pas retélécharger depuis l'IGN : réutiliser les geopackages déjà présents sur S3 (run précédent)"
         required: false
         default: false
         type: boolean
       skip_import:
-        description: "Uploader l'archive sur S3 sans lancer l'import"
+        description: "Ne pas importer : seulement rafraîchir les geopackages sur S3 depuis l'IGN"
         required: false
         default: false
         type: boolean
       keep_archives:
-        description: "Conserver les archives téléchargées après l'upload S3"
+        description: "Conserver les archives .7z téléchargées après l'extraction"
         required: false
         default: false
         type: boolean
@@ -30,29 +30,46 @@ on:
   # schedule:
   #   # Voir https://crontab.guru/ : les 1er et 16 de chaque mois à 02h00 GMT (~tous les 15 jours)
   #   - cron: '0 2 1,16 * *'
+
 permissions:
   contents: read
 
-jobs:
-  update:
-    runs-on: ubuntu-latest
-    env:
-      BDTOPO_TARGET: ${{ github.event.inputs.target || '2025' }}
-      SKIP_DOWNLOAD: ${{ github.event.inputs.skip_download || 'false' }}
-      SKIP_IMPORT: ${{ github.event.inputs.skip_import || 'false' }}
-      KEEP_ARCHIVES: ${{ github.event.inputs.keep_archives || 'false' }}
-      BDTOPO_2025_DATABASE_URL: ${{ secrets.BDTOPO_2025_DATABASE_URL }}
-      BDTOPO_2025_2_DATABASE_URL: ${{ secrets.BDTOPO_2025_2_DATABASE_URL }}
-      S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
-      S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-      S3_BUCKET: ${{ secrets.S3_BUCKET }}
-      S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+# Un seul pipeline BD TOPO à la fois, quelle que soit la base cible : les geopackages
+# et le manifest sur S3 (bdtopo/*.gpkg, bdtopo/manifest.json) sont partagés entre cibles,
+# deux runs concurrents pourraient donc se marcher dessus.
+concurrency:
+  group: bdtopo-update
+  cancel-in-progress: false
 
+env:
+  BDTOPO_TARGET: ${{ github.event.inputs.target || '2025' }}
+  SKIP_DOWNLOAD: ${{ github.event.inputs.skip_download || 'false' }}
+  KEEP_ARCHIVES: ${{ github.event.inputs.keep_archives || 'false' }}
+  # Les scripts Python écrivent sur une sortie non-TTY : sans cela, leurs logs
+  # n'apparaissent qu'en fin de step (voire jamais si le job est annulé).
+  PYTHONUNBUFFERED: "1"
+  BDTOPO_2025_DATABASE_URL: ${{ secrets.BDTOPO_2025_DATABASE_URL }}
+  BDTOPO_2025_2_DATABASE_URL: ${{ secrets.BDTOPO_2025_2_DATABASE_URL }}
+  S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+  S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+  S3_BUCKET: ${{ secrets.S3_BUCKET }}
+  S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
+
+jobs:
+  # Étape 1 : télécharge l'archive BD TOPO Express depuis l'IGN (~21 Go en 6 parties),
+  # en extrait uniquement les geopackages des tables cibles et les uploade sur S3 avec
+  # un manifest (millésime + chemins). L'import est volontairement ignoré ici.
+  # Expose aussi la liste des tables (depuis le config) pour piloter la matrice d'import.
+  # Avec skip_download, vérifie seulement que le manifest d'un run précédent est sur S3.
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tables: ${{ steps.tables.outputs.tables }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Free disk space
-        # L'archive BD TOPO fait ~24 Go ; on libère de l'espace sur le runner.
+        # Archive (~21 Go) + geopackages extraits (~15-20 Go) : on libère de l'espace sur le runner.
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: true
@@ -63,10 +80,97 @@ jobs:
           swap-storage: true
 
       - name: Install system dependencies
-        # 7z (listing de l'archive), PostgreSQL (VACUUM ANALYZE) et la dépendance runtime de PHP GD.
+        # 7z : listing puis extraction sélective des geopackages depuis l'archive multi-volumes.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxpm4 p7zip-full postgresql-client
+          sudo apt-get install -y p7zip-full
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Compute table matrix
+        id: tables
+        # La matrice d'import est dérivée automatiquement du fichier de config,
+        # pour rester synchronisée avec les tables réellement importées.
+        run: echo "tables=$(jq -c '[.tables[].name]' tools/bdtopo_update.config.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare BD TOPO geopackages (download IGN + extract + upload S3)
+        run: >
+          make ci_bdtopo_prepare
+          BDTOPO_TARGET="${BDTOPO_TARGET}"
+          SKIP_DOWNLOAD="${SKIP_DOWNLOAD}"
+          KEEP_ARCHIVES="${KEEP_ARCHIVES}"
+
+  # Étape 2 : un job par table, en parallèle. Chaque job télécharge le geopackage de sa
+  # table depuis S3 sur le disque du runner, ouvre un tunnel vers la base cible et importe
+  # cette seule table (ogr2ogr), sans recréer les index (--skip-migrate).
+  # Si skip_import est coché, cette étape et finalize (qui en dépend) sont ignorées.
+  import:
+    needs: prepare
+    if: ${{ !inputs.skip_import }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        table: ${{ fromJson(needs.prepare.outputs.tables) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free disk space
+        # Le geopackage de troncon_de_route fait plusieurs Go ; l'espace libre par défaut est juste.
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
+
+      - name: Install system dependencies
+        # PostgreSQL client : VACUUM ANALYZE après l'import de la table.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Install Scalingo CLI
+        run: curl -O https://cli-dl.scalingo.com/install && bash install
+
+      - name: Install SSH key
+        # Credit: https://stackoverflow.com/a/69234389
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.GH_SCALINGO_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Scalingo as a known host
+        run: |
+          ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
+
+      - name: Import table ${{ matrix.table }}
+        run: >
+          make ci_bdtopo_import_table
+          BDTOPO_TARGET="${BDTOPO_TARGET}"
+          BDTOPO_TABLE="${{ matrix.table }}"
+
+  # Étape 3 : une fois toutes les tables importées, recrée l'ensemble des index,
+  # extensions et fonctions, et enregistre le millésime (lu depuis le manifest S3).
+  # ogr2ogr -overwrite recrée les tables : sans cette étape, la base n'a plus d'index.
+  finalize:
+    needs: import
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        # Dépendance runtime de l'extension PHP GD.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxpm4
 
       - name: Setup PHP with PECL extension
         uses: shivammathur/setup-php@v2
@@ -103,22 +207,9 @@ jobs:
         run: |
           ssh-keyscan -H ssh.osc-fr1.scalingo.com >> ~/.ssh/known_hosts
 
-      - name: Init environment variables
-        run: |
-          echo "BDTOPO_2025_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
-          echo "BDTOPO_2025_2_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
-          if [ "${BDTOPO_TARGET}" = "2025_2" ]; then
-            echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_2_DATABASE_URL }}" >> .env.local
-          else
-            echo "BDTOPO_DATABASE_URL=${{ secrets.BDTOPO_2025_DATABASE_URL }}" >> .env.local
-          fi
-
-      - name: Run BD TOPO update
+      - name: Finalize BD TOPO (indexes + millésime)
         run: >
-          make ci_bdtopo_update
+          make ci_bdtopo_finalize
           BIN_COMPOSER="composer"
           BIN_CONSOLE="php bin/console"
           BDTOPO_TARGET="${BDTOPO_TARGET}"
-          SKIP_DOWNLOAD="${SKIP_DOWNLOAD}"
-          SKIP_IMPORT="${SKIP_IMPORT}"
-          KEEP_ARCHIVES="${KEEP_ARCHIVES}"
