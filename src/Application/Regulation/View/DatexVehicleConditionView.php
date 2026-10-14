@@ -32,14 +32,21 @@ final class DatexVehicleConditionView
                 $this->nonVehicularRoadUser = $vehicleType;
                 break;
             case VehicleTypeEnum::EMERGENCY_SERVICES->value:
+            case VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value:
+            case VehicleTypeEnum::TAXI->value:
+            case VehicleTypeEnum::CAR_SHARING->value:
+            case VehicleTypeEnum::CITY_LOGISTICS->value:
+                // Ces valeurs appartiennent à VehicleUsageEnum en DATEX II, pas à VehicleTypeEnum.
                 $this->vehicleUsage = $vehicleType;
                 break;
             case VehicleTypeEnum::POLICE->value:
                 // No dedicated DATEX II value for police: collapse to emergencyServices (police is part of emergency services).
                 $this->vehicleUsage = VehicleTypeEnum::EMERGENCY_SERVICES->value;
                 break;
-            case VehicleTypeEnum::ROAD_MAINTENANCE_OR_CONSTRUCTION->value:
-                $this->vehicleUsage = $vehicleType;
+            case VehicleTypeEnum::COMMERCIAL->value:
+                // « Transports en commun » : DATEX II n'a pas de notion de transport public, et vehicleUsage=commercial
+                // est lu comme « véhicule utilitaire » par les calculateurs d'itinéraires. On expose donc le type bus.
+                $this->type = 'bus';
                 break;
             case VehicleTypeEnum::DESSERTE_LOCALE->value:
                 $this->accessConditionType = 'destinationTraffic';

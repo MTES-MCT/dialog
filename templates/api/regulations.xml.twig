@@ -1,5 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+{% macro vehicle_condition(vehicle) %}
+    {% if vehicle.accessConditionType %}
+        <conditions xsi:type="AccessCondition">
+            <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+            <accessConditionType>{{ vehicle.accessConditionType }}</accessConditionType>
+        </conditions>
+    {% elseif vehicle.driverCharacteristic %}
+        <conditions xsi:type="DriverCondition">
+            <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+            <driverCharacteristicsType>{{ vehicle.driverCharacteristic }}</driverCharacteristicsType>
+        </conditions>
+    {% elseif vehicle.nonVehicularRoadUser %}
+        <conditions xsi:type="NonVehicularRoadUserCondition">
+            <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+            <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
+        </conditions>
+    {% else %}
+        <conditions xsi:type="VehicleCondition">
+            <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
+            <vehicleCharacteristics>
+                {% if vehicle.vehicleUsage %}
+                    <com:vehicleUsage>{{ vehicle.vehicleUsage }}</com:vehicleUsage>
+                {% elseif vehicle.emissionClassificationOther %}
+                    <com:emissions>
+                        <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
+                    </com:emissions>
+                {% else %}
+                    {% if vehicle.isDangerousSubstances %}
+                        <com:loadType>hazardousMaterials</com:loadType>
+                    {% elseif vehicle.type == 'dimensions' %}
+                        {% if vehicle.maxHeight %}
+                            <com:heightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
+                            </com:heightCharacteristic>
+                        {% endif %}
+                        {% if vehicle.maxLength %}
+                            <com:lengthCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleLength>{{ vehicle.maxLength }}</com:vehicleLength>
+                            </com:lengthCharacteristic>
+                        {% endif %}
+                        {% if vehicle.maxWidth %}
+                            <com:widthCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
+                            </com:widthCharacteristic>
+                        {% endif %}
+                    {% elseif not vehicle.isOther %}
+                        <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
+                    {% endif %}
+                    {% if vehicle.type == 'heavyGoodsVehicle' %}
+                        {% if vehicle.maxWeight %}
+                            <com:grossWeightCharacteristic>
+                                <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
+                                <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
+                                <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
+                            </com:grossWeightCharacteristic>
+                        {% endif %}
+                    {% endif %}
+                    {% if vehicle.isOther %}
+                        <com:_vehicleCharacteristicsExtension>
+                            <com:vehicleCharacteristicsExtended>
+                                <dx:otherVehicleType>{{ vehicle.otherTypeText }}</dx:otherVehicleType>
+                            </com:vehicleCharacteristicsExtended>
+                        </com:_vehicleCharacteristicsExtension>
+                    {% endif %}
+                {% endif %}
+            </vehicleCharacteristics>
+        </conditions>
+    {% endif %}
+{% endmacro %}
+
 <d2:payload
   modelBaseVersion="3"
   lang="FR"
@@ -176,82 +249,26 @@
                                 {% endfor %}
                             </conditions>
 
-                            {% set vehicles = trafficRegulation.vehicleConditions %}
+                            {% set restrictedVehicles = trafficRegulation.vehicleConditions|filter(vehicle => not vehicle.isExempted) %}
+                            {% set exemptedVehicles = trafficRegulation.vehicleConditions|filter(vehicle => vehicle.isExempted) %}
 
-                            {% if vehicles|length > 0 %}
+                            {# Véhicules concernés : la restriction s'applique dès que le véhicule correspond à l'un des types (OU). #}
+                            {% if restrictedVehicles|length > 0 %}
                                 <conditions xsi:type="ConditionSet">
                                     <operator>or</operator>
-                                    {% for vehicle in vehicles %}
-                                        {% if vehicle.accessConditionType %}
-                                            <conditions xsi:type="AccessCondition">
-                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                                <accessConditionType>{{ vehicle.accessConditionType }}</accessConditionType>
-                                            </conditions>
-                                        {% elseif vehicle.driverCharacteristic %}
-                                            <conditions xsi:type="DriverCondition">
-                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                                <driverCharacteristicsType>{{ vehicle.driverCharacteristic }}</driverCharacteristicsType>
-                                            </conditions>
-                                        {% elseif vehicle.nonVehicularRoadUser %}
-                                            <conditions xsi:type="NonVehicularRoadUserCondition">
-                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                                <nonVehicularRoadUser>{{ vehicle.nonVehicularRoadUser }}</nonVehicularRoadUser>
-                                            </conditions>
-                                        {% else %}
-                                            <conditions xsi:type="VehicleCondition">
-                                                <negate>{{ vehicle.isExempted ? 'true' : 'false' }}</negate>
-                                                <vehicleCharacteristics>
-                                                    {% if vehicle.vehicleUsage %}
-                                                        <com:vehicleUsage>{{ vehicle.vehicleUsage }}</com:vehicleUsage>
-                                                    {% elseif vehicle.emissionClassificationOther %}
-                                                        <com:emissions>
-                                                            <com:emissionClassificationOther>{{ vehicle.emissionClassificationOther }}</com:emissionClassificationOther>
-                                                        </com:emissions>
-                                                    {% else %}
-                                                        {% if vehicle.isDangerousSubstances %}
-                                                            <com:loadType>hazardousMaterials</com:loadType>
-                                                        {% elseif vehicle.type == 'dimensions' %}
-                                                            {% if vehicle.maxHeight %}
-                                                                <com:heightCharacteristic>
-                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                                    <com:vehicleHeight>{{ vehicle.maxHeight }}</com:vehicleHeight>
-                                                                </com:heightCharacteristic>
-                                                            {% endif %}
-                                                            {% if vehicle.maxLength %}
-                                                                <com:lengthCharacteristic>
-                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                                    <com:vehicleLength>{{ vehicle.maxLength }}</com:vehicleLength>
-                                                                </com:lengthCharacteristic>
-                                                            {% endif %}
-                                                            {% if vehicle.maxWidth %}
-                                                                <com:widthCharacteristic>
-                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                                    <com:vehicleWidth>{{ vehicle.maxWidth }}</com:vehicleWidth>
-                                                                </com:widthCharacteristic>
-                                                            {% endif %}
-                                                        {% elseif not vehicle.isOther %}
-                                                            <com:vehicleType>{{ vehicle.type }}</com:vehicleType>
-                                                        {% endif %}
-                                                        {% if vehicle.type == 'heavyGoodsVehicle' %}
-                                                            {% if vehicle.maxWeight %}
-                                                                <com:grossWeightCharacteristic>
-                                                                    <com:comparisonOperator>lessThanOrEqualTo</com:comparisonOperator>
-                                                                    <com:grossVehicleWeight>{{ vehicle.maxWeight }}</com:grossVehicleWeight>
-                                                                    <com:typeOfWeight>maximumPermitted</com:typeOfWeight>
-                                                                </com:grossWeightCharacteristic>
-                                                            {% endif %}
-                                                        {% endif %}
-                                                        {% if vehicle.isOther %}
-                                                            <com:_vehicleCharacteristicsExtension>
-                                                                <com:vehicleCharacteristicsExtended>
-                                                                    <dx:otherVehicleType>{{ vehicle.otherTypeText }}</dx:otherVehicleType>
-                                                                </com:vehicleCharacteristicsExtended>
-                                                            </com:_vehicleCharacteristicsExtension>
-                                                        {% endif %}
-                                                    {% endif %}
-                                                </vehicleCharacteristics>
-                                            </conditions>
-                                        {% endif %}
+                                    {% for vehicle in restrictedVehicles %}
+                                        {{ _self.vehicle_condition(vehicle) }}
+                                    {% endfor %}
+                                </conditions>
+                            {% endif %}
+
+                            {# Dérogations : chaque condition est niée et elles sont reliées par un ET (« ni taxi, ni vélo, ... »).
+                               Un OU entre conditions niées serait vrai pour tout véhicule et annulerait les dérogations. #}
+                            {% if exemptedVehicles|length > 0 %}
+                                <conditions xsi:type="ConditionSet">
+                                    <operator>and</operator>
+                                    {% for vehicle in exemptedVehicles %}
+                                        {{ _self.vehicle_condition(vehicle) }}
                                     {% endfor %}
                                 </conditions>
                             {% endif %}
