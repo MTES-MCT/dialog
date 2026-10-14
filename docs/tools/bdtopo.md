@@ -68,15 +68,17 @@ Une fois la PR mergée, les migrations seront exécutées par GitHub Actions gr�
 
 La BD TOPO EXPRESS est millésimée. Une nouvelle version sort **tous les 15 jours**. Le workflow GitHub Actions `bdtopo_update` s'exécute automatiquement tous les 15 jours (les 1er et 16 de chaque mois) et récupère/importe la dernière version disponible.
 
-#### Fonctionnement de la mise à jour automatique (streaming S3)
+#### Fonctionnement de la mise à jour automatique (pipeline S3 en 3 étapes)
 
-En production (et dans la CI), la mise à jour **ne dézippe pas** l'archive localement (ce qui représenterait ~140 Go). À la place :
+En production (et dans la CI), la mise à jour **ne dézippe pas** l'intégralité de l'archive (ce qui représenterait ~140 Go). Le workflow `bdtopo_update` est découpé en trois jobs :
 
-1. Les 6 parties de l'archive multi-volume `.7z.001` … `.7z.006` (~24 Go au total) sont téléchargées.
-2. Ces parties étant un simple découpage binaire d'un unique conteneur `.7z`, elles sont **concaténées à la volée** et envoyées vers notre bucket S3 (Outscale) en un seul objet, via un upload multipart (`aws s3 cp -`), sans jamais matérialiser les ~24 Go sur le disque.
-3. L'import lit ensuite **directement** chaque geopackage cible à l'intérieur de l'archive stockée sur S3, grâce aux systèmes de fichiers virtuels de GDAL `/vsi7z//vsis3/`. Aucune extraction locale n'est nécessaire.
+1. **`prepare`** : les 6 parties de l'archive multi-volume `.7z.001` … `.7z.006` (~21 Go au total) sont téléchargées depuis l'IGN, puis **seuls les geopackages des tables cibles** (celles de `tools/bdtopo_update.config.json`) sont extraits sur le disque du runner. Ils sont ensuite uploadés sur notre bucket S3 (Outscale) sous `bdtopo/<table>.gpkg`, accompagnés d'un manifest `bdtopo/manifest.json` (millésime, chemins, tailles).
+2. **`import`** : un job par table, en parallèle. Chaque job télécharge le geopackage de sa table depuis S3 sur son disque local, ouvre un tunnel vers la base cible et l'importe avec `ogr2ogr` (`-overwrite`), **sans** recréer les index (`--skip-migrate`).
+3. **`finalize`** : une fois toutes les tables importées, recrée l'ensemble des index, extensions et fonctions, et enregistre le millésime lu dans le manifest S3. `ogr2ogr -overwrite` recrée les tables : sans cette étape, la base n'a plus d'index.
 
-La configuration S3 réutilise celle de Flysystem/Outscale (`config/packages/flysystem.yaml`). Les variables `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` et `S3_ENDPOINT` sont traduites en variables `AWS_*` attendues par GDAL (`/vsis3/`), avec l'adressage *path-style* d'Outscale (`AWS_VIRTUAL_HOSTING=FALSE`).
+:warning: Une première version lisait les geopackages directement dans l'archive stockée sur S3 via GDAL `/vsi7z//vsis3/`. Ce n'est **pas viable** : l'archive IGN est un 7z *solide*, et tout accès aléatoire relance la décompression depuis le début de l'archive (plus de 1h30 pour la plus petite table, aucun run n'a jamais abouti). D'où l'extraction unique vers des fichiers `.gpkg` plats sur S3.
+
+La configuration S3 réutilise celle de Flysystem/Outscale (`config/packages/flysystem.yaml`) : variables `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` et `S3_ENDPOINT`, utilisées par l'AWS CLI avec l'adressage *path-style* d'Outscale.
 
 
 #### 🧪 Mise à jour en local (pour tester)
@@ -177,9 +179,13 @@ Le workflow GitHub Actions `bdtopo_update` automatise tout le processus et est l
    - Cliquez sur "Run workflow"
    - Optionnellement, configurez les options :
      - `target` : Base BDTOPO cible (`2025` ou `2025_2`)
-     - `skip_download` : Ignorer le téléchargement (réutiliser les fichiers existants)
-     - `skip_import` : Uploader l'archive sur S3 sans lancer l'import
-     - `keep_archives` : Conserver les parties .7z après l'upload S3
+     - `skip_download` : Ne pas retélécharger depuis l'IGN, réutiliser les geopackages déjà présents sur S3 (run précédent). Pratique pour relancer un import ou charger la seconde base sans attendre ~1h de téléchargement
+     - `skip_import` : Seulement rafraîchir les geopackages sur S3 depuis l'IGN, sans importer (les jobs `import` et `finalize` sont ignorés)
+     - `keep_archives` : Conserver les parties .7z après l'extraction
+
+   En cas d'échec d'un job `import`, « Re-run failed jobs » relance uniquement la (les) table(s) en échec puis `finalize`.
+
+   :information_source: Un seul run à la fois est autorisé (groupe de concurrence `bdtopo-update`), quelle que soit la base cible : les objets S3 sont partagés.
 
 2. **Planification automatique** :
    - Le workflow est configuré pour s'exécuter automatiquement tous les 15 jours à 2h00 UTC
@@ -205,7 +211,7 @@ scalingo login --ssh
 # Renseigner la configuration S3 (Outscale) dans .env.local :
 # S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET, S3_ENDPOINT
 
-# Lancer la mise à jour en mode streaming S3
+# Lancer la mise à jour via S3 (extraction sélective + upload + import local)
 ./tools/bdtopo_download_and_update \
   --s3 \
   --prod=2025 \
@@ -213,24 +219,26 @@ scalingo login --ssh
   -y
 ```
 
-:information_source: **Note** : Le mode `--s3` évite l'extraction locale (~140 Go). Il faut néanmoins de l'espace disque pour télécharger les parties (~24 Go compressé) avant leur envoi en flux sur S3.
+:information_source: **Note** : Le mode `--s3` évite l'extraction complète (~140 Go). Il faut néanmoins de l'espace disque pour les parties téléchargées (~21 Go compressé) et les geopackages cibles extraits (~15-20 Go).
 
 **Options du script** :
 - `--download-dir DIR` : Répertoire où télécharger et dézipper
   - Défaut : `./dump` en local (évite les problèmes de RAM sur Linux où `/tmp` est monté en RAM)
   - Dans la CI GitHub Actions : `/tmp/bdtopo_download` (plus d'espace disponible)
-- `--keep-archives` : Conserver les parties .7z après l'upload S3 / le dézippage
-- `--skip-download` : Ignorer le téléchargement (utiliser les parties `.7z` locales si présentes ; en mode `--s3` sans parties locales, l'archive et le manifest déjà sur S3 sont réutilisés directement, sans re-upload)
-- `--skip-import` : Ignorer l'import (uniquement télécharger, et uploader sur S3 en mode `--s3`)
+- `--keep-archives` : Conserver les parties .7z après l'extraction
+- `--skip-download` : Ignorer le téléchargement (utiliser les parties `.7z` locales si présentes ; en mode `--s3` sans parties locales, les geopackages et le manifest déjà sur S3 sont réutilisés directement)
+- `--skip-import` : Ignorer l'import (uniquement télécharger/extraire, et uploader sur S3 en mode `--s3`)
 - `--prod [2025|2025_2]` : Déployer vers l'environnement de production (`dialog-bdtopo-2025` ou `dialog-bdtopo-2025-2`)
 - `--overwrite` : Réécrire les tables au lieu d'ajouter
 - `--skip-migrate` : Ignorer l'exécution des migrations d'index après l'import
+- `--table NOM` : Restreindre l'import aux tables nommées (répétable). C'est ce qu'utilise la matrice CI (une table par job)
+- `--setup-indexes-only` : Ne rien importer, seulement recréer les index et enregistrer le millésime lu dans le manifest S3 (job `finalize`). Nécessite `--url` ou `--prod`
 - `-y, --yes` : Accepter toutes les confirmations
 
-**Options du mode streaming S3** :
-- `--s3` : Activer le pipeline S3 (upload de l'archive concaténée + import en flux via `/vsi7z//vsis3/`, sans extraction locale)
+**Options du mode S3** :
+- `--s3` : Activer le pipeline S3 (extraction sélective des geopackages cibles, upload sur S3, import depuis une copie locale)
 - `--s3-bucket` : Bucket S3 cible (défaut : variable d'environnement `S3_BUCKET`)
-- `--s3-key` : Clé de l'objet S3 (défaut : `bdtopo/bdtopo-latest.7z`). Le manifest des geopackages est stocké à côté, sous `<clé>.manifest.json`.
+- `--s3-prefix` : Préfixe des objets S3 (défaut : `bdtopo`). Les geopackages sont stockés sous `<prefix>/<table>.gpkg` et le manifest sous `<prefix>/manifest.json`
 - `--s3-endpoint` : Endpoint S3 (défaut : variable d'environnement `S3_ENDPOINT`)
 - `--s3-region` : Région S3 (défaut : déduite de l'endpoint Outscale, ex. `cloudgouv-eu-west-1`)
 

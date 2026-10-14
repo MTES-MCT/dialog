@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
 import signal
 import subprocess
 import sys
@@ -36,7 +35,6 @@ def _run_dockerized_ogr2ogr(
     source: str,
     options: list,
     volume: tuple[str, str] | None = None,
-    extra_env: dict[str, str] | None = None,
 ):
     # Make ogr2ogr access database tunnel connection open on the host
     # https://stackoverflow.com/a/43541732
@@ -56,14 +54,10 @@ def _run_dockerized_ogr2ogr(
         "--rm",  # Do not leave dead containers
     ]
 
-    # Mount the local data directory (local import mode only).
+    # Mount the local data directory.
     if volume is not None:
         host_dir, container_dir = volume
         command += ["-v", f"{host_dir}:{container_dir}"]
-
-    # Forward S3 credentials/config to GDAL (S3 streaming import mode only).
-    for key, value in (extra_env or {}).items():
-        command += ["-e", f"{key}={value}"]
 
     command += [
         "gdal",
@@ -81,31 +75,6 @@ def _run_dockerized_ogr2ogr(
     return subprocess.run(command)
 
 
-def _build_s3_env(endpoint: str, region: str) -> dict[str, str]:
-    """Translate the Flysystem/Outscale S3 configuration into GDAL /vsis3/ variables."""
-    urlobj = urlparse(endpoint if "://" in endpoint else f"https://{endpoint}")
-    host = urlobj.netloc or urlobj.path
-
-    access_key = os.environ.get("S3_ACCESS_KEY")
-    secret_key = os.environ.get("S3_SECRET_KEY")
-
-    if not access_key or not secret_key:
-        raise RuntimeError(
-            "S3_ACCESS_KEY and S3_SECRET_KEY must be set for S3 streaming import"
-        )
-
-    return {
-        "AWS_ACCESS_KEY_ID": access_key,
-        "AWS_SECRET_ACCESS_KEY": secret_key,
-        "AWS_S3_ENDPOINT": host,
-        "AWS_REGION": region,
-        "AWS_DEFAULT_REGION": region,
-        # Outscale uses HTTPS and path-style addressing (pathStyleEndpoint: true).
-        "AWS_HTTPS": "NO" if urlobj.scheme == "http" else "YES",
-        "AWS_VIRTUAL_HOSTING": "FALSE",
-    }
-
-
 @dataclass
 class Table:
     name: str
@@ -119,15 +88,6 @@ class Table:
 @dataclass
 class Config:
     tables: list[Table]
-
-
-@dataclass
-class S3Source:
-    bucket: str
-    key: str
-    endpoint: str
-    region: str
-    entries: list[dict]
 
 
 @dataclass
@@ -150,7 +110,6 @@ def _build_local_items(directory: Path, tables_by_name: dict) -> list[dict]:
                         "table": tables_by_name[path.stem],
                         "source": str(Path("/home/data") / path.relative_to(directory)),
                         "volume": (str(directory), "/home/data"),
-                        "env": None,
                         "size": path.stat().st_size,
                         "display": str(path),
                     }
@@ -159,33 +118,46 @@ def _build_local_items(directory: Path, tables_by_name: dict) -> list[dict]:
     return items
 
 
-def _build_s3_items(s3: "S3Source", tables_by_name: dict) -> list[dict]:
-    """Build the list of geopackages to import by streaming from a .7z archive on S3.
-
-    Each source uses GDAL virtual filesystems to read the target geopackage directly
-    inside the (single-volume) 7z archive stored on S3, without any local extraction:
-    /vsi7z//vsis3/<bucket>/<key>/<path inside archive>
+def _build_manifest_items(
+    directory: Path, entries: list[dict], tables_by_name: dict
+) -> list[dict] | None:
+    """Build the list of geopackages to import from a directory holding the
+    geopackages described by a manifest (one `path` per table, relative to
+    `directory`). Used by the S3 pipeline, which only downloads the geopackages
+    of the requested tables. Returns None if a requested geopackage is missing.
     """
-    env = _build_s3_env(s3.endpoint, s3.region)
     items = []
+    missing = []
 
-    for entry in s3.entries:
+    for entry in entries:
         table = tables_by_name.get(entry["table"])
 
         if table is None:
             continue
 
-        source = f"/vsi7z//vsis3/{s3.bucket}/{s3.key}/{entry['path']}"
+        path = directory / entry["path"]
+
+        if not path.exists():
+            missing.append(str(path))
+            continue
+
         items.append(
             {
                 "table": table,
-                "source": source,
-                "volume": None,
-                "env": env,
-                "size": entry.get("size"),
-                "display": source,
+                "source": str(Path("/home/data") / entry["path"]),
+                "volume": (str(directory), "/home/data"),
+                "size": path.stat().st_size,
+                "display": str(path),
             }
         )
+
+    if missing:
+        print(
+            "ERROR: geopackage(s) listed in the manifest not found on disk: "
+            + ", ".join(missing),
+            file=sys.stderr,
+        )
+        return None
 
     return items
 
@@ -214,7 +186,6 @@ def _build_local_archive_items(
                 "table": table,
                 "source": source,
                 "volume": (str(archive.archive_path.parent), "/home/data"),
-                "env": None,
                 "size": entry.get("size"),
                 "display": source,
             }
@@ -229,15 +200,12 @@ def main(
     url: str | None,
     overwrite: bool,
     yes: bool,
-    s3: "S3Source | None" = None,
     archive: "LocalArchive | None" = None,
+    manifest_entries: list[dict] | None = None,
 ) -> int:
     tables_by_name = {table.name: table for table in config.tables}
 
-    if s3 is not None:
-        geopackages = _build_s3_items(s3, tables_by_name)
-        source_label = f"s3://{s3.bucket}/{s3.key}"
-    elif archive is not None:
+    if archive is not None:
         geopackages = _build_local_archive_items(archive, tables_by_name)
         source_label = str(archive.archive_path)
     else:
@@ -245,7 +213,13 @@ def main(
             print(f"ERROR: directory {directory} does not exist", file=sys.stderr)
             return 1
 
-        geopackages = _build_local_items(directory, tables_by_name)
+        if manifest_entries is not None:
+            geopackages = _build_manifest_items(directory, manifest_entries, tables_by_name)
+            if geopackages is None:
+                return 1
+        else:
+            geopackages = _build_local_items(directory, tables_by_name)
+
         source_label = str(directory)
 
     if not geopackages:
@@ -382,7 +356,6 @@ def main(
                     source=gpkg["source"],
                     options=options,
                     volume=gpkg["volume"],
-                    extra_env=gpkg["env"],
                 )
 
                 if result.returncode:
@@ -465,29 +438,14 @@ if __name__ == "__main__":
         help="Path to config file. Default: ./bdtopo_update.config.json",
     )
     parser.add_argument(
-        "--s3-archive",
-        default=None,
-        help=(
-            "Stream the import directly from a single-volume .7z archive on S3, "
-            "e.g. s3://my-bucket/bdtopo/bdtopo-latest.7z (no local extraction). "
-            "Requires --manifest, --s3-endpoint and --s3-region."
-        ),
-    )
-    parser.add_argument(
         "--manifest",
         type=_path_check_exists,
         default=None,
-        help="Path to the JSON manifest describing the geopackages inside the S3 archive",
-    )
-    parser.add_argument(
-        "--s3-endpoint",
-        default=None,
-        help="S3 endpoint (e.g. https://oos.cloudgouv-eu-west-1.outscale.com)",
-    )
-    parser.add_argument(
-        "--s3-region",
-        default=None,
-        help="S3 region (e.g. cloudgouv-eu-west-1)",
+        help=(
+            "Path to the JSON manifest describing the geopackages to import. "
+            "With a directory: import `<directory>/<entry path>` for each table "
+            "(S3 pipeline). With --archive: paths inside the archive."
+        ),
     )
     parser.add_argument(
         "--archive",
@@ -496,6 +454,17 @@ if __name__ == "__main__":
         help=(
             "Import directly from a local single-volume .7z archive via GDAL /vsi7z/ "
             "(no local extraction). Requires --manifest."
+        ),
+    )
+    parser.add_argument(
+        "--table",
+        action="append",
+        default=None,
+        dest="tables",
+        help=(
+            "Only import the named table(s). Repeatable. "
+            "Default: all tables declared in the config. Useful to parallelize the "
+            "import across jobs (one table per job)."
         ),
     )
     args = parser.parse_args()
@@ -514,37 +483,28 @@ if __name__ == "__main__":
         tables=[Table(**t) for t in configdata["tables"]],
     )
 
-    s3_source = None
+    if args.tables:
+        selected = set(args.tables)
+        known = {table.name for table in config.tables}
+        unknown = selected - known
+
+        if unknown:
+            print(
+                f"ERROR: unknown table(s): {', '.join(sorted(unknown))}. "
+                f"Available: {', '.join(sorted(known))}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        config = Config(
+            tables=[table for table in config.tables if table.name in selected],
+        )
+
     local_archive = None
     directory = None
+    manifest_entries = None
 
-    if args.s3_archive:
-        if not (args.manifest and args.s3_endpoint and args.s3_region):
-            print(
-                "ERROR: --s3-archive requires --manifest, --s3-endpoint and --s3-region",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-        archive_url = urlparse(args.s3_archive)
-
-        if archive_url.scheme != "s3":
-            print(
-                f"ERROR: --s3-archive must be an s3:// URL, received: {args.s3_archive}",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-        manifest_data = json.loads(args.manifest.read_text())
-
-        s3_source = S3Source(
-            bucket=archive_url.netloc,
-            key=archive_url.path.lstrip("/"),
-            endpoint=args.s3_endpoint,
-            region=args.s3_region,
-            entries=manifest_data["entries"],
-        )
-    elif args.archive:
+    if args.archive:
         if not args.manifest:
             print(
                 "ERROR: --archive requires --manifest",
@@ -561,13 +521,16 @@ if __name__ == "__main__":
     else:
         if args.directory is None:
             print(
-                "ERROR: please pass a directory (local mode) or --s3-archive (S3 mode)",
+                "ERROR: please pass a directory (local mode) or --archive (archive mode)",
                 file=sys.stderr,
             )
             sys.exit(1)
 
         # Relative paths are OK but ogr2ogr volume will require an absolute path.
         directory = args.directory.absolute()
+
+        if args.manifest:
+            manifest_entries = json.loads(args.manifest.read_text())["entries"]
 
     sys.exit(
         main(
@@ -576,7 +539,7 @@ if __name__ == "__main__":
             url=args.url,
             overwrite=args.overwrite,
             yes=args.yes,
-            s3=s3_source,
             archive=local_archive,
+            manifest_entries=manifest_entries,
         )
     )
