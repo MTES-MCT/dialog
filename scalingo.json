@@ -1,3 +1,9 @@
 {
-    "stack": "scalingo-22"
+    "stack": "scalingo-22",
+    "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": {
+            "description": "Installe le navigateur Playwright (export carte des arrêtés) dans node_modules (valeur 0), seul emplacement conservé dans le slug runtime par le buildpack Node. ~/.cache et les dossiers créés en postbuild hors node_modules sont purgés. Aligné avec docker/php/Dockerfile.",
+            "value": "0"
+        }
+    }
 }
