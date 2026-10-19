@@ -1,20 +1,23 @@
+{# Préfixe des identifiants HTML et des classes servant de sélecteurs (outlets Stimulus) :
+   dérivé de l'id du formulaire pour rester unique quand plusieurs formulaires de mesure sont ouverts #}
+{% set idPrefix = form.vars.id %}
 {% set restrictedDetailsClass = {
-    heavyGoodsVehicle: 'restricted-details-heavyGoodsVehicle' ~ index,
-    dimensions: 'restricted-details-dimensions' ~ index,
-    critair: 'restricted-details-critair' ~ index,
-    other: 'restricted-details-other' ~ index,
+    heavyGoodsVehicle: 'restricted-details-heavyGoodsVehicle-' ~ idPrefix,
+    dimensions: 'restricted-details-dimensions-' ~ idPrefix,
+    critair: 'restricted-details-critair-' ~ idPrefix,
+    other: 'restricted-details-other-' ~ idPrefix,
 } %}
-{% set exemptedDetailsOtherClass = 'exempted-details-other' ~ index %}
+{% set exemptedDetailsOtherClass = 'exempted-details-other-' ~ idPrefix %}
 
 <fieldset
     class="fr-fieldset {% if form.allVehicles.vars.errors|length > 0 %}fr-fieldset--error{% endif %}"
     role="radiogroup"
-    aria-labelledby="allVehicles-legend-{{ index }} {% if form.allVehicles.vars.errors|length > 0 %}{{ form.allVehicles.vars.id }}_error{% endif %}"
+    aria-labelledby="{{ idPrefix }}-allVehicles-legend {% if form.allVehicles.vars.errors|length > 0 %}{{ form.allVehicles.vars.id }}_error{% endif %}"
     data-controller="form-reveal"
 >
     {{ form_label(form.allVehicles, null, {
         element: 'legend',
-        label_attr: { 'id': 'allVehicles-legend-' ~ index, 'class': 'fr-fieldset__legend' }
+        label_attr: { 'id': idPrefix ~ '-allVehicles-legend', 'class': 'fr-fieldset__legend' }
     }) }}
 
     {% for option in form.allVehicles %}
@@ -42,10 +45,10 @@
         <div class="app-card app-card--content-only app-someVehicles__form">
             <div class="app-card__content">
                 <fieldset class="fr-x-fieldset--raw" data-form-reveal-target="formControl">
-                    <fieldset class="fr-fieldset" aria-labelledby="restrictedTypes-legend-{{ index }}">
+                    <fieldset class="fr-fieldset" aria-labelledby="{{ idPrefix }}-restrictedTypes-legend">
                         {{ form_label(form.restrictedTypes, null, {
                             element: 'legend',
-                            label_attr: { id: 'restrictedTypes-legend-' ~ index, class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
+                            label_attr: { id: idPrefix ~ '-restrictedTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
                         }) }}
 
                         <ul class="fr-fieldset__item fr-tags-group">
@@ -90,13 +93,13 @@
                     <fieldset
                         data-controller="section form-control"
                         class="fr-fieldset {{ restrictedDetailsClass['critair'] }}"
-                        id="critairTypes"
-                        aria-labelledby="critairTypes-legend"
+                        id="{{ idPrefix }}-critairTypes-fieldset"
+                        aria-labelledby="{{ idPrefix }}-critairTypes-legend"
                         {% if 'critair' not in form.restrictedTypes.vars.value %}hidden disabled{% endif %}
                     >
                         {{ form_label(form.critairTypes, null, {
                             element: 'legend',
-                            label_attr: { id: 'critairTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
+                            label_attr: { id: idPrefix ~ '-critairTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
                         }) }}
                         {{ form_widget(form.critairTypes) }}
                         {{ form_errors(form.critairTypes) }}
@@ -105,10 +108,10 @@
                     <fieldset
                         data-controller="section form-control"
                         class="fr-fieldset fr-x-max-w-38w {{ restrictedDetailsClass['heavyGoodsVehicle'] }}"
-                        aria-labelledby="heavyGoodsVehicle-details-legend-{{ index }}"
+                        aria-labelledby="{{ idPrefix }}-heavyGoodsVehicle-details-legend"
                         {% if 'heavyGoodsVehicle' not in form.restrictedTypes.vars.value %}hidden disabled{% endif %}
                     >
-                        <legend class="fr-fieldset__legend" id="heavyGoodsVehicle-details-legend-{{ index }}">
+                        <legend class="fr-fieldset__legend" id="{{ idPrefix }}-heavyGoodsVehicle-details-legend">
                             {{ 'regulation.vehicle_set.type.heavyGoodsVehicle'|trans }}
                         </legend>
                         <div class="fr-fieldset__element">
@@ -125,10 +128,10 @@
                     <fieldset
                         data-controller="section form-control"
                         class="fr-fieldset fr-x-max-w-32w {{ restrictedDetailsClass['dimensions'] }} {% if hasDimensionsErrors %}fr-fieldset--error{% endif %}"
-                        aria-labelledby="dimensions-details-legend-{{ index }}"
+                        aria-labelledby="{{ idPrefix }}-dimensions-details-legend"
                         {% if 'dimensions' not in form.restrictedTypes.vars.value %}hidden disabled{% endif %}
                     >
-                        <legend class="fr-fieldset__legend" id="dimensions-details-legend-{{ index }}">
+                        <legend class="fr-fieldset__legend" id="{{ idPrefix }}-dimensions-details-legend">
                             {{ 'regulation.vehicle_set.type.dimensions'|trans }}
                         </legend>
                         <div class="fr-fieldset__element">
@@ -179,17 +182,17 @@
 
 <fieldset
     class="fr-fieldset"
-    aria-labelledby="exemptedVehicles-legend-{{ index }}"
+    aria-labelledby="{{ idPrefix }}-exemptedVehicles-legend"
     data-controller="form-reveal"
     data-form-reveal-is-permanent-button-value="false"
 >
-    <legend id="exemptedVehicles-legend-{{ index }}" class="fr-fieldset__legend">
+    <legend id="{{ idPrefix }}-exemptedVehicles-legend" class="fr-fieldset__legend">
         {{ 'regulation.vehicle_set.exempted_vehicles'|trans }}
     </legend>
 
     <button
         type="button"
-        id="defineExemptedVehiclesBtn-{{ index }}"
+        id="{{ idPrefix }}-defineExemptedVehiclesBtn"
         class="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-add-line fr-x-btn--with-hint"
         data-form-reveal-target="button"
         data-action="click->form-reveal#open"
@@ -210,12 +213,12 @@
             <div class="app-card__content">
                 <fieldset
                     class="fr-fieldset"
-                    aria-labelledby="exemptedTypes-legend-{{ index }}"
+                    aria-labelledby="{{ idPrefix }}-exemptedTypes-legend"
                     data-form-reveal-target="formControl"
                 >
                     {{ form_label(form.exemptedTypes, null, {
                         element: 'legend',
-                        label_attr: { id: 'exemptedTypes-legend-' ~ index, class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
+                        label_attr: { id: idPrefix ~ '-exemptedTypes-legend', class: 'fr-fieldset__legend fr-fieldset__legend--regular' },
                     }) }}
 
                     <ul class="fr-fieldset__item fr-tags-group">

@@ -88,7 +88,8 @@ final class UpdateMeasureController extends AbstractRegulationController
             $command->permissions[] = CanUseRawGeoJSON::PERMISSION_NAME;
         }
 
-        $form = $this->formFactory->create(
+        $form = $this->formFactory->createNamed(
+            name: MeasureFormType::getName($uuid),
             type: MeasureFormType::class,
             data: $command,
             options: [
