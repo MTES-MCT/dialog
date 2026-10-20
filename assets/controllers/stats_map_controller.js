@@ -2,6 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
+import { buildClusterPopupContent } from '../maps/stats_cluster_popup';
 
 // Cache global pour éviter de recharger l'API plusieurs fois
 let cachedOrganizationsData = null;
@@ -174,39 +175,6 @@ export default class extends Controller {
             const zoom = Math.max(map.getZoom(), 8).toFixed(2);
             const mapLink = `/carte#mapZoomAndPosition=${zoom}/${lat.toFixed(5)}/${lng.toFixed(5)}`;
 
-            const names = clusterName
-                .split(',')
-                .map(name => name.trim())
-                .filter(name => name.length > 0);
-
-            const MAX_VISIBLE_NAMES = 10;
-            const visibleNames = names.slice(0, MAX_VISIBLE_NAMES);
-            const totalCount = names.length;
-            const remainingCount = totalCount - visibleNames.length;
-
-            const listItems = visibleNames
-                .map(name => `<li>${name}</li>`)
-                .join('');
-
-            const moreInfo = remainingCount > 0
-                ? `<li><em>… et ${remainingCount} autre${remainingCount > 1 ? 's' : ''}</em></li>`
-                : '';
-
-            const content = `
-                <div class="fr-background-default--grey fr-p-1w fr-text--sm fr-radius-1w">
-                    <p class="fr-text--bold fr-mb-1v">Zones couvertes</p>
-                    <ul class="fr-list fr-mb-0">
-                        ${listItems}
-                        ${moreInfo}
-                    </ul>
-                    <p class="fr-mt-1v fr-mb-0">
-                        <a class="fr-link fr-link--sm" href="${mapLink}" rel="noopener noreferrer">
-                            Voir les restrictions
-                        </a>
-                    </p>
-                </div>
-            `;
-
             new maplibregl.Popup({
                 closeButton: true,
                 closeOnClick: true,
@@ -214,7 +182,9 @@ export default class extends Controller {
                 maxWidth: '320px',
             })
                 .setLngLat(event.lngLat)
-                .setHTML(content)
+                // Contenu construit en nœuds DOM : le nom de cluster est une donnée
+                // utilisateur, il ne doit jamais être interpolé dans du HTML (XSS).
+                .setDOMContent(buildClusterPopupContent(clusterName, mapLink))
                 .addTo(map);
         });
     }
