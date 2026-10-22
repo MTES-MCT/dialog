@@ -8,6 +8,12 @@
             <constraint name="Length">
                 <option name="max">255</option>
             </constraint>
+            <!-- Le nom est affiché dans des interfaces tierces (GeoJSON public, popups) :
+                 on refuse les chevrons pour ne laisser aucune chance à du HTML injecté. -->
+            <constraint name="Regex">
+                <option name="pattern">/^[^&lt;&gt;]*$/</option>
+                <option name="message">organization.name.error.angle_brackets</option>
+            </constraint>
         </property>
         <property name="file">
             <constraint name="File">
