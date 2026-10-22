@@ -8,6 +8,7 @@ use App\Application\QueryBusInterface;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\RegulationExportCsvGeneratorInterface;
 use App\Application\Regulation\View\RegulationCsvRowView;
+use App\Application\Regulation\View\VehicleSetView;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -31,6 +32,8 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
         'lien_pdf',
         'mesure_uuid',
         'type_restriction',
+        'types_vehicules',
+        'exceptions',
         'emprise_uuid',
         'emprise_type',
         'emprise_libelle',
@@ -111,10 +114,61 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
             $row->linkPdf,
             $row->measureUuid,
             $this->translator->trans('regulation.measure.type.' . $row->measureType),
+            $this->formatRestrictedTypes($row->vehicleSet),
+            $this->formatExemptedTypes($row->vehicleSet),
             $row->locationUuid,
             $this->translator->trans('regulation.location.road.type.' . $row->locationType),
             $row->locationLabel,
             $row->geometry,
         ];
+    }
+
+    private function formatRestrictedTypes(?VehicleSetView $vehicleSet): string
+    {
+        if ($vehicleSet === null) {
+            return '';
+        }
+
+        $parts = [];
+
+        foreach ($vehicleSet->maxCharacteristics as $item) {
+            $parts[] = $this->translator->trans(
+                'regulation.vehicles.maxCharacteristics.' . $item['name'],
+                ['%value%' => $item['value']],
+            );
+        }
+
+        foreach ($vehicleSet->restrictedTypes as $type) {
+            $parts[] = $this->formatVehicleType($type);
+        }
+
+        return implode(', ', $parts);
+    }
+
+    private function formatExemptedTypes(?VehicleSetView $vehicleSet): string
+    {
+        if ($vehicleSet === null) {
+            return '';
+        }
+
+        $parts = [];
+
+        foreach ($vehicleSet->exemptedTypes as $type) {
+            $parts[] = $this->formatVehicleType($type);
+        }
+
+        return implode(', ', $parts);
+    }
+
+    /**
+     * @param array{name: string, isOther?: bool} $type
+     */
+    private function formatVehicleType(array $type): string
+    {
+        if (!empty($type['isOther'])) {
+            return $type['name'];
+        }
+
+        return $this->translator->trans('regulation.vehicle_set.type.' . $type['name']);
     }
 }

@@ -133,18 +133,24 @@ final class NumberedRoadFormType extends AbstractType
             ]);
         };
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($storageAreaModifier): void {
-            $storageAreaModifier($event->getForm(), $event->getData());
-        });
+        // Dans le sous-formulaire d'exception (WholeCityExceptionFormType), pas d'aire de
+        // stockage : une exception soustrait une emprise, elle ne définit pas de restriction.
+        if ($options['with_storage_area']) {
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($storageAreaModifier): void {
+                $storageAreaModifier($event->getForm(), $event->getData());
+            });
+        }
 
         // Constraint "Valid" cannot be nested inside constraint When. The event listener is used to ensure that the roadType is added to the submitted data before the form is processed.
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($storageAreaModifier): void {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($storageAreaModifier, $options): void {
             $data = $event->getData();
             $data['roadType'] = $event->getForm()->getParent()->get('roadType')->getData();
             $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value;
             $event->setData($data);
 
-            $storageAreaModifier($event->getForm(), $event->getForm()->getData());
+            if ($options['with_storage_area']) {
+                $storageAreaModifier($event->getForm(), $event->getForm()->getData());
+            }
         });
     }
 
@@ -204,6 +210,7 @@ final class NumberedRoadFormType extends AbstractType
             'roadType' => null,
             'administrators' => [],
             'storage_areas' => [],
+            'with_storage_area' => true,
             'data_class' => SaveNumberedRoadCommand::class,
             'error_mapping' => [
                 'fromPointNumber' => 'fromPointNumberWithDepartmentCodeLabel',
@@ -213,5 +220,6 @@ final class NumberedRoadFormType extends AbstractType
         $resolver->setAllowedTypes('roadType', 'string');
         $resolver->setAllowedTypes('administrators', 'array');
         $resolver->setAllowedTypes('storage_areas', 'array');
+        $resolver->setAllowedTypes('with_storage_area', 'bool');
     }
 }

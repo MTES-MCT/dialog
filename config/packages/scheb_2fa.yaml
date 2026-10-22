@@ -1,0 +1,19 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/7.x/configuration.html
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+        - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+
+    persister: App\Infrastructure\Security\TwoFactor\EmailAuthCodePersister
+
+    email:
+        enabled: true
+        mailer: App\Infrastructure\Security\TwoFactor\AuthCodeMailer
+        digits: 6
+        template: security/2fa_form.html.twig
+
+    trusted_device:
+        enabled: true
+        lifetime: 2592000 # 30 jours (en secondes)
+        key: '%kernel.secret%'
+        cookie_same_site: 'lax'

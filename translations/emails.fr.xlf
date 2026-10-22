@@ -242,6 +242,26 @@
                 <source>inactivity.email.signature</source>
                 <target>L’équipe DiaLog</target>
             </trans-unit>
+            <trans-unit id="two_factor_auth_code.subject">
+                <source>two_factor_auth_code.subject</source>
+                <target>Votre code de connexion DiaLog</target>
+            </trans-unit>
+            <trans-unit id="two_factor_auth_code.title">
+                <source>two_factor_auth_code.title</source>
+                <target>Votre code de connexion</target>
+            </trans-unit>
+            <trans-unit id="two_factor_auth_code.intro">
+                <source>two_factor_auth_code.intro</source>
+                <target>Utilisez le code ci-dessous pour finaliser votre connexion à DiaLog :</target>
+            </trans-unit>
+            <trans-unit id="two_factor_auth_code.validity">
+                <source>two_factor_auth_code.validity</source>
+                <target>Ce code est valable 15 minutes.</target>
+            </trans-unit>
+            <trans-unit id="two_factor_auth_code.ignore">
+                <source>two_factor_auth_code.ignore</source>
+                <target>Si vous n'êtes pas à l'origine de cette connexion, ignorez cet e-mail et modifiez votre mot de passe.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,6 +1,8 @@
 <d-map-share
     class="d-map-share"
     carteUrl="{{ carteUrl }}"
+    startDateParam="{{ startDateParam }}"
+    defaultStartDate="{{ defaultStartDate }}"
 >
     <button
         type="button"
@@ -71,23 +73,31 @@
                 </div>
 
                 <div id="map-share-tab-embed-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="map-share-tab-embed" tabindex="0" data-share-panel="embed">
-                    <p class="fr-text--sm">{{ 'map.share.embed.description'|trans }}</p>
+                    {% if cityCode %}
+                        {# Un code INSEE dans l'URL centre la carte sur la commune, avant toute organisation
+                           (cf. MapController) : le choix d'une organisation n'est pas proposé. #}
+                        <p class="fr-text--sm">{{ 'map.share.embed.description.city'|trans({'%code%': cityCode}) }}</p>
+                    {% else %}
+                        <p class="fr-text--sm">{{ 'map.share.embed.description'|trans }}</p>
+                    {% endif %}
                     <div class='d-map-share__input-row'>
                         <div class='d-map-share__embed-options'>
-                            <div class="fr-select-group">
-                                <label class="fr-label" for="map-share-org-select">
-                                    {{ 'map.share.embed.organization.label'|trans }}
-                                </label>
-                                <select
-                                    id="map-share-org-select"
-                                    class="fr-select"
-                                    data-share-role="orgSelect"
-                                >
-                                    {% for org in organizations %}
-                                        <option value="{{ org.uuid }}"{% if loop.first %} selected{% endif %}>{{ org.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            {% if not cityCode %}
+                                <div class="fr-select-group">
+                                    <label class="fr-label" for="map-share-org-select">
+                                        {{ 'map.share.embed.organization.label'|trans }}
+                                    </label>
+                                    <select
+                                        id="map-share-org-select"
+                                        class="fr-select"
+                                        data-share-role="orgSelect"
+                                    >
+                                        {% for org in organizations %}
+                                            <option value="{{ org.uuid }}"{% if loop.first %} selected{% endif %}>{{ org.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
                             <div class="fr-input-group fr-mt-2w">
                                 <label class="fr-label" for="map-share-embed-code">
                                     {{ 'map.share.embed.code.label'|trans }}

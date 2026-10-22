@@ -151,7 +151,7 @@ final class UpdateRegulationController
                                 items: new OA\Items(
                                     type: 'object',
                                     properties: [
-                                        new OA\Property(property: 'roadType', type: 'string', enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON', 'zone'], example: 'lane'),
+                                        new OA\Property(property: 'roadType', type: 'string', enum: ['lane', 'departmentalRoad', 'nationalRoad', 'rawGeoJSON', 'zone', 'wholeCity'], example: 'lane'),
                                         new OA\Property(
                                             property: 'namedStreet',
                                             type: 'object',
@@ -212,6 +212,7 @@ final class UpdateRegulationController
                                             properties: [
                                                 new OA\Property(property: 'label', type: 'string', nullable: true),
                                                 new OA\Property(property: 'geometry', type: 'string', nullable: true),
+                                                new OA\Property(property: 'exceptions', type: 'array', nullable: true, description: 'Emprises exclues de la restriction (« Sauf... »), soustraites du tracé.', items: new OA\Items(ref: '#/components/schemas/WholeCityException')),
                                             ],
                                         ),
                                         new OA\Property(
@@ -226,6 +227,20 @@ final class UpdateRegulationController
                                             properties: [
                                                 new OA\Property(property: 'label', type: 'string', maxLength: 255, nullable: true, description: 'Libellé descriptif de la zone.', example: 'Quartier des Docks'),
                                                 new OA\Property(property: 'geometry', type: 'string', nullable: true, description: 'Polygone GeoJSON sérialisé en chaîne JSON délimitant la zone.', example: '{"type":"Polygon","coordinates":[[[2.325,48.9125],[2.331,48.9125],[2.331,48.9152],[2.325,48.9152],[2.325,48.9125]]]}'),
+                                                new OA\Property(property: 'exceptions', type: 'array', nullable: true, description: 'Emprises exclues de la restriction (« Sauf... »), soustraites des tronçons couverts par la zone.', items: new OA\Items(ref: '#/components/schemas/WholeCityException')),
+                                            ],
+                                        ),
+                                        new OA\Property(
+                                            property: 'wholeCity',
+                                            type: 'object',
+                                            nullable: true,
+                                            description: 'Ville entière. Renseigné lorsque `roadType` vaut `wholeCity` : '
+                                                . 'la restriction s\'applique à toutes les voies de la commune, '
+                                                . 'sauf les emprises listées dans `exceptions`.',
+                                            properties: [
+                                                new OA\Property(property: 'cityCode', type: 'string', nullable: true, description: 'Code INSEE de la commune.', example: '93070'),
+                                                new OA\Property(property: 'cityLabel', type: 'string', nullable: true, example: 'Saint-Ouen-sur-Seine'),
+                                                new OA\Property(property: 'exceptions', type: 'array', nullable: true, description: 'Emprises exclues de la restriction (« Sauf... »).', items: new OA\Items(ref: '#/components/schemas/WholeCityException')),
                                             ],
                                         ),
                                     ],

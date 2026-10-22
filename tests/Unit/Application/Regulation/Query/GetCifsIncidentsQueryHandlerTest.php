@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
@@ -22,6 +23,7 @@ use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
+use App\Domain\User\Organization;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -31,6 +33,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     private $polylineMaker;
     private $dateUtils;
     private $translator;
+    private $numberedRoadLabelMaker;
 
     protected function setUp(): void
     {
@@ -38,6 +41,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->polylineMaker = $this->createMock(PolylineMakerInterface::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->numberedRoadLabelMaker = new NumberedRoadLabelMaker($this->translator);
     }
 
     public function testGetAllEmpty(): void
@@ -47,7 +51,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -93,6 +97,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $period4Id = '0661e7ed-e549-7e4b-8000-945882a092c4';
         $period5Id = '066e2bff-d436-7f16-8000-57d9f6b99960';
 
+        $uuid1 = '06716514-0a0d-7bde-8000-f23df39a6693';
+        $uuid2 = '06716514-6035-7f92-8000-b1afcab7d3cf';
+
         $descriptionNoEntry = 'Interdiction d\'accès';
         $descriptionAlternateRoad = 'Route à alternance';
 
@@ -106,6 +113,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $polyline1Merged,
             startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
             endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
+            sourceReference: '82121',
+            sourceName: 'Commune de Montauban (DiaLog)',
+            regulationOrderRecordUuid: $uuid1,
             schedule: [],
             subType: 'ROAD_BLOCKED_HAZARD',
         );
@@ -120,6 +130,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $polyline1bis,
             startTime: $incident1->startTime,
             endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
+            sourceReference: $incident1->sourceReference,
+            sourceName: $incident1->sourceName,
+            regulationOrderRecordUuid: $incident1->regulationOrderRecordUuid,
             schedule: $incident1->schedule,
             subType: $incident1->subType,
         );
@@ -134,6 +147,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $polyline3,
             startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
             endTime: new \DateTimeImmutable('2023-11-06T00:00:00+00:00'),
+            sourceReference: 'dialog.beta.gouv.fr',
+            sourceName: 'Département de Tarn-et-Garonne (DiaLog)',
+            regulationOrderRecordUuid: $uuid2,
             schedule: [
                 'monday' => [
                     [
@@ -169,6 +185,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $incident3->polyline,
             startTime: new \DateTimeImmutable('2023-11-03T00:00:00+00:00'),
             endTime: new \DateTimeImmutable('2023-11-04T23:59:00+00:00'),
+            sourceReference: $incident3->sourceReference,
+            sourceName: $incident3->sourceName,
+            regulationOrderRecordUuid: $incident3->regulationOrderRecordUuid,
             schedule: [
                 'monday' => [
                     [
@@ -196,6 +215,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $incident3->polyline,
             startTime: $incident4->startTime,
             endTime: $incident4->endTime,
+            sourceReference: $incident3->sourceReference,
+            sourceName: $incident3->sourceName,
+            regulationOrderRecordUuid: $incident3->regulationOrderRecordUuid,
             schedule: [
                 'sunday' => [
                     [
@@ -217,6 +239,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $incident3->polyline,
             startTime: $incident4->startTime,
             endTime: $incident4->endTime,
+            sourceReference: $incident3->sourceReference,
+            sourceName: $incident3->sourceName,
+            regulationOrderRecordUuid: $incident3->regulationOrderRecordUuid,
             schedule: [
                 'everyday' => [
                     [
@@ -238,6 +263,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             polyline: $incident3->polyline,
             startTime: $incident4->startTime,
             endTime: $incident4->endTime,
+            sourceReference: $incident3->sourceReference,
+            sourceName: $incident3->sourceName,
+            regulationOrderRecordUuid: $incident3->regulationOrderRecordUuid,
             schedule: [
                 'everyday' => [
                     [
@@ -251,7 +279,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 
         $regulationOrderRecord1 = $this->createMock(RegulationOrderRecord::class);
 
-        $uuid1 = '06716514-0a0d-7bde-8000-f23df39a6693';
         $regulationOrderRecord1
             ->expects(self::exactly(2))
             ->method('getUuid')
@@ -261,6 +288,20 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn(new \DateTimeImmutable('2023-11-01 00:00:00'));
+
+        $organization1 = $this->createMock(Organization::class);
+        $organization1
+            ->expects(self::once())
+            ->method('getCode')
+            ->willReturn('82121');
+        $organization1
+            ->expects(self::once())
+            ->method('getName')
+            ->willReturn('Commune de Montauban');
+        $regulationOrderRecord1
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization1);
 
         $regulationOrder1 = $this->createMock(RegulationOrder::class);
         $regulationOrder1
@@ -360,7 +401,6 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
 
         $regulationOrderRecord2 = $this->createMock(RegulationOrderRecord::class);
 
-        $uuid2 = '06716514-6035-7f92-8000-b1afcab7d3cf';
         $regulationOrderRecord2
             ->expects(self::exactly(2))
             ->method('getUuid')
@@ -370,6 +410,21 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getCreatedAt')
             ->willReturn(new \DateTimeImmutable('2023-11-01 00:00:00'));
+
+        // Organisation sans code : on retombe sur la référence de DiaLog
+        $organization2 = $this->createMock(Organization::class);
+        $organization2
+            ->expects(self::once())
+            ->method('getCode')
+            ->willReturn(null);
+        $organization2
+            ->expects(self::once())
+            ->method('getName')
+            ->willReturn('Département de Tarn-et-Garonne');
+        $regulationOrderRecord2
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization2);
 
         $regulationOrder2 = $this->createMock(RegulationOrder::class);
         $regulationOrder2
@@ -643,7 +698,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 $uuid2 => ['uuid' => $uuid2, 'overallStartDate' => $startDate2, 'overallEndDate' => $endDate2],
             ]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
             [$incident1, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
@@ -664,6 +719,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             $this->polylineMaker,
             $this->dateUtils,
             $this->translator,
+            $this->numberedRoadLabelMaker,
             new CifsFilterSet(
                 allowedSources: ['my_source'],
                 excludedIdentifiers: ['identifier1'],

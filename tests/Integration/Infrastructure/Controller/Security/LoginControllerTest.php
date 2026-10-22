@@ -4,28 +4,55 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Security;
 
+use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class LoginControllerTest extends AbstractWebTestCase
 {
-    public function testLoginSuccessfully(): void
+    private function submitCredentials(KernelBrowser $client, string $email): void
     {
-        $client = static::createClient();
         $crawler = $client->request('GET', '/login');
-
         $this->assertResponseStatusCodeSame(200);
         $this->assertSecurityHeaders();
         $this->assertSame('Connexion à DiaLog', $crawler->filter('h1')->text());
         $this->assertMetaTitle('Connexion - DiaLog', $crawler);
-        $saveButton = $crawler->selectButton('Se connecter');
-        $form = $saveButton->form();
 
-        $form['email'] = UserFixture::DEPARTMENT_93_USER_EMAIL;
+        $form = $crawler->selectButton('Se connecter')->form();
+        $form['email'] = $email;
         $form['password'] = UserFixture::PASSWORD;
         $client->submit($form);
-        // Après connexion, l'utilisateur arrive sur le tableau de bord.
-        $this->assertResponseRedirects('/', 302);
+
+        // Le mot de passe est validé mais le jeton est mis « en attente 2FA » :
+        // la connexion redirige directement vers le formulaire /2fa, dont l'accès
+        // déclenche la génération et l'envoi du code.
+        $this->assertResponseRedirects('http://localhost/2fa', 302);
+        $client->followRedirect();
+        $this->assertResponseIsSuccessful();
+        $this->assertSame('Double authentification', $client->getCrawler()->filter('h1')->text());
+    }
+
+    private function submitTwoFactorCode(KernelBrowser $client, string $email): void
+    {
+        /** @var UserRepositoryInterface $userRepository */
+        $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
+        $code = $userRepository->findOneByEmail($email)->getEmailAuthCode();
+        $this->assertNotNull($code);
+
+        $form = $client->getCrawler()->selectButton('Vérifier')->form();
+        $form['_auth_code'] = $code;
+        $client->submit($form);
+    }
+
+    public function testLoginSuccessfully(): void
+    {
+        $client = static::createClient();
+        $this->submitCredentials($client, UserFixture::DEPARTMENT_93_USER_EMAIL);
+        $this->submitTwoFactorCode($client, UserFixture::DEPARTMENT_93_USER_EMAIL);
+
+        // Après la double authentification, l'utilisateur arrive sur le tableau de bord.
+        $this->assertResponseRedirects('http://localhost/', 302);
         $crawler = $client->followRedirect();
         $this->assertSame('Mes organisations', $crawler->filter('h1')->text());
         $this->assertSame('Nouveautés Aide Mathieu MARCHOIS Mathieu MARCHOIS mathieu.marchois@beta.gouv.fr Mon compte Mes organisations Se déconnecter', $crawler->filter('[data-testid="user-links"]')->text());
@@ -34,16 +61,10 @@ final class LoginControllerTest extends AbstractWebTestCase
     public function testLoginAsAdminSuccessfully(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/login');
+        $this->submitCredentials($client, UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+        $this->submitTwoFactorCode($client, UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
 
-        $this->assertResponseStatusCodeSame(200);
-        $saveButton = $crawler->selectButton('Se connecter');
-        $form = $saveButton->form();
-
-        $form['email'] = UserFixture::DEPARTMENT_93_ADMIN_EMAIL;
-        $form['password'] = UserFixture::PASSWORD;
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects('http://localhost/', 302);
         $crawler = $client->followRedirect();
         $this->assertSame('Nouveautés Aide Mathieu FERNANDEZ Mathieu FERNANDEZ mathieu.fernandez@beta.gouv.fr Mon compte Mes organisations Administration Se déconnecter', $crawler->filter('[data-testid="user-links"]')->text());
     }

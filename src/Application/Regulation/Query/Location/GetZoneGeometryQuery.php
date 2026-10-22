@@ -13,6 +13,8 @@ final readonly class GetZoneGeometryQuery implements QueryInterface
     public function __construct(
         public SaveZoneCommand $command,
         public ?Location $location = null,
+        // Tronçons déjà calculés pour ce périmètre (ex. duplication) : renvoyés tels quels.
+        public ?string $sectionsGeometry = null,
     ) {
     }
 }

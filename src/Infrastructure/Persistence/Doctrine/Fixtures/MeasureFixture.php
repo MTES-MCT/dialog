@@ -24,6 +24,8 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
     public const UUID_RAWGEOJSON = '06672e2d-669d-7593-8000-7cfd59230dc2';
     public const UUID_WINTER_MAINTENANCE = '5f19f73e-58ae-4281-bd17-362b8db003b7';
     public const UUID_PARKING_PROHIBITED = '3260382e-1d37-48f0-a5a1-9ced1d8192f2';
+    public const UUID_WHOLE_CITY = '3c9e5a74-bd2f-4b80-8c43-7e6f5d4a3b22';
+    public const UUID_ZONE = '4daf6b85-ce30-4c91-9d54-8f7a6e5b4c33';
 
     public function load(ObjectManager $manager): void
     {
@@ -105,6 +107,21 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
             new \DateTime('2025-01-15'),
         );
 
+        // Mesures « Ville entière » et « Tracé de zone », rattachées à l'arrêté avec tracé libre
+        $wholeCityMeasure = new Measure(
+            self::UUID_WHOLE_CITY,
+            $this->getReference('rawGeoJSONRegulationOrder', RegulationOrder::class),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-01-06'),
+        );
+
+        $zoneMeasure = new Measure(
+            self::UUID_ZONE,
+            $this->getReference('rawGeoJSONRegulationOrder', RegulationOrder::class),
+            MeasureTypeEnum::NO_ENTRY->value,
+            new \DateTime('2023-01-06'),
+        );
+
         $manager->persist($typicalMeasure);
         $manager->persist($typicalMeasureToRemove);
         $manager->persist($publishedMeasure);
@@ -116,6 +133,8 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $manager->persist($litteralisMeasure);
         $manager->persist($winterMaintenanceMeasure);
         $manager->persist($parkingProhibitedMeasure);
+        $manager->persist($wholeCityMeasure);
+        $manager->persist($zoneMeasure);
 
         $this->addReference('typicalMeasure', $typicalMeasure);
         $this->addReference('typicalMeasureToRemove', $typicalMeasureToRemove);
@@ -128,6 +147,8 @@ final class MeasureFixture extends Fixture implements DependentFixtureInterface
         $this->addReference('litteralisMeasure', $litteralisMeasure);
         $this->addReference('winterMaintenanceMeasure', $winterMaintenanceMeasure);
         $this->addReference('parkingProhibitedMeasure', $parkingProhibitedMeasure);
+        $this->addReference('wholeCityMeasure', $wholeCityMeasure);
+        $this->addReference('zoneMeasure', $zoneMeasure);
 
         $manager->flush();
     }

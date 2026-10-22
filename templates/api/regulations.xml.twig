@@ -139,6 +139,13 @@
                                                     <loc:roadInformation>
                                                         <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
                                                     </loc:roadInformation>
+                                                    {% if location.referencePoints %}
+                                                        <loc:locationDescription>
+                                                            <com:values>
+                                                                <com:value>{{ location.referencePoints }}</com:value>
+                                                            </com:values>
+                                                        </loc:locationDescription>
+                                                    {% endif %}
                                                 {% elseif location.roadType == 'rawGeoJSON' %}
                                                     <loc:locationDescription>
                                                         <com:values>

@@ -23,13 +23,15 @@ final class RegulationOrderTemplateFixture extends Fixture implements DependentF
             ->setArticleContent('ARTICLES ...')
             ->setCreatedAt(new \DateTime('2023-01-01'));
 
+        // Contenu HTML tel que produit par l'éditeur Quill : les lignes vides
+        // sont représentées par des <p><br></p>, utilisés par les tests d'export.
         $regulationOrderTemplate = new RegulationOrderTemplate('54eacea0-e1e0-4823-828d-3eae72b76da8');
         $regulationOrderTemplate
             ->setName('Réglementation de vitesse en agglomération')
-            ->setTitle('Arrete temporaire n°[numero_arrete]')
-            ->setVisaContent('VU ...')
-            ->setConsideringContent('CONSIDERANT ...')
-            ->setArticleContent('ARTICLES ...')
+            ->setTitle('<h2>Arrete temporaire n°[numero_arrete]</h2><h2><br></h2><p><br></p><p><strong>LE MAIRE DE [nom_commune],</strong></p>')
+            ->setVisaContent('<p><br></p><p>VU ...</p>')
+            ->setConsideringContent('<p>CONSIDERANT ...</p>')
+            ->setArticleContent('<p>ARTICLES ...</p>')
             ->setCreatedAt(new \DateTime('2025-04-08'))
             ->setOrganization($this->getReference('seineSaintDenisOrg', Organization::class));
 

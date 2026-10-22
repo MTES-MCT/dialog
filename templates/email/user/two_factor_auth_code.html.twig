@@ -1,0 +1,10 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <h1>{{ 'two_factor_auth_code.title'|trans }}</h1>
+    <p>{{ 'two_factor_auth_code.intro'|trans }}</p>
+    <p style="font-size: 24px; font-weight: bold; letter-spacing: 4px;">{{ code }}</p>
+    <p>{{ 'two_factor_auth_code.validity'|trans }}</p>
+    <p>{{ 'two_factor_auth_code.ignore'|trans }}</p>
+{% endblock %}

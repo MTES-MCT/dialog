@@ -11,9 +11,9 @@
             <starttime>{{ incident.startTime|date('Y-m-d\\TH:i:sP') }}</starttime>
             <endtime>{{ incident.endTime|date('Y-m-d\\TH:i:sP') }}</endtime>
             <source>
-                <reference>dialog.beta.gouv.fr</reference>
-                <name>DiaLog</name>
-                <url>{{ url('api_regulations_cifs', {_format: 'xml'}) }}</url>
+                <reference>{{ incident.sourceReference }}</reference>
+                <name>{{ incident.sourceName }}</name>
+                <url>{{ url('app_regulation_detail', {uuid: incident.regulationOrderRecordUuid}) }}</url>
             </source>
             {% if incident.schedule %}
                 <schedule>

@@ -4,6 +4,32 @@
     </template>
 </turbo-stream>
 
+<turbo-stream action="update" target="regulation-detail">
+    <template>{{ (generalInfo.category == 'permanentRegulation' ? 'regulation.permanent' : 'regulation.temporary')|trans ~ ' ' ~ generalInfo.identifier }}</template>
+</turbo-stream>
+
+{# La catégorie conditionne l'affichage des dates de fin dans les formulaires
+   de mesure : on re-rend les blocs concernés pour éviter un état périmé. #}
+{% if categoryChanged %}
+    {% for measure in measures %}
+        <turbo-stream action="replace" target="block_measure_{{ measure.uuid }}">
+            <template>
+                {% include 'regulation/fragments/_measure.html.twig' with { measure, generalInfo, canDelete, isReadOnly: false } only %}
+            </template>
+        </turbo-stream>
+    {% endfor %}
+
+    <turbo-stream action="replace" target="block_measure">
+        <template>
+            {% if measures|length > 0 %}
+                {% include 'regulation/fragments/_add_measure_link.html.twig' with { regulationOrderRecordUuid: generalInfo.uuid } only %}
+            {% else %}
+                {{ render(path('fragment_regulations_measure_add', { uuid: generalInfo.uuid })) }}
+            {% endif %}
+        </template>
+    </turbo-stream>
+{% endif %}
+
 <turbo-stream action="update" target="block_publication">
     <template>
         {% include 'regulation/fragments/_publication_button.html.twig' with { canPublish: true, uuid: generalInfo.uuid, regulationOrderRecord, publishLabel: 'regulation.publish_changes'|trans } only %}

@@ -77,7 +77,9 @@ jobs:
       - name: CI
         run: make ci CI=1 BIN_SHELL="" BIN_CONSOLE="php bin/console" BIN_COMPOSER="composer"
 
-      - uses: codecov/codecov-action@v3
+      # v3 est dépréciée : son ancien uploader échoue en TLS (« SSL alert number 40 »)
+      # contre les endpoints actuels de Codecov. v5 passe par le codecov-cli.
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml

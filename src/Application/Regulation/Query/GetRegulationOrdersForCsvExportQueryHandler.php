@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\NumberedRoadLabelMaker;
 use App\Application\Regulation\View\RegulationCsvRowView;
+use App\Application\Regulation\View\VehicleSetView;
 use App\Application\StorageInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -22,6 +24,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         private StorageRegulationOrderRepositoryInterface $storageRegulationOrderRepository,
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
+        private NumberedRoadLabelMaker $numberedRoadLabelMaker,
     ) {
     }
 
@@ -63,6 +66,8 @@ final class GetRegulationOrdersForCsvExportQueryHandler
 
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
+                $vehicleSet = VehicleSetView::fromEntity($measure->getVehicleSet());
+
                 foreach ($measure->getLocations() as $location) {
                     $rows[] = new RegulationCsvRowView(
                         regulationOrderUuid: $record->getUuid(),
@@ -80,6 +85,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         locationType: $location->getRoadType(),
                         locationLabel: $this->buildLocationLabel($location),
                         geometry: $location->getGeometry() ?? '',
+                        vehicleSet: $vehicleSet,
                     );
                 }
             }
@@ -133,10 +139,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         }
 
         if ($numberedRoad = $location->getNumberedRoad()) {
-            $roadNumber = $numberedRoad->getRoadNumber() ?? '';
-            $administrator = $numberedRoad->getAdministrator();
-
-            return $administrator ? trim(\sprintf('%s (%s)', $roadNumber, $administrator)) : trim($roadNumber);
+            return $this->numberedRoadLabelMaker->make($numberedRoad);
         }
 
         if ($zone = $location->getZone()) {

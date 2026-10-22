@@ -10,9 +10,9 @@
         <starttime>2023-06-04T23:00:00+00:00</starttime>
         <endtime>2023-06-10T22:59:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
         </source>
         <schedule>
             <everyday>18:00-22:00</everyday>
@@ -28,9 +28,9 @@
         <starttime>2023-06-01T23:00:00+00:00</starttime>
         <endtime>2023-06-06T22:59:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
         </source>
         <schedule>
             <tuesday>12:00-14:00,19:00-21:00</tuesday>
@@ -46,9 +46,9 @@
         <starttime>2023-06-03T08:00:00+00:00</starttime>
         <endtime>2023-06-05T10:00:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
         </source>
         <schedule>
             <tuesday>08:00-10:00</tuesday>
@@ -59,15 +59,15 @@
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Circulation interdite</description>
-        <street>D14</street>
+        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
         <starttime>2023-06-04T23:00:00+00:00</starttime>
         <endtime>2023-06-10T22:59:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
         </source>
         <schedule>
             <everyday>18:00-22:00</everyday>
@@ -77,15 +77,15 @@
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Circulation interdite</description>
-        <street>D14</street>
+        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
         <starttime>2023-06-01T23:00:00+00:00</starttime>
         <endtime>2023-06-06T22:59:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
         </source>
         <schedule>
             <tuesday>12:00-14:00,19:00-21:00</tuesday>
@@ -95,15 +95,15 @@
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
         <description>Circulation interdite</description>
-        <street>D14</street>
+        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
         <direction>BOTH_DIRECTIONS</direction>
         <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
         <starttime>2023-06-03T08:00:00+00:00</starttime>
         <endtime>2023-06-05T10:00:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
         </source>
         <schedule>
             <tuesday>08:00-10:00</tuesday>
@@ -120,9 +120,9 @@
         <starttime>2023-07-02T23:00:00+00:00</starttime>
         <endtime>2023-11-10T22:59:00+00:00</endtime>
         <source>
-            <reference>dialog.beta.gouv.fr</reference>
-            <name>DiaLog</name>
-            <url>http://localhost/api/regulations/cifs</url>
+            <reference>93</reference>
+            <name>Département de Seine-Saint-Denis (DiaLog)</name>
+            <url>http://localhost/regulations/066e9849-1457-7a1e-8000-3142ece4a7de</url>
         </source>
     </incident>
 </incidents>

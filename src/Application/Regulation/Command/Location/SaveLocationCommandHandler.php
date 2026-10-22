@@ -9,7 +9,9 @@ use App\Application\Exception\OrganizationCannotInterveneOnGeometryException;
 use App\Application\Exception\ZoneWithoutStreetsException;
 use App\Application\IdFactoryInterface;
 use App\Application\QueryBusInterface;
+use App\Application\Regulation\Query\Location\ExceptionsSignature;
 use App\Domain\Geography\GeoJSON;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\WholeCityException;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
@@ -119,14 +121,37 @@ final class SaveLocationCommandHandler
      */
     private function syncExceptions(array $exceptionCommands, Location $location): void
     {
-        // On remplace l'ensemble des exceptions (l'orphan removal supprime les anciennes).
+        // On remplace l'ensemble des exceptions (l'orphan removal supprime les anciennes),
+        // en gardant leurs géométries : une exception inchangée (même signature) ne doit pas
+        // être re-géocodée à chaque enregistrement de la mesure.
+        $existingGeometries = [];
         foreach ($location->getExceptions() as $existingException) {
+            $existingGeometries[ExceptionsSignature::ofException($existingException)] ??= $existingException->getGeometry();
             $location->removeException($existingException);
         }
 
         foreach ($exceptionCommands as $exceptionCommand) {
-            $geometryQuery = $exceptionCommand->getGeometryQuery();
-            $geometry = $geometryQuery ? $this->queryBus->handle($geometryQuery) : null;
+            $signature = ExceptionsSignature::ofCommand($exceptionCommand);
+            $isReused = \array_key_exists($signature, $existingGeometries);
+
+            if ($exceptionCommand->computedGeometry !== null) {
+                // Déjà calculée par la requête de géométrie parente (soustraction).
+                $geometry = $exceptionCommand->computedGeometry;
+            } elseif ($isReused) {
+                $geometry = $existingGeometries[$signature];
+            } else {
+                $geometryQuery = $exceptionCommand->getGeometryQuery();
+                $geometry = $geometryQuery ? $this->queryBus->handle($geometryQuery) : null;
+            }
+
+            // Comme pour une localisation « Tracé de zone » : une zone sans rue ne soustrairait
+            // rien, on refuse l'enregistrement pour que l'usager corrige son tracé. Les
+            // exceptions réutilisées telles quelles ne sont pas re-contrôlées.
+            if (!$isReused
+                && $exceptionCommand->roadType === RoadTypeEnum::ZONE->value
+                && ($geometry === null || GeoJSON::isEmptyGeometryCollection($geometry))) {
+                throw new ZoneWithoutStreetsException();
+            }
 
             $location->addException(
                 new WholeCityException(

@@ -48,6 +48,9 @@ security:
                 # Après connexion, rediriger vers le tableau de bord (sauf retour vers une page
                 # protégée demandée avant le login, ex : lien d'invitation).
                 default_target_path: app_landing
+                # Quand la 2FA est requise, ce handler redirige directement vers le
+                # formulaire 2FA au lieu de la cible habituelle (page d'accueil).
+                success_handler: App\Infrastructure\Security\TwoFactor\TwoFactorAuthenticationSuccessHandler
             # Protection anti brute-force ciblé : blocage par couple (email, IP)
             # en complément du rate-limiter global par IP.
             login_throttling:
@@ -55,6 +58,11 @@ security:
                 interval: '15 minutes'
             logout:
                 path: app_logout
+            two_factor:
+                auth_code_parameter_name: _auth_code
+                check_path: 2fa_login_check
+                auth_form_path: 2fa_login
+                enable_csrf: true
 
     access_control:
         - { path: '^/api/regulations/json', roles: PUBLIC_ACCESS, methods: [GET] }
@@ -62,6 +70,7 @@ security:
         - { path: '^/api/regulations$', roles: ROLE_API, methods: [POST] }
         - { path: '^/api/organization', roles: ROLE_API, methods: [POST, GET] }
         - { path: ^/api, roles: PUBLIC_ACCESS }
+        - { path: ^/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
         - { path: '^/regulations/([0-9a-f]{8}-[0-9a-f]{4}-[13-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$', methods: [GET], roles: PUBLIC_ACCESS }
         - { path: '^/regulations$', methods: [GET], roles: PUBLIC_ACCESS }

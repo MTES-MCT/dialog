@@ -19,4 +19,5 @@ final class SaveLocationDTO
     public ?SaveNumberedRoadDTO $nationalRoad = null;
     public ?SaveRawGeoJSONDTO $rawGeoJSON = null;
     public ?SaveZoneDTO $zone = null;
+    public ?SaveWholeCityDTO $wholeCity = null;
 }

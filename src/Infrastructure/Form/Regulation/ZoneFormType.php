@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Application\Regulation\Command\Location\SaveZoneCommand;
+use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -36,12 +37,23 @@ final class ZoneFormType extends AbstractType
                     'label' => 'regulation.location.zone.geometry',
                 ],
             )
-            ->add(
+            ->add('roadType', HiddenType::class)
+        ;
+
+        // Seulement au niveau localisation : ce form type est aussi embarqué dans le
+        // sous-formulaire d'exception (WholeCityExceptionFormType), qui ne doit pas
+        // proposer d'exceptions imbriquées.
+        if ($options['with_exceptions']) {
+            $builder->add(
                 'exceptions',
                 CollectionType::class,
                 options: [
                     'entry_type' => WholeCityExceptionFormType::class,
-                    'entry_options' => ['label' => false, 'with_city' => true],
+                    'entry_options' => [
+                        'label' => false,
+                        'with_city' => true,
+                        'administrators' => $options['administrators'],
+                    ],
                     'allow_add' => true,
                     'allow_delete' => true,
                     'by_reference' => false,
@@ -52,9 +64,8 @@ final class ZoneFormType extends AbstractType
                     'prototype_data' => new SaveWholeCityExceptionCommand(),
                     'label' => false,
                 ],
-            )
-            ->add('roadType', HiddenType::class)
-        ;
+            );
+        }
 
         // Constraint "Valid" cannot be nested inside constraint When. The event listener is used to ensure that the roadType is added to the submitted data before the form is processed.
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
@@ -67,7 +78,14 @@ final class ZoneFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
+            'with_exceptions' => false,
+            'administrators' => [
+                RoadTypeEnum::DEPARTMENTAL_ROAD->value => [],
+                RoadTypeEnum::NATIONAL_ROAD->value => [],
+            ],
             'data_class' => SaveZoneCommand::class,
         ]);
+        $resolver->setAllowedTypes('with_exceptions', 'bool');
+        $resolver->setAllowedTypes('administrators', 'array');
     }
 }

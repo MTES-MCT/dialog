@@ -139,6 +139,11 @@
                                         <loc:roadNumber>D14</loc:roadNumber>
 
                                     </loc:roadInformation>
+                                    <loc:locationDescription>
+                                        <com:values>
+                                            <com:value>du PR 1+0 (côté U) au PR 4+0 (côté U)</com:value>
+                                        </com:values>
+                                    </loc:locationDescription>
                                 </loc:supplementaryPositionalDescription>
 
                                 <loc:_linearLocationExtension>
@@ -363,6 +368,11 @@
                                         <loc:roadNumber>D322</loc:roadNumber>
 
                                     </loc:roadInformation>
+                                    <loc:locationDescription>
+                                        <com:values>
+                                            <com:value>du PR 1+0 (côté U) au PR 4+0 (côté U)</com:value>
+                                        </com:values>
+                                    </loc:locationDescription>
                                 </loc:supplementaryPositionalDescription>
 
                                 <loc:_linearLocationExtension>
@@ -544,6 +554,11 @@
                                         <loc:roadNumber>N176</loc:roadNumber>
 
                                     </loc:roadInformation>
+                                    <loc:locationDescription>
+                                        <com:values>
+                                            <com:value>du PR 24+0 (côté D) au PR 28+0 (côté D)</com:value>
+                                        </com:values>
+                                    </loc:locationDescription>
                                 </loc:supplementaryPositionalDescription>
 
                                 <loc:_linearLocationExtension>

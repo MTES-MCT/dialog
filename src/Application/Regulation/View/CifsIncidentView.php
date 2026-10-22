@@ -16,6 +16,9 @@ final readonly class CifsIncidentView
         public string $polyline,
         public \DateTimeInterface $startTime,
         public \DateTimeInterface $endTime,
+        public string $sourceReference,
+        public string $sourceName,
+        public string $regulationOrderRecordUuid,
         public ?array $schedule = [],
         public ?string $subType = null,
     ) {

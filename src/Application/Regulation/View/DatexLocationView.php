@@ -14,6 +14,7 @@ final class DatexLocationView
         public readonly string $geometry,
         public readonly ?string $wholeCityLabel = null,
         public readonly ?string $zoneLabel = null,
+        public readonly ?string $referencePoints = null,
     ) {
     }
 }

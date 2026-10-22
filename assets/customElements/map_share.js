@@ -6,6 +6,12 @@ customElements.define('d-map-share', class extends HTMLElement {
     /** @type {string} */
     #carteUrl;
 
+    /** @type {string} */
+    #startDateParam;
+
+    /** @type {string} */
+    #defaultStartDate;
+
     /** @type {HTMLButtonElement} */
     #trigger;
 
@@ -23,6 +29,8 @@ customElements.define('d-map-share', class extends HTMLElement {
 
     connectedCallback() {
         this.#carteUrl = getAttributeOrError(this, 'carteUrl');
+        this.#startDateParam = getAttributeOrError(this, 'startDateParam');
+        this.#defaultStartDate = getAttributeOrError(this, 'defaultStartDate');
         this.#trigger = querySelectorOrError(this, '[data-share-role="trigger"]');
         this.#modal = querySelectorOrError(this, '[data-share-role="modal"]');
         this.#linkInput = querySelectorOrError(this, '[data-share-role="linkInput"]');
@@ -52,8 +60,10 @@ customElements.define('d-map-share', class extends HTMLElement {
             this.#copy(this.#linkInput.value, 'copyLinkFeedback');
         });
 
-        if (this.#orgSelect && this.#embedInput) {
-            this.#orgSelect.addEventListener('change', () => this.#updateEmbed());
+        if (this.#embedInput) {
+            if (this.#orgSelect) {
+                this.#orgSelect.addEventListener('change', () => this.#updateEmbed());
+            }
             const copyEmbedBtn = querySelectorOrError(this.#modal, '[data-share-role="copyEmbed"]');
             copyEmbedBtn.addEventListener('click', () => {
                 if (this.#embedInput) {
@@ -66,6 +76,9 @@ customElements.define('d-map-share', class extends HTMLElement {
 
     #openModal() {
         this.#linkInput.value = window.location.href;
+        // Les filtres sont synchronisés dans l'URL au fil des changements (cf. d-map-form) :
+        // on régénère le code d'intégration à chaque ouverture pour qu'il reflète l'URL courante.
+        this.#updateEmbed();
         this.#modal.showModal();
         requestAnimationFrame(() => this.#updateTabsHeight());
     }
@@ -95,15 +108,47 @@ customElements.define('d-map-share', class extends HTMLElement {
     }
 
     #updateEmbed() {
-        if (!this.#orgSelect || !this.#embedInput) {
+        if (!this.#embedInput) {
             return;
         }
-        const organizationUuid = this.#orgSelect.value;
         const absoluteCarteUrl = new URL(this.#carteUrl, window.location.origin);
-        absoluteCarteUrl.searchParams.set('organizationUuid', organizationUuid);
-        absoluteCarteUrl.searchParams.set('embed', '1');
+        const params = absoluteCarteUrl.searchParams;
+        // Reprend les paramètres de l'URL courante (filtres de la carte, code INSEE d'une commune)
+        // dans l'URL de l'iframe.
+        for (const [key, value] of new URLSearchParams(window.location.search)) {
+            params.append(key, value);
+        }
+        this.#unfreezeDefaultStartDate(params);
+        // Le zoom sur un arrêté, prioritaire côté serveur, ne doit pas prendre le dessus sur le centrage.
+        params.delete('regulationOrderRecordUuid');
+        // La carte intégrée est centrée sur l'organisation sélectionnée. Avec un code INSEE dans l'URL,
+        // elle est centrée sur la commune (prioritaire côté serveur) et le choix d'organisation n'est
+        // pas proposé (cf. map/_share.html.twig).
+        if (this.#orgSelect) {
+            params.set('organizationUuid', this.#orgSelect.value);
+        } else {
+            params.delete('organizationUuid');
+        }
+        params.set('embed', '1');
         const src = absoluteCarteUrl.toString();
         this.#embedInput.value = `<iframe src="${src}" width="1280" height="600" frameborder="0" title="DiaLog"></iframe>`;
+    }
+
+    /**
+     * La date de début par défaut (aujourd'hui) n'est pas figée dans le code d'intégration : en son
+     * absence, la carte intégrée démarre au jour de la consultation. Une date vidée par l'utilisateur
+     * est transmise vide pour ne pas être confondue avec ce cas.
+     * @param {URLSearchParams} params
+     */
+    #unfreezeDefaultStartDate(params) {
+        const filterPrefix = this.#startDateParam.slice(0, this.#startDateParam.indexOf('[') + 1);
+        const hasFilters = [...params.keys()].some((key) => key.startsWith(filterPrefix));
+
+        if (params.get(this.#startDateParam) === this.#defaultStartDate) {
+            params.delete(this.#startDateParam);
+        } else if (hasFilters && !params.has(this.#startDateParam)) {
+            params.set(this.#startDateParam, '');
+        }
     }
 
     /**

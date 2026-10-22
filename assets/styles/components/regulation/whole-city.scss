@@ -3,6 +3,9 @@
 // Sélecteur composé pour l'emporter sur la spécificité de `.app-card`.
 .app-card.app-whole-city-exception {
     background-color: #f8f8f8;
+    // Padding réduit : les sous-formulaires de route numérotée (PR, côté, abscisse)
+    // ont besoin de toute la largeur disponible (retour du ticket #2095).
+    --card-padding: 1rem;
 }
 
 // Liste à puces indentée des exceptions dans le récapitulatif (DSFR réinitialise

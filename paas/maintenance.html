@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="refresh" content="300">
+    <title>Maintenance en cours - DiaLog</title>
+    <style>
+        /*
+         * Page de maintenance servie par le routeur Scalingo quand l'application est arrêtée
+         * (variable SCALINGO_STOPPED_PAGE_URL). Scalingo met le contenu en cache et recommande
+         * une page entièrement autonome : aucune ressource externe (CSS, police, image).
+         * Les couleurs reprennent celles du DSFR (bleu France #000091, texte #161616).
+         */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Marianne, Arial, Helvetica, sans-serif;
+            color: #161616;
+            background: #ffffff;
+            line-height: 1.5;
+        }
+        header {
+            border-bottom: 1px solid #dddddd;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        .wrap {
+            max-width: 78rem;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .marianne {
+            font-weight: 700;
+            font-size: 0.875rem;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .service {
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        main .wrap {
+            max-width: 48rem;
+            padding-top: 4rem;
+            padding-bottom: 5rem;
+        }
+        h1 {
+            margin: 0 0 1.5rem;
+            font-size: 2rem;
+            line-height: 1.25;
+        }
+        .lead { font-size: 1.25rem; }
+        a { color: #000091; }
+        footer { border-top: 2px solid #000091; }
+        footer .wrap {
+            font-size: 0.875rem;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="wrap brand">
+            <div class="marianne">République<br>Française</div>
+            <div class="service">DiaLog</div>
+        </div>
+    </header>
+    <main>
+        <div class="wrap">
+            <h1>DiaLog est temporairement indisponible</h1>
+            <p class="lead">Nous réalisons actuellement une opération de maintenance. Le service sera de nouveau accessible très prochainement.</p>
+            <p>Nous vous prions de nous excuser pour la gêne occasionnée. Cette page se rafraîchit automatiquement toutes les cinq minutes.</p>
+            <p>Pour toute question, vous pouvez nous écrire à <a href="mailto:dialog@beta.gouv.fr">dialog@beta.gouv.fr</a>.</p>
+        </div>
+    </main>
+    <footer>
+        <div class="wrap">dialog.beta.gouv.fr</div>
+    </footer>
+</body>
+</html>

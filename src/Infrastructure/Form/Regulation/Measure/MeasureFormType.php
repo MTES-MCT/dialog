@@ -20,6 +20,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class MeasureFormType extends AbstractType
 {
+    public const NAME = 'measure_form';
+
+    /**
+     * Nom du formulaire, dont dérivent les attributs name et id de tous ses champs.
+     *
+     * Plusieurs formulaires de mesure peuvent être ouverts en même temps sur la page d'un arrêté
+     * (modification d'une mesure pendant l'ajout d'une autre, par exemple). Sans nom propre à chaque
+     * mesure, leurs identifiants HTML se recoupent et les labels, le bouton « Valider » et les
+     * sélecteurs d'un formulaire agissent sur le premier formulaire de la page.
+     */
+    public static function getName(?string $measureUuid = null): string
+    {
+        return $measureUuid === null ? self::NAME : \sprintf('%s_%s', self::NAME, $measureUuid);
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

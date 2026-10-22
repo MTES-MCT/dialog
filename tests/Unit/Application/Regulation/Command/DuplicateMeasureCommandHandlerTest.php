@@ -11,6 +11,9 @@ use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Application\Regulation\Command\Period\SaveDailyRangeCommand;
 use App\Application\Regulation\Command\Period\SavePeriodCommand;
 use App\Application\Regulation\Command\Period\SaveTimeSlotCommand;
@@ -29,6 +32,8 @@ use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
+use App\Domain\Regulation\Location\WholeCityException;
+use App\Domain\Regulation\Location\Zone;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -319,6 +324,141 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
             $this->commandBus,
         );
         $command = new DuplicateMeasureCommand($measure1, $this->originalRegulationOrderRecord);
+
+        $this->assertSame($duplicatedMeasure, $handler($command));
+    }
+
+    public function testLocationsWithExceptionsDuplicated(): void
+    {
+        $createdAt = new \DateTimeImmutable('2025-01-15');
+
+        $this->originalRegulationOrderRecord
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($this->originalRegulationOrder);
+
+        // Ville entière avec une voie exclue
+        $wholeCityException = $this->createMock(WholeCityException::class);
+        $wholeCityException->method('getRoadType')->willReturn(RoadTypeEnum::LANE->value);
+        $wholeCityException->method('getData')->willReturn([
+            'cityCode' => '93070',
+            'cityLabel' => 'Saint-Ouen-sur-Seine',
+            'roadBanId' => '93070_0074',
+            'roadName' => 'Rue Ardoin',
+            'direction' => DirectionEnum::BOTH->value,
+        ]);
+        $wholeCityException->method('getGeometry')->willReturn('exceptionGeometry');
+
+        $wholeCityLocation = $this->createMock(Location::class);
+        $wholeCityLocation->expects(self::exactly(3))->method('getRoadType')->willReturn(RoadTypeEnum::WHOLE_CITY->value);
+        $wholeCityLocation->expects(self::once())->method('getNumberedRoad')->willReturn(null);
+        $wholeCityLocation->expects(self::once())->method('getNamedStreet')->willReturn(null);
+        $wholeCityLocation->expects(self::once())->method('getRawGeoJSON')->willReturn(null);
+        $wholeCityLocation->expects(self::once())->method('getZone')->willReturn(null);
+        $wholeCityLocation->expects(self::once())->method('getCityCode')->willReturn('93070');
+        $wholeCityLocation->expects(self::once())->method('getCityLabel')->willReturn('Saint-Ouen-sur-Seine');
+        $wholeCityLocation->expects(self::once())->method('getGeometry')->willReturn('cityGeometry');
+        $wholeCityLocation->expects(self::once())->method('getExceptions')->willReturn([$wholeCityException]);
+
+        // Tracé de zone avec un tracé libre exclu
+        $zoneException = $this->createMock(WholeCityException::class);
+        $zoneException->method('getRoadType')->willReturn(RoadTypeEnum::RAW_GEOJSON->value);
+        $zoneException->method('getData')->willReturn(['label' => 'Parvis de la mairie']);
+        $zoneException->method('getGeometry')->willReturn('zoneExceptionGeometry');
+
+        $zone = $this->createMock(Zone::class);
+        $zone->expects(self::once())->method('getLabel')->willReturn('Quartier de la Rue Ardoin');
+        $zone->expects(self::once())->method('getGeometry')->willReturn('zonePolygon');
+
+        $zoneLocation = $this->createMock(Location::class);
+        $zoneLocation->expects(self::exactly(2))->method('getRoadType')->willReturn(RoadTypeEnum::ZONE->value);
+        $zoneLocation->expects(self::once())->method('getNumberedRoad')->willReturn(null);
+        $zoneLocation->expects(self::once())->method('getNamedStreet')->willReturn(null);
+        $zoneLocation->expects(self::once())->method('getRawGeoJSON')->willReturn(null);
+        $zoneLocation->expects(self::once())->method('getZone')->willReturn($zone);
+        $zoneLocation->expects(self::once())->method('getGeometry')->willReturn('zoneSections');
+        $zoneLocation->expects(self::once())->method('getExceptions')->willReturn([$zoneException]);
+
+        // Tracé libre (avec son tracé d'origine) et un tronçon de voie exclu
+        $rawGeoJSONException = $this->createMock(WholeCityException::class);
+        $rawGeoJSONException->method('getRoadType')->willReturn(RoadTypeEnum::LANE->value);
+        $rawGeoJSONException->method('getData')->willReturn([
+            'cityCode' => '93070',
+            'cityLabel' => 'Saint-Ouen-sur-Seine',
+            'roadBanId' => '93070_1475',
+            'roadName' => 'Rue Claude Monet',
+            'fromHouseNumber' => '1',
+            'toHouseNumber' => '33',
+            'direction' => DirectionEnum::BOTH->value,
+        ]);
+        $rawGeoJSONException->method('getGeometry')->willReturn('rawGeoJSONExceptionGeometry');
+
+        $rawGeoJSON = $this->createMock(RawGeoJSON::class);
+        $rawGeoJSON->expects(self::once())->method('getLabel')->willReturn('Tracé libre');
+        $rawGeoJSON->expects(self::once())->method('getGeometry')->willReturn('drawnGeometry');
+
+        $rawGeoJSONLocation = $this->createMock(Location::class);
+        $rawGeoJSONLocation->expects(self::exactly(2))->method('getRoadType')->willReturn(RoadTypeEnum::RAW_GEOJSON->value);
+        $rawGeoJSONLocation->expects(self::once())->method('getNumberedRoad')->willReturn(null);
+        $rawGeoJSONLocation->expects(self::once())->method('getNamedStreet')->willReturn(null);
+        $rawGeoJSONLocation->expects(self::once())->method('getRawGeoJSON')->willReturn($rawGeoJSON);
+        $rawGeoJSONLocation->expects(self::never())->method('getGeometry');
+        $rawGeoJSONLocation->expects(self::once())->method('getExceptions')->willReturn([$rawGeoJSONException]);
+
+        $measure = $this->createMock(Measure::class);
+        $measure->expects(self::once())->method('getType')->willReturn(MeasureTypeEnum::NO_ENTRY->value);
+        $measure->expects(self::once())->method('getCreatedAt')->willReturn($createdAt);
+        $measure->expects(self::once())->method('getPeriods')->willReturn([]);
+        $measure->expects(self::once())->method('getVehicleSet')->willReturn(null);
+        $measure->expects(self::once())->method('getLocations')->willReturn([$wholeCityLocation, $zoneLocation, $rawGeoJSONLocation]);
+
+        $wholeCityExceptionCommand = new SaveWholeCityExceptionCommand($wholeCityException);
+        $wholeCityExceptionCommand->namedStreet->geometry = 'exceptionGeometry';
+
+        $wholeCityCommand = new SaveLocationCommand();
+        $wholeCityCommand->roadType = RoadTypeEnum::WHOLE_CITY->value;
+        $wholeCityCommand->wholeCity = new SaveWholeCityCommand();
+        $wholeCityCommand->wholeCity->roadType = RoadTypeEnum::WHOLE_CITY->value;
+        $wholeCityCommand->wholeCity->cityCode = '93070';
+        $wholeCityCommand->wholeCity->cityLabel = 'Saint-Ouen-sur-Seine';
+        $wholeCityCommand->wholeCity->geometry = 'cityGeometry';
+        $wholeCityCommand->wholeCity->exceptions = [$wholeCityExceptionCommand];
+
+        $zoneCommand = new SaveLocationCommand();
+        $zoneCommand->roadType = RoadTypeEnum::ZONE->value;
+        $zoneCommand->zone = new SaveZoneCommand();
+        $zoneCommand->zone->roadType = RoadTypeEnum::ZONE->value;
+        $zoneCommand->zone->label = 'Quartier de la Rue Ardoin';
+        $zoneCommand->zone->geometry = 'zonePolygon';
+        $zoneCommand->zone->sectionsGeometry = 'zoneSections';
+        $zoneCommand->zone->exceptions = [new SaveWholeCityExceptionCommand($zoneException)];
+
+        $rawGeoJSONExceptionCommand = new SaveWholeCityExceptionCommand($rawGeoJSONException);
+        $rawGeoJSONExceptionCommand->namedStreet->geometry = 'rawGeoJSONExceptionGeometry';
+
+        $rawGeoJSONCommand = new SaveLocationCommand();
+        $rawGeoJSONCommand->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $rawGeoJSONCommand->rawGeoJSON = new SaveRawGeoJSONCommand();
+        $rawGeoJSONCommand->rawGeoJSON->roadType = RoadTypeEnum::RAW_GEOJSON->value;
+        $rawGeoJSONCommand->rawGeoJSON->label = 'Tracé libre';
+        $rawGeoJSONCommand->rawGeoJSON->geometry = 'drawnGeometry';
+        $rawGeoJSONCommand->rawGeoJSON->exceptions = [$rawGeoJSONExceptionCommand];
+
+        $measureCommand = new SaveMeasureCommand($this->originalRegulationOrder);
+        $measureCommand->type = MeasureTypeEnum::NO_ENTRY->value;
+        $measureCommand->createdAt = $createdAt;
+        $measureCommand->locations = [$wholeCityCommand, $zoneCommand, $rawGeoJSONCommand];
+
+        $duplicatedMeasure = $this->createMock(Measure::class);
+
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->with($measureCommand)
+            ->willReturn($duplicatedMeasure);
+
+        $handler = new DuplicateMeasureCommandHandler($this->commandBus);
+        $command = new DuplicateMeasureCommand($measure, $this->originalRegulationOrderRecord);
 
         $this->assertSame($duplicatedMeasure, $handler($command));
     }

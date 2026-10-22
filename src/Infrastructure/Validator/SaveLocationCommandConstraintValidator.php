@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Validator;
 
 use App\Application\Regulation\Command\Location\SaveLocationCommand;
-use App\Domain\Regulation\Location\NumberedRoad;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -78,38 +77,8 @@ final class SaveLocationCommandConstraintValidator extends ConstraintValidator
                 continue;
             }
 
-            if ($command->$roadType === null) {
-                $this->context->buildViolation('common.error.not_blank')
-                    ->atPath($roadType)
-                    ->addViolation();
-
-                return;
-            }
-
             // '$command->$roadType' is a 'variable variable' syntax => https://www.php.net/manual/en/language.variables.variable.php
-            if (!$command->$roadType->administrator) {
-                $this->context->buildViolation('common.error.not_blank')
-                    ->atPath("$roadType.administrator")
-                    ->addViolation();
-            }
-
-            if (!$command->$roadType->roadNumber) {
-                $this->context->buildViolation('common.error.not_blank')
-                    ->atPath("$roadType.roadNumber")
-                    ->addViolation();
-            }
-
-            if (NumberedRoad::isPointNumberEmpty($command->$roadType->fromPointNumberWithDepartmentCode)) {
-                $this->context->buildViolation('regulation.location.pointNumber.error.blank')
-                    ->atPath("$roadType.fromPointNumber")
-                    ->addViolation();
-            }
-
-            if (NumberedRoad::isPointNumberEmpty($command->$roadType->toPointNumberWithDepartmentCode)) {
-                $this->context->buildViolation('regulation.location.pointNumber.error.blank')
-                    ->atPath("$roadType.toPointNumber")
-                    ->addViolation();
-            }
+            NumberedRoadRequiredFieldsValidator::validate($this->context, $command->$roadType, $roadType);
         }
     }
 }

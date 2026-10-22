@@ -10,6 +10,7 @@ use App\Application\Exception\GeocodingFailureException;
 use App\Application\Exception\IntersectionGeocodingFailureException;
 use App\Application\Exception\RoadGeocodingFailureException;
 use App\Application\IntersectionGeocoderInterface;
+use App\Application\Organization\View\MapBboxView;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -131,6 +132,57 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
 
         $message = \sprintf("no result found for cityCode='%s'", $cityCode);
         throw new GeocodingAddressNotFoundException($message);
+    }
+
+    public function findCityBbox(string $cityCode): ?MapBboxView
+    {
+        try {
+            $row = $this->bdtopo2025Connection->fetchAssociative(
+                'SELECT
+                    ST_XMin(env) AS min_lon,
+                    ST_YMin(env) AS min_lat,
+                    ST_XMax(env) AS max_lon,
+                    ST_YMax(env) AS max_lat
+                FROM (
+                    SELECT ST_Extent(geometrie) AS env
+                    FROM voie_nommee
+                    WHERE insee_commune IN (:city_codes)
+                ) AS t',
+                ['city_codes' => self::expandCityCode($cityCode)],
+                ['city_codes' => ArrayParameterType::STRING],
+            );
+        } catch (\Exception $exc) {
+            throw new GeocodingFailureException(\sprintf('City bbox query has failed: %s', $exc->getMessage()), previous: $exc);
+        }
+
+        // ST_Extent vaut NULL quand aucune voie ne correspond : la commune est inconnue de BD TOPO.
+        if (!$row || $row['min_lon'] === null) {
+            return null;
+        }
+
+        return new MapBboxView(
+            minLon: (float) $row['min_lon'],
+            minLat: (float) $row['min_lat'],
+            maxLon: (float) $row['max_lon'],
+            maxLat: (float) $row['max_lat'],
+        );
+    }
+
+    /**
+     * BD TOPO ne connaît pas Paris, Lyon et Marseille en tant que communes, seulement leurs
+     * arrondissements (75101…75120, 69381…69389, 13201…13216) : le code INSEE de la commune
+     * est remplacé par ceux de ses arrondissements.
+     *
+     * @return string[]
+     */
+    private static function expandCityCode(string $cityCode): array
+    {
+        return match ($cityCode) {
+            '75056' => array_map(static fn (int $i) => \sprintf('751%02d', $i), range(1, 20)), // Paris
+            '69123' => array_map(static fn (int $i) => \sprintf('6938%d', $i), range(1, 9)), // Lyon
+            '13055' => array_map(static fn (int $i) => \sprintf('132%02d', $i), range(1, 16)), // Marseille
+            default => [$cityCode],
+        };
     }
 
     public function subtractGeometries(string $geometry, array $subtractGeometries): string

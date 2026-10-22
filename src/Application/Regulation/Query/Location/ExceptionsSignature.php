@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query\Location;
 
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\WholeCityException;
 
 /**
  * Signatures comparables des exceptions d'une localisation, pour éviter de recalculer
@@ -14,15 +15,22 @@ use App\Domain\Regulation\Location\Location;
  */
 final class ExceptionsSignature
 {
+    public static function ofCommand(SaveWholeCityExceptionCommand $exception): string
+    {
+        return json_encode([$exception->roadType, $exception->toData()]);
+    }
+
+    public static function ofException(WholeCityException $exception): string
+    {
+        return json_encode([$exception->getRoadType(), $exception->getData()]);
+    }
+
     /**
      * @param SaveWholeCityExceptionCommand[] $exceptions
      */
     public static function ofCommands(array $exceptions): array
     {
-        $signature = array_map(
-            fn (SaveWholeCityExceptionCommand $exception) => json_encode([$exception->roadType, $exception->toData()]),
-            $exceptions,
-        );
+        $signature = array_map(self::ofCommand(...), $exceptions);
         sort($signature);
 
         return $signature;
@@ -30,10 +38,7 @@ final class ExceptionsSignature
 
     public static function ofLocation(Location $location): array
     {
-        $signature = array_map(
-            fn ($exception) => json_encode([$exception->getRoadType(), $exception->getData()]),
-            $location->getExceptions(),
-        );
+        $signature = array_map(self::ofException(...), $location->getExceptions());
         sort($signature);
 
         return $signature;

@@ -8,8 +8,16 @@ use App\Application\Regulation\Command\Location\SaveLocationCommand;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
+use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Application\Regulation\Command\Location\SaveZoneCommand;
 use App\Infrastructure\DTO\Event\SaveLocationDTO;
+use App\Infrastructure\DTO\Event\SaveNamedStreetDTO;
+use App\Infrastructure\DTO\Event\SaveNumberedRoadDTO;
+use App\Infrastructure\DTO\Event\SaveRawGeoJSONDTO;
+use App\Infrastructure\DTO\Event\SaveWholeCityDTO;
+use App\Infrastructure\DTO\Event\SaveWholeCityExceptionDTO;
+use App\Infrastructure\DTO\Event\SaveZoneDTO;
 
 final class LocationsTransformer
 {
@@ -26,87 +34,157 @@ final class LocationsTransformer
             $cmd->roadType = $dto->roadType?->value;
 
             if ($dto->namedStreet) {
-                $ns = new SaveNamedStreetCommand();
-                $ns->roadType = $cmd->roadType;
-                $ns->cityCode = $dto->namedStreet->cityCode;
-                $ns->cityLabel = $dto->namedStreet->cityLabel;
-                $ns->roadName = $dto->namedStreet->roadName;
-                $ns->fromPointType = $dto->namedStreet->fromPointType;
-                $ns->fromHouseNumber = $dto->namedStreet->fromHouseNumber;
-                $ns->fromRoadName = $dto->namedStreet->fromRoadName;
-                $ns->toPointType = $dto->namedStreet->toPointType;
-                $ns->toHouseNumber = $dto->namedStreet->toHouseNumber;
-                $ns->toRoadName = $dto->namedStreet->toRoadName;
-                $ns->geometry = $dto->namedStreet->geometry;
-                if ($dto->namedStreet->direction) {
-                    $ns->direction = $dto->namedStreet->direction->value;
-                }
-                $cmd->namedStreet = $ns;
+                $cmd->namedStreet = self::buildNamedStreet($dto->namedStreet, $cmd->roadType);
             }
 
             if ($dto->departmentalRoad) {
-                $nr = new SaveNumberedRoadCommand();
-                $nr->roadType = $cmd->roadType;
-                $nr->administrator = $dto->departmentalRoad->administrator;
-                $nr->roadNumber = $dto->departmentalRoad->roadNumber;
-                $nr->fromDepartmentCode = $dto->departmentalRoad->fromDepartmentCode;
-                $nr->fromPointNumber = $dto->departmentalRoad->fromPointNumber;
-                $nr->fromPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->departmentalRoad->fromDepartmentCode, $dto->departmentalRoad->fromPointNumber);
-                $nr->toPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->departmentalRoad->toDepartmentCode, $dto->departmentalRoad->toPointNumber);
-                $nr->fromAbscissa = $dto->departmentalRoad->fromAbscissa;
-                $nr->fromSide = $dto->departmentalRoad->fromSide;
-                $nr->toDepartmentCode = $dto->departmentalRoad->toDepartmentCode;
-                $nr->toPointNumber = $dto->departmentalRoad->toPointNumber;
-                $nr->toAbscissa = $dto->departmentalRoad->toAbscissa;
-                $nr->toSide = $dto->departmentalRoad->toSide;
-                if ($dto->departmentalRoad->direction) {
-                    $nr->direction = $dto->departmentalRoad->direction->value;
-                }
-                $nr->geometry = $dto->departmentalRoad->geometry;
-                $cmd->departmentalRoad = $nr;
+                $cmd->departmentalRoad = self::buildNumberedRoad($dto->departmentalRoad, $cmd->roadType);
             }
 
             if ($dto->nationalRoad) {
-                $nr = new SaveNumberedRoadCommand();
-                $nr->roadType = $cmd->roadType;
-                $nr->administrator = $dto->nationalRoad->administrator;
-                $nr->roadNumber = $dto->nationalRoad->roadNumber;
-                $nr->fromDepartmentCode = $dto->nationalRoad->fromDepartmentCode;
-                $nr->fromPointNumber = $dto->nationalRoad->fromPointNumber;
-                $nr->fromAbscissa = $dto->nationalRoad->fromAbscissa;
-                $nr->fromSide = $dto->nationalRoad->fromSide;
-                $nr->toDepartmentCode = $dto->nationalRoad->toDepartmentCode;
-                $nr->toPointNumber = $dto->nationalRoad->toPointNumber;
-                $nr->toAbscissa = $dto->nationalRoad->toAbscissa;
-                $nr->toSide = $dto->nationalRoad->toSide;
-                $nr->fromPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->nationalRoad->fromDepartmentCode, $dto->nationalRoad->fromPointNumber);
-                $nr->toPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->nationalRoad->toDepartmentCode, $dto->nationalRoad->toPointNumber);
-                if ($dto->nationalRoad->direction) {
-                    $nr->direction = $dto->nationalRoad->direction->value;
-                }
-                $nr->geometry = $dto->nationalRoad->geometry;
-                $cmd->nationalRoad = $nr;
+                $cmd->nationalRoad = self::buildNumberedRoad($dto->nationalRoad, $cmd->roadType);
             }
 
             if ($dto->rawGeoJSON) {
-                $r = new SaveRawGeoJSONCommand();
-                $r->roadType = $cmd->roadType;
-                $r->label = $dto->rawGeoJSON->label;
-                $r->geometry = $dto->rawGeoJSON->geometry;
-                $cmd->rawGeoJSON = $r;
+                $cmd->rawGeoJSON = self::buildRawGeoJSON($dto->rawGeoJSON, $cmd->roadType);
+                $cmd->rawGeoJSON->exceptions = self::buildExceptions($dto->rawGeoJSON->exceptions);
             }
 
             if ($dto->zone) {
-                $z = new SaveZoneCommand();
-                $z->roadType = $cmd->roadType;
-                $z->label = $dto->zone->label;
-                $z->geometry = $dto->zone->geometry;
-                $cmd->zone = $z;
+                $cmd->zone = self::buildZone($dto->zone, $cmd->roadType);
+                $cmd->zone->exceptions = self::buildExceptions($dto->zone->exceptions);
+            }
+
+            if ($dto->wholeCity) {
+                $cmd->wholeCity = self::buildWholeCity($dto->wholeCity, $cmd->roadType);
             }
 
             $commands[] = $cmd;
         }
 
         return $commands;
+    }
+
+    private static function buildWholeCity(SaveWholeCityDTO $dto, ?string $roadType): SaveWholeCityCommand
+    {
+        $wc = new SaveWholeCityCommand();
+        $wc->roadType = $roadType;
+        $wc->cityCode = $dto->cityCode;
+        $wc->cityLabel = $dto->cityLabel;
+        $wc->exceptions = self::buildExceptions($dto->exceptions, $dto);
+
+        return $wc;
+    }
+
+    /**
+     * @param SaveWholeCityExceptionDTO[] $exceptionDtos
+     *
+     * @return SaveWholeCityExceptionCommand[]
+     */
+    private static function buildExceptions(array $exceptionDtos, ?SaveWholeCityDTO $hostCity = null): array
+    {
+        $commands = [];
+
+        foreach ($exceptionDtos as $dto) {
+            $exception = new SaveWholeCityExceptionCommand();
+            $exception->roadType = $dto->roadType?->value;
+
+            if ($dto->namedStreet) {
+                $exception->namedStreet = self::buildNamedStreet($dto->namedStreet, $exception->roadType);
+
+                // Exception d'une « Ville entière » : la ville est héritée de la localisation
+                // parente si elle n'est pas renseignée (même comportement que le formulaire).
+                if ($hostCity) {
+                    $exception->namedStreet->cityCode ??= $hostCity->cityCode;
+                    $exception->namedStreet->cityLabel ??= $hostCity->cityLabel;
+                }
+            }
+
+            if ($dto->departmentalRoad) {
+                $exception->departmentalRoad = self::buildNumberedRoad($dto->departmentalRoad, $exception->roadType);
+            }
+
+            if ($dto->nationalRoad) {
+                $exception->nationalRoad = self::buildNumberedRoad($dto->nationalRoad, $exception->roadType);
+            }
+
+            if ($dto->zone) {
+                // Pas d'exceptions imbriquées : le sous-objet zone d'une exception est pris sans les siennes.
+                $exception->zone = self::buildZone($dto->zone, $exception->roadType);
+            }
+
+            if ($dto->rawGeoJSON) {
+                $exception->rawGeoJSON = self::buildRawGeoJSON($dto->rawGeoJSON, $exception->roadType);
+            }
+
+            $commands[] = $exception;
+        }
+
+        return $commands;
+    }
+
+    private static function buildNamedStreet(SaveNamedStreetDTO $dto, ?string $roadType): SaveNamedStreetCommand
+    {
+        $ns = new SaveNamedStreetCommand();
+        $ns->roadType = $roadType;
+        $ns->cityCode = $dto->cityCode;
+        $ns->cityLabel = $dto->cityLabel;
+        $ns->roadName = $dto->roadName;
+        $ns->fromPointType = $dto->fromPointType;
+        $ns->fromHouseNumber = $dto->fromHouseNumber;
+        $ns->fromRoadName = $dto->fromRoadName;
+        $ns->toPointType = $dto->toPointType;
+        $ns->toHouseNumber = $dto->toHouseNumber;
+        $ns->toRoadName = $dto->toRoadName;
+        $ns->geometry = $dto->geometry;
+        if ($dto->direction) {
+            $ns->direction = $dto->direction->value;
+        }
+
+        return $ns;
+    }
+
+    private static function buildNumberedRoad(SaveNumberedRoadDTO $dto, ?string $roadType): SaveNumberedRoadCommand
+    {
+        $nr = new SaveNumberedRoadCommand();
+        $nr->roadType = $roadType;
+        $nr->administrator = $dto->administrator;
+        $nr->roadNumber = $dto->roadNumber;
+        $nr->fromDepartmentCode = $dto->fromDepartmentCode;
+        $nr->fromPointNumber = $dto->fromPointNumber;
+        $nr->fromAbscissa = $dto->fromAbscissa;
+        $nr->fromSide = $dto->fromSide;
+        $nr->toDepartmentCode = $dto->toDepartmentCode;
+        $nr->toPointNumber = $dto->toPointNumber;
+        $nr->toAbscissa = $dto->toAbscissa;
+        $nr->toSide = $dto->toSide;
+        $nr->fromPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->fromDepartmentCode, $dto->fromPointNumber);
+        $nr->toPointNumberWithDepartmentCode = SaveNumberedRoadCommand::encodePointNumberWithDepartmentCode($dto->toDepartmentCode, $dto->toPointNumber);
+        if ($dto->direction) {
+            $nr->direction = $dto->direction->value;
+        }
+        $nr->geometry = $dto->geometry;
+
+        return $nr;
+    }
+
+    private static function buildRawGeoJSON(SaveRawGeoJSONDTO $dto, ?string $roadType): SaveRawGeoJSONCommand
+    {
+        $r = new SaveRawGeoJSONCommand();
+        $r->roadType = $roadType;
+        $r->label = $dto->label;
+        $r->geometry = $dto->geometry;
+
+        return $r;
+    }
+
+    private static function buildZone(SaveZoneDTO $dto, ?string $roadType): SaveZoneCommand
+    {
+        $z = new SaveZoneCommand();
+        $z->roadType = $roadType;
+        $z->label = $dto->label;
+        $z->geometry = $dto->geometry;
+
+        return $z;
     }
 }

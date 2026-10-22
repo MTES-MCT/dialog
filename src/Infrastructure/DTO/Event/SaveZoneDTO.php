@@ -13,4 +13,11 @@ final class SaveZoneDTO
     public ?string $label = null;
     // Périmètre dessiné (polygone GeoJSON) : les tronçons de rues couverts sont calculés côté serveur.
     public ?string $geometry = null;
+    /**
+     * Exceptions (« Sauf... ») — uniquement au niveau localisation, ignorées dans le
+     * sous-objet zone d'une exception.
+     *
+     * @var SaveWholeCityExceptionDTO[]
+     */
+    public array $exceptions = [];
 }
