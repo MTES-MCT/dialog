@@ -182,6 +182,24 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertCount(1, $crawler->filter('#map-share-tab-embed'));
     }
 
+    public function testShareModalTargetsCityWhenInseeIsGiven(): void
+    {
+        $client = $this->login();
+
+        // Avec un code INSEE dans l'URL, la carte intégrée sera centrée sur la commune (prioritaire
+        // côté serveur) : le choix d'une organisation n'est pas proposé et le code INSEE est annoncé.
+        $crawler = $client->request('GET', '/carte?insee=93070');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('#map-share-org-select'));
+        $this->assertStringContainsString('code INSEE est 93070', $crawler->filter('#map-share-tab-embed-panel')->text());
+
+        // Un code mal formé est ignoré : le choix d'organisation est proposé comme d'habitude.
+        $crawler = $client->request('GET', '/carte?insee=not-a-code');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(1, $crawler->filter('#map-share-org-select'));
+        $this->assertStringNotContainsString('code INSEE', $crawler->filter('#map-share-tab-embed-panel')->text());
+    }
+
     public function testGetWithOrganizationUuidUsesOrganizationBbox(): void
     {
         $client = static::createClient();
@@ -238,6 +256,75 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
     }
 
+    public function testGetWithInseeUsesCityBbox(): void
+    {
+        $client = static::createClient();
+        // Saint-Ouen (93070) : emprise de ses voies nommées dans BD TOPO, lon ~[2.31, 2.35], lat ~[48.90, 48.92].
+        $crawler = $client->request('GET', '/carte?insee=93070');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $initialBbox = $crawler->filter('d-map')->attr('initialbbox');
+        $this->assertNotNull($initialBbox);
+        $decoded = json_decode($initialBbox, true);
+        $this->assertGreaterThan(2.30, $decoded['minLon']);
+        $this->assertLessThan(2.36, $decoded['maxLon']);
+        $this->assertGreaterThan(48.89, $decoded['minLat']);
+        $this->assertLessThan(48.93, $decoded['maxLat']);
+        $this->assertLessThan($decoded['maxLon'], $decoded['minLon']);
+        $this->assertLessThan($decoded['maxLat'], $decoded['minLat']);
+    }
+
+    public function testGetWithInseeTakesPrecedenceOverOrganizationUuid(): void
+    {
+        $client = static::createClient();
+        // Une commune est plus précise qu'une organisation : la carte zoome sur Saint-Ouen,
+        // pas sur toute la Seine-Saint-Denis (dont l'emprise s'étend jusqu'à lon ~2.60).
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'organizationUuid' => '8f9164ed-dc0f-4c98-ac18-2f590a1cfd22',
+            'insee' => '93070',
+        ]));
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertLessThan(2.36, $decoded['maxLon']);
+    }
+
+    public function testGetWithInseeOfParisUsesArrondissementsBbox(): void
+    {
+        $client = static::createClient();
+        // BD TOPO ne connaît que les arrondissements de Paris : le code de la commune (75056)
+        // zoome sur leur emprise réunie, lon ~[2.22, 2.47], lat ~[48.81, 48.91].
+        $crawler = $client->request('GET', '/carte?insee=75056');
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertGreaterThan(2.2, $decoded['minLon']);
+        $this->assertLessThan(2.5, $decoded['maxLon']);
+        $this->assertGreaterThan(48.8, $decoded['minLat']);
+        $this->assertLessThan(48.95, $decoded['maxLat']);
+    }
+
+    public function testGetWithUnknownInseeReturnsNoBbox(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?insee=00000');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+    }
+
+    public function testGetWithMalformedInseeIsIgnored(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?insee=not-a-code');
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertNull($crawler->filter('d-map')->attr('initialbbox'));
+    }
+
     public function testGetEmbedHidesHeaderAndFooter(): void
     {
         $client = static::createClient();
@@ -280,6 +367,28 @@ final class MapControllerTest extends AbstractWebTestCase
 
         // Le code d'intégration ne fige pas la date de début par défaut : absente, elle vaut « aujourd'hui ».
         $this->assertSame('2023-06-09', $crawler->filter('[name="map_filter_form[startDate]"]')->attr('value'));
+    }
+
+    public function testGetEmbedWithInseeUsesCityBbox(): void
+    {
+        // Le code d'intégration reprend le code INSEE de l'URL : la carte intégrée est centrée sur
+        // la commune, ici Saint-Ouen (93070), lon ~[2.31, 2.35], lat ~[48.90, 48.92].
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => ['displayTemporaryRegulations' => 'yes'],
+            'insee' => '93070',
+            'embed' => '1',
+        ]));
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('header.fr-header'));
+
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertGreaterThan(2.30, $decoded['minLon']);
+        $this->assertLessThan(2.36, $decoded['maxLon']);
+        $this->assertGreaterThan(48.89, $decoded['minLat']);
+        $this->assertLessThan(48.93, $decoded['maxLat']);
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[displayTemporaryRegulations]"]')->attr('checked'));
     }
 
     public function testGetEmbedKeepsStartDateFromQueryString(): void

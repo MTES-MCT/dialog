@@ -60,8 +60,10 @@ customElements.define('d-map-share', class extends HTMLElement {
             this.#copy(this.#linkInput.value, 'copyLinkFeedback');
         });
 
-        if (this.#orgSelect && this.#embedInput) {
-            this.#orgSelect.addEventListener('change', () => this.#updateEmbed());
+        if (this.#embedInput) {
+            if (this.#orgSelect) {
+                this.#orgSelect.addEventListener('change', () => this.#updateEmbed());
+            }
             const copyEmbedBtn = querySelectorOrError(this.#modal, '[data-share-role="copyEmbed"]');
             copyEmbedBtn.addEventListener('click', () => {
                 if (this.#embedInput) {
@@ -106,21 +108,27 @@ customElements.define('d-map-share', class extends HTMLElement {
     }
 
     #updateEmbed() {
-        if (!this.#orgSelect || !this.#embedInput) {
+        if (!this.#embedInput) {
             return;
         }
-        const organizationUuid = this.#orgSelect.value;
         const absoluteCarteUrl = new URL(this.#carteUrl, window.location.origin);
         const params = absoluteCarteUrl.searchParams;
-        // Reprend les paramètres de l'URL courante (filtres de la carte) dans l'URL de l'iframe.
+        // Reprend les paramètres de l'URL courante (filtres de la carte, code INSEE d'une commune)
+        // dans l'URL de l'iframe.
         for (const [key, value] of new URLSearchParams(window.location.search)) {
             params.append(key, value);
         }
         this.#unfreezeDefaultStartDate(params);
-        // La carte intégrée est centrée sur l'organisation sélectionnée : le zoom sur un arrêté,
-        // prioritaire côté serveur, ne doit pas prendre le dessus.
+        // Le zoom sur un arrêté, prioritaire côté serveur, ne doit pas prendre le dessus sur le centrage.
         params.delete('regulationOrderRecordUuid');
-        params.set('organizationUuid', organizationUuid);
+        // La carte intégrée est centrée sur l'organisation sélectionnée. Avec un code INSEE dans l'URL,
+        // elle est centrée sur la commune (prioritaire côté serveur) et le choix d'organisation n'est
+        // pas proposé (cf. map/_share.html.twig).
+        if (this.#orgSelect) {
+            params.set('organizationUuid', this.#orgSelect.value);
+        } else {
+            params.delete('organizationUuid');
+        }
         params.set('embed', '1');
         const src = absoluteCarteUrl.toString();
         this.#embedInput.value = `<iframe src="${src}" width="1280" height="600" frameborder="0" title="DiaLog"></iframe>`;

@@ -21,7 +21,17 @@ describe('d-map-share', () => {
         window.history.replaceState(null, '', '/');
     });
 
-    const mount = () => {
+    /**
+     * @param {{ withOrgSelect?: boolean }} [options] Sans choix d'organisation : le serveur ne le
+     * propose pas quand l'URL cible une commune (cf. map/_share.html.twig).
+     */
+    const mount = ({ withOrgSelect = true } = {}) => {
+        const orgSelect = withOrgSelect
+            ? `<select data-share-role="orgSelect">
+                    <option value="${ORG_A}" selected>Organisation A</option>
+                    <option value="${ORG_B}">Organisation B</option>
+                </select>`
+            : '';
         document.body.innerHTML = `
             <d-map-share
                 carteUrl="${window.location.origin}/carte"
@@ -32,10 +42,7 @@ describe('d-map-share', () => {
                 <dialog data-share-role="modal">
                     <input type="text" data-share-role="linkInput" value="">
                     <button type="button" data-share-role="copyLink"></button>
-                    <select data-share-role="orgSelect">
-                        <option value="${ORG_A}" selected>Organisation A</option>
-                        <option value="${ORG_B}">Organisation B</option>
-                    </select>
+                    ${orgSelect}
                     <textarea data-share-role="embedInput"></textarea>
                     <button type="button" data-share-role="copyEmbed"></button>
                 </dialog>
@@ -160,5 +167,22 @@ describe('d-map-share', () => {
         const url = getEmbedUrl();
         expect(url.searchParams.getAll('organizationUuid')).toEqual([ORG_A]);
         expect(url.searchParams.has('regulationOrderRecordUuid')).toBe(false);
+    });
+
+    it('conserve le centrage sur une commune de l’URL courante, sans organisation', () => {
+        window.history.replaceState(
+            null,
+            '',
+            `/carte?insee=93070&organizationUuid=${ORG_B}&map_filter_form[displayTemporaryRegulations]=yes`,
+        );
+        mount({ withOrgSelect: false });
+        openModal();
+
+        // La carte intégrée est centrée sur la commune : une organisation n'aurait pas d'effet.
+        const url = getEmbedUrl();
+        expect(url.searchParams.get('insee')).toBe('93070');
+        expect(url.searchParams.has('organizationUuid')).toBe(false);
+        expect(url.searchParams.get('map_filter_form[displayTemporaryRegulations]')).toBe('yes');
+        expect(url.searchParams.get('embed')).toBe('1');
     });
 });
