@@ -79,6 +79,15 @@ final class SaveOrganizationDetailFragmentControllerTest extends AbstractWebTest
         $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#organization_form_address_error')->text());
         $this->assertSame('Cette chaîne doit contenir exactement 5 caractères.', $crawler->filter('#organization_form_zipCode_error')->text());
         $this->assertSame('Cette chaîne est trop longue. Elle doit contenir au maximum 255 caractères.', $crawler->filter('#organization_form_city_error')->text());
+
+        // Le nom est publié tel quel via /api/stats : on refuse tout chevron (XSS stockée).
+        $values['organization_form']['name'] = '<img src="x" onerror="alert(1)">';
+        $values['organization_form']['address'] = '123 Rue de la Paix';
+        $values['organization_form']['zipCode'] = '75000';
+        $values['organization_form']['city'] = 'Paris';
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame('Le nom ne doit pas contenir les caractères < ou >.', $crawler->filter('#organization_form_name_error')->text());
     }
 
     public function testOrganizationNotOwned(): void
