@@ -182,6 +182,24 @@ final class MapControllerTest extends AbstractWebTestCase
         $this->assertCount(1, $crawler->filter('#map-share-tab-embed'));
     }
 
+    public function testShareModalTargetsCityWhenInseeIsGiven(): void
+    {
+        $client = $this->login();
+
+        // Avec un code INSEE dans l'URL, la carte intégrée sera centrée sur la commune (prioritaire
+        // côté serveur) : le choix d'une organisation n'est pas proposé et le code INSEE est annoncé.
+        $crawler = $client->request('GET', '/carte?insee=93070');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('#map-share-org-select'));
+        $this->assertStringContainsString('code INSEE est 93070', $crawler->filter('#map-share-tab-embed-panel')->text());
+
+        // Un code mal formé est ignoré : le choix d'organisation est proposé comme d'habitude.
+        $crawler = $client->request('GET', '/carte?insee=not-a-code');
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(1, $crawler->filter('#map-share-org-select'));
+        $this->assertStringNotContainsString('code INSEE', $crawler->filter('#map-share-tab-embed-panel')->text());
+    }
+
     public function testGetWithOrganizationUuidUsesOrganizationBbox(): void
     {
         $client = static::createClient();
@@ -349,6 +367,28 @@ final class MapControllerTest extends AbstractWebTestCase
 
         // Le code d'intégration ne fige pas la date de début par défaut : absente, elle vaut « aujourd'hui ».
         $this->assertSame('2023-06-09', $crawler->filter('[name="map_filter_form[startDate]"]')->attr('value'));
+    }
+
+    public function testGetEmbedWithInseeUsesCityBbox(): void
+    {
+        // Le code d'intégration reprend le code INSEE de l'URL : la carte intégrée est centrée sur
+        // la commune, ici Saint-Ouen (93070), lon ~[2.31, 2.35], lat ~[48.90, 48.92].
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/carte?' . http_build_query([
+            'map_filter_form' => ['displayTemporaryRegulations' => 'yes'],
+            'insee' => '93070',
+            'embed' => '1',
+        ]));
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertCount(0, $crawler->filter('header.fr-header'));
+
+        $decoded = json_decode($crawler->filter('d-map')->attr('initialbbox'), true);
+        $this->assertGreaterThan(2.30, $decoded['minLon']);
+        $this->assertLessThan(2.36, $decoded['maxLon']);
+        $this->assertGreaterThan(48.89, $decoded['minLat']);
+        $this->assertLessThan(48.93, $decoded['maxLat']);
+        $this->assertSame('checked', $crawler->filter('[name="map_filter_form[displayTemporaryRegulations]"]')->attr('checked'));
     }
 
     public function testGetEmbedKeepsStartDateFromQueryString(): void

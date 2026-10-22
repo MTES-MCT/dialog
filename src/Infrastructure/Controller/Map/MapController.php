@@ -102,6 +102,7 @@ final class MapController
                     'tilesUrlTemplate' => $tilesUrl,
                     'initialBbox' => $initialBbox,
                     'defaultStartDate' => $defaultStartDate,
+                    'cityCode' => $cityCode,
                 ],
             ),
         );
