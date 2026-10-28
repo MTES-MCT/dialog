@@ -322,13 +322,12 @@ ci_bdtopo_migrate: ## Run CI steps for BD TOPO Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	make bdtopo_migrate
 
-ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow (upload S3 + import en flux)
-	make composer CMD="install -n --prefer-dist"
+# Ouvre un tunnel Scalingo vers la base BD TOPO cible (BDTOPO_TARGET = 2025 par défaut, ou 2025_2),
+# puis lance ./tools/bdtopo_download_and_update --url <tunnel> $(1), et referme le tunnel.
+# On utilise `scalingo db-tunnel` directement car scalingodbtunnel nécessite Docker.
+# --bind 0.0.0.0 : le conteneur gdal joint le tunnel via host.docker.internal (loopback non routé sous Linux).
+define bdtopo_download_and_update_through_tunnel
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
-	# Ouvre un tunnel vers la base BDTOPO cible puis lance le pipeline S3.
-	# On utilise `scalingo db-tunnel` directement car scalingodbtunnel nécessite Docker.
-	# --bind 0.0.0.0 : le conteneur gdal joint le tunnel via host.docker.internal (loopback non routé sous Linux).
-	# BDTOPO_TARGET vaut 2025 (défaut) ou 2025_2.
 	if [ "$(BDTOPO_TARGET)" = "2025_2" ]; then \
 		BDTOPO_APP="dialog-bdtopo-2025-2"; \
 		SOURCE_URL="$$BDTOPO_2025_2_DATABASE_URL"; \
@@ -338,19 +337,35 @@ ci_bdtopo_update: ## Run CI steps for BD TOPO Update workflow (upload S3 + impor
 	fi; \
 	scalingo --app $$BDTOPO_APP db-tunnel --bind 0.0.0.0 -p 10002 DATABASE_URL > /dev/null 2>&1 & \
 	TUNNEL_PID=$$!; \
-	./tools/wait-for-it.sh 127.0.0.1:10002; \
 	BDTOPO_TUNNEL_URL=$$(echo "$$SOURCE_URL" | sed 's|@[^/]*|@127.0.0.1:10002|'); \
-	./tools/bdtopo_download_and_update \
-		--s3 \
-		--url "$$BDTOPO_TUNNEL_URL" \
-		--overwrite \
-		-y \
-		$$([ "$(SKIP_DOWNLOAD)" = "true" ] && echo "--skip-download") \
-		$$([ "$(SKIP_IMPORT)" = "true" ] && echo "--skip-import") \
-		$$([ "$(KEEP_ARCHIVES)" = "true" ] && echo "--keep-archives"); \
+	./tools/wait-for-it.sh 127.0.0.1:10002 && ./tools/bdtopo_download_and_update --url "$$BDTOPO_TUNNEL_URL" $(1); \
 	EXIT_CODE=$$?; \
 	kill $$TUNNEL_PID 2>/dev/null || true; \
 	exit $$EXIT_CODE
+endef
+
+ci_bdtopo_prepare: ## BD TOPO Update (matrice) : extrait les geopackages cibles de l'archive IGN et les uploade sur S3, sans import
+	# Étape 1 de la matrice : download IGN + extraction sélective + upload des geopackages et du manifest sur S3.
+	# Aucun tunnel ni PHP nécessaire ici (pas d'import).
+	# SKIP_DOWNLOAD=true : ne retélécharge rien, vérifie seulement que le manifest S3 d'un run précédent existe.
+	./tools/bdtopo_download_and_update \
+		--s3 \
+		--skip-import \
+		$$([ "$(SKIP_DOWNLOAD)" = "true" ] && echo "--skip-download") \
+		$$([ "$(KEEP_ARCHIVES)" = "true" ] && echo "--keep-archives")
+
+ci_bdtopo_import_table: ## BD TOPO Update (matrice) : importe une seule table (BDTOPO_TABLE) depuis le geopackage S3
+	# Étape 2 de la matrice : un job par table, en parallèle. Le geopackage de la table est
+	# téléchargé depuis S3 sur le disque du runner puis importé via ogr2ogr.
+	# --skip-download : réutilise les geopackages et le manifest déjà sur S3 (étape prepare).
+	# --skip-migrate : les index sont recréés une seule fois à l'étape finalize.
+	$(call bdtopo_download_and_update_through_tunnel,--s3 --skip-download --skip-migrate --table "$(BDTOPO_TABLE)" --overwrite -y)
+
+ci_bdtopo_finalize: ## BD TOPO Update (matrice) : recrée les index et enregistre le millésime, une fois toutes les tables importées
+	# Étape 3 de la matrice : lit le manifest sur S3, détecte le millésime et (re)crée
+	# tous les index/fonctions. Nécessite PHP (bin/console) et donc composer.
+	make composer CMD="install -n --prefer-dist"
+	$(call bdtopo_download_and_update_through_tunnel,--setup-indexes-only)
 
 ci_metabase_migrate: ## Run CI steps for Metabase Migrate workflow
 	make composer CMD="install -n --prefer-dist"

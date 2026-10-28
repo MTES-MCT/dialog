@@ -2913,6 +2913,10 @@
                 <source>map.share.embed.description</source>
                 <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur l’organisation sélectionnée et reprendra les filtres actuels.</target>
             </trans-unit>
+            <trans-unit id="map.share.embed.description.city">
+                <source>map.share.embed.description.city</source>
+                <target>Copiez ce code pour intégrer la carte dans un site web. La carte sera centrée sur la commune dont le code INSEE est %code% (repris de l’URL) et reprendra les filtres actuels.</target>
+            </trans-unit>
             <trans-unit id="map.share.embed.organization.label">
                 <source>map.share.embed.organization.label</source>
                 <target>Organisation à afficher</target>

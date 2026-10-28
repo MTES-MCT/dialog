@@ -6,22 +6,35 @@ Compatible avec macOS, Linux et la CI GitHub Actions.
 
 Usage:
     ./tools/bdtopo_download_and_update [--download-dir DIR] [--keep-archives] [--skip-download] [--skip-import] [--url] [--prod [2025|2025_2]] [--overwrite] [-y]
+    ./tools/bdtopo_download_and_update --s3 [--skip-download] [--skip-import] [--table T ...] [--skip-migrate] ...
+    ./tools/bdtopo_download_and_update --setup-indexes-only (--url URL | --prod [2025|2025_2])
 
 Options:
     --download-dir DIR     Répertoire où télécharger et dézipper les données
                            (défaut: ./dump en local, /tmp/bdtopo_download dans la CI)
     --keep-archives         Conserver les archives .7z après dézippage
-    --skip-download         Ignorer le téléchargement (utiliser les fichiers déjà présents)
-    --skip-import           Ignorer l'import (seulement télécharger et dézipper)
+    --skip-download         Ignorer le téléchargement (utiliser les fichiers déjà présents,
+                            ou, en mode --s3 sans archive locale, les geopackages déjà sur S3)
+    --skip-import           Ignorer l'import (seulement télécharger et dézipper / uploader)
     --prod [TARGET]         Déployer vers une base de production
                            (`2025` par défaut, ou `2025_2`)
     --overwrite             Réécrire les tables au lieu d'ajouter
     --skip-migrate          Ignorer l'exécution des migrations d'index après l'import
+    --table T               Restreindre l'import aux tables nommées (répétable)
+    --s3                    Mode S3 : extraire uniquement les geopackages cibles de l'archive
+                            IGN, les uploader sur S3, puis importer depuis S3
+    --setup-indexes-only    Ne rien importer : recréer les index et enregistrer le millésime
+                            (lu depuis le manifest S3)
     -y, --yes               Accepter toutes les confirmations
 
 Note:
     Après un --overwrite, les migrations d'index sont automatiquement exécutées
     (sauf si --skip-migrate est spécifié) pour recréer tous les index.
+
+Pipeline CI (GitHub Actions, voir .github/workflows/bdtopo_update.yml) :
+    1. prepare  : --s3 --skip-import           (IGN -> extraction sélective -> S3)
+    2. import   : --s3 --skip-download --table T --skip-migrate --overwrite  (un job par table)
+    3. finalize : --setup-indexes-only          (index + millésime, une seule fois)
 
 Prérequis:
     - Python 3 avec requests et beautifulsoup4:
@@ -32,6 +45,7 @@ Prérequis:
       * macOS: brew install p7zip
       * Linux: sudo apt-get install p7zip-full (Debian/Ubuntu) ou sudo yum install p7zip-plugins (RedHat/CentOS)
       * ou: pip3 install --user py7zr (mais ne gère pas les archives multi-volumes)
+    - AWS CLI (mode --s3 et --setup-indexes-only)
 """
 import argparse
 import json
@@ -43,6 +57,7 @@ import signal
 import subprocess
 import sys
 from datetime import datetime, timedelta
+from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -346,28 +361,6 @@ def _merge_7z_parts(parts: list[Path], output_path: Path) -> None:
     print(f"✓ Fusion terminée")
 
 
-def _resolve_target_database_url(args: argparse.Namespace) -> tuple[str | None, str | None]:
-    """
-    Détermine la base BDTOPO cible pour l'import et les migrations.
-
-    Priorité:
-    1. `--url`
-    2. `--prod=2025` -> `BDTOPO_2025_DATABASE_URL`
-    3. `--prod=2025_2` -> `BDTOPO_2025_2_DATABASE_URL`
-    """
-    if args.url:
-        print("Utilisation de l'URL fournie via --url")
-        return args.url, "--url"
-
-    if args.prod == "2025":
-        return os.environ.get("BDTOPO_2025_DATABASE_URL"), "BDTOPO_2025_DATABASE_URL"
-
-    if args.prod == "2025_2":
-        return os.environ.get("BDTOPO_2025_2_DATABASE_URL"), "BDTOPO_2025_2_DATABASE_URL"
-
-    return None, None
-
-
 def _extract_millesime(extracted_dir: Path) -> str | None:
     """Extrait le millésime (date d'édition) BD TOPO"""
     for path in extracted_dir.glob("**/*ED[0-9][0-9][0-9][0-9]-*"):
@@ -406,8 +399,13 @@ def _extract_millesime_from_paths(paths: list[str]) -> str | None:
 def _run_index_migrations(
     database_url_for_migrations: str | None,
     millesime: str | None = None,
-) -> None:
-    """Recreate BD TOPO indexes/functions after an --overwrite import."""
+) -> int:
+    """Recreate BD TOPO indexes/functions after an --overwrite import.
+
+    Returns a non-zero code on failure: `ogr2ogr -overwrite` drops and recreates
+    the tables, so a run that ends without indexes must not be reported as a
+    success (the CI `finalize` job relies on this exit code).
+    """
     print("\n" + "=" * 60)
     print("ÉTAPE 4: Exécution des migrations d'index")
     print("=" * 60)
@@ -424,14 +422,14 @@ def _run_index_migrations(
             else "make n'est pas disponible"
         )
         print(
-            f"WARNING: {reason}. La création des indexes ne sera pas exécutée.",
+            f"ERROR: {reason}. La création des indexes ne peut pas être exécutée.",
             file=sys.stderr,
         )
         print(
             "Vous pouvez l'exécuter manuellement avec: make bdtopo_setup_indexes",
             file=sys.stderr,
         )
-        return
+        return 1
 
     # Détecter si on est dans un environnement CI (GitHub Actions)
     is_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
@@ -476,12 +474,14 @@ def _run_index_migrations(
 
     if result.returncode != 0:
         print(
-            "WARNING: La création des indexes a échoué. "
-            "Vous pouvez l'exécuter manuellement avec: make bdtopo_setup_indexes",
+            "ERROR: La création des indexes a échoué. "
+            "Vous pouvez la relancer manuellement avec: make bdtopo_setup_indexes",
             file=sys.stderr,
         )
-    else:
-        print("\n✓ Indexes et fonctions créés avec succès")
+        return result.returncode
+
+    print("\n✓ Indexes et fonctions créés avec succès")
+    return 0
 
 
 def _part_sort_key(path: Path) -> int:
@@ -501,9 +501,14 @@ def _redact_url(url: str) -> str:
     return urlobj._replace(netloc=f"{urlobj.username}:***@{host}").geturl()
 
 
-def _manifest_key(archive_key: str) -> str:
-    """S3 key of the manifest stored next to the archive."""
-    return f"{archive_key}.manifest.json"
+def _manifest_key(prefix: str) -> str:
+    """S3 key of the manifest describing the geopackages uploaded under `prefix`."""
+    return f"{prefix.rstrip('/')}/manifest.json"
+
+
+def _gpkg_key(prefix: str, table: str) -> str:
+    """S3 key of the geopackage of a table uploaded under `prefix`."""
+    return f"{prefix.rstrip('/')}/{table}.gpkg"
 
 
 def _region_from_endpoint(endpoint: str | None) -> str | None:
@@ -516,6 +521,48 @@ def _region_from_endpoint(endpoint: str | None) -> str | None:
     host = urlparse(endpoint if "://" in endpoint else f"https://{endpoint}").netloc
     match = re.search(r"oos\.([a-z0-9-]+)\.outscale\.com", host)
     return match.group(1) if match else None
+
+
+@dataclass
+class S3Config:
+    bucket: str
+    endpoint: str
+    region: str
+    prefix: str
+
+
+def _resolve_s3_config(args: argparse.Namespace) -> S3Config | None:
+    """Resolve the S3 configuration from the CLI options and the environment
+    (S3_* variables, as used by the Flysystem storage of the application).
+    Prints the missing pieces and returns None if the configuration is incomplete.
+    """
+    bucket = args.s3_bucket or os.environ.get("S3_BUCKET")
+    endpoint = args.s3_endpoint or os.environ.get("S3_ENDPOINT")
+    region = args.s3_region or _region_from_endpoint(endpoint)
+
+    missing = [
+        name
+        for name, value in [
+            ("bucket S3 (--s3-bucket / S3_BUCKET)", bucket),
+            ("endpoint S3 (--s3-endpoint / S3_ENDPOINT)", endpoint),
+            ("région S3 (--s3-region)", region),
+            ("S3_ACCESS_KEY", os.environ.get("S3_ACCESS_KEY")),
+            ("S3_SECRET_KEY", os.environ.get("S3_SECRET_KEY")),
+        ]
+        if not value
+    ]
+    if missing:
+        print(
+            f"ERROR: configuration S3 incomplète: {', '.join(missing)}",
+            file=sys.stderr,
+        )
+        return None
+
+    if not _check_command_exists("aws"):
+        print("ERROR: l'AWS CLI est requis pour le mode S3", file=sys.stderr)
+        return None
+
+    return S3Config(bucket=bucket, endpoint=endpoint, region=region, prefix=args.s3_prefix)
 
 
 def _load_table_names(config_path: Path) -> list[str]:
@@ -584,6 +631,48 @@ def _list_archive_gpkgs(first_part: Path, table_names: list[str]) -> list[dict]:
     return entries
 
 
+def _extract_7z_entries(first_part: Path, dest_dir: Path, paths: list[str]) -> bool:
+    """Extract only the given entries of a (multi-volume) .7z archive into
+    `dest_dir`, preserving their internal paths.
+
+    Only the target geopackages are extracted (a few tables out of the ~140 GB
+    of the full BD TOPO delivery). The IGN archive is a solid 7z, so 7z still
+    has to decompress through the whole stream once: this takes a while but
+    it is done exactly once, on the runner's local disk.
+    """
+    if not _check_command_exists("7z"):
+        print(
+            "ERROR: 7z (p7zip) est requis pour extraire l'archive",
+            file=sys.stderr,
+        )
+        return False
+
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    print(f"Extraction sélective de {len(paths)} geopackage(s) depuis {first_part}")
+    print("(cela peut prendre plusieurs dizaines de minutes : archive solide)")
+
+    # -bd: pas d'indicateur de progression (illisible dans les logs CI),
+    # -bb1: journaliser chaque fichier extrait.
+    cmd = ["7z", "x", str(first_part), f"-o{dest_dir}", "-y", "-bd", "-bb1", *paths]
+    result = subprocess.run(cmd)
+
+    if result.returncode != 0:
+        print(f"ERROR: `7z x` a échoué (code {result.returncode})", file=sys.stderr)
+        return False
+
+    missing = [path for path in paths if not (dest_dir / path).is_file()]
+    if missing:
+        print(
+            "ERROR: fichier(s) absent(s) après extraction: " + ", ".join(missing),
+            file=sys.stderr,
+        )
+        return False
+
+    print("✓ Extraction terminée")
+    return True
+
+
 def _aws_env(region: str) -> dict[str, str]:
     """Build the AWS CLI environment from the Flysystem/Outscale S3 configuration."""
     env = os.environ.copy()
@@ -612,115 +701,130 @@ def _endpoint_url(endpoint: str) -> str:
     return endpoint if "://" in endpoint else f"https://{endpoint}"
 
 
-def _upload_manifest_to_s3(
-    manifest_path: Path, bucket: str, archive_key: str, endpoint: str, region: str
-) -> int:
-    """Store the manifest next to the archive so that a later run can reuse both
-    without re-downloading the IGN parts (--skip-download)."""
-    key = _manifest_key(archive_key)
-    result = subprocess.run(
-        [
-            "aws",
-            "s3",
-            "cp",
-            str(manifest_path),
-            f"s3://{bucket}/{key}",
-            "--endpoint-url",
-            _endpoint_url(endpoint),
-        ],
-        env=_aws_env(region),
-    )
-
-    if result.returncode == 0:
-        print(f"✓ Manifest uploadé: s3://{bucket}/{key}")
-
-    return result.returncode
-
-
-def _download_manifest_from_s3(
-    manifest_path: Path, bucket: str, archive_key: str, endpoint: str, region: str
-) -> list[dict] | None:
-    """Fetch the manifest stored next to the archive; None if unavailable."""
-    if not _check_command_exists("aws"):
-        print("ERROR: l'AWS CLI est requis pour lire le manifest S3", file=sys.stderr)
-        return None
-
-    key = _manifest_key(archive_key)
-    print(f"Lecture du manifest s3://{bucket}/{key}")
-    result = subprocess.run(
-        [
-            "aws",
-            "s3",
-            "cp",
-            f"s3://{bucket}/{key}",
-            str(manifest_path),
-            "--endpoint-url",
-            _endpoint_url(endpoint),
-        ],
-        env=_aws_env(region),
-    )
-
-    if result.returncode != 0:
-        return None
-
-    try:
-        entries = json.loads(manifest_path.read_text(encoding="utf-8"))["entries"]
-    except (OSError, ValueError, KeyError) as e:
-        print(f"ERROR: manifest S3 illisible: {e}", file=sys.stderr)
-        return None
-
-    return entries if isinstance(entries, list) and entries else None
-
-
-def _stream_upload_to_s3(
-    parts: list[Path],
-    bucket: str,
-    key: str,
-    endpoint: str,
-    region: str,
-    total_size: int,
-    remove_after: bool,
-) -> int:
-    """Stream the concatenation of the multi-volume parts into a single S3 object.
-
-    The 6 IGN parts are a plain byte-split of one .7z container, so streaming them
-    in order reconstructs the original single-volume archive. Using `aws s3 cp -`
-    performs a multipart upload without ever materializing the ~40 GB archive on
-    disk (and frees each part as it is consumed).
-    """
-    if not _check_command_exists("aws"):
-        print("ERROR: l'AWS CLI est requis pour l'upload S3", file=sys.stderr)
-        return 1
-
-    env = _aws_env(region)
-
+def _s3_cp(source: str, destination: str, s3: S3Config) -> int:
+    """Copy a file from/to S3 with the AWS CLI (multipart transfers are handled
+    automatically, so this works for the ~10 GB geopackages)."""
     cmd = [
         "aws",
         "s3",
         "cp",
-        "-",
-        f"s3://{bucket}/{key}",
+        source,
+        destination,
         "--endpoint-url",
-        _endpoint_url(endpoint),
-        "--expected-size",
-        str(total_size),
+        _endpoint_url(s3.endpoint),
+        # Les logs CI n'affichent une ligne qu'au retour chariot : la progression
+        # de l'AWS CLI y est illisible et très verbeuse.
+        "--no-progress",
     ]
+    print(f"aws s3 cp {source} {destination}")
+    return subprocess.run(cmd, env=_aws_env(s3.region)).returncode
 
-    print(f"Upload S3 en flux vers s3://{bucket}/{key} ({_sizeof_fmt(total_size)})")
-    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, env=env)
+
+def _upload_gpkgs_to_s3(entries: list[dict], extracted_dir: Path, s3: S3Config) -> int:
+    """Upload the extracted geopackages to s3://<bucket>/<prefix>/<table>.gpkg and
+    record the object key in each manifest entry."""
+    for entry in entries:
+        local_path = extracted_dir / entry["path"]
+        key = _gpkg_key(s3.prefix, entry["table"])
+        size = local_path.stat().st_size
+
+        print(f"Upload de {entry['table']} ({_sizeof_fmt(size)})")
+        ret = _s3_cp(str(local_path), f"s3://{s3.bucket}/{key}", s3)
+        if ret != 0:
+            print(f"ERROR: échec de l'upload de {local_path}", file=sys.stderr)
+            return ret
+
+        entry["key"] = key
+        entry["size"] = size
+        print(f"✓ Geopackage uploadé: s3://{s3.bucket}/{key}")
+
+    return 0
+
+
+def _download_gpkgs_from_s3(entries: list[dict], extracted_dir: Path, s3: S3Config) -> int:
+    """Download the geopackages of the given manifest entries to
+    `<extracted_dir>/<path>` (same layout as a local extraction), unless already
+    present with the expected size."""
+    for entry in entries:
+        local_path = extracted_dir / entry["path"]
+        key = entry.get("key") or _gpkg_key(s3.prefix, entry["table"])
+        expected_size = entry.get("size")
+
+        if local_path.is_file() and (
+            expected_size is None or local_path.stat().st_size == expected_size
+        ):
+            print(f"✓ Geopackage déjà présent: {local_path}")
+            continue
+
+        local_path.parent.mkdir(parents=True, exist_ok=True)
+        print(
+            f"Téléchargement de {entry['table']}"
+            + (f" ({_sizeof_fmt(expected_size)})" if expected_size else "")
+        )
+        ret = _s3_cp(f"s3://{s3.bucket}/{key}", str(local_path), s3)
+        if ret != 0 or not local_path.is_file():
+            print(
+                f"ERROR: échec du téléchargement de s3://{s3.bucket}/{key}. "
+                "Lancez d'abord l'étape de préparation (prepare).",
+                file=sys.stderr,
+            )
+            return ret or 1
+
+        if expected_size is not None and local_path.stat().st_size != expected_size:
+            print(
+                f"ERROR: taille inattendue pour {local_path}: "
+                f"{local_path.stat().st_size} octets au lieu de {expected_size}",
+                file=sys.stderr,
+            )
+            return 1
+
+        print(f"✓ Geopackage téléchargé: {local_path}")
+
+    return 0
+
+
+def _upload_manifest_to_s3(manifest_path: Path, s3: S3Config) -> int:
+    """Store the manifest on S3 so that later runs (per-table import jobs,
+    finalize, --skip-download) can find the geopackages and the millésime."""
+    key = _manifest_key(s3.prefix)
+    ret = _s3_cp(str(manifest_path), f"s3://{s3.bucket}/{key}", s3)
+
+    if ret == 0:
+        print(f"✓ Manifest uploadé: s3://{s3.bucket}/{key}")
+
+    return ret
+
+
+def _download_manifest_from_s3(manifest_path: Path, s3: S3Config) -> dict | None:
+    """Fetch the manifest written by the prepare step; None if unavailable."""
+    key = _manifest_key(s3.prefix)
+    print(f"Lecture du manifest s3://{s3.bucket}/{key}")
+
+    if _s3_cp(f"s3://{s3.bucket}/{key}", str(manifest_path), s3) != 0:
+        print(
+            f"ERROR: manifest introuvable sur s3://{s3.bucket}/{key}. "
+            "Lancez d'abord l'étape de préparation (prepare, sans --skip-download).",
+            file=sys.stderr,
+        )
+        return None
 
     try:
-        for part in parts:
-            print(f"  -> flux: {part.name}")
-            with open(part, "rb") as f:
-                shutil.copyfileobj(f, proc.stdin)
-            if remove_after:
-                part.unlink()
-    finally:
-        if proc.stdin is not None:
-            proc.stdin.close()
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        entries = manifest["entries"]
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        print(f"ERROR: manifest S3 illisible: {e}", file=sys.stderr)
+        return None
 
-    return proc.wait()
+    if not isinstance(entries, list) or not entries:
+        print("ERROR: le manifest S3 ne liste aucun geopackage", file=sys.stderr)
+        return None
+
+    if not manifest.get("millesime"):
+        manifest["millesime"] = _extract_millesime_from_paths(
+            [entry["path"] for entry in entries]
+        )
+
+    return manifest
 
 
 def _sizeof_fmt(num: float, suffix: str = "B") -> str:
@@ -778,6 +882,10 @@ def _run_bdtopo_update(
     if args.yes:
         cmd.append("-y")
 
+    # Restreindre l'import aux tables demandées (une table par job dans la matrice CI).
+    for table in args.tables or []:
+        cmd.extend(["--table", table])
+
     print(f"Exécution de: {' '.join(_redact_url(arg) for arg in cmd)}")
     try:
         result = subprocess.run(cmd)
@@ -794,52 +902,38 @@ def _run_bdtopo_update(
     print("\n✓ Import terminé avec succès")
 
     if args.overwrite and not args.skip_migrate:
-        _run_index_migrations(database_url_for_migrations, millesime=millesime)
+        return _run_index_migrations(database_url_for_migrations, millesime=millesime)
 
     return 0
 
 
 def _run_s3_pipeline(
-    args: argparse.Namespace, download_dir: Path, archives_dir: Path
+    args: argparse.Namespace, download_dir: Path, archives_dir: Path, extracted_dir: Path
 ) -> int:
-    """S3 streaming pipeline: download -> upload single archive -> stream import.
+    """S3 pipeline: download the IGN parts, extract only the target geopackages,
+    upload them (plus a manifest) to S3, then import from a local copy.
 
-    Avoids the ~140 GB local extraction entirely: the import reads each target
-    geopackage directly inside the .7z archive stored on S3 via GDAL's
-    /vsi7z//vsis3/ virtual filesystems.
+    Avoids the ~140 GB full extraction: only the few target tables are extracted.
+    Reading the geopackages through GDAL `/vsi7z//vsis3/` was tried before and is
+    not viable (random access inside a solid 7z over HTTP restarts the
+    decompression from the beginning of the archive at every backward seek), hence
+    the plain gpkg files on S3 and the import from the local disk.
+
+    With --skip-download and no local .7z part, the geopackages already uploaded
+    to S3 are reused (that is how the per-table CI import jobs run).
     """
     print("=" * 60)
-    print("MODE S3: téléchargement, upload de l'archive, import en flux")
+    print("MODE S3: extraction sélective, upload des geopackages, import local")
     print("=" * 60)
 
-    # 1. Résolution de la configuration S3
-    bucket = args.s3_bucket or os.environ.get("S3_BUCKET")
-    endpoint = args.s3_endpoint or os.environ.get("S3_ENDPOINT")
-    region = args.s3_region or _region_from_endpoint(endpoint)
-    key = args.s3_key
-
-    missing = [
-        name
-        for name, value in [
-            ("bucket S3 (--s3-bucket / S3_BUCKET)", bucket),
-            ("endpoint S3 (--s3-endpoint / S3_ENDPOINT)", endpoint),
-            ("région S3 (--s3-region)", region),
-            ("S3_ACCESS_KEY", os.environ.get("S3_ACCESS_KEY")),
-            ("S3_SECRET_KEY", os.environ.get("S3_SECRET_KEY")),
-        ]
-        if not value
-    ]
-    if missing:
-        print(
-            f"ERROR: configuration S3 incomplète: {', '.join(missing)}",
-            file=sys.stderr,
-        )
+    s3 = _resolve_s3_config(args)
+    if s3 is None:
         return 1
 
     download_dir.mkdir(parents=True, exist_ok=True)
     manifest_path = download_dir / "bdtopo_manifest.json"
 
-    # 2. Téléchargement des parties (sauf --skip-download)
+    # 1. Téléchargement des parties (sauf --skip-download)
     if not args.skip_download:
         archives_dir.mkdir(parents=True, exist_ok=True)
         download_urls = args.urls or _get_download_urls_from_page()
@@ -853,28 +947,23 @@ def _run_s3_pipeline(
         parts = list(archives_dir.glob("*.7z.*"))
 
     if args.skip_download and not parts:
-        # Aucune partie locale (cas typique de la CI) : on réutilise l'archive et le
-        # manifest déjà présents sur S3, sans re-télécharger ni re-uploader.
+        # Aucune partie locale (cas des jobs d'import de la CI) : on réutilise les
+        # geopackages et le manifest déjà présents sur S3.
         print(f"Aucune partie .7z locale dans {archives_dir}, réutilisation de S3")
-        entries = _download_manifest_from_s3(manifest_path, bucket, key, endpoint, region)
-        if entries is None:
-            print(
-                f"ERROR: manifest introuvable sur s3://{bucket}/{_manifest_key(key)}. "
-                "Lancez d'abord un run complet (sans --skip-download).",
-                file=sys.stderr,
-            )
+        manifest = _download_manifest_from_s3(manifest_path, s3)
+        if manifest is None:
             return 1
 
-        print(f"✓ {len(entries)} table(s) listée(s) dans le manifest S3:")
-        for entry in entries:
-            print(f"   - {entry['table']}: {entry['path']}")
+        print(f"✓ {len(manifest['entries'])} table(s) listée(s) dans le manifest S3:")
+        for entry in manifest["entries"]:
+            print(f"   - {entry['table']}: s3://{s3.bucket}/{entry.get('key', '?')}")
 
-        return _run_s3_import(args, entries, manifest_path, bucket, key, endpoint, region)
+        return _run_s3_import(args, manifest, manifest_path, extracted_dir, s3)
 
     parts = sorted(parts, key=_part_sort_key)
     first_part = parts[0]
 
-    # 3. Énumération des geopackages cibles dans l'archive
+    # 2. Énumération des geopackages cibles dans l'archive
     config_path = Path(__file__).parent / "bdtopo_update.config.json"
     table_names = _load_table_names(config_path)
     entries = _list_archive_gpkgs(first_part, table_names)
@@ -890,65 +979,138 @@ def _run_s3_pipeline(
     for entry in entries:
         print(f"   - {entry['table']}: {entry['path']}")
 
-    # 4. Upload de la concaténation (mono-archive) vers S3
-    total_size = sum(part.stat().st_size for part in parts)
-    upload_ret = _stream_upload_to_s3(
-        parts,
-        bucket,
-        key,
-        endpoint,
-        region,
-        total_size,
-        remove_after=not args.keep_archives,
-    )
+    not_found = sorted(set(table_names) - {entry["table"] for entry in entries})
+    if not_found:
+        print(
+            f"WARNING: table(s) du config absente(s) de l'archive: {', '.join(not_found)}",
+            file=sys.stderr,
+        )
+
+    # 3. Extraction sélective des geopackages cibles
+    if not _extract_7z_entries(first_part, extracted_dir, [e["path"] for e in entries]):
+        return 1
+
+    if not args.keep_archives:
+        for part in parts:
+            part.unlink()
+        print("✓ Parties .7z supprimées (utilisez --keep-archives pour les conserver)")
+
+    # 4. Upload des geopackages vers S3
+    upload_ret = _upload_gpkgs_to_s3(entries, extracted_dir, s3)
     if upload_ret != 0:
-        print("ERROR: échec de l'upload S3", file=sys.stderr)
         return upload_ret
 
-    print(f"✓ Archive uploadée: s3://{bucket}/{key}")
+    # 5. Écriture du manifest, en local et sur S3
+    manifest = {
+        "millesime": _extract_millesime_from_paths([entry["path"] for entry in entries]),
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+        "entries": entries,
+    }
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    print(f"✓ Manifest écrit: {manifest_path} (millésime: {manifest['millesime']})")
 
-    # 5. Écriture du manifest, en local et à côté de l'archive sur S3
-    manifest_path.write_text(
-        json.dumps({"entries": entries}, indent=2), encoding="utf-8"
-    )
-    print(f"✓ Manifest écrit: {manifest_path}")
-
-    manifest_ret = _upload_manifest_to_s3(manifest_path, bucket, key, endpoint, region)
+    manifest_ret = _upload_manifest_to_s3(manifest_path, s3)
     if manifest_ret != 0:
         print("ERROR: échec de l'upload du manifest S3", file=sys.stderr)
         return manifest_ret
 
-    return _run_s3_import(args, entries, manifest_path, bucket, key, endpoint, region)
+    return _run_s3_import(args, manifest, manifest_path, extracted_dir, s3)
+
+
+def _select_manifest_entries(manifest: dict, tables: list[str] | None) -> list[dict] | None:
+    """Keep the manifest entries of the requested tables (all of them if no --table).
+    Returns None if a requested table is not in the manifest."""
+    entries = manifest["entries"]
+
+    if not tables:
+        return entries
+
+    by_table = {entry["table"]: entry for entry in entries}
+    unknown = [table for table in tables if table not in by_table]
+    if unknown:
+        print(
+            f"ERROR: table(s) absente(s) du manifest S3: {', '.join(unknown)}. "
+            f"Tables disponibles: {', '.join(by_table)}",
+            file=sys.stderr,
+        )
+        return None
+
+    return [by_table[table] for table in tables]
 
 
 def _run_s3_import(
     args: argparse.Namespace,
-    entries: list[dict],
+    manifest: dict,
     manifest_path: Path,
-    bucket: str,
-    key: str,
-    endpoint: str,
-    region: str,
+    extracted_dir: Path,
+    s3: S3Config,
 ) -> int:
-    """Stream import from the archive on S3 (unless --skip-import)."""
+    """Download the geopackages of the requested tables from S3 (unless already on
+    disk) and import them from the local directory (unless --skip-import)."""
     if args.skip_import:
         print("⏭ Import ignoré (--skip-import)")
         return 0
 
+    selected = _select_manifest_entries(manifest, args.tables)
+    if selected is None:
+        return 1
+
+    download_ret = _download_gpkgs_from_s3(selected, extracted_dir, s3)
+    if download_ret != 0:
+        return download_ret
+
     return _run_bdtopo_update(
         args,
-        [
-            "--s3-archive",
-            f"s3://{bucket}/{key}",
-            "--manifest",
-            str(manifest_path),
-            "--s3-endpoint",
-            endpoint,
-            "--s3-region",
-            region,
-        ],
-        millesime=_extract_millesime_from_paths([entry["path"] for entry in entries]),
+        [str(extracted_dir), "--manifest", str(manifest_path)],
+        millesime=manifest.get("millesime"),
     )
+
+
+def _run_setup_indexes_only(args: argparse.Namespace, download_dir: Path) -> int:
+    """Finalize step: recreate indexes/functions and record the millésime.
+
+    Reads the manifest already stored on S3 (written by the prepare step) to detect
+    the millésime, then runs the index migrations once. Used by the CI matrix: the
+    per-table import jobs run with --skip-migrate, and this single job recreates all
+    indexes after every table has been imported.
+    """
+    print("=" * 60)
+    print("MODE FINALIZE: recréation des index et du millésime")
+    print("=" * 60)
+
+    s3 = _resolve_s3_config(args)
+    if s3 is None:
+        return 1
+
+    if not args.url and not args.prod:
+        print(
+            "ERROR: --setup-indexes-only nécessite --url ou --prod [2025|2025_2]",
+            file=sys.stderr,
+        )
+        return 1
+
+    download_dir.mkdir(parents=True, exist_ok=True)
+    manifest_path = download_dir / "bdtopo_manifest.json"
+
+    manifest = _download_manifest_from_s3(manifest_path, s3)
+    if manifest is None:
+        return 1
+
+    tunnel_proc = None
+    if args.url:
+        database_url = args.url
+    else:
+        tunnel_proc, database_url = _open_prod_tunnel(args.prod)
+        if tunnel_proc is None:
+            return 1
+
+    try:
+        return _run_index_migrations(database_url, millesime=manifest.get("millesime"))
+    finally:
+        if tunnel_proc is not None:
+            print("Fermeture du tunnel...")
+            tunnel_proc.send_signal(signal.SIGINT)
+            tunnel_proc.wait()
 
 
 def _run_local_archive_pipeline(
@@ -1096,11 +1258,32 @@ def main() -> int:
         help="Ignorer l'exécution des migrations d'index après l'import",
     )
     parser.add_argument(
+        "--setup-indexes-only",
+        action="store_true",
+        help=(
+            "Ne rien importer : lire le manifest déjà présent sur S3, détecter le "
+            "millésime et (re)créer les index/fonctions. Étape 'finalize' de la "
+            "matrice CI, à lancer une fois toutes les tables importées."
+        ),
+    )
+    parser.add_argument(
+        "--table",
+        action="append",
+        default=None,
+        dest="tables",
+        help=(
+            "Restreindre l'import aux tables nommées (répétable). Par défaut, toutes "
+            "les tables du config. Permet de paralléliser l'import (une table par job)."
+        ),
+    )
+    parser.add_argument(
         "--s3",
         action="store_true",
         help=(
-            "Mode S3: uploader l'archive concaténée sur S3 (Outscale) puis importer "
-            "en flux via GDAL /vsi7z//vsis3/ sans extraction locale (~140 Go évités)"
+            "Mode S3: extraire uniquement les geopackages cibles de l'archive IGN, "
+            "les uploader sur S3 (Outscale) puis importer depuis une copie locale. "
+            "Avec --skip-download et sans archive locale, réutilise les geopackages "
+            "déjà présents sur S3 (jobs d'import de la CI)."
         ),
     )
     parser.add_argument(
@@ -1118,9 +1301,12 @@ def main() -> int:
         help="Bucket S3 cible (défaut: variable d'environnement S3_BUCKET)",
     )
     parser.add_argument(
-        "--s3-key",
-        default="bdtopo/bdtopo-latest.7z",
-        help="Clé de l'objet S3 (défaut: bdtopo/bdtopo-latest.7z)",
+        "--s3-prefix",
+        default="bdtopo",
+        help=(
+            "Préfixe des objets S3 : <prefix>/<table>.gpkg et <prefix>/manifest.json "
+            "(défaut: bdtopo)"
+        ),
     )
     parser.add_argument(
         "--s3-endpoint",
@@ -1171,9 +1357,13 @@ def main() -> int:
     archives_dir = download_dir / "archives"
     extracted_dir = download_dir / "extracted"
 
-    # Mode S3: pipeline dédié (upload archive + import en flux, sans extraction)
+    # Mode finalize: recréer les index à partir du manifest S3, sans import
+    if args.setup_indexes_only:
+        return _run_setup_indexes_only(args, download_dir)
+
+    # Mode S3: extraction sélective + upload des geopackages + import local
     if args.s3:
-        return _run_s3_pipeline(args, download_dir, archives_dir)
+        return _run_s3_pipeline(args, download_dir, archives_dir, extracted_dir)
 
     # Mode archive locale: concaténation dans dump/ + import via /vsi7z/ (sans S3)
     if args.local_archive:
@@ -1276,73 +1466,19 @@ def main() -> int:
             )
             return 1
 
-    # Étape 3: Import
+    # Étape 3: Import (+ étape 4: migrations d'index si --overwrite)
     if not args.skip_import:
         print("\n" + "=" * 60)
         print("ÉTAPE 3: Import dans la base de données")
         print("=" * 60)
 
-        bdtopo_update_script = Path(__file__).parent / "bdtopo_update"
-        if not bdtopo_update_script.exists():
-            print(
-                f"ERROR: Script bdtopo_update introuvable: {bdtopo_update_script}",
-                file=sys.stderr,
-            )
-            return 1
-
-        cmd = [
-            str(bdtopo_update_script),
-            str(extracted_dir),
-        ]
-
-        database_url_from_env, database_url_source = _resolve_target_database_url(args)
-        database_url_for_migrations = None  # Sera utilisé pour les migrations
-        tunnel_proc = None
-
-        if args.prod:
-            tunnel_proc, tunnel_url = _open_prod_tunnel(args.prod)
-            if tunnel_proc is None:
-                return 1
-
-            cmd.extend(["--url", tunnel_url])
-            database_url_for_migrations = tunnel_url
-            print(f"Base cible sélectionnée via {database_url_source}")
-        elif args.url:
-            cmd.extend(["--url", args.url])
-            database_url_for_migrations = args.url
-        else:
-            print(
-                "ERROR: veuillez fournir --url ou --prod [2025|2025_2]",
-                file=sys.stderr,
-            )
-            return 1
-
-        if args.overwrite:
-            cmd.append("--overwrite")
-        if args.yes:
-            cmd.append("-y")
-
-        print(f"Exécution de: {' '.join(cmd)}")
-        try:
-            result = subprocess.run(cmd)
-        finally:
-            if tunnel_proc is not None:
-                print("Fermeture du tunnel...")
-                tunnel_proc.send_signal(signal.SIGINT)
-                tunnel_proc.wait()
-
-        if result.returncode != 0:
-            print("ERROR: L'import a échoué", file=sys.stderr)
-            return result.returncode
-
-        print("\n✓ Import terminé avec succès")
-
-        # Étape 4: Migrations d'index (si --overwrite et pas --skip-migrate)
-        if args.overwrite and not args.skip_migrate:
-            _run_index_migrations(
-                database_url_for_migrations,
-                millesime=_extract_millesime(extracted_dir),
-            )
+        ret = _run_bdtopo_update(
+            args,
+            [str(extracted_dir)],
+            millesime=_extract_millesime(extracted_dir),
+        )
+        if ret != 0:
+            return ret
     else:
         print("⏭ Import ignoré (--skip-import)")
 
