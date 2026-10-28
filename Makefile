@@ -367,6 +367,21 @@ ci_bdtopo_finalize: ## BD TOPO Update (matrice) : recrée les index et enregistr
 	make composer CMD="install -n --prefer-dist"
 	$(call bdtopo_download_and_update_through_tunnel,--setup-indexes-only)
 
+ci_bdtopo_notify: ## BD TOPO Update (matrice) : envoie une notification Tchap avec le résultat global du pipeline
+	# Étape finale : notifie sur Tchap le résultat global, calculé à partir des résultats
+	# des jobs (PREPARE_RESULT, IMPORT_RESULT, FINALIZE_RESULT = success/failure/cancelled/skipped),
+	# avec le millésime (MILLESIME, YYYY-MM-DD) lu dans le manifest S3 par le job prepare.
+	# Aucun tunnel ni base nécessaire : la notification doit partir même quand le pipeline a échoué.
+	make composer CMD="install -n --prefer-dist"
+	$(BIN_CONSOLE) app:bdtopo:notify \
+		--target "$(BDTOPO_TARGET)" \
+		--result "prepare=$(PREPARE_RESULT)" \
+		--result "import=$(IMPORT_RESULT)" \
+		--result "finalize=$(FINALIZE_RESULT)" \
+		--millesime "$(MILLESIME)" \
+		--run-url "$(RUN_URL)" \
+		$$([ "$(SKIP_IMPORT)" = "true" ] && echo "--skip-import")
+
 ci_metabase_migrate: ## Run CI steps for Metabase Migrate workflow
 	make composer CMD="install -n --prefer-dist"
 	scalingo login --ssh --ssh-identity ~/.ssh/id_rsa
