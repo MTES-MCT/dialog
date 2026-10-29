@@ -48,6 +48,36 @@ final class DatexVehicleConditionViewTest extends TestCase
         $this->assertFalse($view->isOther);
     }
 
+    public function testCommercialMapsToBusVehicleType(): void
+    {
+        $view = new DatexVehicleConditionView(VehicleTypeEnum::COMMERCIAL->value, isExempted: true);
+
+        $this->assertSame('bus', $view->type);
+        $this->assertNull($view->vehicleUsage);
+        $this->assertFalse($view->isOther);
+    }
+
+    /**
+     * @dataProvider provideVehicleUsages
+     */
+    public function testVehicleUsages(string $vehicleType): void
+    {
+        $view = new DatexVehicleConditionView($vehicleType, isExempted: true);
+
+        $this->assertSame($vehicleType, $view->vehicleUsage);
+        $this->assertNull($view->type);
+        $this->assertFalse($view->isOther);
+    }
+
+    public static function provideVehicleUsages(): array
+    {
+        return [
+            [VehicleTypeEnum::TAXI->value],
+            [VehicleTypeEnum::CAR_SHARING->value],
+            [VehicleTypeEnum::CITY_LOGISTICS->value],
+        ];
+    }
+
     public function testDesserteLocaleMapsToAccessConditionDestinationTraffic(): void
     {
         $view = new DatexVehicleConditionView(VehicleTypeEnum::DESSERTE_LOCALE->value, isExempted: true);
