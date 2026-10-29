@@ -18,7 +18,7 @@ enum CritairEnum: string
     public static function critairCases(): array
     {
         return [
-            'Sans vignette' => CritairEnum::CRITAIR_WITHOUT,
+            'Non classé' => CritairEnum::CRITAIR_WITHOUT,
             5 => CritairEnum::CRITAIR_5,
             4 => CritairEnum::CRITAIR_4,
             3 => CritairEnum::CRITAIR_3,
