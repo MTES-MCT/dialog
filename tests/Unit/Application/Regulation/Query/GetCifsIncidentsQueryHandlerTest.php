@@ -15,9 +15,11 @@ use App\Domain\Condition\Period\DailyRange;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\Period\TimeSlot;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
+use App\Domain\Regulation\Location\NamedStreet;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
@@ -702,6 +704,159 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
             [$incident1, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
+            $incidents,
+        );
+    }
+
+    public function testGetAllReversesPolylineForBToADirection(): void
+    {
+        $geometry = '{"type":"LineString","coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}';
+        $polyline = '44.028996 1.362275 44.025665 1.35931';
+        $uuid = '06716514-0a0d-7bde-8000-f23df39a6693';
+
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $regulationOrderRecord
+            ->expects(self::exactly(2))
+            ->method('getUuid')
+            ->willReturn($uuid);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getCreatedAt')
+            ->willReturn(new \DateTimeImmutable('2023-11-01 00:00:00'));
+
+        $organization = $this->createMock(Organization::class);
+        $organization
+            ->expects(self::once())
+            ->method('getCode')
+            ->willReturn('82121');
+        $organization
+            ->expects(self::once())
+            ->method('getName')
+            ->willReturn('Commune de Montauban');
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getIdentifier')
+            ->willReturn('2024T3');
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getSubject')
+            ->willReturn(RegulationSubjectEnum::ROAD_MAINTENANCE->value);
+
+        $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::B_TO_A->value);
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getUuid')
+            ->willReturn('02d5eb61-9ca3-4e67-aacd-726f124382d0');
+        $location
+            ->expects(self::once())
+            ->method('getCifsStreetLabel')
+            ->willReturn('Rue des Arts');
+        $location
+            ->expects(self::once())
+            ->method('getGeometry')
+            ->willReturn($geometry);
+        $location
+            ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet);
+
+        $measure = $this->createMock(Measure::class);
+        $measure
+            ->expects(self::atLeastOnce())
+            ->method('getType')
+            ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
+        $measure
+            ->expects(self::once())
+            ->method('getPeriods')
+            ->willReturn([]);
+        $measure
+            ->expects(self::once())
+            ->method('getLocations')
+            ->willReturn([$location]);
+
+        $regulationOrder
+            ->expects(self::once())
+            ->method('getMeasures')
+            ->willReturn([$measure]);
+        $regulationOrderRecord
+            ->expects(self::once())
+            ->method('getRegulationOrder')
+            ->willReturn($regulationOrder);
+
+        $this->polylineMaker
+            ->expects(self::once())
+            ->method('normalizeToLineStringGeoJSON')
+            ->with($geometry)
+            ->willReturn($geometry);
+        $this->polylineMaker
+            ->expects(self::once())
+            ->method('getMergedPolyline')
+            ->with($geometry)
+            ->willReturn($polyline);
+
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('addDays')
+            ->with(new \DateTimeImmutable('2023-11-06 00:00:00'), 1)
+            ->willReturn(new \DateTimeImmutable('2023-11-07 00:00:00'));
+
+        $this->translator
+            ->expects(self::once())
+            ->method('trans')
+            ->with('regulation.measure.type.noEntry')
+            ->willReturn('Interdiction d\'accès');
+
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('findRegulationOrdersForCifsIncidentFormat')
+            ->willReturn([$regulationOrderRecord]);
+        $this->regulationOrderRecordRepository
+            ->expects(self::once())
+            ->method('getOverallDatesByRegulationUuids')
+            ->with([$uuid])
+            ->willReturn([
+                $uuid => [
+                    'uuid' => $uuid,
+                    'overallStartDate' => new \DateTimeImmutable('2023-11-02 00:00:00'),
+                    'overallEndDate' => new \DateTimeImmutable('2023-11-06 00:00:00'),
+                ],
+            ]);
+
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
+        $incidents = $handler(new GetCifsIncidentsQuery());
+
+        $this->assertEquals(
+            [
+                new CifsIncidentView(
+                    id: '2024T3:02d5eb61-9ca3-4e67-aacd-726f124382d0:0',
+                    creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
+                    type: 'ROAD_CLOSED',
+                    description: 'Interdiction d\'accès',
+                    street: 'Rue des Arts',
+                    direction: 'ONE_DIRECTION',
+                    // La géométrie est stockée de A vers B : la polyligne est retournée pour une restriction de B vers A
+                    polyline: '44.025665 1.35931 44.028996 1.362275',
+                    startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
+                    endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
+                    sourceReference: '82121',
+                    sourceName: 'Commune de Montauban (DiaLog)',
+                    regulationOrderRecordUuid: $uuid,
+                    schedule: [],
+                    subType: 'ROAD_BLOCKED_CONSTRUCTION',
+                ),
+            ],
             $incidents,
         );
     }

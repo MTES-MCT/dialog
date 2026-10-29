@@ -133,12 +133,12 @@ final class RegulationApiViewTest extends TestCase
                 new LocationView(
                     uuid: 'loc-1',
                     roadType: 'lane',
-                    namedStreet: new NamedStreetView('Paris', 'Rue Exemple', '1', null, '10', null),
+                    namedStreet: new NamedStreetView('Paris', 'Rue Exemple', '1', null, '10', null, 'B_TO_A'),
                 ),
                 new LocationView(
                     uuid: 'loc-2',
                     roadType: 'departmentalRoad',
-                    numberedRoad: new NumberedRoadView('SSD', 'D1', '1', 0, 'U', '5', 100, 'U'),
+                    numberedRoad: new NumberedRoadView('SSD', 'D1', '1', 0, 'U', '5', 100, 'U', 'BOTH'),
                     storageArea: new StorageAreaView('Aire'),
                 ),
                 new LocationView(
@@ -178,10 +178,12 @@ final class RegulationApiViewTest extends TestCase
         $this->assertCount(4, $measureView->locations);
         $this->assertInstanceOf(LocationApiView::class, $measureView->locations[0]);
         $this->assertInstanceOf(NamedStreetApiView::class, $measureView->locations[0]->namedStreet);
+        $this->assertSame('B_TO_A', $measureView->locations[0]->namedStreet->direction);
         $this->assertNull($measureView->locations[0]->numberedRoad);
 
         $this->assertInstanceOf(NumberedRoadApiView::class, $measureView->locations[1]->numberedRoad);
         $this->assertSame('D1', $measureView->locations[1]->numberedRoad->roadNumber);
+        $this->assertSame('BOTH', $measureView->locations[1]->numberedRoad->direction);
         $this->assertInstanceOf(StorageAreaApiView::class, $measureView->locations[1]->storageArea);
         $this->assertSame('Aire', $measureView->locations[1]->storageArea->description);
 
