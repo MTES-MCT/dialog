@@ -15,3 +15,4 @@ Table des matières :
 - [S3](./s3.md)
 - [Mailer](./mailer.md)
 - [Signalements adresse IGN (Espace collaboratif / GCMS)](./ign-signalements.md)
+- [Géométries des emprises](./locations.md)

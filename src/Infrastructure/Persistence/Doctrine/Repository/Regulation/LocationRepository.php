@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Application\Organization\View\MapBboxView;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -456,6 +457,24 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             ->leftJoin('l.numberedRoad', 'nr')
             ->where('l.uuid IN (:uuids)')
             ->setParameter('uuids', $uuids)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAllOneWaySections(): array
+    {
+        return $this->createQueryBuilder('l')
+            ->addSelect('ns', 'nr', 'm', 'ro', 'roc', 'o')
+            ->leftJoin('l.namedStreet', 'ns')
+            ->leftJoin('l.numberedRoad', 'nr')
+            ->innerJoin('l.measure', 'm')
+            ->innerJoin('m.regulationOrder', 'ro')
+            ->innerJoin('ro.regulationOrderRecord', 'roc')
+            ->innerJoin('roc.organization', 'o')
+            ->where('(ns.direction <> :both AND (ns.fromHouseNumber IS NOT NULL OR ns.fromRoadName IS NOT NULL)) OR nr.direction <> :both')
+            ->setParameter('both', DirectionEnum::BOTH->value)
+            ->orderBy('l.uuid', 'ASC')
             ->getQuery()
             ->getResult()
         ;
