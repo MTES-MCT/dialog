@@ -7,6 +7,11 @@
     <field name="startDateTime" type="datetimetz" column="start_datetime" nullable="true"/>
     <field name="endDateTime" type="datetimetz" column="end_datetime" nullable="true"/>
     <field name="recurrenceType" type="string" column="recurrence_type" nullable="false"/>
+    <field name="isPublicHolidaysExcluded" type="boolean" column="is_public_holidays_excluded" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <one-to-many field="timeSlots" target-entity="App\Domain\Condition\Period\TimeSlot" mapped-by="period"/>
     <one-to-one field="dailyRange" target-entity="App\Domain\Condition\Period\DailyRange" mapped-by="period" fetch="EAGER"/>
     <many-to-one field="measure" target-entity="App\Domain\Regulation\Measure" inversed-by="periods">

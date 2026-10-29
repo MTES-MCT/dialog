@@ -43,6 +43,7 @@ final class DuplicateMeasureCommandHandler
             $cmd->endTime = $period->getEndDateTime();
             $cmd->recurrenceType = $period->getRecurrenceType();
             $cmd->isPermanent = $originalRegulationOrder->isPermanent();
+            $cmd->isPublicHolidaysExcluded = $period->isPublicHolidaysExcluded();
 
             $dailyRange = $period->getDailyRange();
             if ($dailyRange) {

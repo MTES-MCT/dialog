@@ -20,6 +20,7 @@ final class SavePeriodCommand implements CommandInterface
     public ?SaveDailyRangeCommand $dailyRange = null;
     public ?array $timeSlots = [];
     public ?bool $isPermanent = false;
+    public bool $isPublicHolidaysExcluded = false;
 
     public function __construct(
         public readonly ?Period $period = null,
@@ -31,6 +32,7 @@ final class SavePeriodCommand implements CommandInterface
         $this->endDate = $period?->getEndDateTime();
         $this->endTime = $period?->getEndDateTime();
         $this->recurrenceType = $period?->getRecurrenceType();
+        $this->isPublicHolidaysExcluded = $period?->isPublicHolidaysExcluded() ?? false;
 
         if ($period?->getDailyRange()) {
             $this->dailyRange = new SaveDailyRangeCommand($period->getDailyRange());

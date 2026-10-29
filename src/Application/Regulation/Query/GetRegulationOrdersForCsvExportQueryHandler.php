@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\NumberedRoadLabelMaker;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use App\Application\Regulation\View\VehicleSetView;
 use App\Application\StorageInterface;
@@ -25,6 +26,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
         private NumberedRoadLabelMaker $numberedRoadLabelMaker,
+        private PeriodPublicHolidaysProvider $publicHolidaysProvider,
     ) {
     }
 
@@ -67,6 +69,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
                 $vehicleSet = VehicleSetView::fromEntity($measure->getVehicleSet());
+                [$isPublicHolidaysExcluded, $excludedPublicHolidays] = $this->getExcludedPublicHolidays($measure);
 
                 foreach ($measure->getLocations() as $location) {
                     $rows[] = new RegulationCsvRowView(
@@ -86,12 +89,36 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         locationLabel: $this->buildLocationLabel($location),
                         geometry: $location->getGeometry() ?? '',
                         vehicleSet: $vehicleSet,
+                        isPublicHolidaysExcluded: $isPublicHolidaysExcluded,
+                        excludedPublicHolidays: $excludedPublicHolidays,
                     );
                 }
             }
         }
 
         return $rows;
+    }
+
+    /**
+     * @return array{bool, string[]}
+     */
+    private function getExcludedPublicHolidays(Measure $measure): array
+    {
+        $isExcluded = false;
+        $dates = [];
+
+        foreach ($measure->getPeriods() as $period) {
+            $isExcluded = $isExcluded || $period->isPublicHolidaysExcluded();
+
+            foreach ($this->publicHolidaysProvider->getExcludedPublicHolidays($period) as $date) {
+                $dates[] = $date->format('Y-m-d');
+            }
+        }
+
+        $dates = array_values(array_unique($dates));
+        sort($dates);
+
+        return [$isExcluded, $dates];
     }
 
     private function restrictsHeavyGoodsVehicle(RegulationOrderRecord $record): bool

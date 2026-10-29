@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\View\Measure\MeasureView;
 use App\Application\Regulation\View\RegulationOrderForApiView;
 use App\Application\StorageInterface;
@@ -22,6 +23,7 @@ final class GetRegulationOrdersForApiQueryHandler
         private StorageRegulationOrderRepositoryInterface $storageRegulationOrderRepository,
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
+        private PeriodPublicHolidaysProvider $publicHolidaysProvider,
     ) {
     }
 
@@ -103,7 +105,7 @@ final class GetRegulationOrdersForApiQueryHandler
         $measures = [];
 
         foreach ($regulationOrder->getMeasures() as $measure) {
-            $measures[] = MeasureView::fromEntity($measure);
+            $measures[] = MeasureView::fromEntity($measure, $this->publicHolidaysProvider);
         }
 
         return new RegulationOrderForApiView(

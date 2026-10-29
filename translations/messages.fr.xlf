@@ -2207,6 +2207,14 @@
                 <source>regulation.period.all_days</source>
                 <target>tous les jours</target>
             </trans-unit>
+            <trans-unit id="regulation.period.isPublicHolidaysExcluded">
+                <source>regulation.period.isPublicHolidaysExcluded</source>
+                <target>Sauf jours fériés</target>
+            </trans-unit>
+            <trans-unit id="regulation.period.except_public_holidays">
+                <source>regulation.period.except_public_holidays</source>
+                <target>sauf jours fériés</target>
+            </trans-unit>
             <trans-unit id="regulation.period.endTime">
                 <source>regulation.period.endTime</source>
                 <target>Heure de fin</target>
