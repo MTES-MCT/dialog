@@ -70,11 +70,12 @@ La BD TOPO EXPRESS est millésimée. Une nouvelle version sort **tous les 15 jou
 
 #### Fonctionnement de la mise à jour automatique (pipeline S3 en 3 étapes)
 
-En production (et dans la CI), la mise à jour **ne dézippe pas** l'intégralité de l'archive (ce qui représenterait ~140 Go). Le workflow `bdtopo_update` est découpé en trois jobs :
+En production (et dans la CI), la mise à jour **ne dézippe pas** l'intégralité de l'archive (ce qui représenterait ~140 Go). Le workflow `bdtopo_update` est découpé en trois jobs, suivis d'un job `notify` :
 
 1. **`prepare`** : les 6 parties de l'archive multi-volume `.7z.001` … `.7z.006` (~21 Go au total) sont téléchargées depuis l'IGN, puis **seuls les geopackages des tables cibles** (celles de `tools/bdtopo_update.config.json`) sont extraits sur le disque du runner. Ils sont ensuite uploadés sur notre bucket S3 (Outscale) sous `bdtopo/<table>.gpkg`, accompagnés d'un manifest `bdtopo/manifest.json` (millésime, chemins, tailles).
 2. **`import`** : un job par table, en parallèle. Chaque job télécharge le geopackage de sa table depuis S3 sur son disque local, ouvre un tunnel vers la base cible et l'importe avec `ogr2ogr` (`-overwrite`), **sans** recréer les index (`--skip-migrate`).
 3. **`finalize`** : une fois toutes les tables importées, recrée l'ensemble des index, extensions et fonctions, et enregistre le millésime lu dans le manifest S3. `ogr2ogr -overwrite` recrée les tables : sans cette étape, la base n'a plus d'index.
+4. **`notify`** : s'exécute toujours, même en cas d'échec ou d'annulation, et publie le résultat sur Tchap via la commande `app:bdtopo:notify`. Le message indique si la mise à jour a réussi, échoué ou été annulée, le millésime (lu dans le manifest S3 par `prepare`), les étapes en échec, et le lien vers l'exécution GitHub Actions.
 
 :warning: Une première version lisait les geopackages directement dans l'archive stockée sur S3 via GDAL `/vsi7z//vsis3/`. Ce n'est **pas viable** : l'archive IGN est un 7z *solide*, et tout accès aléatoire relance la décompression depuis le début de l'archive (plus de 1h30 pour la plus petite table, aucun run n'a jamais abouti). D'où l'extraction unique vers des fichiers `.gpkg` plats sur S3.
 
@@ -199,6 +200,7 @@ Le workflow GitHub Actions `bdtopo_update` automatise tout le processus et est l
 - Les secrets `BDTOPO_2025_DATABASE_URL` et `BDTOPO_2025_2_DATABASE_URL` doivent être configurés dans les secrets GitHub Actions
 - Les secrets S3 (Outscale) `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET` et `S3_ENDPOINT` doivent être configurés
 - Le secret `GH_SCALINGO_SSH_PRIVATE_KEY` doit être configuré (déjà fait pour les autres workflows)
+- Les secrets Tchap `TCHAP_HOMESERVER_URL`, `TCHAP_ACCESS_TOKEN` et `TCHAP_ROOM_ID` doivent être configurés pour la notification (partagés avec le workflow Litteralis)
 
 **Méthode alternative : Script en local**
 
