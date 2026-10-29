@@ -157,10 +157,11 @@ final class LaneSectionMakerTest extends TestCase
                 'fromCoords' => $fromCoords,
                 'toCoords' => $toCoords,
             ],
+            // Quel que soit le sens, la section est calculée de A vers B : le sens est une métadonnée des exports
             'ba' => [
                 'direction' => DirectionEnum::B_TO_A->value,
-                'fromCoords' => $toCoords,
-                'toCoords' => $fromCoords,
+                'fromCoords' => $fromCoords,
+                'toCoords' => $toCoords,
             ],
         ];
     }

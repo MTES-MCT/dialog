@@ -170,11 +170,58 @@ final class LineSectionMaker implements LineSectionMakerInterface
                     SELECT geom FROM intermediate_sections
                     UNION ALL
                     SELECT geom FROM b_side_section
+                ),
+                -- Section brute : son orientation suit celle des tronçons de la géométrie source, pas celle de A vers B
+                raw_section AS (
+                    SELECT CASE WHEN EXISTS (SELECT 1 FROM same_host_section)
+                        THEN (SELECT geom FROM same_host_section)
+                        ELSE (SELECT ST_Collect(geom) FROM all_sections)
+                    END AS geom
+                ),
+                -- Fusionne les morceaux connectés en une seule ligne lorsque possible
+                merged_section AS (
+                    SELECT CASE
+                        WHEN ST_GeometryType(geom) IN (\'ST_LineString\', \'ST_MultiLineString\') THEN ST_LineMerge(geom)
+                        ELSE geom
+                    END AS geom
+                    FROM raw_section
+                ),
+                -- Morceaux non connectés : chacun est orienté pour que son premier sommet soit le plus proche de A
+                oriented_pieces AS (
+                    SELECT
+                        CASE WHEN ST_Distance(ST_StartPoint(p.geom)::geography, a.geom::geography) > ST_Distance(ST_EndPoint(p.geom)::geography, a.geom::geography)
+                            THEN ST_Reverse(p.geom)
+                            ELSE p.geom
+                        END AS geom,
+                        p.path
+                    FROM merged_section m, a, LATERAL ST_Dump(m.geom) AS p
+                    WHERE ST_GeometryType(m.geom) = \'ST_MultiLineString\'
+                ),
+                -- Oriente la section de A vers B : la position des sommets devient une information fiable
+                -- (le sens de circulation reste une métadonnée interprétée par les exports)
+                oriented_section AS (
+                    SELECT CASE
+                        -- Ligne unique : A doit se situer avant B le long de la ligne
+                        WHEN ST_GeometryType(m.geom) = \'ST_LineString\' THEN
+                            CASE WHEN ST_LineLocatePoint(m.geom, a.geom) > ST_LineLocatePoint(m.geom, b.geom)
+                                THEN ST_Reverse(m.geom)
+                                ELSE m.geom
+                            END
+                        -- Plusieurs morceaux : ordonnés par distance croissante à A
+                        WHEN ST_GeometryType(m.geom) = \'ST_MultiLineString\' THEN (
+                            SELECT ST_Collect(op.geom ORDER BY
+                                ST_Distance(ST_StartPoint(op.geom)::geography, a.geom::geography),
+                                ST_Distance(ST_EndPoint(op.geom)::geography, a.geom::geography),
+                                op.path
+                            )
+                            FROM oriented_pieces op
+                        )
+                        -- Géométrie dégénérée (points) : inchangée
+                        ELSE m.geom
+                    END AS geom
+                    FROM merged_section m, a, b
                 )
-                SELECT CASE WHEN EXISTS (SELECT 1 FROM same_host_section)
-                    THEN ST_AsGeoJSON(f_ST_NormalizeGeometryCollection((SELECT geom FROM same_host_section)))
-                    ELSE ST_AsGeoJSON(f_ST_NormalizeGeometryCollection((SELECT ST_Collect(geom) FROM all_sections)))
-                END AS geom
+                SELECT ST_AsGeoJSON(f_ST_NormalizeGeometryCollection((SELECT geom FROM oriented_section))) AS geom
                 ',
             [
                 'geom' => $lineGeometry,

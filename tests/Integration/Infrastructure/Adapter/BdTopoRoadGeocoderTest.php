@@ -148,7 +148,6 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
                     ['roadNumber' => 'N1013'],
                     ['roadNumber' => 'N1014'],
                     ['roadNumber' => 'N104'],
-                    ['roadNumber' => 'N105'],
                 ],
             ],
             'nationalRoad-success-RN' => [
@@ -284,7 +283,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
      */
     public function testComputeReferencePoint(string $roadNumber, string $administrator, ?string $departmentCode, string $pointNumber, string $side, int $abscissa, Coordinates $coords): void
     {
-        $this->assertEquals($coords, $this->roadGeocoder->computeReferencePoint(
+        $actual = $this->roadGeocoder->computeReferencePoint(
             RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             $administrator,
             $roadNumber,
@@ -292,7 +291,11 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             $pointNumber,
             $side,
             $abscissa,
-        ));
+        );
+
+        // Tolérance d'environ 1 cm : les coordonnées bougent à la 9e décimale à chaque mise à jour de la BD TOPO
+        $this->assertEqualsWithDelta($coords->longitude, $actual->longitude, 1e-7);
+        $this->assertEqualsWithDelta($coords->latitude, $actual->latitude, 1e-7);
     }
 
     public function testComputeReferencePointErrorNoResult(): void

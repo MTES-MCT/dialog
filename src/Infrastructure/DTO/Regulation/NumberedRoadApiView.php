@@ -17,6 +17,7 @@ final readonly class NumberedRoadApiView
         public ?string $toPointNumber,
         public ?int $toAbscissa,
         public ?string $toSide,
+        public ?string $direction,
     ) {
     }
 
@@ -31,6 +32,7 @@ final readonly class NumberedRoadApiView
             toPointNumber: $view->toPointNumber,
             toAbscissa: $view->toAbscissa,
             toSide: $view->toSide,
+            direction: $view->direction,
         );
     }
 }
