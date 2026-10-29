@@ -10,6 +10,7 @@ final readonly class DatexValidityConditionView
         public \DateTimeInterface $overallStartTime,
         public ?\DateTimeInterface $overallEndTime,
         public array $validPeriods,
+        public bool $isPublicHolidaysExcluded = false,
     ) {
     }
 }

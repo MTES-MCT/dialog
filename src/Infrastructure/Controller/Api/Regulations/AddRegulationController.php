@@ -86,6 +86,7 @@ final class AddRegulationController
                                         new OA\Property(property: 'endTime', type: 'string', format: 'date-time', nullable: true, description: 'Obligatoire si isPermanent = false'),
                                         new OA\Property(property: 'recurrenceType', type: 'string', enum: ['everyDay', 'certainDays']),
                                         new OA\Property(property: 'isPermanent', type: 'boolean', nullable: true),
+                                        new OA\Property(property: 'isPublicHolidaysExcluded', type: 'boolean', nullable: true, description: 'Exclut les jours fériés de la période (par défaut : false)'),
                                         new OA\Property(
                                             property: 'dailyRange',
                                             type: 'object',

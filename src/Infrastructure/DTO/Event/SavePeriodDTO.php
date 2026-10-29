@@ -24,6 +24,7 @@ final class SavePeriodDTO
     #[Map(target: 'recurrenceType', transform: [EnumTransformers::class, 'toString'])]
     public ?PeriodRecurrenceTypeEnum $recurrenceType = null;
     public ?bool $isPermanent = false;
+    public ?bool $isPublicHolidaysExcluded = false;
     /** @var SaveTimeSlotDTO[]|null */
     public ?array $timeSlots = [];
     public ?SaveDailyRangeDTO $dailyRange = null;

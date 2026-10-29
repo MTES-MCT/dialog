@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\NumberedRoadLabelMaker;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQueryHandler;
 use App\Application\Regulation\View\RegulationCsvRowView;
@@ -60,6 +61,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
             $this->storage,
             $this->dateUtils,
             new NumberedRoadLabelMaker($this->translator),
+            new PeriodPublicHolidaysProvider($this->dateUtils, 'Europe/Paris'),
         );
     }
 

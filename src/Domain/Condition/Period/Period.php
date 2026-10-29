@@ -19,6 +19,7 @@ class Period
         private ?\DateTimeInterface $endDateTime,
         private ?string $recurrenceType,
         private ?DailyRange $dailyRange = null,
+        private bool $isPublicHolidaysExcluded = false,
     ) {
         $this->timeSlots = new ArrayCollection();
     }
@@ -41,6 +42,11 @@ class Period
     public function getRecurrenceType(): ?string
     {
         return $this->recurrenceType;
+    }
+
+    public function isPublicHolidaysExcluded(): bool
+    {
+        return $this->isPublicHolidaysExcluded;
     }
 
     public function getMeasure(): Measure
@@ -85,7 +91,9 @@ class Period
         \DateTimeInterface $startDateTime,
         string $recurrenceType,
         ?\DateTimeInterface $endDateTime,
+        bool $isPublicHolidaysExcluded = false,
     ): void {
+        $this->isPublicHolidaysExcluded = $isPublicHolidaysExcluded;
         $this->startDateTime = $startDateTime;
         $this->endDateTime = $endDateTime;
         $this->recurrenceType = $recurrenceType;

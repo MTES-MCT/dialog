@@ -70,6 +70,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
   - `endTime` (string, date-time ISO, nullable) — requis si `isPermanent = false` ; à omettre si période permanente
   - `recurrenceType` (string) — enum: `everyDay` | `certainDays` — **obligatoire**
   - `isPermanent` (boolean, nullable) — **à mettre à `true` dans chaque période** pour un arrêté permanent (sans date de fin) ; si absent ou `false`, `endDate` et `endTime` sont requis
+  - `isPublicHolidaysExcluded` (boolean, nullable, défaut `false`) — exception « sauf jours fériés » : la période ne s'applique pas les jours fériés (jours fériés nationaux, plus le Vendredi saint et le 26 décembre pour les organisations de Moselle, du Bas-Rhin et du Haut-Rhin)
   - `dailyRange` (object, nullable)
     - `applicableDays` (string[], nullable) — enum: `monday` | `tuesday` | `wednesday` | `thursday` | `friday` | `saturday` | `sunday`
   - `timeSlots` (array<object>, nullable)
@@ -684,6 +685,8 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includePerman
 - Le flux suit le standard DATEX II (schémas disponibles dans `docs/spec/datex2/`).
 - Le document XML contient l’ensemble des arrêtés publiés, prêts à être réutilisés.
 
+- Une période « sauf jours fériés » est exprimée par une `com:exceptionPeriod` contenant un `com:recurringSpecialDay` de type `publicHoliday`.
+
 #### Véhicules concernés et dérogations
 
 Chaque `trafficRegulation` porte une `condition` de type `ConditionSet` dont les sous-ensembles sont reliés par un `and` : périodes, localisations, puis le cas échéant véhicules concernés et dérogations.
@@ -768,6 +771,8 @@ Sans aucun filtre, l'export porte sur **toute la base publiée** (tous statuts c
 | `type_restriction` | Type de restriction (`alternateRoad`, `noOvertaking`, `noEntry`, `speedLimitation`, `parkingProhibited`). |
 | `types_vehicules` | Types de véhicules concernés par la restriction (vide si tous les véhicules). |
 | `exceptions` | Types de véhicules exemptés de la restriction. |
+| `sauf_jours_feries` | `oui` si au moins une période de la mesure exclut les jours fériés, `non` sinon. |
+| `jours_feries_exclus` | Jours fériés exclus (`AAAA-MM-JJ`, séparés par des virgules), parmi les jours d'application des périodes de la mesure. Pour une période sans date de fin, limités aux 12 prochains mois. |
 | `emprise_uuid` | UUID de l'emprise. |
 | `emprise_type` | Type d'emprise (voie nommée, route numérotée, ville entière, zone…). |
 | `emprise_libelle` | Libellé lisible de l'emprise. |
@@ -816,6 +821,7 @@ Chaque incident identifie l'organisation émettrice de l'arrêté dans l'éléme
 
 #### Limitations
 
+- Le format CIFS ne permettant pas d'exprimer d'exceptions, une période « sauf jours fériés » est découpée en plusieurs incidents excluant chacun des jours fériés à venir. Le premier incident conserve l'identifiant habituel, les suivants sont suffixés par leur date de début (`:AAAAMMJJ`).
 - En raison des limites du format propriétaire CIFS (Waze), seules les interdictions de circulation temporaires s'appliquant à tous les véhicules sont exposées. Les autres cas (ex. zone 30, restrictions poids lourds, permanentes, etc.) ne sont pas inclus.
 
 ### Géométries des organisations (statistiques)

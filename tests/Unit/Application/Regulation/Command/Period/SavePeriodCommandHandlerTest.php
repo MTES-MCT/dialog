@@ -80,6 +80,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
                         startDateTime: $mergedStartDateTime,
                         endDateTime: $mergedEndDateTime,
                         recurrenceType: PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value,
+                        isPublicHolidaysExcluded: true,
                     ),
                 ),
             )
@@ -124,6 +125,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $command->dailyRange = $dailyRangeCommand;
         $command->timeSlots = [$timeSlotCommand];
+        $command->isPublicHolidaysExcluded = true;
         $result = $handler($command);
 
         $this->assertSame($createdPeriod, $result);
@@ -256,7 +258,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $period
             ->expects(self::once())
             ->method('update')
-            ->with($mergedStartDateTime, PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value, $mergedEndDateTime);
+            ->with($mergedStartDateTime, PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value, $mergedEndDateTime, true);
 
         $period
             ->expects(self::exactly(3))
@@ -298,6 +300,7 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $command->endDate = $endDateTime;
         $command->startTime = $startTime;
         $command->endTime = $endTime;
+        $command->isPublicHolidaysExcluded = true;
         $command->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value;
         $command->dailyRange = $dailyRangeCommand;
         $command->timeSlots = [$timeSlotCommand1];

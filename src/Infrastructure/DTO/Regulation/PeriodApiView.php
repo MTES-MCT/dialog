@@ -11,6 +11,7 @@ final readonly class PeriodApiView
 {
     /**
      * @param TimeSlotApiView[] $timeSlots
+     * @param string[]          $excludedPublicHolidays Dates Y-m-d
      */
     public function __construct(
         public string $recurrenceType,
@@ -18,6 +19,8 @@ final readonly class PeriodApiView
         public ?\DateTimeInterface $endDateTime,
         public ?DailyRangeApiView $dailyRange,
         public array $timeSlots,
+        public bool $isPublicHolidaysExcluded,
+        public array $excludedPublicHolidays,
     ) {
     }
 
@@ -36,6 +39,11 @@ final readonly class PeriodApiView
             endDateTime: $view->endDateTime,
             dailyRange: $view->dailyRange ? DailyRangeApiView::fromView($view->dailyRange) : null,
             timeSlots: $timeSlots,
+            isPublicHolidaysExcluded: $view->isPublicHolidaysExcluded,
+            excludedPublicHolidays: array_map(
+                static fn (\DateTimeInterface $date): string => $date->format('Y-m-d'),
+                $view->excludedPublicHolidays,
+            ),
         );
     }
 }
