@@ -2395,7 +2395,7 @@
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.critairWithout">
                 <source>regulation.vehicle_set.type.critairWithout</source>
-                <target>sans vignette</target>
+                <target>non classé</target>
             </trans-unit>
             <trans-unit id="regulation.vehicle_set.type.critair0">
                 <source>regulation.vehicle_set.type.critair0</source>
