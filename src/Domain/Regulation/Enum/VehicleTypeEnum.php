@@ -10,7 +10,7 @@ enum VehicleTypeEnum: string
     // So it is not a 1:1 mapping with DATEX II's VehicleTypeEnum, although it shares the same name.
     case HEAVY_GOODS_VEHICLE = 'heavyGoodsVehicle'; // Vehicles with a total weight above 3,500 kg (vehicle and load)
     case DIMENSIONS = 'dimensions'; // CUSTOM: Vehicle characterized by its maximum dimensions
-    case COMMERCIAL = 'commercial'; // public transport.
+    case COMMERCIAL = 'commercial'; // Libellé « Transports en commun » : exposé en DATEX II avec vehicleType=bus.
     case PEDESTRIANS = 'pedestrians'; // Pedestrians.
     case BICYCLE = 'bicycle'; // Bicycle.
     case EMERGENCY_SERVICES = 'emergencyServices'; // A motor vehicle of category M intended for the transport of sick or injured people and having special equipment for such purpose.

@@ -684,6 +684,59 @@ curl -X GET 'https://dialog.beta.gouv.fr/api/regulations/datex.xml?includePerman
 - Le flux suit le standard DATEX II (schémas disponibles dans `docs/spec/datex2/`).
 - Le document XML contient l’ensemble des arrêtés publiés, prêts à être réutilisés.
 
+#### Véhicules concernés et dérogations
+
+Chaque `trafficRegulation` porte une `condition` de type `ConditionSet` dont les sous-ensembles sont reliés par un `and` : périodes, localisations, puis le cas échéant véhicules concernés et dérogations.
+
+- **Véhicules concernés** : un `ConditionSet` d'opérateur `or`, dont chaque condition a `negate=false`. La restriction s'applique dès que le véhicule correspond à l'une des conditions. L'ensemble est absent si la restriction vise tous les véhicules.
+- **Dérogations** : un `ConditionSet` d'opérateur `and`, dont chaque condition a `negate=true`. La restriction ne s'applique donc pas dès que le véhicule ou l'usager correspond à l'une des dérogations.
+
+Exemple pour « interdit aux poids lourds, sauf transports en commun et taxis » :
+
+```xml
+<conditions xsi:type="ConditionSet">
+    <operator>or</operator>
+    <conditions xsi:type="VehicleCondition">
+        <negate>false</negate>
+        <vehicleCharacteristics>
+            <com:vehicleType>heavyGoodsVehicle</com:vehicleType>
+        </vehicleCharacteristics>
+    </conditions>
+</conditions>
+<conditions xsi:type="ConditionSet">
+    <operator>and</operator>
+    <conditions xsi:type="VehicleCondition">
+        <negate>true</negate>
+        <vehicleCharacteristics>
+            <com:vehicleType>bus</com:vehicleType>
+        </vehicleCharacteristics>
+    </conditions>
+    <conditions xsi:type="VehicleCondition">
+        <negate>true</negate>
+        <vehicleCharacteristics>
+            <com:vehicleUsage>taxi</com:vehicleUsage>
+        </vehicleCharacteristics>
+    </conditions>
+</conditions>
+```
+
+Correspondance entre les dérogations DiaLog et DATEX II :
+
+| Dérogation DiaLog | Condition DATEX II |
+|---|---|
+| Transports en commun (`commercial`) | `VehicleCondition` — `vehicleType` = `bus` |
+| Vélos (`bicycle`) | `VehicleCondition` — `vehicleType` = `bicycle` |
+| Véhicules d'urgence (`emergencyServices`) | `VehicleCondition` — `vehicleUsage` = `emergencyServices` |
+| Véhicules de police (`police`) | `VehicleCondition` — `vehicleUsage` = `emergencyServices` (pas de valeur DATEX II dédiée ; une seule condition si les véhicules d'urgence sont aussi exemptés) |
+| Taxis / VTC (`taxi`) | `VehicleCondition` — `vehicleUsage` = `taxi` (pas de valeur DATEX II dédiée aux VTC) |
+| Covoiturage (`carSharing`) | `VehicleCondition` — `vehicleUsage` = `carSharing` |
+| Véhicules de livraisons (`cityLogistics`) | `VehicleCondition` — `vehicleUsage` = `cityLogistics` |
+| Véhicules de l'entreprise de travaux (`roadMaintenanceOrConstruction`) | `VehicleCondition` — `vehicleUsage` = `roadMaintenanceOrConstruction` |
+| Piétons (`pedestrians`) | `NonVehicularRoadUserCondition` — `nonVehicularRoadUser` = `pedestrians` |
+| Desserte locale (`desserteLocale`) | `AccessCondition` — `accessConditionType` = `destinationTraffic` |
+| Riverains (`localResident`) | `DriverCondition` — `driverCharacteristicsType` = `localResident` |
+| Autres (`other`) | `VehicleCondition` — texte libre dans l'extension `dx:otherVehicleType` |
+
 ### Export CSV des restrictions
 
 - Méthode: GET
