@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query\Measure;
 
+use App\Application\DateUtilsInterface;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\Query\Measure\GetMeasuresQuery;
 use App\Application\Regulation\Query\Measure\GetMeasuresQueryHandler;
 use App\Application\Regulation\View\DailyRangeView;
@@ -290,7 +292,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->with('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf')
             ->willReturn([$measure]);
 
-        $handler = new GetMeasuresQueryHandler($measureRepository);
+        $handler = new GetMeasuresQueryHandler($measureRepository, new PeriodPublicHolidaysProvider($this->createMock(DateUtilsInterface::class), 'Europe/Paris'));
         $summary = $handler(new GetMeasuresQuery('3d1c6ec7-28f5-4b6b-be71-b0920e85b4bf'));
 
         $this->assertEquals(

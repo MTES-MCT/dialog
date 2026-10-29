@@ -8,6 +8,7 @@ use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\NumberedRoadLabelMaker;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\Query\GetCifsIncidentsQuery;
 use App\Application\Regulation\Query\GetCifsIncidentsQueryHandler;
 use App\Application\Regulation\View\CifsIncidentView;
@@ -34,6 +35,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
     private $dateUtils;
     private $translator;
     private $numberedRoadLabelMaker;
+    private $publicHolidaysProvider;
 
     protected function setUp(): void
     {
@@ -42,6 +44,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->numberedRoadLabelMaker = new NumberedRoadLabelMaker($this->translator);
+        $this->publicHolidaysProvider = new PeriodPublicHolidaysProvider($this->dateUtils, 'Europe/Paris');
     }
 
     public function testGetAllEmpty(): void
@@ -51,7 +54,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('findRegulationOrdersForCifsIncidentFormat')
             ->willReturn([]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker, $this->publicHolidaysProvider);
         $regulationOrders = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $regulationOrders);
@@ -698,7 +701,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 $uuid2 => ['uuid' => $uuid2, 'overallStartDate' => $startDate2, 'overallEndDate' => $endDate2],
             ]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker, $this->publicHolidaysProvider);
         $incidents = $handler(new GetCifsIncidentsQuery());
         $this->assertEquals(
             [$incident1, $incident1bis, $incident3, $incident4, $incident5, $incident6, $incident7],
@@ -720,6 +723,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             $this->dateUtils,
             $this->translator,
             $this->numberedRoadLabelMaker,
+            $this->publicHolidaysProvider,
             new CifsFilterSet(
                 allowedSources: ['my_source'],
                 excludedIdentifiers: ['identifier1'],
@@ -730,5 +734,77 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals([], $incidents);
+    }
+
+    public function testSplitsIncidentAroundPublicHolidays(): void
+    {
+        $tz = new \DateTimeZone('Europe/Paris');
+        $periodId = '0661e7da-0639-7e7a-8000-153b4c23b48b';
+        $uuid = '06716514-0a0d-7bde-8000-f23df39a6693';
+
+        $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2026-10-29 10:00:00', $tz));
+        $this->translator->method('trans')->willReturn('Interdiction d\'accès');
+
+        $organization = $this->createMock(Organization::class);
+        $organization->method('getCode')->willReturn('82121');
+        $organization->method('getName')->willReturn('Commune de Montauban');
+        $organization->method('getDepartmentCode')->willReturn('82');
+
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $regulationOrderRecord->method('getUuid')->willReturn($uuid);
+        $regulationOrderRecord->method('getCreatedAt')->willReturn(new \DateTimeImmutable('2026-10-01 00:00:00'));
+        $regulationOrderRecord->method('getOrganization')->willReturn($organization);
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder->method('getIdentifier')->willReturn('2026T1');
+        $regulationOrder->method('getRegulationOrderRecord')->willReturn($regulationOrderRecord);
+        $regulationOrderRecord->method('getRegulationOrder')->willReturn($regulationOrder);
+
+        $measure = $this->createMock(Measure::class);
+        $measure->method('getType')->willReturn(MeasureTypeEnum::NO_ENTRY->value);
+        $measure->method('getRegulationOrder')->willReturn($regulationOrder);
+        $regulationOrder->method('getMeasures')->willReturn([$measure]);
+
+        $period = $this->createMock(Period::class);
+        $period->method('getUuid')->willReturn($periodId);
+        $period->method('getMeasure')->willReturn($measure);
+        $period->method('isPublicHolidaysExcluded')->willReturn(true);
+        $period->method('getStartDateTime')->willReturn(new \DateTimeImmutable('2026-10-26 00:00:00', $tz));
+        $period->method('getEndDateTime')->willReturn(new \DateTimeImmutable('2026-11-15 00:00:00', $tz));
+        $period->method('getTimeSlots')->willReturn([]);
+        $measure->method('getPeriods')->willReturn([$period]);
+
+        $location = $this->createMock(Location::class);
+        $location->method('getUuid')->willReturn('location-uuid');
+        $location->method('getCifsStreetLabel')->willReturn('Rue des Arts');
+        $location->method('getGeometry')->willReturn('geometry');
+        $measure->method('getLocations')->willReturn([$location]);
+
+        $this->polylineMaker->method('normalizeToLineStringGeoJSON')->willReturn('geometry');
+        $this->polylineMaker->method('getMergedPolyline')->willReturn('polyline');
+        $this->regulationOrderRecordRepository->method('findRegulationOrdersForCifsIncidentFormat')->willReturn([$regulationOrderRecord]);
+        $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([
+            $uuid => ['overallStartDate' => null, 'overallEndDate' => null],
+        ]);
+
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker, $this->publicHolidaysProvider);
+        $incidents = $handler(new GetCifsIncidentsQuery());
+
+        // November 1st and 11th are excluded
+        $this->assertSame(
+            [
+                ['2026T1:location-uuid:' . $periodId, '2026-10-26T00:00:00+01:00', '2026-11-01T00:00:00+01:00'],
+                ['2026T1:location-uuid:' . $periodId . ':20261102', '2026-11-02T00:00:00+01:00', '2026-11-11T00:00:00+01:00'],
+                ['2026T1:location-uuid:' . $periodId . ':20261112', '2026-11-12T00:00:00+01:00', '2026-11-15T00:00:00+01:00'],
+            ],
+            array_map(
+                fn (CifsIncidentView $incident) => [
+                    $incident->id,
+                    $incident->startTime->format(\DateTimeInterface::ATOM),
+                    $incident->endTime->format(\DateTimeInterface::ATOM),
+                ],
+                $incidents,
+            ),
+        );
     }
 }

@@ -40,6 +40,7 @@ final class PeriodsTransformer implements TransformCallableInterface
             $cmd = new SavePeriodCommand();
             $cmd->recurrenceType = $dto->recurrenceType?->value;
             $cmd->isPermanent = $dto->isPermanent;
+            $cmd->isPublicHolidaysExcluded = $dto->isPublicHolidaysExcluded ?? false;
             $cmd->startDate = DateTimeTransformers::fromIso($dto->startDate);
             $cmd->startTime = DateTimeTransformers::fromIso($dto->startTime);
             $cmd->endDate = DateTimeTransformers::fromIso($dto->endDate);
