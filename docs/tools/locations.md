@@ -9,7 +9,8 @@ Depuis octobre 2026, cette géométrie est **toujours orientée du point A (déb
 Le sens de circulation concerné par la mesure n'est **pas** porté par la géométrie mais par la colonne `direction` des tables `named_street` et `numbered_road` (`BOTH`, `A_TO_B`, `B_TO_A`). Ce sont les exports qui l'interprètent :
 
 - **API JSON** : le champ `direction` est exposé tel quel sur `namedStreet` et `numberedRoad`, relativement aux points A et B décrits dans la même réponse.
-- **CIFS (Waze)** : un incident `ONE_DIRECTION` porte son sens dans l'ordre des points de la polyligne. Pour une restriction `B_TO_A`, la polyligne est donc retournée à l'export.
+- **CIFS (Waze)** : un incident `ONE_DIRECTION` porte son sens dans l'ordre des points de la polyligne. Pour une restriction `B_TO_A`, la polyligne est donc retournée à l'export. Voies nommées et routes numérotées sont concernées.
+- **Export CSV** : les colonnes `emprise_debut`, `emprise_fin` et `sens_circulation` décrivent les points A et B et le sens relatif à ces points.
 
 Les voies entières n'ont pas de point A ni B : leur sens est forcé à `BOTH` par le formulaire et leur géométrie n'est pas orientée.
 

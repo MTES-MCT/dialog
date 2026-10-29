@@ -33,6 +33,24 @@ final class NumberedRoadLabelMaker
         return $label;
     }
 
+    /**
+     * Libellé du point de repère de début ($from = true) ou de fin, ex. « PR 10+50 (côté U) ».
+     */
+    public function makeReferencePoint(NumberedRoad $numberedRoad, bool $from): string
+    {
+        $pointNumber = $from ? $numberedRoad->getFromPointNumber() : $numberedRoad->getToPointNumber();
+
+        if (NumberedRoad::isPointNumberEmpty($pointNumber)) {
+            return '';
+        }
+
+        return $this->translator->trans('regulation.location.reference_point.single', [
+            '%pointNumber%' => $pointNumber,
+            '%abscissa%' => ($from ? $numberedRoad->getFromAbscissa() : $numberedRoad->getToAbscissa()) ?? 0,
+            '%side%' => $from ? $numberedRoad->getFromSide() : $numberedRoad->getToSide(),
+        ]);
+    }
+
     public function makeReferencePoints(NumberedRoad $numberedRoad): string
     {
         if (

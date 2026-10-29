@@ -147,9 +147,44 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         fclose($handle);
 
         $this->assertStringContainsString(
-            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;;;location-uuid;regulation.location.road.type.lane;Label;[]',
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;;;location-uuid;regulation.location.road.type.lane;Label;[];;;',
             $content,
         );
+    }
+
+    public function testWriteCsvOutputsPointsAndDirection(): void
+    {
+        $row = new RegulationCsvRowView(
+            regulationOrderUuid: 'ro-uuid',
+            title: 'Titre',
+            category: 'temporaryRegulation',
+            status: 'published',
+            startDate: null,
+            endDate: null,
+            organizationName: 'Org',
+            organizationSiret: '12345678901234',
+            linkPdf: '',
+            measureUuid: 'measure-uuid',
+            measureType: 'noEntry',
+            locationUuid: 'location-uuid',
+            locationType: 'lane',
+            locationLabel: 'Label',
+            geometry: '[]',
+            locationStart: 'n° 47',
+            locationEnd: 'n° 65',
+            direction: 'B_TO_A',
+        );
+
+        $handle = fopen('php://memory', 'r+');
+        $this->generator->writeCsv([$row], $handle);
+
+        rewind($handle);
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        $this->assertStringContainsString('emprise_libelle;geometrie;emprise_debut;emprise_fin;sens_circulation', $content);
+        // fputcsv entoure de guillemets les champs contenant une espace
+        $this->assertStringContainsString('Label;[];"n° 47";"n° 65";regulation.location.direction.B_TO_A', $content);
     }
 
     public function testGenerateWritesCsvToStorage(): void

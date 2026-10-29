@@ -51,6 +51,10 @@ final class GetRegulationsCsvController
             (localisation d'une mesure). Les colonnes exposent notamment l'UUID et le titre de l'arrêté,
             le lien vers le document source (PDF), ainsi que le type de restriction.
 
+            Pour une emprise délimitée par une section, les colonnes `emprise_debut` et `emprise_fin` décrivent
+            les points A et B (numéro ou voie transversale, point de repère), et `sens_circulation` indique le sens
+            concerné relativement à ces points : « Double sens », « Sens A vers B » ou « Sens B vers A ».
+
             ### Comportement par défaut
             Sans aucun filtre, l'export porte sur **toute la base publiée** (tous statuts confondus). Cet
             export complet est pré-généré et servi depuis un cache pour un téléchargement rapide.

@@ -20,6 +20,7 @@ final class NumberedRoadLabelMakerTest extends TestCase
             function (string $id, array $parameters = []): string {
                 $catalogue = [
                     'regulation.location.reference_point' => 'du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)',
+                    'regulation.location.reference_point.single' => 'PR %pointNumber%+%abscissa% (côté %side%)',
                 ];
 
                 return strtr($catalogue[$id] ?? $id, $parameters);
@@ -44,6 +45,28 @@ final class NumberedRoadLabelMakerTest extends TestCase
             'D66 (Lozère) du PR 10+50 (côté U) au PR 13+0 (côté U)',
             $this->labelMaker->make($numberedRoad),
         );
+    }
+
+    public function testMakeReferencePoint(): void
+    {
+        $numberedRoad = $this->createMock(NumberedRoad::class);
+        $numberedRoad->method('getFromPointNumber')->willReturn('10');
+        $numberedRoad->method('getFromAbscissa')->willReturn(50);
+        $numberedRoad->method('getFromSide')->willReturn('U');
+        $numberedRoad->method('getToPointNumber')->willReturn('13');
+        $numberedRoad->method('getToAbscissa')->willReturn(null);
+        $numberedRoad->method('getToSide')->willReturn('D');
+
+        $this->assertSame('PR 10+50 (côté U)', $this->labelMaker->makeReferencePoint($numberedRoad, from: true));
+        $this->assertSame('PR 13+0 (côté D)', $this->labelMaker->makeReferencePoint($numberedRoad, from: false));
+    }
+
+    public function testMakeReferencePointWithoutPointNumber(): void
+    {
+        $numberedRoad = $this->createMock(NumberedRoad::class);
+        $numberedRoad->method('getFromPointNumber')->willReturn(null);
+
+        $this->assertSame('', $this->labelMaker->makeReferencePoint($numberedRoad, from: true));
     }
 
     public function testMakeCoalescesNullAbscissaToZero(): void
