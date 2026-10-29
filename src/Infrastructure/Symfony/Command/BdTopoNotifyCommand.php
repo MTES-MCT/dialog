@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\Command;
 
-use App\Application\DateUtilsInterface;
 use App\Application\TchapInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -32,7 +31,6 @@ class BdTopoNotifyCommand extends Command
     public function __construct(
         private LoggerInterface $logger,
         private TchapInterface $tchap,
-        private DateUtilsInterface $dateUtils,
     ) {
         parent::__construct();
     }
@@ -94,9 +92,8 @@ class BdTopoNotifyCommand extends Command
         $title = '' !== $target
             ? \sprintf('Mise à jour BD TOPO %s', $target)
             : 'Mise à jour BD TOPO';
-        $generatedAt = 'Notification générée le ' . $this->dateUtils->getNow()->format('d/m/Y H:i') . '.';
 
-        $textLines = [$title, $generatedAt, '', $statusLine];
+        $textLines = [$title, '', $statusLine];
         $htmlItems = [\sprintf('<li>%s</li>', htmlspecialchars($statusLine, ENT_QUOTES))];
 
         if (null !== $millesimeDate) {
@@ -118,9 +115,8 @@ class BdTopoNotifyCommand extends Command
 
         $body = implode("\n", $textLines);
         $formattedBody = \sprintf(
-            '<h4>%s</h4><p>%s</p><ul>%s</ul>',
+            '<h4>%s</h4><ul>%s</ul>',
             htmlspecialchars($title, ENT_QUOTES),
-            htmlspecialchars($generatedAt, ENT_QUOTES),
             implode('', $htmlItems),
         );
 

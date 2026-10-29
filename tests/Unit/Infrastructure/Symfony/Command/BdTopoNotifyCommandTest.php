@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
-use App\Application\DateUtilsInterface;
 use App\Application\TchapInterface;
 use App\Infrastructure\Symfony\Command\BdTopoNotifyCommand;
 use PHPUnit\Framework\TestCase;
@@ -16,19 +15,16 @@ class BdTopoNotifyCommandTest extends TestCase
 {
     private $logger;
     private $tchap;
-    private $dateUtils;
 
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->tchap = $this->createMock(TchapInterface::class);
-        $this->dateUtils = $this->createMock(DateUtilsInterface::class);
-        $this->dateUtils->method('getNow')->willReturn(new \DateTimeImmutable('2025-01-02 03:04:00'));
     }
 
     private function execute(array $input): CommandTester
     {
-        $commandTester = new CommandTester(new BdTopoNotifyCommand($this->logger, $this->tchap, $this->dateUtils));
+        $commandTester = new CommandTester(new BdTopoNotifyCommand($this->logger, $this->tchap));
         $commandTester->execute($input);
 
         return $commandTester;
