@@ -451,6 +451,9 @@
                                 <com:loadType>hazardousMaterials</com:loadType>
                             </vehicleCharacteristics>
                         </conditions>
+                    </conditions>
+                    <conditions xsi:type="ConditionSet">
+                        <operator>and</operator>
                         <conditions
                             xsi:type="NonVehicularRoadUserCondition">
                             <negate>true</negate>
