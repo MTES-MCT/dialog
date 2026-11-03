@@ -101,6 +101,8 @@ final class RegulationExportCsvGeneratorTest extends TestCase
                     ['name' => 'weight', 'value' => 3.5],
                 ],
             ),
+            isPublicHolidaysExcluded: true,
+            excludedPublicHolidays: ['2025-11-01', '2025-11-11'],
         );
 
         $handle = fopen('php://memory', 'r+');
@@ -114,6 +116,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
             'regulation.measure.type.noEntry;'
             . '"regulation.vehicles.maxCharacteristics.weight, regulation.vehicle_set.type.hazardousMaterials, Mon texte libre";'
             . 'regulation.vehicle_set.type.emergencyServices;'
+            . 'oui;"2025-11-01, 2025-11-11";'
             . 'location-uuid',
             $content,
         );
@@ -147,7 +150,7 @@ final class RegulationExportCsvGeneratorTest extends TestCase
         fclose($handle);
 
         $this->assertStringContainsString(
-            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;;;location-uuid;regulation.location.road.type.lane;Label;[]',
+            'ro-uuid;Titre;regulation.category.temporaryRegulation;regulation.status_badge.published.text;;;Org;12345678901234;;measure-uuid;regulation.measure.type.noEntry;;;non;;location-uuid;regulation.location.road.type.lane;Label;[]',
             $content,
         );
     }

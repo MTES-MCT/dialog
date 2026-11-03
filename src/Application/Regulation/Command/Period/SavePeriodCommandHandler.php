@@ -73,6 +73,7 @@ final class SavePeriodCommandHandler
                 startDateTime: $command->startDate,
                 recurrenceType: $command->recurrenceType,
                 endDateTime: $command->endDate,
+                isPublicHolidaysExcluded: $command->isPublicHolidaysExcluded,
             );
 
             return $command->period;
@@ -85,6 +86,7 @@ final class SavePeriodCommandHandler
                 startDateTime: $command->startDate,
                 endDateTime: $command->endDate,
                 recurrenceType: $command->recurrenceType,
+                isPublicHolidaysExcluded: $command->isPublicHolidaysExcluded,
             ),
         );
 

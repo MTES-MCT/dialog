@@ -191,6 +191,14 @@
                                                             {% endfor %}
                                                         </com:validPeriod>
                                                     {% endfor %}
+                                                    {% if validityCondition.isPublicHolidaysExcluded %}
+                                                        <com:exceptionPeriod>
+                                                            <com:recurringSpecialDay>
+                                                                <com:intersectWithApplicableDays>true</com:intersectWithApplicableDays>
+                                                                <com:specialDayType>publicHoliday</com:specialDayType>
+                                                            </com:recurringSpecialDay>
+                                                        </com:exceptionPeriod>
+                                                    {% endif %}
                                                 </com:validityTimeSpecification>
                                             </validityByOrder>
                                         </conditions>

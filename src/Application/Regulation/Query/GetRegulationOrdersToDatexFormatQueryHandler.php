@@ -156,6 +156,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                         $overallStartTime,
                         $overallEndTime,
                         $validPeriods,
+                        $period->isPublicHolidaysExcluded(),
                     );
                 }
 

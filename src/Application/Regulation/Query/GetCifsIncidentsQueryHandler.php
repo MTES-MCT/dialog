@@ -8,6 +8,7 @@ use App\Application\Cifs\PolylineMakerInterface;
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\DTO\CifsFilterSet;
 use App\Application\Regulation\NumberedRoadLabelMaker;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\View\CifsIncidentView;
 use App\Domain\Condition\Period\Enum\ApplicableDayEnum;
 use App\Domain\Condition\Period\Period;
@@ -31,6 +32,7 @@ final class GetCifsIncidentsQueryHandler
         private DateUtilsInterface $dateUtils,
         private TranslatorInterface $translator,
         private NumberedRoadLabelMaker $numberedRoadLabelMaker,
+        private PeriodPublicHolidaysProvider $publicHolidaysProvider,
         private CifsFilterSet $cifsFilterSet = new CifsFilterSet(),
     ) {
     }
@@ -123,12 +125,9 @@ final class GetCifsIncidentsQueryHandler
                         $dayOrder = ['everyday', ...ApplicableDayEnum::getValues()];
                         uksort($schedule, fn ($day1, $day2) => array_search($day1, $dayOrder) - array_search($day2, $dayOrder));
 
-                        $incidentPeriods[] = [
-                            'id' => $period->getUuid(),
-                            'start' => $period->getStartDateTime(),
-                            'end' => $period->getEndDateTime(),
-                            'schedule' => $schedule,
-                        ];
+                        foreach ($this->splitAroundPublicHolidays($period) as $segment) {
+                            $incidentPeriods[] = [...$segment, 'schedule' => $schedule];
+                        }
                     }
                 } else {
                     $incidentPeriods[] = [
@@ -203,6 +202,46 @@ final class GetCifsIncidentsQueryHandler
         }
 
         return $incidents;
+    }
+
+    /**
+     * CIFS ne permet pas d'exprimer d'exceptions : la période est découpée
+     * en plusieurs incidents qui excluent les jours fériés à venir.
+     */
+    private function splitAroundPublicHolidays(Period $period): array
+    {
+        $start = $period->getStartDateTime();
+        $end = $period->getEndDateTime();
+        $now = $this->dateUtils->getNow();
+        $segments = [];
+        $cursor = $start;
+
+        foreach ($this->publicHolidaysProvider->getExcludedPublicHolidays($period) as $holidayStart) {
+            $holidayEnd = $holidayStart->modify('+1 day');
+
+            if ($holidayEnd <= $now) {
+                continue;
+            }
+
+            if ($holidayStart > $cursor) {
+                $segments[] = ['start' => $cursor, 'end' => $holidayStart];
+            }
+
+            $cursor = max($cursor, $holidayEnd);
+        }
+
+        if ($end === null || $cursor < $end) {
+            $segments[] = ['start' => $cursor, 'end' => $end];
+        }
+
+        // Le premier segment conserve l'identifiant de la période pour rester stable
+        foreach ($segments as $index => $segment) {
+            $segments[$index]['id'] = $index === 0
+                ? $period->getUuid()
+                : \sprintf('%s:%s', $period->getUuid(), $segment['start']->format('Ymd'));
+        }
+
+        return $segments;
     }
 
     private function getSubType(?string $regulationSubject, MeasureTypeEnum $measureType): ?string

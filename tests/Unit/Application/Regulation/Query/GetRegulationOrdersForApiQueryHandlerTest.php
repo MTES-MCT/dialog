@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForApiQueryHandler;
 use App\Application\Regulation\View\RegulationOrderForApiView;
@@ -41,6 +42,7 @@ final class GetRegulationOrdersForApiQueryHandlerTest extends TestCase
             $this->storageRepository,
             $this->storage,
             $this->dateUtils,
+            new PeriodPublicHolidaysProvider($this->dateUtils, 'Europe/Paris'),
         );
     }
 

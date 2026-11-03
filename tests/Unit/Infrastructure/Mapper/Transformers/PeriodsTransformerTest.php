@@ -31,6 +31,7 @@ final class PeriodsTransformerTest extends TestCase
         $cmd = $commands[0];
         self::assertSame(PeriodRecurrenceTypeEnum::EVERY_DAY->value, $cmd->recurrenceType);
         self::assertFalse($cmd->isPermanent);
+        self::assertFalse($cmd->isPublicHolidaysExcluded);
         self::assertInstanceOf(\DateTimeImmutable::class, $cmd->startDate);
         self::assertSame('2025-01-15', $cmd->startDate->format('Y-m-d'));
         self::assertInstanceOf(\DateTimeImmutable::class, $cmd->startTime);
@@ -46,6 +47,7 @@ final class PeriodsTransformerTest extends TestCase
         $dto = new SavePeriodDTO();
         $dto->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS;
         $dto->isPermanent = true;
+        $dto->isPublicHolidaysExcluded = true;
 
         $dailyRangeDto = new SaveDailyRangeDTO();
         $dailyRangeDto->recurrenceType = PeriodRecurrenceTypeEnum::CERTAIN_DAYS;
@@ -59,6 +61,7 @@ final class PeriodsTransformerTest extends TestCase
         self::assertNotNull($cmd->dailyRange);
         self::assertSame(PeriodRecurrenceTypeEnum::CERTAIN_DAYS->value, $cmd->dailyRange->recurrenceType);
         self::assertSame(['monday', 'tuesday', 'wednesday'], $cmd->dailyRange->applicableDays);
+        self::assertTrue($cmd->isPublicHolidaysExcluded);
     }
 
     public function testTransformsPeriodWithTimeSlots(): void
@@ -128,6 +131,7 @@ final class PeriodsTransformerTest extends TestCase
         $dto->endTime = null;
         $dto->recurrenceType = null;
         $dto->isPermanent = null;
+        $dto->isPublicHolidaysExcluded = null;
         $dto->dailyRange = null;
         $dto->timeSlots = null;
 
@@ -141,6 +145,7 @@ final class PeriodsTransformerTest extends TestCase
         self::assertNull($cmd->endTime);
         self::assertNull($cmd->recurrenceType);
         self::assertNull($cmd->isPermanent);
+        self::assertFalse($cmd->isPublicHolidaysExcluded);
         self::assertNull($cmd->dailyRange);
         self::assertEmpty($cmd->timeSlots);
     }
