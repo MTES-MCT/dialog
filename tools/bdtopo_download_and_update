@@ -501,6 +501,16 @@ def _redact_url(url: str) -> str:
     return urlobj._replace(netloc=f"{urlobj.username}:***@{host}").geturl()
 
 
+def _write_github_output(name: str, value: str) -> None:
+    """Expose a value as a step output when running in GitHub Actions (no-op otherwise)."""
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if not github_output:
+        return
+
+    with open(github_output, "a", encoding="utf-8") as f:
+        f.write(f"{name}={value}\n")
+
+
 def _manifest_key(prefix: str) -> str:
     """S3 key of the manifest describing the geopackages uploaded under `prefix`."""
     return f"{prefix.rstrip('/')}/manifest.json"
@@ -1047,6 +1057,9 @@ def _run_s3_import(
 ) -> int:
     """Download the geopackages of the requested tables from S3 (unless already on
     disk) and import them from the local directory (unless --skip-import)."""
+    # Lu par la notification Tchap de fin de pipeline (sortie du job prepare).
+    _write_github_output("millesime", manifest.get("millesime") or "")
+
     if args.skip_import:
         print("⏭ Import ignoré (--skip-import)")
         return 0
