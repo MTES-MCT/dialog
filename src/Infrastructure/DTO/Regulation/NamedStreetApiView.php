@@ -15,6 +15,7 @@ final readonly class NamedStreetApiView
         public ?string $fromRoadName,
         public ?string $toHouseNumber,
         public ?string $toRoadName,
+        public ?string $direction,
     ) {
     }
 
@@ -27,6 +28,7 @@ final readonly class NamedStreetApiView
             fromRoadName: $view->fromRoadName,
             toHouseNumber: $view->toHouseNumber,
             toRoadName: $view->toRoadName,
+            direction: $view->direction,
         );
     }
 }

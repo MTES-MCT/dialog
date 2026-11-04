@@ -361,6 +361,16 @@ final class GetRegulationController
                                                 new OA\Property(property: 'fromRoadName', type: 'string', nullable: true, description: 'Nom de la voie transversale marquant le début (alternative à `fromHouseNumber`).'),
                                                 new OA\Property(property: 'toHouseNumber', type: 'string', nullable: true, description: 'Numéro de fin.'),
                                                 new OA\Property(property: 'toRoadName', type: 'string', nullable: true, description: 'Nom de la voie transversale marquant la fin.'),
+                                                new OA\Property(
+                                                    property: 'direction',
+                                                    type: 'string',
+                                                    enum: ['BOTH', 'A_TO_B', 'B_TO_A'],
+                                                    nullable: true,
+                                                    description: 'Sens de circulation concerné, relativement au point de début A '
+                                                        . '(`fromHouseNumber` ou `fromRoadName`) et au point de fin B (`toHouseNumber` ou `toRoadName`) : '
+                                                        . '`BOTH` (les deux sens), `A_TO_B` (de A vers B uniquement) ou `B_TO_A` (de B vers A uniquement).',
+                                                    example: 'BOTH',
+                                                ),
                                             ],
                                         ),
                                         new OA\Property(
@@ -378,6 +388,16 @@ final class GetRegulationController
                                                 new OA\Property(property: 'toPointNumber', type: 'string', nullable: true, description: 'Point de repère (PR) de fin.'),
                                                 new OA\Property(property: 'toAbscissa', type: 'integer', nullable: true, description: 'Abscisse en mètres depuis le PR de fin.'),
                                                 new OA\Property(property: 'toSide', type: 'string', nullable: true, description: 'Côté du PR de fin.'),
+                                                new OA\Property(
+                                                    property: 'direction',
+                                                    type: 'string',
+                                                    enum: ['BOTH', 'A_TO_B', 'B_TO_A'],
+                                                    nullable: true,
+                                                    description: 'Sens de circulation concerné, relativement au PR de début A '
+                                                        . '(`fromPointNumber`) et au PR de fin B (`toPointNumber`) : '
+                                                        . '`BOTH` (les deux sens), `A_TO_B` (de A vers B uniquement) ou `B_TO_A` (de B vers A uniquement).',
+                                                    example: 'BOTH',
+                                                ),
                                             ],
                                         ),
                                         new OA\Property(

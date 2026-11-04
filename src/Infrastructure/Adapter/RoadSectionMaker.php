@@ -12,7 +12,6 @@ use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
-use App\Domain\Regulation\Enum\DirectionEnum;
 
 final class RoadSectionMaker implements RoadSectionMakerInterface
 {
@@ -55,11 +54,8 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
             throw new RoadGeocodingFailureException($roadType, previous: $e);
         }
 
-        // NOTE : Rien à faire pour le cas A vers B, on mettra le fait qu'une seule direction est concernée comme métadonnée dans les exports DATEX / CIFS / etc.
-        if ($direction === DirectionEnum::B_TO_A->value) {
-            [$fromCoords, $toCoords] = [$toCoords, $fromCoords];
-        }
-
+        // La géométrie est toujours calculée de A vers B, quel que soit le sens de circulation ($direction) :
+        // le sens reste une métadonnée que les exports (CIFS, DATEX, etc.) interprètent.
         try {
             return $this->lineSectionMaker->computeSection(
                 $fullRoadGeometry,

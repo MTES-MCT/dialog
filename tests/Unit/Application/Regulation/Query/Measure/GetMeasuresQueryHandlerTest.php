@@ -199,6 +199,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getToRoadName')
             ->willReturn(null);
+        $namedStreet
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn('A_TO_B');
 
         $location2 = $this->createMock(Location::class);
         $numberedRoad = $this->createMock(NumberedRoad::class);
@@ -246,6 +250,10 @@ final class GetMeasuresQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getToAbscissa')
             ->willReturn(0);
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn('BOTH');
 
         $storageArea = $this->createMock(StorageArea::class);
         $storageArea
@@ -331,6 +339,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                                 fromRoadName: null,
                                 toHouseNumber: '253',
                                 toRoadName: null,
+                                direction: 'A_TO_B',
                             ),
                             geometry: '{"type":"LineString","coordinates":[[1.3,44.0],[1.4,44.1]]}',
                         ),
@@ -346,6 +355,7 @@ final class GetMeasuresQueryHandlerTest extends TestCase
                                 toPointNumber: '28',
                                 toSide: 'D',
                                 toAbscissa: 0,
+                                direction: 'BOTH',
                             ),
                             storageArea: new StorageAreaView('Aire de stockage 1'),
                         ),

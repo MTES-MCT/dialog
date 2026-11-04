@@ -12,7 +12,6 @@ use App\Application\IntersectionGeocoderInterface;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\DirectionEnum;
 
 final class LaneSectionMaker implements LaneSectionMakerInterface
 {
@@ -59,11 +58,8 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
                     : $this->intersectionGeocoder->computeIntersection($roadBanId, $toRoadBanId);
             }
 
-            // NOTE : Rien à faire pour le cas A vers B, on mettra le fait qu'une seule direction est concernée comme métadonnée dans les exports DATEX / CIFS / etc.
-            if ($direction === DirectionEnum::B_TO_A->value) {
-                [$fromCoords, $toCoords] = [$toCoords, $fromCoords];
-            }
-
+            // La géométrie est toujours calculée de A vers B, quel que soit le sens de circulation ($direction) :
+            // le sens reste une métadonnée que les exports (CIFS, DATEX, etc.) interprètent.
             return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
         } catch (IntersectionGeocodingFailureException $exc) {
             throw $exc;

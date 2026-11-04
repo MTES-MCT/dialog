@@ -129,14 +129,15 @@ final class LineSectionMakerTest extends KernelTestCase
                     ],
                 ]),
             ],
+            // La section est orientée de A vers B même si la ligne source va dans l'autre sens
             'pointsInInverseOrderComparedToCoordinatesOrder' => [
                 'fromCoords' => Coordinates::fromLonLat(1, 2), // 3rd point of a (1st segment)
                 'toCoords' => Coordinates::fromLonLat(1, 1), // 1st point of a (1st segment)
                 'section' => json_encode([
                     'type' => 'LineString',
                     'coordinates' => [
-                        [1, 1],
                         [1, 2],
+                        [1, 1],
                     ],
                 ]),
             ],
@@ -157,8 +158,8 @@ final class LineSectionMakerTest extends KernelTestCase
                 'section' => json_encode([
                     'type' => 'LineString',
                     'coordinates' => [
-                        [7, 2],
                         [7, 1],
+                        [7, 2],
                     ],
                 ]),
                 'getTolerance' => fn ($bdtopo2025Connection) => 1.01 // Just above
@@ -206,6 +207,31 @@ final class LineSectionMakerTest extends KernelTestCase
                         [
                             [5, 2],
                             [7, 2],
+                        ],
+                    ],
+                ]),
+            ],
+            // Même tronçons que ci-dessus, A et B inversés : chaque morceau est retourné et ils sont ordonnés depuis A
+            'pointsDoNotMapToSameSegmentInverseOrder' => [
+                'fromCoords' => Coordinates::fromLonLat(7, 3), // Maps to c
+                'toCoords' => Coordinates::fromLonLat(1, 1), // Belongs to a
+                'section' => json_encode([
+                    'type' => 'MultiLineString',
+                    'coordinates' => [
+                        [
+                            [7, 2],
+                            [5, 2],
+                        ],
+                        [
+                            [5, 3],
+                            [5, 2],
+                        ],
+                        [
+                            [5, 2],
+                            [3, 2],
+                            [2, 2],
+                            [1, 2],
+                            [1, 1],
                         ],
                     ],
                 ]),

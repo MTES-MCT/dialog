@@ -159,9 +159,10 @@ final class GetCifsIncidentsQueryHandler
                         continue;
                     }
                     $direction = 'BOTH_DIRECTIONS';
+                    $namedStreetDirection = $location->getNamedStreet()?->getDirection();
 
-                    if ($location->getNamedStreet()) {
-                        $direction = DirectionEnum::toCifsDirection($location->getNamedStreet()->getDirection());
+                    if ($namedStreetDirection) {
+                        $direction = DirectionEnum::toCifsDirection($namedStreetDirection);
                     }
 
                     if ($location->getRawGeoJSON()) {
@@ -172,6 +173,12 @@ final class GetCifsIncidentsQueryHandler
                     $polyline = $this->polylineMaker->getMergedPolyline($geometry);
                     if (!$polyline) {
                         continue;
+                    }
+
+                    // La géométrie est stockée de A vers B. En CIFS, le sens d'un incident ONE_DIRECTION est donné
+                    // par l'ordre des points de la polyligne : pour une restriction de B vers A, on la retourne.
+                    if ($namedStreetDirection === DirectionEnum::B_TO_A->value) {
+                        $polyline = self::reversePolyline($polyline);
                     }
 
                     foreach ($incidentPeriods as $incidentPeriod) {
@@ -203,6 +210,16 @@ final class GetCifsIncidentsQueryHandler
         }
 
         return $incidents;
+    }
+
+    /**
+     * Inverse l'ordre des points d'une polyligne CIFS ("lat lon lat lon ...").
+     */
+    private static function reversePolyline(string $polyline): string
+    {
+        $points = array_chunk(explode(' ', $polyline), 2);
+
+        return implode(' ', array_merge(...array_reverse($points)));
     }
 
     private function getSubType(?string $regulationSubject, MeasureTypeEnum $measureType): ?string
