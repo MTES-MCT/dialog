@@ -62,10 +62,25 @@ class OrientLocationGeometriesCommand extends Command
                 'level' => 'ERROR',
                 'message' => 'geocoding failed',
                 'location_uuid' => $locationUuid,
-                'exc' => $excItem->getMessage(),
+                'exc' => self::describeException($excItem),
             ]));
         }
 
         return $isSuccess ? Command::SUCCESS : Command::FAILURE;
+    }
+
+    /**
+     * Les exceptions de géocodage de voie (LaneGeocodingFailureException…) n'ont souvent pas de message
+     * et enveloppent la cause réelle : on remonte le premier message non vide de la chaîne, sinon la classe.
+     */
+    private static function describeException(\Throwable $exc): string
+    {
+        for ($current = $exc; $current !== null; $current = $current->getPrevious()) {
+            if ($current->getMessage() !== '') {
+                return \sprintf('%s: %s', (new \ReflectionClass($current))->getShortName(), $current->getMessage());
+            }
+        }
+
+        return (new \ReflectionClass($exc))->getShortName();
     }
 }
