@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\Regulation\Command\Location\RecomputeOneWayLocationGeometriesCommand;
 use App\Application\Regulation\Command\Location\RecomputeOneWayLocationGeometriesCommandResult;
 use App\Infrastructure\Symfony\Command\OrientLocationGeometriesCommand;
@@ -90,8 +91,34 @@ final class OrientLocationGeometriesCommandTest extends TestCase
         $this->assertEquals([
             ['level' => 'ERROR', 'message' => 'some locations failed to be geocoded', 'dry_run' => false, 'num_locations' => 2, 'num_updated' => 1, 'num_unchanged' => 0],
             ['level' => 'DEBUG', 'message' => 'updated', 'location_uuid' => self::UUID1],
-            ['level' => 'ERROR', 'message' => 'geocoding failed', 'location_uuid' => self::UUID2, 'exc' => 'oops'],
+            ['level' => 'ERROR', 'message' => 'geocoding failed', 'location_uuid' => self::UUID2, 'exc' => 'GeocodingFailureException: oops'],
         ], $this->decodeLogs($commandTester));
+    }
+
+    public function testExecuteDescribesWrappedExceptionWithoutMessage(): void
+    {
+        $commandBus = $this->createMock(CommandBusInterface::class);
+        $commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->willReturn(new RecomputeOneWayLocationGeometriesCommandResult(
+                numLocations: 2,
+                updatedLocationUuids: [],
+                unchangedLocationUuids: [],
+                exceptions: [
+                    // Message vide, cause enveloppée : c'est la cause qui doit apparaître
+                    self::UUID1 => new LaneGeocodingFailureException(previous: new GeocodingFailureException('no intersection found')),
+                    // Aucun message dans la chaîne : la classe suffit
+                    self::UUID2 => new LaneGeocodingFailureException(),
+                ],
+            ));
+
+        $commandTester = new CommandTester(new OrientLocationGeometriesCommand($commandBus));
+        $this->assertSame(Command::FAILURE, $commandTester->execute([]));
+
+        $logs = $this->decodeLogs($commandTester);
+        $this->assertSame('GeocodingFailureException: no intersection found', $logs[1]['exc']);
+        $this->assertSame('LaneGeocodingFailureException', $logs[2]['exc']);
     }
 
     private function decodeLogs(CommandTester $commandTester): array
