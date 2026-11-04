@@ -293,7 +293,6 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             $abscissa,
         );
 
-        // Tolérance d'environ 1 cm : les coordonnées bougent à la 9e décimale à chaque mise à jour de la BD TOPO
         $this->assertEqualsWithDelta($coords->longitude, $actual->longitude, 1e-7);
         $this->assertEqualsWithDelta($coords->latitude, $actual->latitude, 1e-7);
     }
