@@ -209,9 +209,7 @@
                                                         <loc:roadName>{{ location.roadName }}</loc:roadName>
                                                     </loc:roadInformation>
                                                 {% elseif location.roadType == 'departmentalRoad' or location.roadType == 'nationalRoad' %}
-                                                    <loc:roadInformation>
-                                                        <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
-                                                    </loc:roadInformation>
+                                                    {# Le XSD impose locationDescription avant roadInformation #}
                                                     {% if location.referencePoints %}
                                                         <loc:locationDescription>
                                                             <com:values>
@@ -219,6 +217,9 @@
                                                             </com:values>
                                                         </loc:locationDescription>
                                                     {% endif %}
+                                                    <loc:roadInformation>
+                                                        <loc:roadNumber>{{ location.roadNumber }}</loc:roadNumber>
+                                                    </loc:roadInformation>
                                                 {% elseif location.roadType == 'rawGeoJSON' %}
                                                     <loc:locationDescription>
                                                         <com:values>
@@ -242,6 +243,9 @@
                                             <loc:_linearLocationExtension>
                                                 <loc:linearLocationExtended>
                                                     <dx:geoJsonGeometry>{{ location.geometry }}</dx:geoJsonGeometry>
+                                                    {% if location.direction %}
+                                                        <dx:directionRelativeOnLinearSection>{{ location.direction }}</dx:directionRelativeOnLinearSection>
+                                                    {% endif %}
                                                 </loc:linearLocationExtended>
                                             </loc:_linearLocationExtension>
                                         </locationByOrder>

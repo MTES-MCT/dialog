@@ -55,12 +55,13 @@ final class GetRegulationsControllerTest extends AbstractWebTestCase
             $content,
         );
 
-        // Je commente le temps de trouver une solution concernant l'execution random
-        /*$xml = new \DOMDocument();
-        $xml->loadXML($response->getContent(), \LIBXML_NOBLANKS);
+        // La validation XSD est déterministe, contrairement à la comparaison avec le fichier attendu ci-dessous
+        $xml = new \DOMDocument();
+        $xml->loadXML($content, \LIBXML_NOBLANKS);
         $this->assertTrue($xml->schemaValidate(self::$kernel->getProjectDir() . '/docs/spec/datex2/DATEXII_3_D2Payload.xsd'));
 
-        $this->assertXmlStringEqualsXmlFile(
+        // Je commente le temps de trouver une solution concernant l'execution random
+        /*$this->assertXmlStringEqualsXmlFile(
             __DIR__ . '/get-regulations-expected-result.xml',
             $response->getContent(),
         );*/

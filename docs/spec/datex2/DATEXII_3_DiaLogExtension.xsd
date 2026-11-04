@@ -14,11 +14,27 @@
     <xs:sequence>
       <xs:element name="geoJsonGeometry" type="xs:string" minOccurs="1" maxOccurs="1">
         <xs:annotation>
-          <xs:documentation>GeoJSON representation for the linear location.</xs:documentation>
+          <xs:documentation>GeoJSON representation for the linear location. Its vertices are ordered from point A (start) to point B (end) of the location.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="directionRelativeOnLinearSection" type="dx:LinearDirectionEnum" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Direction of traffic concerned by the regulation, relative to the vertex order of geoJsonGeometry: "aligned" (from A to B only), "opposite" (from B to A only) or "both". Absent when the location has no direction (free-drawn line, zone, whole city).</xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="LinearDirectionEnum">
+    <xs:annotation>
+      <xs:documentation>Same vocabulary as loc:LinearDirectionEnum, restricted to the values DiaLog can produce.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="both" />
+      <xs:enumeration value="aligned" />
+      <xs:enumeration value="opposite" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="TrafficRegulationOrderExtended">
     <xs:annotation>

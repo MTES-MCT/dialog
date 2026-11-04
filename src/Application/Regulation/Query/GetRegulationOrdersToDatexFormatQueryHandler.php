@@ -10,6 +10,7 @@ use App\Application\Regulation\View\DatexTrafficRegulationView;
 use App\Application\Regulation\View\DatexValidityConditionView;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Application\Regulation\View\RegulationOrderDatexListItemView;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Measure;
@@ -109,17 +110,19 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                 /** @var Location $location */
                 foreach ($measure->getLocations() as $location) {
                     $roadType = $location->getRoadType();
+                    $namedStreet = $location->getNamedStreet();
                     $numberedRoad = $location->getNumberedRoad();
 
                     $locationConditions[] = new DatexLocationView(
                         roadType: $roadType,
-                        roadName: $location->getNamedStreet()?->getRoadName(),
+                        roadName: $namedStreet?->getRoadName(),
                         roadNumber: $numberedRoad?->getRoadNumber(),
                         rawGeoJSONLabel: $location->getRawGeoJSON()?->getLabel(),
                         geometry: $location->getGeometry(),
                         wholeCityLabel: $location->getCityLabel(),
                         zoneLabel: $location->getZone()?->getLabel(),
                         referencePoints: $numberedRoad ? ($this->numberedRoadLabelMaker->makeReferencePoints($numberedRoad) ?: null) : null,
+                        direction: DirectionEnum::toDatexDirection($namedStreet?->getDirection() ?? $numberedRoad?->getDirection()),
                     );
 
                     $storageArea = $location->getStorageArea();
