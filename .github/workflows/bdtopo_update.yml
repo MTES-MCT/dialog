@@ -65,6 +65,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tables: ${{ steps.tables.outputs.tables }}
+      # Millésime lu dans le manifest S3, affiché dans la notification Tchap.
+      millesime: ${{ steps.geopackages.outputs.millesime }}
     steps:
       - uses: actions/checkout@v4
 
@@ -95,6 +97,7 @@ jobs:
         run: echo "tables=$(jq -c '[.tables[].name]' tools/bdtopo_update.config.json)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare BD TOPO geopackages (download IGN + extract + upload S3)
+        id: geopackages
         run: >
           make ci_bdtopo_prepare
           BDTOPO_TARGET="${BDTOPO_TARGET}"
@@ -213,3 +216,63 @@ jobs:
           BIN_COMPOSER="composer"
           BIN_CONSOLE="php bin/console"
           BDTOPO_TARGET="${BDTOPO_TARGET}"
+
+  # Étape 4 : notifie le résultat global du pipeline sur Tchap, quelle que soit l'issue
+  # (succès, échec ou annulation). Le statut global et les étapes en échec sont calculés
+  # par app:bdtopo:notify à partir des résultats des jobs précédents.
+  notify:
+    needs: [prepare, import, finalize]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    env:
+      PREPARE_RESULT: ${{ needs.prepare.result }}
+      IMPORT_RESULT: ${{ needs.import.result }}
+      FINALIZE_RESULT: ${{ needs.finalize.result }}
+      SKIP_IMPORT: ${{ github.event.inputs.skip_import || 'false' }}
+      MILLESIME: ${{ needs.prepare.outputs.millesime }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        # Dépendance runtime de l'extension PHP GD.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxpm4
+
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: gd
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Init environment variables
+        run: |
+          echo "TCHAP_HOMESERVER_URL=${{ secrets.TCHAP_HOMESERVER_URL }}" >> .env.local
+          echo "TCHAP_ACCESS_TOKEN=${{ secrets.TCHAP_ACCESS_TOKEN }}" >> .env.local
+          echo "TCHAP_ROOM_ID=${{ secrets.TCHAP_ROOM_ID }}" >> .env.local
+
+      - name: Send Tchap notification
+        run: >
+          make ci_bdtopo_notify
+          BIN_COMPOSER="composer"
+          BIN_CONSOLE="php bin/console"
+          BDTOPO_TARGET="${BDTOPO_TARGET}"
+          PREPARE_RESULT="${PREPARE_RESULT}"
+          IMPORT_RESULT="${IMPORT_RESULT}"
+          FINALIZE_RESULT="${FINALIZE_RESULT}"
+          SKIP_IMPORT="${SKIP_IMPORT}"
+          MILLESIME="${MILLESIME}"
+          RUN_URL="${RUN_URL}"
