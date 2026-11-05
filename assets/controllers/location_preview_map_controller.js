@@ -500,8 +500,10 @@ export default class extends Controller {
             this.#fitBounds(geojson);
         });
 
-        this.#map.on('error', () => {
-            this.#hideMap();
+        // Une ressource du fond de carte en échec (tuile, sprite, police : réseau, bloqueur…)
+        // n'empêche pas d'afficher le tracé : masquer l'aperçu ferait disparaître toute la carte.
+        this.#map.on('error', (event) => {
+            console.warn('Aperçu carte :', event.error);
         });
     }
 
