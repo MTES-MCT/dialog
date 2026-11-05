@@ -50,6 +50,19 @@ final class GetRegulationControllerTest extends AbstractWebTestCase
         $this->assertArrayHasKey('vehicleSet', $measure);
         $this->assertArrayHasKey('periods', $measure);
         $this->assertArrayHasKey('locations', $measure);
+
+        // Le sens de circulation est exposé pour les voies nommées (fixture : Rue Eugène Berthoud, du 47 au 65, de A vers B)
+        $namedStreets = [];
+        foreach ($data['measures'] as $m) {
+            foreach ($m['locations'] as $location) {
+                if ($location['namedStreet'] !== null) {
+                    $namedStreets[$location['namedStreet']['roadName']] = $location['namedStreet'];
+                }
+            }
+        }
+        $this->assertSame('A_TO_B', $namedStreets['Rue Eugène Berthoud']['direction']);
+        $this->assertSame('47', $namedStreets['Rue Eugène Berthoud']['fromHouseNumber']);
+        $this->assertSame('BOTH', $namedStreets['Rue Adrien Lesesne']['direction']);
     }
 
     public function testGetReturns404ForAnotherOrganization(): void

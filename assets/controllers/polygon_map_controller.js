@@ -117,9 +117,10 @@ export default class extends Controller {
             }));
         });
 
-        this.map.on('error', () => {
-            this.hideLoading();
-            this.containerTarget.innerHTML = `<h3>Erreur de chargement de la carte</h3>`;
+        // Une ressource du fond de carte en échec (tuile, sprite, police : réseau, bloqueur…)
+        // n'empêche pas d'afficher le polygone : ne pas remplacer la carte par un message.
+        this.map.on('error', (event) => {
+            console.warn('Carte :', event.error);
         });
     }
 

@@ -74,4 +74,12 @@ interface LocationRepositoryInterface
     public function findAllWithoutGeometry(): array;
 
     public function findAllWithPolygonGeometry(): array;
+
+    /**
+     * Emprises à sens unique (A vers B ou B vers A) délimitées par une section : voies nommées avec un point
+     * de début renseigné, et routes numérotées. Les voies entières sont exclues, leur sens est forcé à BOTH.
+     *
+     * @return Location[]
+     */
+    public function findAllOneWaySections(): array;
 }

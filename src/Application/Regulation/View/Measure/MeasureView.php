@@ -62,6 +62,7 @@ readonly class MeasureView
                         fromRoadName: $namedStreet->getFromRoadName(),
                         toHouseNumber: $namedStreet->getToHouseNumber(),
                         toRoadName: $namedStreet->getToRoadName(),
+                        direction: $namedStreet->getDirection(),
                     ),
                     geometry: $location->getGeometry(),
                 );
@@ -80,6 +81,7 @@ readonly class MeasureView
                         toPointNumber: $numberedRoad->getToPointNumber(),
                         toAbscissa: $numberedRoad->getToAbscissa() ?? 0,
                         toSide: $numberedRoad->getToSide(),
+                        direction: $numberedRoad->getDirection(),
                     ),
                     storageArea: $storageArea ? new StorageAreaView($storageArea->getDescription()) : null,
                     geometry: $location->getGeometry(),

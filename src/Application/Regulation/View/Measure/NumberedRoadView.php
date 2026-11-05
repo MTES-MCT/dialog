@@ -17,6 +17,7 @@ final readonly class NumberedRoadView
         public ?string $toPointNumber,
         public ?int $toAbscissa,
         public ?string $toSide,
+        public ?string $direction = null,
     ) {
     }
 
