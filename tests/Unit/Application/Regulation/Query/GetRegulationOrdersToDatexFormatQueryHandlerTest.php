@@ -19,6 +19,7 @@ use App\Domain\Condition\VehicleSet;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Geography\GeoJSON;
 use App\Domain\Regulation\Enum\CritairEnum;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -172,6 +173,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                 Coordinates::fromLonLat(1.362275, 44.028996),
                 Coordinates::fromLonLat(1.35931, 44.025665),
             ]),
+            direction: 'aligned',
         );
 
         $location1 = $this->createMock(Location::class);
@@ -188,6 +190,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRoadName')
             ->willReturn($locationView1->roadName);
+        $namedStreet1
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::A_TO_B->value);
         $location1
             ->expects(self::once())
             ->method('getGeometry')
@@ -450,6 +456,7 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
                 Coordinates::fromLonLat(-1.935836, 47.347024),
                 Coordinates::fromLonLat(-1.930973, 47.347917),
             ]),
+            direction: 'both',
         );
         $winterMaintenanceLocation = $this->createMock(Location::class);
         $winterMaintenanceNationalRoad = $this->createMock(NumberedRoad::class);
@@ -469,6 +476,10 @@ final class GetRegulationOrdersToDatexFormatQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRoadNumber')
             ->willReturn('N176');
+        $winterMaintenanceNationalRoad
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::BOTH->value);
         $winterMaintenanceLocation
             ->expects(self::once())
             ->method('getGeometry')

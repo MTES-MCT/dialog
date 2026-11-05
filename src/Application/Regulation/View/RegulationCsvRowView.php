@@ -23,6 +23,10 @@ final readonly class RegulationCsvRowView
         public string $locationLabel,
         public string $geometry,
         public ?VehicleSetView $vehicleSet = null,
+        // Bornes de l'emprise (point A et point B) et sens de circulation concerné, relatif à ces bornes
+        public string $locationStart = '',
+        public string $locationEnd = '',
+        public ?string $direction = null,
     ) {
     }
 }

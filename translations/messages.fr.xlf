@@ -1048,6 +1048,14 @@
                 <source>regulation.location.reference_point</source>
                 <target>du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)</target>
             </trans-unit>
+            <trans-unit id="regulation.location.reference_point.single">
+                <source>regulation.location.reference_point.single</source>
+                <target>PR %pointNumber%+%abscissa% (côté %side%)</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.point.house_number">
+                <source>regulation.location.point.house_number</source>
+                <target>n° %houseNumber%</target>
+            </trans-unit>
             <trans-unit id="regulation.location.from_point.house_number">
                 <source>regulation.location.from_point.house_number</source>
                 <target>du n° %houseNumber%</target>

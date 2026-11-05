@@ -15,6 +15,8 @@ final class DatexLocationView
         public readonly ?string $wholeCityLabel = null,
         public readonly ?string $zoneLabel = null,
         public readonly ?string $referencePoints = null,
+        // both / aligned / opposite, relatif à l'ordre des sommets de $geometry (cf. DirectionEnum::toDatexDirection)
+        public readonly ?string $direction = null,
     ) {
     }
 }
