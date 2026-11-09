@@ -23,9 +23,14 @@ final class PeriodPublicHolidaysProvider
     /**
      * Jours fériés exclus de la période, en tenant compte de ses jours d'application.
      *
+     * @param bool $limitToUpcoming Pour une période sans date de fin, borne également le début du
+     *                              calcul à aujourd'hui (horizon « 12 prochains mois »). À passer à
+     *                              false lorsqu'un découpage déterministe, indépendant de la date de
+     *                              consultation, est requis (ex. identifiants CIFS stables).
+     *
      * @return \DateTimeImmutable[] Débuts des jours fériés (minuit, fuseau client), triés
      */
-    public function getExcludedPublicHolidays(Period $period): array
+    public function getExcludedPublicHolidays(Period $period, bool $limitToUpcoming = true): array
     {
         if (!$period->isPublicHolidaysExcluded()) {
             return [];
@@ -34,9 +39,19 @@ final class PeriodPublicHolidaysProvider
         $timezone = new \DateTimeZone($this->clientTimezone);
         $now = $this->dateUtils->getNow();
         $start = \DateTimeImmutable::createFromInterface($period->getStartDateTime() ?? $now)->setTimezone($timezone);
-        $end = $period->getEndDateTime()
-            ? \DateTimeImmutable::createFromInterface($period->getEndDateTime())->setTimezone($timezone)
-            : $now->setTimezone($timezone)->modify(self::OPEN_ENDED_HORIZON);
+
+        if ($period->getEndDateTime()) {
+            $end = \DateTimeImmutable::createFromInterface($period->getEndDateTime())->setTimezone($timezone);
+        } else {
+            // Période sans date de fin : on borne l'horizon à [aujourd'hui, aujourd'hui + 1 an] pour
+            // ne pas inclure tout l'historique des jours fériés déjà passés.
+            $nowInClientTz = $now->setTimezone($timezone);
+            $end = $nowInClientTz->modify(self::OPEN_ENDED_HORIZON);
+
+            if ($limitToUpcoming && $start < $nowInClientTz) {
+                $start = $nowInClientTz;
+            }
+        }
 
         $applicableDays = $period->getDailyRange()?->getApplicableDays() ?? [];
         $departmentCode = $period->getMeasure()->getRegulationOrder()->getRegulationOrderRecord()?->getOrganization()?->getDepartmentCode();

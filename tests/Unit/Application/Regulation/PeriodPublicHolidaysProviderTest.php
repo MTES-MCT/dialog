@@ -113,4 +113,31 @@ final class PeriodPublicHolidaysProviderTest extends TestCase
             '2027-08-15T00:00:00+02:00',
         ], $this->format($this->provider->getExcludedPublicHolidays($period)));
     }
+
+    public function testOpenEndedPeriodExcludesPastHolidays(): void
+    {
+        // Période permanente démarrée bien avant la consultation (2020) : seuls les jours fériés
+        // à venir dans les 12 prochains mois doivent être renvoyés, pas tout l'historique.
+        $period = $this->makePeriod(true, '2020-01-01T00:00:00+01:00', null, [], '75');
+
+        $dates = $this->format($this->provider->getExcludedPublicHolidays($period));
+
+        $this->assertNotEmpty($dates);
+        $this->assertSame('2026-11-01T00:00:00+01:00', $dates[0]);
+        foreach ($dates as $date) {
+            $this->assertGreaterThanOrEqual('2026-10-29', $date);
+            $this->assertLessThanOrEqual('2027-10-29', $date);
+        }
+    }
+
+    public function testOpenEndedPeriodKeepsPastHolidaysWhenNotLimitedToUpcoming(): void
+    {
+        // Avec limitToUpcoming=false (ex. découpage CIFS), le début n'est pas borné à aujourd'hui :
+        // la liste reste déterministe, indépendante de la date de consultation.
+        $period = $this->makePeriod(true, '2026-01-01T00:00:00+01:00', null, [], '75');
+
+        $dates = $this->format($this->provider->getExcludedPublicHolidays($period, false));
+
+        $this->assertSame('2026-01-01T00:00:00+01:00', $dates[0]);
+    }
 }

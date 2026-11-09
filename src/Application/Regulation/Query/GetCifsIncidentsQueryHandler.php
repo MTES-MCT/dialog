@@ -233,12 +233,11 @@ final class GetCifsIncidentsQueryHandler
         $segments = [];
         $cursor = $start;
 
-        foreach ($this->publicHolidaysProvider->getExcludedPublicHolidays($period) as $holidayStart) {
+        // Le découpage et les identifiants doivent être indépendants de la date de consultation
+        // pour respecter le contrat de stabilité des identifiants CIFS : on part de la liste
+        // complète et déterministe des jours fériés exclus (sans borner le début à aujourd'hui).
+        foreach ($this->publicHolidaysProvider->getExcludedPublicHolidays($period, limitToUpcoming: false) as $holidayStart) {
             $holidayEnd = $holidayStart->modify('+1 day');
-
-            if ($holidayEnd <= $now) {
-                continue;
-            }
 
             if ($holidayStart > $cursor) {
                 $segments[] = ['start' => $cursor, 'end' => $holidayStart];
@@ -258,7 +257,14 @@ final class GetCifsIncidentsQueryHandler
                 : \sprintf('%s:%s', $period->getUuid(), $segment['start']->format('Ymd'));
         }
 
-        return $segments;
+        // On ne publie pas les segments déjà expirés (jour férié écoulé ou période terminée),
+        // sans jamais recalculer le découpage ni les identifiants des segments encore actifs.
+        $segments = array_filter(
+            $segments,
+            static fn (array $segment): bool => $segment['end'] === null || $segment['end'] > $now,
+        );
+
+        return array_values($segments);
     }
 
     private function getSubType(?string $regulationSubject, MeasureTypeEnum $measureType): ?string
