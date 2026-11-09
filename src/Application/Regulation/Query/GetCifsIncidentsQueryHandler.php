@@ -170,10 +170,12 @@ final class GetCifsIncidentsQueryHandler
                         $geometry = $this->polylineMaker->attemptMergeLines($geometry);
                     }
 
-                    $polyline = $this->polylineMaker->getMergedPolyline($geometry);
-                    if (!$polyline) {
-                        continue;
-                    }
+                    // Une <polyline> CIFS décrit un seul tracé continu : les tronçons connectés d'une emprise sont
+                    // réunis dans une seule polyline (un incident par emprise, pas de doublon), mais des tronçons
+                    // disjoints donnent chacun leur incident, sinon Waze les relie par un trait qui n'existe pas.
+                    $polylines = $this->polylineMaker->getPolylines($geometry);
+                    $hasSeveralPolylines = \count($polylines) > 1;
+                    $measureType = MeasureTypeEnum::from($measure->getType());
 
                     // La géométrie est stockée de A vers B. En CIFS, le sens d'un incident ONE_DIRECTION est donné
                     // par l'ordre des points de la polyligne : pour une restriction de B vers A, on la retourne.
@@ -182,28 +184,34 @@ final class GetCifsIncidentsQueryHandler
                     }
 
                     foreach ($incidentPeriods as $incidentPeriod) {
-                        // L'ID d'un incident CIFS est opaque pour Waze, on le définit comme on veut.
-                        // Il doit être "unique dans le flux et rester stable pendant toute la vie de l'incident".
-                        // Un incident logique par (règlement, lieu, période) — pas de hash de la polyline pour éviter les doublons avec un MultiLineString.
-                        $id = $identifier . ':' . $locationId . ':' . $incidentPeriod['id'];
-                        $measureType = MeasureTypeEnum::from($measure->getType());
+                        foreach ($polylines as $index => $polyline) {
+                            // L'ID d'un incident CIFS est opaque pour Waze, on le définit comme on veut.
+                            // Il doit être "unique dans le flux et rester stable pendant toute la vie de l'incident".
+                            // Un incident logique par (règlement, lieu, période), suffixé par le rang de la polyline quand l'emprise
+                            // en compte plusieurs — pas de hash de la polyline, l'ID changerait à chaque retouche de la géométrie.
+                            $id = $identifier . ':' . $locationId . ':' . $incidentPeriod['id'];
 
-                        $incidents[] = new CifsIncidentView(
-                            id: $id,
-                            creationTime: $incidentCreationTime,
-                            type: $measureType->getCifsKey(),
-                            subType: $this->getSubType($regulationSubject, $measureType),
-                            description: $this->translator->trans('regulation.measure.type.' . $measureType->value),
-                            street: $street,
-                            direction: $direction,
-                            polyline: $polyline,
-                            startTime: $incidentPeriod['start'],
-                            endTime: $incidentPeriod['end'],
-                            sourceReference: $sourceReference,
-                            sourceName: $sourceName,
-                            regulationOrderRecordUuid: $uuid,
-                            schedule: $incidentPeriod['schedule'],
-                        );
+                            if ($hasSeveralPolylines) {
+                                $id .= ':' . ($index + 1);
+                            }
+
+                            $incidents[] = new CifsIncidentView(
+                                id: $id,
+                                creationTime: $incidentCreationTime,
+                                type: $measureType->getCifsKey(),
+                                subType: $this->getSubType($regulationSubject, $measureType),
+                                description: $this->translator->trans('regulation.measure.type.' . $measureType->value),
+                                street: $street,
+                                direction: $direction,
+                                polyline: $polyline,
+                                startTime: $incidentPeriod['start'],
+                                endTime: $incidentPeriod['end'],
+                                sourceReference: $sourceReference,
+                                sourceName: $sourceName,
+                                regulationOrderRecordUuid: $uuid,
+                                schedule: $incidentPeriod['schedule'],
+                            );
+                        }
                     }
                 }
             }

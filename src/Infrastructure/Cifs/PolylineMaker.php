@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Cifs;
 
+use App\Application\Cifs\PolylineBuilder;
 use App\Application\Cifs\PolylineMakerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -13,6 +14,7 @@ final class PolylineMaker implements PolylineMakerInterface
 
     public function __construct(
         private EntityManagerInterface $em,
+        private PolylineBuilder $polylineBuilder,
     ) {
     }
 
@@ -52,15 +54,16 @@ final class PolylineMaker implements PolylineMakerInterface
     }
 
     /**
-     * Retourne une seule polyline CIFS (lat lon lat lon ...) à partir d'une géométrie LineString ou MultiLineString.
+     * Retourne les polylines CIFS (lat lon lat lon ...) d'une géométrie LineString ou MultiLineString.
      * ST_Multi() normalise en MultiLineString, donc les deux types sont gérés. PostGIS assure la déduplication
-     * des segments identiques, ST_LineMerge chaîne les segments connectés, puis dump des points.
+     * des segments identiques et ST_LineMerge chaîne les segments connectés ; les tronçons obtenus sont ensuite
+     * regroupés et parcourus par le PolylineBuilder (une polyline par groupe de tronçons connectés).
      */
-    public function getMergedPolyline(string $geometry): string
+    public function getPolylines(string $geometry): array
     {
-        $row = $this->em
+        $rows = $this->em
             ->getConnection()
-            ->fetchAssociative(
+            ->fetchAllAssociative(
                 'WITH base AS (
                     SELECT ST_GeomFromGeoJSON(:geom)::geometry AS g
                 ),
@@ -81,27 +84,21 @@ final class PolylineMaker implements PolylineMakerInterface
                     SELECT ST_LineMerge(ST_Collect(geom)) AS geom FROM deduped
                 ),
                 dumped_merged AS (
-                    SELECT (ST_Dump(geom)).geom AS geom FROM merged WHERE geom IS NOT NULL
+                    SELECT d.path AS path, d.geom AS geom FROM merged, ST_Dump(merged.geom) AS d
                 )
-                SELECT COALESCE(
-                    array_to_string(
-                        array_agg(
-                            array_to_string(
-                                (SELECT array_agg(ST_Y(d.geom)::text || \' \' || ST_X(d.geom)::text ORDER BY (d.path))
-                                 FROM ST_DumpPoints(dm.geom) AS d),
-                                \' \'
-                            )
-                        ),
-                        \' \'
-                    ),
-                    \'\'
-                ) AS polyline
-                FROM dumped_merged dm',
+                SELECT json_agg(ST_Y(p.geom)::text || \' \' || ST_X(p.geom)::text ORDER BY p.path) AS points
+                FROM dumped_merged dm, ST_DumpPoints(dm.geom) AS p
+                GROUP BY dm.path
+                ORDER BY dm.path',
                 [self::GEOM_PARAM => $geometry],
             );
 
-        $polyline = $row['polyline'] ?? '';
+        $lines = [];
 
-        return \is_string($polyline) ? trim($polyline) : '';
+        foreach ($rows as $row) {
+            $lines[] = json_decode($row['points'], true);
+        }
+
+        return $this->polylineBuilder->build($lines);
     }
 }

@@ -15,5 +15,11 @@ interface PolylineMakerInterface
 
     public function attemptMergeLines(string $geometry): ?string;
 
-    public function getMergedPolyline(string $geometry): string;
+    /**
+     * Retourne les polylines CIFS ("lat lon lat lon ...") de la géométrie : une par groupe de tronçons connectés,
+     * les tronçons disjoints donnant chacun leur propre polyline.
+     *
+     * @return string[]
+     */
+    public function getPolylines(string $geometry): array;
 }
