@@ -872,7 +872,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                 ],
             ]);
 
-        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker);
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker, $this->publicHolidaysProvider);
         $incidents = $handler(new GetCifsIncidentsQuery());
 
         $this->assertEquals(
