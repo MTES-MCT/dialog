@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\LaneSectionMakerInterface;
+use App\Application\LineOrienterInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
@@ -20,6 +21,7 @@ final class GetLocationGeometryControllerTest extends TestCase
     private RoadGeocoderInterface&MockObject $roadGeocoder;
     private LaneSectionMakerInterface&MockObject $laneSectionMaker;
     private RoadSectionMakerInterface&MockObject $roadSectionMaker;
+    private LineOrienterInterface&MockObject $lineOrienter;
     private LoggerInterface&MockObject $logger;
     private GetLocationGeometryController $controller;
 
@@ -28,12 +30,14 @@ final class GetLocationGeometryControllerTest extends TestCase
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->laneSectionMaker = $this->createMock(LaneSectionMakerInterface::class);
         $this->roadSectionMaker = $this->createMock(RoadSectionMakerInterface::class);
+        $this->lineOrienter = $this->createMock(LineOrienterInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->controller = new GetLocationGeometryController(
             $this->roadGeocoder,
             $this->laneSectionMaker,
             $this->roadSectionMaker,
+            $this->lineOrienter,
             $this->logger,
         );
     }
@@ -59,10 +63,17 @@ final class GetLocationGeometryControllerTest extends TestCase
 
         $this->laneSectionMaker->expects(self::never())->method('computeSection');
 
+        // Voie entière : la géométrie complète est orientée de façon déterministe (A à l'ouest)
+        $this->lineOrienter
+            ->expects(self::once())
+            ->method('normalize')
+            ->with($geometry)
+            ->willReturn('normalized');
+
         $response = ($this->controller)(roadType: RoadTypeEnum::LANE, roadBanId: 'ban123');
 
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertSame($geometry, $response->getContent());
+        $this->assertSame('normalized', $response->getContent());
     }
 
     public function testLaneFullGeometryNoStartPoint(): void
@@ -76,6 +87,7 @@ final class GetLocationGeometryControllerTest extends TestCase
             ->willReturn($geometry);
 
         $this->laneSectionMaker->expects(self::never())->method('computeSection');
+        $this->lineOrienter->method('normalize')->willReturnArgument(0);
 
         $response = ($this->controller)(
             roadType: RoadTypeEnum::LANE,
@@ -97,6 +109,7 @@ final class GetLocationGeometryControllerTest extends TestCase
             ->willReturn($geometry);
 
         $this->laneSectionMaker->expects(self::never())->method('computeSection');
+        $this->lineOrienter->method('normalize')->willReturnArgument(0);
 
         $response = ($this->controller)(
             roadType: RoadTypeEnum::LANE,

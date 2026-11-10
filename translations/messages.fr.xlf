@@ -1100,6 +1100,10 @@
                 <source>regulation.location.raw_geojson.geometry</source>
                 <target>Géométrie GeoJSON</target>
             </trans-unit>
+            <trans-unit id="regulation.location.raw_geojson.direction.help">
+                <source>regulation.location.raw_geojson.direction.help</source>
+                <target>A est le premier point du tracé, B le dernier.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.raw_geojson.map.label">
                 <source>regulation.location.raw_geojson.map.label</source>
                 <target>Tracé du linéaire (voie)</target>

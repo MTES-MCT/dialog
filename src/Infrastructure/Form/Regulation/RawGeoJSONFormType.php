@@ -6,6 +6,7 @@ namespace App\Infrastructure\Form\Regulation;
 
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -40,6 +41,14 @@ final class RawGeoJSONFormType extends AbstractType
             ->add('roadType', HiddenType::class)
         ;
 
+        // Sens concerné : A est le premier point du tracé, B le dernier. Non proposé
+        // pour une exception, qui reste en double sens.
+        if ($options['with_direction']) {
+            $builder->add('direction', DirectionChoiceType::class, [
+                'help' => 'regulation.location.raw_geojson.direction.help',
+            ]);
+        }
+
         // Seulement au niveau localisation : ce form type est aussi embarqué dans le
         // sous-formulaire d'exception (WholeCityExceptionFormType), qui ne doit pas
         // proposer d'exceptions imbriquées.
@@ -68,9 +77,12 @@ final class RawGeoJSONFormType extends AbstractType
         }
 
         // Constraint "Valid" cannot be nested inside constraint When. The event listener is used to ensure that the roadType is added to the submitted data before the form is processed.
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options): void {
             $data = $event->getData();
             $data['roadType'] = $event->getForm()->getParent()->get('roadType')->getData();
+            if ($options['with_direction']) {
+                $data['direction'] = $data['direction'] ?? DirectionEnum::BOTH->value; // Select désactivé (autre type de voie sélectionné)
+            }
             $event->setData($data);
         });
     }
@@ -79,6 +91,7 @@ final class RawGeoJSONFormType extends AbstractType
     {
         $resolver->setDefaults([
             'with_exceptions' => false,
+            'with_direction' => false,
             'administrators' => [
                 RoadTypeEnum::DEPARTMENTAL_ROAD->value => [],
                 RoadTypeEnum::NATIONAL_ROAD->value => [],
@@ -86,6 +99,7 @@ final class RawGeoJSONFormType extends AbstractType
             'data_class' => SaveRawGeoJSONCommand::class,
         ]);
         $resolver->setAllowedTypes('with_exceptions', 'bool');
+        $resolver->setAllowedTypes('with_direction', 'bool');
         $resolver->setAllowedTypes('administrators', 'array');
     }
 }

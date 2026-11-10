@@ -1,0 +1,37 @@
+/* Marqueurs de sens (A, B et flèche) posés sur les cartes d'aperçu et de tracé libre.
+   Ils ne captent pas la souris : les sommets restent cliquables et déplaçables dessous. */
+.app-direction-marker {
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-direction-marker--endpoint {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: #000091;
+    color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.app-direction-marker--arrow {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #000091;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Pointe de flèche vers le haut (le nord) : MapLibre applique ensuite la rotation du cap */
+.app-direction-marker__arrow-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: #000091;
+}
