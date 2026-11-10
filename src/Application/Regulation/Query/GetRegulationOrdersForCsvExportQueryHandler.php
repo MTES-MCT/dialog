@@ -16,6 +16,7 @@ use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\Regulation\Repository\StorageRegulationOrderRepositoryInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetRegulationOrdersForCsvExportQueryHandler
 {
@@ -25,6 +26,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
         private StorageInterface $storage,
         private DateUtilsInterface $dateUtils,
         private NumberedRoadLabelMaker $numberedRoadLabelMaker,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -86,6 +88,9 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         locationLabel: $this->buildLocationLabel($location),
                         geometry: $location->getGeometry() ?? '',
                         vehicleSet: $vehicleSet,
+                        locationStart: $this->buildPointLabel($location, from: true),
+                        locationEnd: $this->buildPointLabel($location, from: false),
+                        direction: $location->getNamedStreet()?->getDirection() ?? $location->getNumberedRoad()?->getDirection(),
                     );
                 }
             }
@@ -152,6 +157,29 @@ final class GetRegulationOrdersForCsvExportQueryHandler
 
         if ($location->getRoadType() === RoadTypeEnum::WHOLE_CITY->value) {
             return $location->getCityLabel() ?? '';
+        }
+
+        return '';
+    }
+
+    /**
+     * Libellé du point A ($from = true) ou du point B d'une emprise délimitée par une section :
+     * numéro ou voie transversale pour une voie nommée, point de repère pour une route numérotée.
+     */
+    private function buildPointLabel(Location $location, bool $from): string
+    {
+        if ($namedStreet = $location->getNamedStreet()) {
+            $houseNumber = $from ? $namedStreet->getFromHouseNumber() : $namedStreet->getToHouseNumber();
+
+            if ($houseNumber) {
+                return $this->translator->trans('regulation.location.point.house_number', ['%houseNumber%' => $houseNumber]);
+            }
+
+            return ($from ? $namedStreet->getFromRoadName() : $namedStreet->getToRoadName()) ?? '';
+        }
+
+        if ($numberedRoad = $location->getNumberedRoad()) {
+            return $this->numberedRoadLabelMaker->makeReferencePoint($numberedRoad, $from);
         }
 
         return '';

@@ -38,6 +38,9 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
         'emprise_type',
         'emprise_libelle',
         'geometrie',
+        'emprise_debut',
+        'emprise_fin',
+        'sens_circulation',
     ];
 
     public function __construct(
@@ -120,6 +123,9 @@ final class RegulationExportCsvGenerator implements RegulationExportCsvGenerator
             $this->translator->trans('regulation.location.road.type.' . $row->locationType),
             $row->locationLabel,
             $row->geometry,
+            $row->locationStart,
+            $row->locationEnd,
+            $row->direction ? $this->translator->trans('regulation.location.direction.' . $row->direction) : '',
         ];
     }
 

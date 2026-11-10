@@ -49,6 +49,8 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
             function (string $id, array $parameters = []): string {
                 $catalogue = [
                     'regulation.location.reference_point' => 'du PR %fromPointNumber%+%fromAbscissa% (côté %fromSide%) au PR %toPointNumber%+%toAbscissa% (côté %toSide%)',
+                    'regulation.location.reference_point.single' => 'PR %pointNumber%+%abscissa% (côté %side%)',
+                    'regulation.location.point.house_number' => 'n° %houseNumber%',
                 ];
 
                 return strtr($catalogue[$id] ?? $id, $parameters);
@@ -60,6 +62,7 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
             $this->storage,
             $this->dateUtils,
             new NumberedRoadLabelMaker($this->translator),
+            $this->translator,
         );
     }
 
@@ -324,6 +327,56 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $rows = $this->handleSingleLocation($location);
 
         $this->assertSame('D66 (Lozère) du PR 10+50 (côté U) au PR 13+0 (côté U)', $rows[0]->locationLabel);
+        $this->assertSame('PR 10+50 (côté U)', $rows[0]->locationStart);
+        $this->assertSame('PR 13+0 (côté U)', $rows[0]->locationEnd);
+    }
+
+    public function testBuildsPointsAndDirectionFromNamedStreetWithHouseNumbers(): void
+    {
+        $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet->method('getRoadName')->willReturn('Rue Eugène Berthoud');
+        $namedStreet->method('getCityLabel')->willReturn('Saint-Ouen-sur-Seine');
+        $namedStreet->method('getFromHouseNumber')->willReturn('47');
+        $namedStreet->method('getToHouseNumber')->willReturn('65');
+        $namedStreet->method('getDirection')->willReturn('A_TO_B');
+
+        $location = $this->makeLocation();
+        $location->method('getNamedStreet')->willReturn($namedStreet);
+
+        $rows = $this->handleSingleLocation($location);
+
+        $this->assertSame('n° 47', $rows[0]->locationStart);
+        $this->assertSame('n° 65', $rows[0]->locationEnd);
+        $this->assertSame('A_TO_B', $rows[0]->direction);
+    }
+
+    public function testBuildsPointsFromNamedStreetWithCrossingRoads(): void
+    {
+        $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet->method('getRoadName')->willReturn('Avenue Michelet');
+        $namedStreet->method('getFromHouseNumber')->willReturn(null);
+        $namedStreet->method('getFromRoadName')->willReturn('Allée Isabeau');
+        $namedStreet->method('getToHouseNumber')->willReturn(null);
+        $namedStreet->method('getToRoadName')->willReturn('Avenue du Cimetière');
+        $namedStreet->method('getDirection')->willReturn('B_TO_A');
+
+        $location = $this->makeLocation();
+        $location->method('getNamedStreet')->willReturn($namedStreet);
+
+        $rows = $this->handleSingleLocation($location);
+
+        $this->assertSame('Allée Isabeau', $rows[0]->locationStart);
+        $this->assertSame('Avenue du Cimetière', $rows[0]->locationEnd);
+        $this->assertSame('B_TO_A', $rows[0]->direction);
+    }
+
+    public function testPointsAndDirectionAreEmptyWithoutRoad(): void
+    {
+        $rows = $this->handleSingleLocation($this->makeLocationWithoutSubEntities());
+
+        $this->assertSame('', $rows[0]->locationStart);
+        $this->assertSame('', $rows[0]->locationEnd);
+        $this->assertNull($rows[0]->direction);
     }
 
     public function testBuildsLabelFromZone(): void

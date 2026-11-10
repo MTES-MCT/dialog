@@ -20,6 +20,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationSubjectEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\NamedStreet;
+use App\Domain\Regulation\Location\NumberedRoad;
 use App\Domain\Regulation\Location\RawGeoJSON;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\RegulationOrder;
@@ -708,7 +709,53 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         );
     }
 
-    public function testGetAllReversesPolylineForBToADirection(): void
+    public function testGetAllReversesPolylineForBToANamedStreet(): void
+    {
+        $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::B_TO_A->value);
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getCifsStreetLabel')
+            ->willReturn('Rue des Arts');
+        $location
+            ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet);
+
+        $this->assertPolylineReversedForBToA($location, 'Rue des Arts');
+    }
+
+    public function testGetAllReversesPolylineForBToANumberedRoad(): void
+    {
+        $numberedRoad = $this->createMock(NumberedRoad::class);
+        $numberedRoad
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn(DirectionEnum::B_TO_A->value);
+        $numberedRoad->method('getRoadNumber')->willReturn('D110');
+        $numberedRoad->method('getAdministrator')->willReturn('Ardèche');
+        $numberedRoad->method('getFromPointNumber')->willReturn('1');
+        $numberedRoad->method('getToPointNumber')->willReturn('5');
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::never())
+            ->method('getCifsStreetLabel');
+        $location
+            ->expects(self::once())
+            ->method('getNumberedRoad')
+            ->willReturn($numberedRoad);
+
+        // Le libellé des PR passe par le traducteur, qui renvoie ici la clé telle quelle
+        $this->assertPolylineReversedForBToA($location, 'D110 (Ardèche) regulation.location.reference_point');
+    }
+
+    private function assertPolylineReversedForBToA(Location $location, string $expectedStreet): void
     {
         $geometry = '{"type":"LineString","coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}';
         $polyline = '44.028996 1.362275 44.025665 1.35931';
@@ -748,29 +795,14 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getSubject')
             ->willReturn(RegulationSubjectEnum::ROAD_MAINTENANCE->value);
 
-        $namedStreet = $this->createMock(NamedStreet::class);
-        $namedStreet
-            ->expects(self::once())
-            ->method('getDirection')
-            ->willReturn(DirectionEnum::B_TO_A->value);
-
-        $location = $this->createMock(Location::class);
         $location
             ->expects(self::once())
             ->method('getUuid')
             ->willReturn('02d5eb61-9ca3-4e67-aacd-726f124382d0');
         $location
             ->expects(self::once())
-            ->method('getCifsStreetLabel')
-            ->willReturn('Rue des Arts');
-        $location
-            ->expects(self::once())
             ->method('getGeometry')
             ->willReturn($geometry);
-        $location
-            ->expects(self::once())
-            ->method('getNamedStreet')
-            ->willReturn($namedStreet);
 
         $measure = $this->createMock(Measure::class);
         $measure
@@ -813,10 +845,9 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn(new \DateTimeImmutable('2023-11-07 00:00:00'));
 
         $this->translator
-            ->expects(self::once())
+            ->expects(self::atLeastOnce())
             ->method('trans')
-            ->with('regulation.measure.type.noEntry')
-            ->willReturn('Interdiction d\'accès');
+            ->willReturnCallback(fn (string $id) => $id === 'regulation.measure.type.noEntry' ? 'Interdiction d\'accès' : $id);
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
@@ -844,7 +875,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                     creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
                     type: 'ROAD_CLOSED',
                     description: 'Interdiction d\'accès',
-                    street: 'Rue des Arts',
+                    street: $expectedStreet,
                     direction: 'ONE_DIRECTION',
                     // La géométrie est stockée de A vers B : la polyligne est retournée pour une restriction de B vers A
                     polyline: '44.025665 1.35931 44.028996 1.362275',

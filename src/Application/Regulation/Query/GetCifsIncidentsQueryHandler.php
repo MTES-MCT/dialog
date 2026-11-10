@@ -159,10 +159,10 @@ final class GetCifsIncidentsQueryHandler
                         continue;
                     }
                     $direction = 'BOTH_DIRECTIONS';
-                    $namedStreetDirection = $location->getNamedStreet()?->getDirection();
+                    $roadDirection = $location->getNamedStreet()?->getDirection() ?? $numberedRoad?->getDirection();
 
-                    if ($namedStreetDirection) {
-                        $direction = DirectionEnum::toCifsDirection($namedStreetDirection);
+                    if ($roadDirection) {
+                        $direction = DirectionEnum::toCifsDirection($roadDirection);
                     }
 
                     if ($location->getRawGeoJSON()) {
@@ -177,7 +177,7 @@ final class GetCifsIncidentsQueryHandler
 
                     // La géométrie est stockée de A vers B. En CIFS, le sens d'un incident ONE_DIRECTION est donné
                     // par l'ordre des points de la polyligne : pour une restriction de B vers A, on la retourne.
-                    if ($namedStreetDirection === DirectionEnum::B_TO_A->value) {
+                    if ($roadDirection === DirectionEnum::B_TO_A->value) {
                         $polyline = self::reversePolyline($polyline);
                     }
 
