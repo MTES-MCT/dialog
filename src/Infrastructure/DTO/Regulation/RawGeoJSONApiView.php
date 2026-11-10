@@ -12,6 +12,7 @@ final readonly class RawGeoJSONApiView
         public string $label,
         /** @var WholeCityExceptionApiView[] */
         public array $exceptions = [],
+        public ?string $direction = null,
     ) {
     }
 
@@ -20,6 +21,7 @@ final readonly class RawGeoJSONApiView
         return new self(
             label: $view->label,
             exceptions: WholeCityExceptionApiView::fromViews($view->exceptions),
+            direction: $view->direction,
         );
     }
 }

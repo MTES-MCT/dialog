@@ -95,6 +95,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
     - `rawGeoJSON` (object, nullable) — utilisé avec `roadType = rawGeoJSON`
       - `label` (string, nullable)
       - `geometry` (string GeoJSON, nullable)
+      - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`, relatif au tracé : A est le premier point de la géométrie, B le dernier ; `BOTH` par défaut
       - `exceptions` (array<object>, nullable) — voir « Exceptions » ci-dessous
     - `zone` (object, nullable) — utilisé avec `roadType = zone`
       - `label` (string, nullable)
@@ -128,7 +129,7 @@ d'une exception) sont ignorées. Une exception incomplète est ignorée silencie
 - `measures[*].type` (MeasureTypeEnum): `alternateRoad`, `noEntry`, `speedLimitation`, `parkingProhibited`
 - `locations[*].roadType` (RoadTypeEnum): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`, `zone`, `wholeCity`
 - `exceptions[*].roadType` (RoadTypeEnum, sous-ensemble): `lane`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`, `zone`
-- `namedStreet.direction`, `departmentalRoad.direction`, `nationalRoad.direction` (DirectionEnum): `BOTH`, `A_TO_B`, `B_TO_A`
+- `namedStreet.direction`, `departmentalRoad.direction`, `nationalRoad.direction`, `rawGeoJSON.direction` (DirectionEnum): `BOTH`, `A_TO_B`, `B_TO_A`
 - `periods[*].recurrenceType`, `dailyRange.recurrenceType` (PeriodRecurrenceTypeEnum): `everyDay`, `certainDays`
 - `dailyRange.applicableDays` (ApplicableDayEnum): `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`
 - `vehicleSet.restrictedTypes` / `vehicleSet.exemptedTypes` (VehicleTypeEnum, sous-ensembles):

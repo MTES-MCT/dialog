@@ -159,13 +159,14 @@ final class GetCifsIncidentsQueryHandler
                         continue;
                     }
                     $direction = 'BOTH_DIRECTIONS';
-                    $roadDirection = $location->getNamedStreet()?->getDirection() ?? $numberedRoad?->getDirection();
+                    $rawGeoJSON = $location->getRawGeoJSON();
+                    $roadDirection = $location->getNamedStreet()?->getDirection() ?? $numberedRoad?->getDirection() ?? $rawGeoJSON?->getDirection();
 
                     if ($roadDirection) {
                         $direction = DirectionEnum::toCifsDirection($roadDirection);
                     }
 
-                    if ($location->getRawGeoJSON()) {
+                    if ($rawGeoJSON) {
                         // Simplify the geometry to a (MULTI)LINESTRING with deduplicated segments.
                         $geometry = $this->polylineMaker->attemptMergeLines($geometry);
                     }

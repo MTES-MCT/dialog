@@ -174,6 +174,9 @@ final class LocationsTransformer
         $r->roadType = $roadType;
         $r->label = $dto->label;
         $r->geometry = $dto->geometry;
+        if ($dto->direction) {
+            $r->direction = $dto->direction->value;
+        }
 
         return $r;
     }

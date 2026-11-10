@@ -93,6 +93,7 @@ readonly class MeasureView
                     rawGeoJSON: new RawGeoJSONView(
                         label: $rawGeoJSON->getLabel(),
                         exceptions: self::exceptionViews($location),
+                        direction: $rawGeoJSON->getDirection(),
                     ),
                     geometry: $location->getGeometry(),
                 );

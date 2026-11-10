@@ -7,7 +7,6 @@ namespace App\Infrastructure\Data\StorageArea;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
-use App\Domain\Regulation\Enum\DirectionEnum;
 use Doctrine\DBAL\Connection;
 
 class StorageAreaMigrationGenerator
@@ -102,7 +101,6 @@ class StorageAreaMigrationGenerator
                     $toPointNumber,
                     $toSide,
                     $toAbscissa,
-                    DirectionEnum::BOTH->value,
                 );
             } catch (GeocodingFailureException $exc) {
                 // On rencontre cette erreur pour environ la moitié des aires de stockage

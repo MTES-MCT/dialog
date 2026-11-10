@@ -179,6 +179,7 @@ final class AddRegulationController
                                                 new OA\Property(property: 'label', type: 'string', nullable: true),
                                                 new OA\Property(property: 'geometry', type: 'string', nullable: true),
                                                 new OA\Property(property: 'exceptions', type: 'array', nullable: true, description: 'Emprises exclues de la restriction (« Sauf... »), soustraites du tracé.', items: new OA\Items(ref: '#/components/schemas/WholeCityException')),
+                                                new OA\Property(property: 'direction', type: 'string', nullable: true, enum: ['BOTH', 'A_TO_B', 'B_TO_A'], description: 'Sens de circulation concerné, relativement au tracé : A est le premier point de la géométrie, B le dernier. `BOTH` par défaut.'),
                                             ],
                                         ),
                                         new OA\Property(

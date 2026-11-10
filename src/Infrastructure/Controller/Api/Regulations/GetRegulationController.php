@@ -410,6 +410,14 @@ final class GetRegulationController
                                             properties: [
                                                 new OA\Property(property: 'label', type: 'string', description: 'Libellé descriptif de la zone.'),
                                                 new OA\Property(property: 'exceptions', type: 'array', description: 'Emprises exclues de la restriction (« Sauf... »).', items: new OA\Items(ref: '#/components/schemas/WholeCityExceptionView')),
+                                                new OA\Property(
+                                                    property: 'direction',
+                                                    type: 'string',
+                                                    enum: ['BOTH', 'A_TO_B', 'B_TO_A'],
+                                                    description: 'Sens de circulation concerné, relativement au tracé : A est le premier point de la géométrie, B le dernier. '
+                                                        . '`BOTH` (les deux sens), `A_TO_B` ou `B_TO_A`.',
+                                                    example: 'BOTH',
+                                                ),
                                             ],
                                         ),
                                         new OA\Property(

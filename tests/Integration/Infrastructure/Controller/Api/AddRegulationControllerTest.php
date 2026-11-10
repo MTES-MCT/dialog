@@ -89,6 +89,54 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertArrayHasKey('uuid', $data);
     }
 
+    public function testAddRegulationWithOneWayRawGeoJSON(): void
+    {
+        $client = static::createClient();
+
+        $payload = [
+            'identifier' => 'F2025-trace-sens',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Sens unique sur un tracé libre',
+            'measures' => [[
+                'type' => 'noEntry',
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'startTime' => '2025-10-16T13:01:02.887Z',
+                    'endDate' => '2025-10-20T13:01:02.887Z',
+                    'endTime' => '2025-10-20T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                ]],
+                'locations' => [[
+                    'roadType' => 'rawGeoJSON',
+                    'rawGeoJSON' => [
+                        'label' => 'Rue des Lilas, du parking à la mairie',
+                        'geometry' => '{"type":"LineString","coordinates":[[2.3477,48.9053],[2.3485,48.9049],[2.3493,48.9046]]}',
+                        'direction' => 'B_TO_A',
+                    ],
+                ]],
+            ]],
+        ];
+
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_CLIENT_ID' => 'clientId',
+            'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+        ];
+
+        $client->request('POST', '/api/regulations', [], [], $headers, json_encode($payload));
+        $this->assertResponseStatusCodeSame(201);
+
+        // Le sens est restitué par l'API GET, et le tracé est conservé tel que dessiné (A = premier point)
+        $client->request('GET', '/api/regulations/F2025-trace-sens', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+        $location = json_decode($client->getResponse()->getContent(), true)['measures'][0]['locations'][0];
+        $this->assertSame('rawGeoJSON', $location['roadType']);
+        $this->assertSame('B_TO_A', $location['rawGeoJSON']['direction']);
+        $this->assertSame([2.3477, 48.9053], json_decode($location['geometry'], true)['coordinates'][0]);
+    }
+
     public function testAddRegulationTimeSlotRoundTripsInClientTimezone(): void
     {
         $client = static::createClient();

@@ -9,7 +9,6 @@ use App\Application\LaneSectionMakerInterface;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
-use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -42,6 +41,7 @@ final class GetLocationGeometryController
         #[MapQueryParameter] ?string $toRoadBanId = null,
         #[MapQueryParameter] ?string $roadName = null,
         #[MapQueryParameter] ?string $cityCode = null,
+        // Toujours envoyé par l'aperçu carte ; sans effet sur la géométrie, désormais orientée de A vers B
         #[MapQueryParameter] ?string $direction = null,
         #[MapQueryParameter] ?string $administrator = null,
         #[MapQueryParameter] ?string $roadNumber = null,
@@ -56,9 +56,9 @@ final class GetLocationGeometryController
     ): Response {
         try {
             $geometry = match ($roadType) {
-                RoadTypeEnum::LANE => $this->getNamedStreetGeometry($roadBanId, $fromHouseNumber, $toHouseNumber, $fromRoadBanId, $toRoadBanId, $roadName ?? '', $cityCode ?? '', $direction ?? DirectionEnum::BOTH->value),
+                RoadTypeEnum::LANE => $this->getNamedStreetGeometry($roadBanId, $fromHouseNumber, $toHouseNumber, $fromRoadBanId, $toRoadBanId, $roadName ?? '', $cityCode ?? ''),
                 RoadTypeEnum::DEPARTMENTAL_ROAD,
-                RoadTypeEnum::NATIONAL_ROAD => $this->getNumberedRoadGeometry($roadType, $administrator, $roadNumber, $fromPointNumber, $toPointNumber, $fromSide, $toSide, $fromAbscissa, $toAbscissa, $direction ?? DirectionEnum::BOTH->value),
+                RoadTypeEnum::NATIONAL_ROAD => $this->getNumberedRoadGeometry($roadType, $administrator, $roadNumber, $fromPointNumber, $toPointNumber, $fromSide, $toSide, $fromAbscissa, $toAbscissa),
                 RoadTypeEnum::WHOLE_CITY => $this->getWholeCityGeometry($cityCode ?? '', $excludedRoadBanIds),
                 RoadTypeEnum::ZONE => $this->getZoneGeometry($geometry, $excludedRoadBanIds),
                 default => throw new BadRequestHttpException(\sprintf('Unsupported roadType: %s', $roadType->value)),
@@ -74,7 +74,7 @@ final class GetLocationGeometryController
         return new JsonResponse($geometry, json: true);
     }
 
-    private function getNamedStreetGeometry(?string $roadBanId, ?string $fromHouseNumber, ?string $toHouseNumber, ?string $fromRoadBanId, ?string $toRoadBanId, string $roadName, string $cityCode, string $direction): ?string
+    private function getNamedStreetGeometry(?string $roadBanId, ?string $fromHouseNumber, ?string $toHouseNumber, ?string $fromRoadBanId, ?string $toRoadBanId, string $roadName, string $cityCode): ?string
     {
         if (!$roadBanId) {
             return null;
@@ -101,7 +101,6 @@ final class GetLocationGeometryController
                 $roadBanId,
                 $roadName,
                 $cityCode,
-                $direction,
                 null,
                 $fromHouseNumber,
                 $fromRoadBanId,
@@ -178,7 +177,7 @@ final class GetLocationGeometryController
         }
     }
 
-    private function getNumberedRoadGeometry(RoadTypeEnum $roadType, ?string $administrator, ?string $roadNumber, ?string $fromPointNumber, ?string $toPointNumber, ?string $fromSide, ?string $toSide, int $fromAbscissa, int $toAbscissa, string $direction): ?string
+    private function getNumberedRoadGeometry(RoadTypeEnum $roadType, ?string $administrator, ?string $roadNumber, ?string $fromPointNumber, ?string $toPointNumber, ?string $fromSide, ?string $toSide, int $fromAbscissa, int $toAbscissa): ?string
     {
         if (!$administrator || !$roadNumber) {
             return null;
@@ -213,7 +212,6 @@ final class GetLocationGeometryController
                 $toPointNumberDecoded,
                 $toSide,
                 $toAbscissa,
-                $direction,
             );
         } catch (\Exception $e) {
             $this->logger->error('Failed to compute road section', ['roadType' => $roadType->value, 'administrator' => $administrator, 'roadNumber' => $roadNumber, 'exception' => $e]);

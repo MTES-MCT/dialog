@@ -10,6 +10,7 @@ final readonly class RawGeoJSONView
         public string $label,
         /** @var WholeCityExceptionView[] */
         public array $exceptions = [],
+        public ?string $direction = null,
     ) {
     }
 }

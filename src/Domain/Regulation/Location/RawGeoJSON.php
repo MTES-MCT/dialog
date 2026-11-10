@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Regulation\Location;
 
+use App\Domain\Regulation\Enum\DirectionEnum;
+
 class RawGeoJSON
 {
     public function __construct(
@@ -15,6 +17,8 @@ class RawGeoJSON
         // soustraction des exceptions (affiché dans l'aperçu, la carte et les exports).
         // Nullable pour les tracés créés avant l'introduction des exceptions.
         private ?string $geometry = null,
+        // Sens de circulation concerné, relatif au tracé dessiné : A = premier point, B = dernier point.
+        private string $direction = DirectionEnum::BOTH->value,
     ) {
     }
 
@@ -38,11 +42,18 @@ class RawGeoJSON
         return $this->geometry;
     }
 
+    public function getDirection(): string
+    {
+        return $this->direction;
+    }
+
     public function update(
         string $label,
         ?string $geometry = null,
+        string $direction = DirectionEnum::BOTH->value,
     ): void {
         $this->label = $label;
         $this->geometry = $geometry;
+        $this->direction = $direction;
     }
 }

@@ -133,6 +133,7 @@ final class LocationsTransformerTest extends TestCase
         $dto->rawGeoJSON = new SaveRawGeoJSONDTO();
         $dto->rawGeoJSON->label = 'Zone travaux';
         $dto->rawGeoJSON->geometry = '{"type":"Polygon"}';
+        $dto->rawGeoJSON->direction = DirectionEnum::B_TO_A;
 
         $commands = LocationsTransformer::toCommands([$dto]);
 
@@ -141,6 +142,7 @@ final class LocationsTransformerTest extends TestCase
         self::assertNotNull($cmd->rawGeoJSON);
         self::assertSame('Zone travaux', $cmd->rawGeoJSON->label);
         self::assertSame('{"type":"Polygon"}', $cmd->rawGeoJSON->geometry);
+        self::assertSame('B_TO_A', $cmd->rawGeoJSON->direction);
     }
 
     public function testTransformsZone(): void
