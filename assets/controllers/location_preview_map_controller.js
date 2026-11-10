@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer, addReferencePointsLayer } from '../maps/layers';
 import { boundsFromGeoJSON, extractFirstGeometry, toFeatureCollection } from '../maps/geojson';
+import { DirectionMarkers } from '../maps/direction';
 
 export default class extends Controller {
     // panel/toggleButton : repli/dépliage géré ici (et non par le collapse DSFR, qui ne
@@ -44,9 +45,13 @@ export default class extends Controller {
     #referencePointsKey = null;
     #debounceTimer = null;
     #boundDebouncedLoad = null;
+    #boundRefreshDirection = null;
+    #directionMarkers = null;
+    #lastGeojson = null;
 
     connect() {
         this.#boundDebouncedLoad = () => this.#debouncedLoad();
+        this.#boundRefreshDirection = () => this.#refreshDirection();
         this.#observeFieldChanges();
         this.#tryLoadGeometry();
     }
@@ -88,6 +93,7 @@ export default class extends Controller {
         this.#referencePointsAbortController?.abort();
         clearTimeout(this.#debounceTimer);
         this.#stopListeningForm();
+        this.#directionMarkers?.clear();
         this.#map?.remove();
         this.#map = null;
     }
@@ -104,7 +110,7 @@ export default class extends Controller {
             'administratorField', 'roadNumberField',
             'fromPointNumberField', 'fromSideField', 'fromAbscissaField',
             'toPointNumberField', 'toSideField', 'toAbscissaField',
-            'directionField', 'geometryField', 'isEntireStreetField',
+            'geometryField', 'isEntireStreetField',
         ];
 
         for (const name of fieldNames) {
@@ -115,6 +121,13 @@ export default class extends Controller {
             el.addEventListener('input', this.#boundDebouncedLoad);
             el.addEventListener('change', this.#boundDebouncedLoad);
             this._watchedElements.push(el);
+        }
+
+        // Le sens ne change pas le tracé (stocké de A vers B) : seuls les marqueurs sont redessinés
+        const directionField = document.getElementById(this.directionFieldValue);
+        if (directionField) {
+            directionField.addEventListener('change', this.#boundRefreshDirection);
+            this._directionField = directionField;
         }
 
         // Also listen on a parent for autocomplete.change and native bubbling events
@@ -140,6 +153,11 @@ export default class extends Controller {
         if (this._locationCard && this.#boundDebouncedLoad) {
             this._locationCard.removeEventListener('autocomplete.change', this.#boundDebouncedLoad);
             this._locationCard = null;
+        }
+
+        if (this._directionField) {
+            this._directionField.removeEventListener('change', this.#boundRefreshDirection);
+            this._directionField = null;
         }
     }
 
@@ -239,7 +257,7 @@ export default class extends Controller {
         const params = new URLSearchParams({ roadType: 'lane', roadBanId });
 
         this.#setParamIfPresent(params, ['roadName', 'cityCode']);
-        this.#setParamIfActive(params, ['fromHouseNumber', 'fromRoadBanId', 'toHouseNumber', 'toRoadBanId', 'direction']);
+        this.#setParamIfActive(params, ['fromHouseNumber', 'fromRoadBanId', 'toHouseNumber', 'toRoadBanId']);
 
         this.#fetchAndDisplay(params);
     }
@@ -259,7 +277,7 @@ export default class extends Controller {
             roadNumber,
         });
 
-        this.#setParamIfPresent(params, ['fromPointNumber', 'fromSide', 'fromAbscissa', 'toPointNumber', 'toSide', 'toAbscissa', 'direction']);
+        this.#setParamIfPresent(params, ['fromPointNumber', 'fromSide', 'fromAbscissa', 'toPointNumber', 'toSide', 'toAbscissa']);
 
         this.#loadReferencePoints(administrator, roadNumber);
         this.#fetchAndDisplay(params);
@@ -468,6 +486,7 @@ export default class extends Controller {
 
         const wasHidden = this.containerTarget.hidden;
         this.containerTarget.hidden = false;
+        this.#lastGeojson = geojson;
 
         if (this.#map) {
             this.#updateMapData(geojson);
@@ -496,6 +515,8 @@ export default class extends Controller {
         this.#map.on('load', () => {
             addHouseNumbersLayer(this.#map);
             this.#addSourceAndLayers(geojson);
+            this.#directionMarkers = new DirectionMarkers(this.#map);
+            this.#refreshDirection();
             this.#applyReferencePoints();
             this.#fitBounds(geojson);
         });
@@ -526,7 +547,44 @@ export default class extends Controller {
             this.#addSourceAndLayers(geojson);
         }
 
+        this.#refreshDirection();
         this.#fitBounds(geojson);
+    }
+
+    // Marqueurs A/B et flèche de sens sur le dernier tracé affiché. Le serveur renvoie
+    // toujours la géométrie orientée de A vers B (section entre deux points, ou voie
+    // entière orientée de façon déterministe), comme elle sera enregistrée.
+    #refreshDirection() {
+        if (!this.#directionMarkers) {
+            return;
+        }
+
+        const direction = this.#directionToDisplay();
+        this.#directionMarkers.update(direction && this.#lastGeojson ? this.#lastGeojson : null, direction);
+    }
+
+    // Sens à représenter, ou null quand A et B n'ont pas de signification pour la
+    // localisation en cours (champ absent, section incomplète, ville entière, zone…).
+    #directionToDisplay() {
+        const direction = this.#getFieldValue('direction');
+
+        if (!direction) {
+            return null;
+        }
+
+        if (this.roadTypeValue === 'lane') {
+            const entireStreet = document.getElementById(this.isEntireStreetFieldValue)?.checked;
+            const hasStart = this.#getFieldValue('fromHouseNumber') || this.#getFieldValue('fromRoadBanId');
+            const hasEnd = this.#getFieldValue('toHouseNumber') || this.#getFieldValue('toRoadBanId');
+
+            return entireStreet || (hasStart && hasEnd) ? direction : null;
+        }
+
+        if (this.roadTypeValue === 'departmentalRoad' || this.roadTypeValue === 'nationalRoad') {
+            return this.#getFieldValue('fromPointNumber') && this.#getFieldValue('toPointNumber') ? direction : null;
+        }
+
+        return null;
     }
 
     #fitBounds(geojson) {
@@ -586,6 +644,8 @@ export default class extends Controller {
 
     #hideMap() {
         this.#hideMessage();
+        this.#lastGeojson = null;
+        this.#directionMarkers?.clear();
         this.containerTarget.hidden = true;
     }
 }

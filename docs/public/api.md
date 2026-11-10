@@ -84,7 +84,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
       - `fromHouseNumber`, `fromRoadName` (string, nullable)
       - `toPointType` (string, nullable) - enum : `houseNumber` | `intersection`
       - `toHouseNumber`, `toRoadName` (string, nullable)
-      - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`
+      - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`, relatif aux points de début (A) et de fin (B). Pour une voie entière (sans points), A est l'extrémité la plus à l'ouest de la voie et B l'extrémité opposée ; `BOTH` par défaut
     - `departmentalRoad` (object, nullable) — utilisé avec `roadType = departmentalRoad`
       - `administrator`, `roadNumber`, `fromDepartmentCode`, `fromPointNumber`, `toDepartmentCode`, `toPointNumber` (string, nullable)
       - `fromAbscissa`, `toAbscissa` (integer, nullable)

@@ -6,6 +6,7 @@ namespace App\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\LaneSectionMakerInterface;
+use App\Application\LineOrienterInterface;
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
@@ -23,6 +24,7 @@ final class GetLocationGeometryController
         private RoadGeocoderInterface $roadGeocoder,
         private LaneSectionMakerInterface $laneSectionMaker,
         private RoadSectionMakerInterface $roadSectionMaker,
+        private LineOrienterInterface $lineOrienter,
         private LoggerInterface $logger,
     ) {
     }
@@ -92,7 +94,8 @@ final class GetLocationGeometryController
         $hasEnd = $toHouseNumber || $toRoadBanId;
 
         if (!$hasStart || !$hasEnd) {
-            return $fullGeometry;
+            // Voie entière (ou section incomplète) : même orientation déterministe qu'à l'enregistrement
+            return $this->lineOrienter->normalize($fullGeometry);
         }
 
         try {

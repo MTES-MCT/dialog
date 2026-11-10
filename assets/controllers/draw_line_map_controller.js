@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer } from '../maps/layers';
 import { extractSingleGeometry } from '../maps/geojson';
+import { DirectionMarkers } from '../maps/direction';
 import { buildMeasurePointPaint } from '../maps/measure_type_styles';
 import '../styles/components/draw-line-map.css';
 
@@ -58,6 +59,9 @@ export default class extends Controller {
     cityCodeField: { type: String, default: '' },
     // 'LineString' (tracé libre) ou 'Polygon' (périmètre d'une zone, anneau fermé automatiquement)
     geometryType: { type: String, default: 'LineString' },
+    // Id du select « Sens concerné » du tracé libre : quand il est fourni, les extrémités
+    // sont marquées A (premier point tracé) et B (dernier), avec une flèche en sens unique
+    directionField: { type: String, default: '' },
     start: {
       type: Object,
       default: {
@@ -100,6 +104,8 @@ export default class extends Controller {
   #searchBlurTimer = null;
   #boundCityChange = null;
   #cityChangeDebounceTimer = null;
+  #boundDirectionChange = null;
+  #directionMarkers = null;
 
   connect() {
     if (!this.hasGeometryFieldTarget) {
@@ -124,6 +130,13 @@ export default class extends Controller {
         );
       };
       cityLabelEl.addEventListener('change', this.#boundCityChange);
+    }
+
+    const directionEl = this.#directionElement();
+
+    if (directionEl) {
+      this.#boundDirectionChange = () => this.#renderDirection();
+      directionEl.addEventListener('change', this.#boundDirectionChange);
     }
 
     this.#hiddenAncestor = this.element.closest('[hidden]');
@@ -156,6 +169,16 @@ export default class extends Controller {
         this.#boundCityChange,
       );
     }
+
+    if (this.#boundDirectionChange) {
+      this.#directionElement()?.removeEventListener(
+        'change',
+        this.#boundDirectionChange,
+      );
+    }
+
+    this.#directionMarkers?.clear();
+    this.#directionMarkers = null;
 
     this.#searchAbortController?.abort();
     clearTimeout(this.#searchDebounceTimer);
@@ -418,6 +441,12 @@ export default class extends Controller {
       : null;
   }
 
+  #directionElement() {
+    return this.directionFieldValue
+      ? document.getElementById(this.directionFieldValue)
+      : null;
+  }
+
   // Exception d'une « Ville entière » : tant que rien n'est tracé, la carte s'ouvre
   // centrée sur la ville choisie plutôt que sur la vue par défaut (France entière ou
   // étendue de l'organisation).
@@ -639,6 +668,7 @@ export default class extends Controller {
       },
     });
 
+    this.#directionMarkers = new DirectionMarkers(this.#map);
     this.#bindCanvasInteractions();
   }
 
@@ -840,6 +870,25 @@ export default class extends Controller {
 
     this.#setHoverState(null);
     source.setData({ type: 'FeatureCollection', features });
+    this.#renderDirection();
+  }
+
+  // Marqueurs A (premier point tracé) et B (dernier), avec la flèche du sens choisi :
+  // c'est l'ordre des points dessinés qui définit A et B à l'enregistrement
+  #renderDirection() {
+    if (!this.#directionMarkers) {
+      return;
+    }
+
+    const direction = this.#directionElement()?.value;
+
+    if (!direction || this.#isPolygon() || this.#coordinates.length < 2) {
+      this.#directionMarkers.clear();
+
+      return;
+    }
+
+    this.#directionMarkers.update(this.#buildGeometry(), direction);
   }
 
   #fitBoundsToCoordinates({ animate = true } = {}) {

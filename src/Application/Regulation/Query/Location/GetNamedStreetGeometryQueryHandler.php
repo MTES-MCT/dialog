@@ -7,6 +7,7 @@ namespace App\Application\Regulation\Query\Location;
 use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
+use App\Application\LineOrienterInterface;
 use App\Application\QueryInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\RoadGeocoderInterface;
@@ -16,6 +17,7 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
     public function __construct(
         private RoadGeocoderInterface $roadGeocoder,
         private LaneSectionMakerInterface $laneSectionMaker,
+        private LineOrienterInterface $lineOrienter,
     ) {
     }
 
@@ -55,7 +57,9 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
         }
 
         if ($hasNoStart && $hasNoEnd) {
-            return $fullLaneGeometry;
+            // Voie entière : fusion et orientation déterministe pour que A et B existent
+            // (A à l'ouest, B à l'autre bout), identiques dans l'aperçu et à l'enregistrement.
+            return $this->lineOrienter->normalize($fullLaneGeometry);
         }
 
         return $this->laneSectionMaker->computeSection(

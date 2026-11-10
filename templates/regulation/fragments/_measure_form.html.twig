@@ -783,11 +783,13 @@
                                     pointRoadBanId: form.namedStreet.toRoadBanId,
                                     pointRoadName: form.namedStreet.toRoadName,
                                 } only %}
-                                {{ form_row(form.namedStreet.direction, {
-                                    group_class: 'fr-select-group',
-                                    widget_class: 'fr-select',
-                                }) }}
                             </fieldset>
+
+                            {# Hors du bloc des points : le sens se saisit aussi pour une voie entière #}
+                            {{ form_row(form.namedStreet.direction, {
+                                group_class: 'fr-select-group',
+                                widget_class: 'fr-select',
+                            }) }}
                         </div>
                     </fieldset>
 
@@ -844,6 +846,7 @@
                         {% if organizationBbox %}data-draw-line-map-org-bbox-json-value='{{ [organizationBbox.minLon, organizationBbox.minLat, organizationBbox.maxLon, organizationBbox.maxLat]|json_encode }}'{% endif %}
                         data-draw-line-map-persisted-value="{{ locationPersisted ? 'true' : 'false' }}"
                         data-draw-line-map-measure-type-value="{{ measureType }}"
+                        data-draw-line-map-direction-field-value="{{ form.rawGeoJSON.direction.vars.id }}"
                         data-draw-line-map-search-api-url-value="{{ apiAdresseBaseUrl }}/geocodage/search/"
                         data-draw-line-map-start-value='{{ {
                             "label": "regulation.location.raw_geojson.draw_line_map.draw.start"|trans,
@@ -927,6 +930,16 @@
                                 class="draw-line-map-container"
                             ></div>
                         </div>
+
+                        {{ form_row(form.rawGeoJSON.direction, {
+                            group_class: 'fr-select-group',
+                            widget_class: 'fr-select',
+                            attr: {
+                                'data-form-reveal-target': 'formControl',
+                                'data-value': 'rawGeoJSON',
+                                'disabled': not isRawGeoJSON,
+                            },
+                        }) }}
 
                         <details class="draw-line-map-geojson" open>
                             <summary class="draw-line-map-geojson__summary">
@@ -1344,8 +1357,9 @@
                                 pointRoadBanId: form.namedStreet.toRoadBanId,
                                 pointRoadName: form.namedStreet.toRoadName,
                             } only %}
-                            {{ form_row(form.namedStreet.direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
                         </fieldset>
+
+                        {{ form_row(form.namedStreet.direction, { group_class: 'fr-select-group', widget_class: 'fr-select' }) }}
                     </div>
                 </fieldset>
             </div>

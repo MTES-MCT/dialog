@@ -80,4 +80,45 @@ final class LineOrienter implements LineOrienterInterface
 
         return $row['geom'] ?? $geometry;
     }
+
+    public function normalize(string $geometry): string
+    {
+        $row = $this->em->getConnection()->fetchAssociative(
+            'WITH base AS (
+                    SELECT ST_SetSRID(ST_GeomFromGeoJSON(:geom), 4326) AS geom
+                ),
+                merged AS (
+                    SELECT CASE
+                        WHEN ST_GeometryType(geom) IN (\'ST_LineString\', \'ST_MultiLineString\', \'ST_GeometryCollection\')
+                             AND NOT ST_IsEmpty(ST_CollectionExtract(geom, 2))
+                            THEN ST_LineMerge(ST_CollectionExtract(geom, 2))
+                        ELSE NULL
+                    END AS geom
+                    FROM base
+                ),
+                -- Extrémités de tous les morceaux
+                endpoints AS (
+                    SELECT ST_StartPoint(d.geom) AS geom FROM merged m, LATERAL ST_Dump(m.geom) AS d
+                    UNION ALL
+                    SELECT ST_EndPoint(d.geom) AS geom FROM merged m, LATERAL ST_Dump(m.geom) AS d
+                ),
+                -- A : la plus à l\'ouest puis au sud ; B : la plus éloignée de A
+                a AS (SELECT geom FROM endpoints WHERE geom IS NOT NULL ORDER BY ST_X(geom), ST_Y(geom) LIMIT 1),
+                b AS (SELECT e.geom FROM endpoints e, a WHERE e.geom IS NOT NULL ORDER BY ST_Distance(e.geom::geography, a.geom::geography) DESC LIMIT 1)
+                SELECT ST_AsGeoJSON(m.geom) AS geom, ST_X(a.geom) AS ax, ST_Y(a.geom) AS ay, ST_X(b.geom) AS bx, ST_Y(b.geom) AS "by"
+                FROM merged m, a, b',
+            ['geom' => $geometry],
+        );
+
+        // Pas de partie linéaire (points, polygone…) : rien à orienter
+        if (!$row || $row['geom'] === null || $row['ax'] === null) {
+            return $geometry;
+        }
+
+        return $this->orient(
+            $row['geom'],
+            Coordinates::fromLonLat((float) $row['ax'], (float) $row['ay']),
+            Coordinates::fromLonLat((float) $row['bx'], (float) $row['by']),
+        );
+    }
 }

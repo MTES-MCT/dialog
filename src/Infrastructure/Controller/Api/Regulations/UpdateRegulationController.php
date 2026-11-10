@@ -166,7 +166,7 @@ final class UpdateRegulationController
                                                 new OA\Property(property: 'toPointType', type: 'string', nullable: true),
                                                 new OA\Property(property: 'toHouseNumber', type: 'string', nullable: true),
                                                 new OA\Property(property: 'toRoadName', type: 'string', nullable: true),
-                                                new OA\Property(property: 'direction', type: 'string', enum: ['BOTH', 'A_TO_B', 'B_TO_A'], nullable: true),
+                                                new OA\Property(property: 'direction', type: 'string', enum: ['BOTH', 'A_TO_B', 'B_TO_A'], nullable: true, description: 'Sens de circulation concerné, relativement aux points de début (A) et de fin (B). Pour une voie entière, A est l\'extrémité la plus à l\'ouest de la voie et B l\'extrémité opposée. `BOTH` par défaut.'),
                                             ],
                                         ),
                                         new OA\Property(

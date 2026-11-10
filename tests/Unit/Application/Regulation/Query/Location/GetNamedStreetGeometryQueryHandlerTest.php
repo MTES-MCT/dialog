@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\Query\Location;
 use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
+use App\Application\LineOrienterInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQueryHandler;
@@ -32,11 +33,13 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
     private string $geometry;
     private $roadGeocoder;
     private $laneSectionMaker;
+    private $lineOrienter;
 
     public function setUp(): void
     {
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->laneSectionMaker = $this->createMock(LaneSectionMakerInterface::class);
+        $this->lineOrienter = $this->createMock(LineOrienterInterface::class);
 
         $this->cityCode = '44195';
         $this->cityLabel = 'Savenay';
@@ -79,6 +82,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -117,9 +121,17 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
             ->expects(self::never())
             ->method('computeSection');
 
+        // Voie entière : la géométrie complète est orientée de façon déterministe (A à l'ouest)
+        $this->lineOrienter
+            ->expects(self::once())
+            ->method('normalize')
+            ->with($this->geometry)
+            ->willReturn('normalized');
+
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -132,7 +144,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
 
         $result = $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
 
-        $this->assertSame($this->geometry, $result);
+        $this->assertSame('normalized', $result);
     }
 
     public function testGetWithGeometry(): void
@@ -150,6 +162,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -198,6 +211,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand($namedStreet);
@@ -247,6 +261,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand($namedStreet);
@@ -293,6 +308,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -326,6 +342,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -371,6 +388,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -441,6 +459,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -480,6 +499,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();
@@ -515,6 +535,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler = new GetNamedStreetGeometryQueryHandler(
             $this->roadGeocoder,
             $this->laneSectionMaker,
+            $this->lineOrienter,
         );
 
         $saveNamedStreetCommand = new SaveNamedStreetCommand();

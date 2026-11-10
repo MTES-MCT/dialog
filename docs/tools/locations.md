@@ -15,7 +15,11 @@ Le sens de circulation concerné par la mesure n'est **pas** porté par la géom
 
 Un **tracé libre** porte lui aussi un sens (`raw_geojson.direction`) : A est le premier point dessiné, B le dernier. Quand des exceptions sont soustraites du tracé, le résultat est réorienté dans l'ordre du dessin par `LineOrienter`, le même service qui oriente les sections.
 
-Les voies entières n'ont pas de point A ni B : leur sens est forcé à `BOTH` par le formulaire et leur géométrie n'est pas orientée.
+Une **voie entière** n'a pas de point A ni B saisis : `LineOrienter::normalize()` les fixe de façon déterministe (A est l'extrémité la plus à l'ouest, puis la plus au sud ; B l'extrémité la plus éloignée de A) et oriente la géométrie fusionnée de A vers B. L'aperçu du formulaire et l'enregistrement passent par le même calcul, donc les marqueurs A et B affichés correspondent au sens enregistré. Depuis novembre 2026, le sens est saisissable pour une voie entière.
+
+## Aperçu dans le formulaire
+
+Le serveur renvoie à l'aperçu (`fragment_location_geometry`) une géométrie orientée de A vers B. Le module `assets/maps/direction.js` en déduit les marqueurs A et B (extrémités) et, pour `A_TO_B` ou `B_TO_A`, une flèche au milieu du tracé ; les marqueurs ne sont affichés que lorsque A et B ont un sens (voie entière cochée, section avec ses deux points, route numérotée avec ses deux PR). Sur le tracé libre, la carte de dessin marque A au premier point et B au dernier dès que le select « Sens concerné » est présent.
 
 ## Commandes
 
