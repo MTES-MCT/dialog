@@ -19,6 +19,5 @@ interface RoadSectionMakerInterface
         string $toPointNumber,
         string $toSide,
         int $toAbscissa,
-        string $direction,
     ): string;
 }

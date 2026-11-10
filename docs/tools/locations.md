@@ -13,6 +13,8 @@ Le sens de circulation concerné par la mesure n'est **pas** porté par la géom
 - **Export CSV** : les colonnes `emprise_debut`, `emprise_fin` et `sens_circulation` décrivent les points A et B et le sens relatif à ces points.
 - **DATEX II** : l'extension DiaLog `dx:linearLocationExtended` porte, à côté de `geoJsonGeometry`, un élément `directionRelativeOnLinearSection` valant `both`, `aligned` (de A vers B, dans l'ordre des sommets) ou `opposite` (de B vers A). Le XSD est dans `docs/spec/datex2/DATEXII_3_DiaLogExtension.xsd`.
 
+Un **tracé libre** porte lui aussi un sens (`raw_geojson.direction`) : A est le premier point dessiné, B le dernier. Quand des exceptions sont soustraites du tracé, le résultat est réorienté dans l'ordre du dessin par `LineOrienter`, le même service qui oriente les sections.
+
 Les voies entières n'ont pas de point A ni B : leur sens est forcé à `BOTH` par le formulaire et leur géométrie n'est pas orientée.
 
 ## Commandes

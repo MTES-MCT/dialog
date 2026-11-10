@@ -12,7 +12,6 @@ use App\Application\Exception\StartAbscissaOutOfRangeException;
 use App\Application\LineSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\RoadSectionMaker;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +41,6 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -81,7 +79,6 @@ final class RoadSectionMakerTest extends TestCase
                 $toPointNumber,
                 $toSide,
                 $toAbscissa,
-                $direction,
             ),
         );
     }
@@ -102,7 +99,6 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -134,7 +130,6 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
-            $direction,
         );
     }
 
@@ -154,7 +149,6 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 15000000;
         $toSide = 'U';
-        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -192,7 +186,6 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
-            $direction,
         );
     }
 
@@ -212,7 +205,6 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -249,7 +241,6 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
-            $direction,
         );
     }
 
@@ -269,7 +260,6 @@ final class RoadSectionMakerTest extends TestCase
         $toPointNumber = '5';
         $toAbscissa = 150;
         $toSide = 'U';
-        $direction = DirectionEnum::BOTH->value;
 
         $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
         $geocoder = $this->createMock(RoadGeocoderInterface::class);
@@ -301,91 +291,6 @@ final class RoadSectionMakerTest extends TestCase
             $toPointNumber,
             $toSide,
             $toAbscissa,
-            $direction,
         );
-    }
-
-    private function provideTestComputeSectionDirection(): array
-    {
-        $this->setUp();
-
-        $fromCoords = $this->fromCoords;
-        $toCoords = $this->toCoords;
-
-        return [
-            'both' => [
-                'direction' => DirectionEnum::BOTH->value,
-                'fromCoords' => $fromCoords,
-                'toCoords' => $toCoords,
-            ],
-            'ab' => [
-                'direction' => DirectionEnum::A_TO_B->value,
-                'fromCoords' => $fromCoords,
-                'toCoords' => $toCoords,
-            ],
-            // Quel que soit le sens, la section est calculée de A vers B : le sens est une métadonnée des exports
-            'ba' => [
-                'direction' => DirectionEnum::B_TO_A->value,
-                'fromCoords' => $fromCoords,
-                'toCoords' => $toCoords,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideTestComputeSectionDirection
-     */
-    public function testComputeSectionDirection(string $direction, Coordinates $fromCoords, Coordinates $toCoords): void
-    {
-        $fullDepartmentalRoadGeometry = 'geometry';
-        $roadType = RoadTypeEnum::DEPARTMENTAL_ROAD->value;
-        $administrator = 'Ardèche';
-        $roadNumber = 'D110';
-        $fromDepartmentCode = null;
-        $fromPointNumber = '1';
-        $fromSide = 'U';
-        $fromAbscissa = 0;
-        $toDepartmentCode = null;
-        $toPointNumber = '5';
-        $toAbscissa = 150;
-        $toSide = 'U';
-
-        $lineSectionMaker = $this->createMock(LineSectionMakerInterface::class);
-        $geocoder = $this->createMock(RoadGeocoderInterface::class);
-        $roadSectionMaker = new RoadSectionMaker(
-            $lineSectionMaker,
-            $geocoder,
-        );
-
-        $geocoder
-            ->expects(self::exactly(2))
-            ->method('computeReferencePoint')
-            ->withConsecutive(
-                [$roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa],
-                [$roadType, $administrator, $roadNumber, $toDepartmentCode, $toPointNumber, $toSide, $toAbscissa],
-            )
-            ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
-
-        $lineSectionMaker
-            ->expects(self::once())
-            ->method('computeSection')
-            ->with('geometry', $fromCoords, $toCoords)
-            ->willReturn('section');
-
-        $this->assertSame('section', $roadSectionMaker->computeSection(
-            $fullDepartmentalRoadGeometry,
-            $roadType,
-            $administrator,
-            $roadNumber,
-            $fromDepartmentCode,
-            $fromPointNumber,
-            $fromSide,
-            $fromAbscissa,
-            $toDepartmentCode,
-            $toPointNumber,
-            $toSide,
-            $toAbscissa,
-            $direction,
-        ));
     }
 }

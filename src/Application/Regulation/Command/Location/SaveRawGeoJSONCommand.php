@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Command\Location;
 
 use App\Application\QueryInterface;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
+use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\RawGeoJSON;
 
@@ -16,6 +17,8 @@ final class SaveRawGeoJSONCommand implements RoadCommandInterface
     // Tracé dessiné (GeoJSON). La géométrie de la localisation est calculée à partir de ce
     // tracé en soustrayant les éventuelles exceptions à l'enregistrement.
     public ?string $geometry = null;
+    // Sens de circulation concerné, relatif au tracé dessiné (A = premier point, B = dernier point)
+    public string $direction = DirectionEnum::BOTH->value;
     /** @var SaveWholeCityExceptionCommand[] */
     public array $exceptions = [];
     public ?Location $location = null;
@@ -28,6 +31,7 @@ final class SaveRawGeoJSONCommand implements RoadCommandInterface
         // Repli sur la géométrie de la localisation pour les tracés créés avant
         // l'introduction des exceptions (pas de tracé d'origine stocké).
         $this->geometry = $rawGeoJSON?->getGeometry() ?? $rawGeoJSON?->getLocation()->getGeometry();
+        $this->direction = $rawGeoJSON?->getDirection() ?? DirectionEnum::BOTH->value;
 
         foreach ($rawGeoJSON?->getLocation()->getExceptions() ?? [] as $exception) {
             $this->exceptions[] = new SaveWholeCityExceptionCommand($exception);

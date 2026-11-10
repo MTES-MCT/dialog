@@ -108,6 +108,7 @@ final class DuplicateMeasureCommandHandler
                 // Tracé dessiné, dont les exceptions sont soustraites à l'enregistrement. Repli sur
                 // la géométrie de la localisation pour les tracés antérieurs aux exceptions.
                 $cmd->rawGeoJSON->geometry = $rawGeoJSON->getGeometry() ?? $location->getGeometry();
+                $cmd->rawGeoJSON->direction = $rawGeoJSON->getDirection();
                 $cmd->rawGeoJSON->exceptions = $this->duplicateExceptions($location);
             } elseif ($zone = $location->getZone()) {
                 $cmd->zone = new SaveZoneCommand();

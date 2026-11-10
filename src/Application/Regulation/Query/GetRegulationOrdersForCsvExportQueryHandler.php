@@ -90,7 +90,7 @@ final class GetRegulationOrdersForCsvExportQueryHandler
                         vehicleSet: $vehicleSet,
                         locationStart: $this->buildPointLabel($location, from: true),
                         locationEnd: $this->buildPointLabel($location, from: false),
-                        direction: $location->getNamedStreet()?->getDirection() ?? $location->getNumberedRoad()?->getDirection(),
+                        direction: $location->getNamedStreet()?->getDirection() ?? $location->getNumberedRoad()?->getDirection() ?? $location->getRawGeoJSON()?->getDirection(),
                     );
                 }
             }

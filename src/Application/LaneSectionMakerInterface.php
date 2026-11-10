@@ -13,7 +13,6 @@ interface LaneSectionMakerInterface
         string $roadBanId,
         string $roadName,
         string $cityCode,
-        string $direction,
         ?Coordinates $fromCoords,
         ?string $fromHouseNumber,
         ?string $fromRoadBanId,

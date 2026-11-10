@@ -9,7 +9,6 @@ use App\Application\GeocoderInterface;
 use App\Application\IntersectionGeocoderInterface;
 use App\Application\LineSectionMakerInterface;
 use App\Domain\Geography\Coordinates;
-use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Infrastructure\Adapter\LaneSectionMaker;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +21,6 @@ final class LaneSectionMakerTest extends TestCase
     private $fromCoords;
     private $toCoords;
     private $geocoder;
-    private string $direction;
     private $intersectionGeocoder;
     private $lineSectionMaker;
     private $laneSectionMaker;
@@ -35,7 +33,6 @@ final class LaneSectionMakerTest extends TestCase
         $this->cityCode = '01010';
         $this->fromCoords = Coordinates::fromLonLat(1, 41);
         $this->toCoords = Coordinates::fromLonLat(9, 49);
-        $this->direction = DirectionEnum::BOTH->value;
 
         $this->geocoder = $this->createMock(GeocoderInterface::class);
         $this->intersectionGeocoder = $this->createMock(IntersectionGeocoderInterface::class);
@@ -73,7 +70,6 @@ final class LaneSectionMakerTest extends TestCase
             $this->roadBanId,
             $this->roadName,
             $this->cityCode,
-            $this->direction,
             fromCoords: null,
             fromHouseNumber: '1',
             fromRoadBanId: null,
@@ -104,7 +100,6 @@ final class LaneSectionMakerTest extends TestCase
             $this->roadBanId,
             $this->roadName,
             $this->cityCode,
-            $this->direction,
             fromCoords: $this->fromCoords,
             fromHouseNumber: null,
             fromRoadBanId: null,
@@ -129,7 +124,6 @@ final class LaneSectionMakerTest extends TestCase
             $this->roadBanId,
             $this->roadName,
             $this->cityCode,
-            $this->direction,
             fromCoords: $this->fromCoords,
             fromHouseNumber: null,
             fromRoadBanId: null,
@@ -137,58 +131,5 @@ final class LaneSectionMakerTest extends TestCase
             toHouseNumber: null,
             toRoadBanId: '01010_5678',
         );
-    }
-
-    private function provideTestComputeSectionDirection(): array
-    {
-        $this->setUp();
-
-        $fromCoords = $this->fromCoords;
-        $toCoords = $this->toCoords;
-
-        return [
-            'both' => [
-                'direction' => DirectionEnum::BOTH->value,
-                'fromCoords' => $fromCoords,
-                'toCoords' => $toCoords,
-            ],
-            'ab' => [
-                'direction' => DirectionEnum::A_TO_B->value,
-                'fromCoords' => $fromCoords,
-                'toCoords' => $toCoords,
-            ],
-            // Quel que soit le sens, la section est calculée de A vers B : le sens est une métadonnée des exports
-            'ba' => [
-                'direction' => DirectionEnum::B_TO_A->value,
-                'fromCoords' => $fromCoords,
-                'toCoords' => $toCoords,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider provideTestComputeSectionDirection
-     */
-    public function testComputeSectionDirection(string $direction, Coordinates $fromCoords, Coordinates $toCoords): void
-    {
-        $this->lineSectionMaker
-            ->expects(self::once())
-            ->method('computeSection')
-            ->with($this->fullLaneGeometry, $fromCoords, $toCoords)
-            ->willReturn('section');
-
-        $this->assertSame('section', $this->laneSectionMaker->computeSection(
-            $this->fullLaneGeometry,
-            $this->roadBanId,
-            $this->roadName,
-            $this->cityCode,
-            $direction,
-            fromCoords: $this->fromCoords,
-            fromHouseNumber: null,
-            fromRoadBanId: null,
-            toCoords: $this->toCoords,
-            toHouseNumber: null,
-            toRoadBanId: null,
-        ));
     }
 }

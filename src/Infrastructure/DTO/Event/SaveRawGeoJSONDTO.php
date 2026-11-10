@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\DTO\Event;
 
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
+use App\Domain\Regulation\Enum\DirectionEnum;
+use App\Infrastructure\Mapper\Transformers\EnumTransformers;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 
 #[Map(target: SaveRawGeoJSONCommand::class)]
@@ -19,4 +21,7 @@ final class SaveRawGeoJSONDTO
      * @var SaveWholeCityExceptionDTO[]
      */
     public array $exceptions = [];
+    // Sens de circulation concerné, relatif au tracé : A = premier point, B = dernier point
+    #[Map(target: 'direction', transform: [EnumTransformers::class, 'toString'])]
+    public ?DirectionEnum $direction = null;
 }

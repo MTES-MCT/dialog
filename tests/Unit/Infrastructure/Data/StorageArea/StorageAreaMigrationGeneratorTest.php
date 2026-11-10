@@ -7,7 +7,6 @@ namespace App\Tests\Unit\Infrastructure\Data\StorageArea;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
-use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Infrastructure\Data\StorageArea\StorageAreaMigrationGenerator;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\TestCase;
@@ -101,7 +100,6 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                     '51',
                     'D',
                     150,
-                    DirectionEnum::BOTH->value,
                 ],
                 [
                     'roadGeometry2',
@@ -116,7 +114,6 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                     '87',
                     'G',
                     800,
-                    DirectionEnum::BOTH->value,
                 ],
                 [
                     'roadGeometry3',
@@ -131,7 +128,6 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                     '29',
                     'D',
                     300,
-                    DirectionEnum::BOTH->value,
                 ],
             )
             ->willReturnOnConsecutiveCalls('geom1', 'geom2', 'geom3');

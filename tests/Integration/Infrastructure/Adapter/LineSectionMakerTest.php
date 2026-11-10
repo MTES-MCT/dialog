@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
 use App\Domain\Geography\Coordinates;
+use App\Infrastructure\Adapter\LineOrienter;
 use App\Infrastructure\Adapter\LineSectionMaker;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -75,7 +76,7 @@ final class LineSectionMakerTest extends KernelTestCase
         );
 
         $this->em = $container->get(EntityManagerInterface::class);
-        $this->lineSectionMaker = new LineSectionMaker($this->em);
+        $this->lineSectionMaker = new LineSectionMaker($this->em, new LineOrienter($this->em));
     }
 
     /**
