@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Infrastructure\Repository;
 
-use App\Application\DateUtilsInterface;
 use App\Domain\Regulation\Location\Location;
 use App\Infrastructure\Persistence\Doctrine\Repository\Regulation\LocationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +18,6 @@ final class LocationRepositoryTest extends TestCase
     {
         $location = $this->createMock(Location::class);
 
-        $dateUtils = $this->createMock(DateUtilsInterface::class);
         $em = $this->createMock(EntityManagerInterface::class);
         $em
             ->expects(self::once())
@@ -37,7 +35,7 @@ final class LocationRepositoryTest extends TestCase
             ->with(Location::class)
             ->willReturn($em);
 
-        $repository = new LocationRepository($registry, $dateUtils);
+        $repository = new LocationRepository($registry, 'Europe/Paris');
 
         $repository->delete($location);
     }

@@ -10,7 +10,7 @@ namespace App\Domain\Condition\Period;
  */
 final class PublicHolidayCalendar
 {
-    private const ALSACE_MOSELLE_DEPARTMENT_CODES = ['57', '67', '68'];
+    public const ALSACE_MOSELLE_DEPARTMENT_CODES = ['57', '67', '68'];
 
     /**
      * @return string[] Dates au format Y-m-d, triées
