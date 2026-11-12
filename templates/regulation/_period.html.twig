@@ -23,6 +23,9 @@
             {% if loop.revindex0 == 1 %}&nbsp;{{ 'common.and'|trans }}&nbsp;{% elseif not loop.last%},&nbsp;{% endif %}
         {%- endfor -%}
     {%- endif -%}
+    {%- if period.isPublicHolidaysExcluded -%}
+        ,&nbsp;{{ 'regulation.period.except_public_holidays'|trans }}
+    {%- endif -%}
     {% if period.timeSlots|length %}
         (
         {%- for timeSlot in period.timeSlots -%}

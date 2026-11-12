@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Doctrine\Repository\Regulation;
 
 use App\Application\Organization\View\MapBboxView;
+use App\Domain\Condition\Period\PublicHolidayCalendar;
 use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
@@ -18,8 +19,11 @@ use Doctrine\Persistence\ManagerRegistry;
 
 final class LocationRepository extends ServiceEntityRepository implements LocationRepositoryInterface
 {
+    private const PUBLIC_HOLIDAYS_OPEN_RANGE_YEARS = 20;
+
     public function __construct(
         ManagerRegistry $registry,
+        private string $clientTimezone,
     ) {
         parent::__construct($registry, Location::class);
     }
@@ -349,9 +353,43 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                         END,
                         \'[)\'
                     )
+                    -- Période "sauf jours fériés" : on ne la retient que si son intersection avec
+                    -- les filtres contient au moins un jour (fuseau client) qui n\'est pas férié.
+                    -- Au-delà de 4 jours, l\'intersection contient forcément un jour non férié.
+                    AND (
+                        NOT p.is_public_holidays_excluded
+                        OR EXISTS (
+                            SELECT 1
+                            FROM (
+                                SELECT tstzrange(%s, %s, \'[)\') * tstzrange(
+                                    LEAST(p.start_datetime, p.end_datetime),
+                                    GREATEST(p.start_datetime, p.end_datetime),
+                                    \'[)\'
+                                ) AS r
+                            ) AS i
+                            WHERE upper(i.r) IS NULL
+                            OR lower(i.r) IS NULL
+                            OR upper(i.r) - lower(i.r) > make_interval(days => 4)
+                            OR EXISTS (
+                                SELECT 1
+                                FROM generate_series(
+                                    (lower(i.r) AT TIME ZONE :clientTimezone)::date,
+                                    ((upper(i.r) - make_interval(secs => 0.000001)) AT TIME ZONE :clientTimezone)::date,
+                                    make_interval(days => 1)
+                                ) AS d
+                                WHERE d::date NOT IN (:nationalPublicHolidays)
+                                AND (
+                                    COALESCE((SELECT o.department_code FROM organization AS o WHERE o.uuid = roc.organization_uuid), \'\') NOT IN (:alsaceMoselleDepartmentCodes)
+                                    OR d::date NOT IN (:alsaceMoselleOnlyPublicHolidays)
+                                )
+                            )
+                        )
+                    )
                 )',
                     $rangeStartSql,
                     $rangeEndSql,
+                    $startDate ? '(:startDate)::timestamptz' : 'NULL',
+                    $endDate ? '((:endDate)::timestamptz + make_interval(days => 1))' : 'NULL',
                 );
 
                 if ($startDate) {
@@ -361,10 +399,44 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                 if ($endDate) {
                     $parameters['endDate'] = $endDate->format(\DateTimeInterface::ATOM);
                 }
+
+                [$nationalPublicHolidays, $alsaceMoselleOnlyPublicHolidays] = $this->getPublicHolidaysForMapFilter($startDate, $endDate);
+                $parameters['clientTimezone'] = $this->clientTimezone;
+                $parameters['nationalPublicHolidays'] = $nationalPublicHolidays;
+                $types['nationalPublicHolidays'] = ArrayParameterType::STRING;
+                $parameters['alsaceMoselleOnlyPublicHolidays'] = $alsaceMoselleOnlyPublicHolidays;
+                $types['alsaceMoselleOnlyPublicHolidays'] = ArrayParameterType::STRING;
+                $parameters['alsaceMoselleDepartmentCodes'] = PublicHolidayCalendar::ALSACE_MOSELLE_DEPARTMENT_CODES;
+                $types['alsaceMoselleDepartmentCodes'] = ArrayParameterType::STRING;
             }
         }
 
         return [$regulationTypeWhereClause, $measureDatesCondition, $parameters, $types];
+    }
+
+    /**
+     * @return array{0: string[], 1: string[]} [jours fériés nationaux, jours fériés propres à l'Alsace-Moselle]
+     */
+    private function getPublicHolidaysForMapFilter(?\DateTimeInterface $startDate, ?\DateTimeInterface $endDate): array
+    {
+        $timezone = new \DateTimeZone($this->clientTimezone);
+        $startYear = $startDate ? (int) \DateTimeImmutable::createFromInterface($startDate)->setTimezone($timezone)->format('Y') - 1 : null;
+        $endYear = $endDate ? (int) \DateTimeImmutable::createFromInterface($endDate)->setTimezone($timezone)->format('Y') + 1 : null;
+        // Filtre ouvert d'un côté : l'intersection avec une période peut tomber n'importe quand de ce côté-là.
+        $startYear ??= $endYear - self::PUBLIC_HOLIDAYS_OPEN_RANGE_YEARS;
+        $endYear ??= $startYear + self::PUBLIC_HOLIDAYS_OPEN_RANGE_YEARS;
+
+        $national = [];
+        $alsaceMoselleOnly = [];
+        $alsaceMoselleDepartmentCode = PublicHolidayCalendar::ALSACE_MOSELLE_DEPARTMENT_CODES[0];
+
+        for ($year = $startYear; $year <= $endYear; ++$year) {
+            $nationalDates = PublicHolidayCalendar::getDates($year);
+            array_push($national, ...$nationalDates);
+            array_push($alsaceMoselleOnly, ...array_diff(PublicHolidayCalendar::getDates($year, $alsaceMoselleDepartmentCode), $nationalDates));
+        }
+
+        return [$national, $alsaceMoselleOnly];
     }
 
     public function findGeometriesForRegulationOrderRecord(string $uuid): array
