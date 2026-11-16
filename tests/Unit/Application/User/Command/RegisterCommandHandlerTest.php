@@ -13,6 +13,7 @@ use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\RegisterCommand;
 use App\Application\User\Command\RegisterCommandHandler;
+use App\Domain\Anct\Repository\TerritoryContactRepositoryInterface;
 use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
@@ -37,6 +38,7 @@ final class RegisterCommandHandlerTest extends TestCase
     private MockObject $dateUtils;
     private MockObject $stringUtils;
     private MockObject $commandBus;
+    private MockObject $territoryContactRepository;
     private RegisterCommandHandler $handler;
     private RegisterCommand $command;
 
@@ -50,6 +52,7 @@ final class RegisterCommandHandlerTest extends TestCase
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->stringUtils = $this->createMock(StringUtilsInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
+        $this->territoryContactRepository = $this->createMock(TerritoryContactRepositoryInterface::class);
 
         $this->handler = new RegisterCommandHandler(
             $this->idFactory,
@@ -60,6 +63,7 @@ final class RegisterCommandHandlerTest extends TestCase
             $this->stringUtils,
             $this->passwordHasher,
             $this->commandBus,
+            $this->territoryContactRepository,
         );
 
         $this->command = new RegisterCommand();
@@ -93,6 +97,12 @@ final class RegisterCommandHandlerTest extends TestCase
                 return $cmd->siret === '82050375300015';
             }))
             ->willReturn($orgView);
+
+        $this->territoryContactRepository
+            ->expects(self::once())
+            ->method('isWhitelisted')
+            ->with('82050375300015', 'mathieu@fairness.coop')
+            ->willReturn(false);
 
         $this->idFactory
             ->expects(self::exactly(3))
@@ -145,6 +155,59 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with($this->equalTo($user));
 
         $this->assertEquals(($this->handler)($this->command), $user);
+    }
+
+    public function testRegisterWithAnctWhitelistedEmailIsValidated(): void
+    {
+        $organization = $this->createMock(Organization::class);
+
+        $this->userRepository
+            ->expects(self::once())
+            ->method('findOneByEmail')
+            ->with('mathieu@fairness.coop')
+            ->willReturn(null);
+
+        $orgView = new GetOrCreateOrganizationView($organization, true);
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->willReturn($orgView);
+
+        $this->territoryContactRepository
+            ->expects(self::once())
+            ->method('isWhitelisted')
+            ->with('82050375300015', 'mathieu@fairness.coop')
+            ->willReturn(true);
+
+        $this->idFactory
+            ->expects(self::exactly(3))
+            ->method('make')
+            ->willReturn(
+                '0de5692b-cab1-494c-804d-765dc14df674',
+                '3e4ea113-9f64-4933-a699-0561b8c15622',
+                'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
+            );
+
+        $date = new \DateTimeImmutable('2024-05-07');
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn($date);
+
+        $this->passwordHasher
+            ->expects(self::once())
+            ->method('hash')
+            ->with('12345')
+            ->willReturn('passwordHashed');
+
+        $this->userRepository
+            ->expects(self::once())
+            ->method('add')
+            ->with(self::callback(function (User $user) {
+                return $user->getAccountStatus() === UserAccountStatusEnum::VALIDATED->value;
+            }));
+
+        ($this->handler)($this->command);
     }
 
     public function testRegisterAsOwner(): void

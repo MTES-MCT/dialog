@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Controller\Admin;
 
+use App\Domain\User\Enum\UserAccountStatusEnum;
+use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Controller\Admin\UserCrudController;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 
 final class UserCrudControllerTest extends AbstractWebTestCase
 {
@@ -92,5 +95,71 @@ final class UserCrudControllerTest extends AbstractWebTestCase
         $request = $client->getRequest();
         $this->assertTrue($request->query->has('crudAction'));
         $this->assertTrue($request->query->has('crudControllerFqcn'));
+    }
+
+    public function testValidateUserAccount(): void
+    {
+        $userUuid = 'd47badd9-989e-472b-a80e-9df642e93880';
+
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
+        $userRepository->findOneByUuid($userUuid)->setAccountStatus(UserAccountStatusEnum::PENDING->value);
+        $em->flush();
+
+        $client->request('GET', '/admin', [
+            'crudAction' => 'validateUserAccount',
+            'crudControllerFqcn' => UserCrudController::class,
+            'entityId' => $userUuid,
+        ]);
+
+        $this->assertResponseStatusCodeSame(302);
+
+        $this->assertEmailCount(1);
+        $email = $this->getMailerMessage();
+        $this->assertEmailHtmlBodyContains($email, 'Votre compte a été validé par notre équipe.');
+
+        $em->clear();
+        $this->assertSame(
+            UserAccountStatusEnum::VALIDATED->value,
+            $userRepository->findOneByUuid($userUuid)->getAccountStatus(),
+        );
+    }
+
+    public function testRefuseUserAccount(): void
+    {
+        $userUuid = 'd47badd9-989e-472b-a80e-9df642e93880';
+
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+
+        $client->request('GET', '/admin', [
+            'crudAction' => 'refuseUserAccount',
+            'crudControllerFqcn' => UserCrudController::class,
+            'entityId' => $userUuid,
+        ]);
+
+        $this->assertResponseStatusCodeSame(302);
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->clear();
+        $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
+        $this->assertSame(
+            UserAccountStatusEnum::REFUSED->value,
+            $userRepository->findOneByUuid($userUuid)->getAccountStatus(),
+        );
+    }
+
+    public function testValidateUserAccountWithRoleUser(): void
+    {
+        $client = $this->login();
+
+        $client->request('GET', '/admin', [
+            'crudAction' => 'validateUserAccount',
+            'crudControllerFqcn' => UserCrudController::class,
+            'entityId' => 'd47badd9-989e-472b-a80e-9df642e93880',
+        ]);
+
+        $this->assertResponseStatusCodeSame(403);
     }
 }

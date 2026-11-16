@@ -11,6 +11,7 @@ use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
+use App\Domain\Anct\Repository\TerritoryContactRepositoryInterface;
 use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -32,6 +33,7 @@ final class RegisterCommandHandler
         private StringUtilsInterface $stringUtils,
         private PasswordHasherInterface $passwordHasher,
         private CommandBusInterface $commandBus,
+        private TerritoryContactRepositoryInterface $territoryContactRepository,
     ) {
     }
 
@@ -49,13 +51,17 @@ final class RegisterCommandHandler
         $organization = $organizationView->organization;
         $isOwner = !$organizationView->hasOrganizationUsers;
 
+        $accountStatus = $this->territoryContactRepository->isWhitelisted($command->organizationSiret, $email)
+            ? UserAccountStatusEnum::VALIDATED->value
+            : UserAccountStatusEnum::PENDING->value;
+
         $now = $this->dateUtils->getNow();
         $user = (new User($this->idFactory->make()))
             ->setFullName($command->fullName)
             ->setEmail($email)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($now)
-            ->setAccountStatus(UserAccountStatusEnum::PENDING->value);
+            ->setAccountStatus($accountStatus);
 
         $passwordUser = new PasswordUser(
             uuid: $this->idFactory->make(),
