@@ -11,6 +11,11 @@ class ProConnectUser extends AbstractAuthenticatedUser
         return true;
     }
 
+    public function isValidated(): bool
+    {
+        return true;
+    }
+
     public function getAuthOrigin(): string
     {
         return 'proconnect';

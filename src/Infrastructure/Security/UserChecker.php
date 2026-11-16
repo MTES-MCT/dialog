@@ -26,6 +26,12 @@ final class UserChecker implements UserCheckerInterface
                 $this->translator->trans('login.error.not_verified_account'),
             );
         }
+
+        if (!$user->isValidated()) {
+            throw new CustomUserMessageAccountStatusException(
+                $this->translator->trans('login.error.pending_validation'),
+            );
+        }
     }
 
     public function checkPostAuth(UserInterface $user, ?TokenInterface $token = null): void

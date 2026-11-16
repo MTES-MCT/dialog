@@ -123,5 +123,7 @@ abstract class AbstractAuthenticatedUser implements UserInterface
 
     abstract public function isVerified(): bool;
 
+    abstract public function isValidated(): bool;
+
     abstract public function getAuthOrigin(): string;
 }

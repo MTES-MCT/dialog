@@ -11,6 +11,7 @@ use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\OrganizationUser;
@@ -53,7 +54,8 @@ final class RegisterCommandHandler
             ->setFullName($command->fullName)
             ->setEmail($email)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
-            ->setRegistrationDate($now);
+            ->setRegistrationDate($now)
+            ->setAccountStatus(UserAccountStatusEnum::PENDING->value);
 
         $passwordUser = new PasswordUser(
             uuid: $this->idFactory->make(),

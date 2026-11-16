@@ -1870,6 +1870,10 @@
                 <source>login.error.not_verified_account</source>
                 <target>Vous devez valider votre compte grâce à l'e-mail de confirmation reçu.</target>
             </trans-unit>
+            <trans-unit id="login.error.pending_validation">
+                <source>login.error.pending_validation</source>
+                <target>Votre compte est en attente de validation par notre équipe. Vous recevrez un e-mail dès qu'il sera activé.</target>
+            </trans-unit>
             <trans-unit id="login.title">
                 <source>login.title</source>
                 <target>Connexion à DiaLog</target>
@@ -2668,6 +2672,18 @@
             <trans-unit id="register.auth.email">
                 <source>register.auth.email</source>
                 <target>Créer un compte avec son adresse e-mail</target>
+            </trans-unit>
+            <trans-unit id="register.auth.recommended">
+                <source>register.auth.recommended</source>
+                <target>Recommandé</target>
+            </trans-unit>
+            <trans-unit id="register.auth.proconnect.help">
+                <source>register.auth.proconnect.help</source>
+                <target>ProConnect vérifie votre identité et votre rattachement à votre collectivité. Votre compte est activé immédiatement, sans étape de validation.</target>
+            </trans-unit>
+            <trans-unit id="register.auth.email.help">
+                <source>register.auth.email.help</source>
+                <target>Si vous ne pouvez pas utiliser ProConnect, créez un compte avec votre adresse e-mail. Ce compte pourra nécessiter une validation avant de pouvoir être utilisé.</target>
             </trans-unit>
             <trans-unit id="organization.name">
                 <source>organization.name</source>

@@ -13,6 +13,7 @@ use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\RegisterCommand;
 use App\Application\User\Command\RegisterCommandHandler;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -112,7 +113,8 @@ final class RegisterCommandHandlerTest extends TestCase
             ->setFullName('Mathieu MARCHOIS')
             ->setEmail('mathieu@fairness.coop')
             ->setRegistrationDate($date)
-            ->setRoles([UserRolesEnum::ROLE_USER->value]);
+            ->setRoles([UserRolesEnum::ROLE_USER->value])
+            ->setAccountStatus(UserAccountStatusEnum::PENDING->value);
 
         $passwordUser = new PasswordUser('3e4ea113-9f64-4933-a699-0561b8c15622', 'passwordHashed', $user);
         $user->setPasswordUser($passwordUser);
