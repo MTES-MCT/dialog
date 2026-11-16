@@ -13,6 +13,7 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
 {
     private string $password;
     private bool $isVerified;
+    private bool $isValidated;
     private ?string $emailAuthCode;
 
     public function __construct(
@@ -24,6 +25,7 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
 
         $this->password = $user->getPasswordUser()->getPassword();
         $this->isVerified = $user->isVerified();
+        $this->isValidated = $user->isValidated();
 
         $now ??= new \DateTimeImmutable();
         $expiresAt = $user->getEmailAuthCodeExpiresAt();
@@ -33,6 +35,11 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
     public function isVerified(): bool
     {
         return $this->isVerified;
+    }
+
+    public function isValidated(): bool
+    {
+        return $this->isValidated;
     }
 
     public function getPassword(): string

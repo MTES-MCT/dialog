@@ -24,6 +24,10 @@ final class UserCheckerTest extends TestCase
             ->expects(self::once())
             ->method('isVerified')
             ->willReturn(true);
+        $user
+            ->expects(self::once())
+            ->method('isValidated')
+            ->willReturn(true);
 
         $checker = new UserChecker($translator);
         $this->assertEmpty($checker->checkPreAuth($user));
@@ -45,6 +49,32 @@ final class UserCheckerTest extends TestCase
         $user
             ->expects(self::once())
             ->method('isVerified')
+            ->willReturn(false);
+
+        $checker = new UserChecker($translator);
+        $this->assertEmpty($checker->checkPreAuth($user));
+    }
+
+    public function testCheckPreAuthUserPendingValidation(): void
+    {
+        $this->expectException(CustomUserMessageAccountStatusException::class);
+        $this->expectExceptionMessage('Votre compte est en attente de validation par notre équipe.');
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator
+            ->expects(self::once())
+            ->method('trans')
+            ->with('login.error.pending_validation')
+            ->willReturn('Votre compte est en attente de validation par notre équipe.');
+
+        $user = $this->createMock(AbstractAuthenticatedUser::class);
+        $user
+            ->expects(self::once())
+            ->method('isVerified')
+            ->willReturn(true);
+        $user
+            ->expects(self::once())
+            ->method('isValidated')
             ->willReturn(false);
 
         $checker = new UserChecker($translator);
