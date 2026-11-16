@@ -8,6 +8,7 @@ use App\Application\CommandBusInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
 use App\Application\QueryBusInterface;
+use App\Application\User\Command\Mail\SendAccountValidatedEmailCommand;
 use App\Application\User\Command\SetUserAccountStatusCommand;
 use App\Application\User\Query\GetAllUsersForExportQuery;
 use App\Domain\User\Enum\UserAccountStatusEnum;
@@ -112,7 +113,17 @@ final class UserCrudController extends AbstractCrudController
 
     public function validateUserAccount(AdminContext $context): RedirectResponse
     {
-        return $this->changeAccountStatus($context, UserAccountStatusEnum::VALIDATED, 'Le compte a été validé.');
+        /** @var User $user */
+        $user = $context->getEntity()->getInstance();
+        $wasAlreadyValidated = $user->getAccountStatus() === UserAccountStatusEnum::VALIDATED->value;
+
+        $response = $this->changeAccountStatus($context, UserAccountStatusEnum::VALIDATED, 'Le compte a été validé.');
+
+        if (!$wasAlreadyValidated) {
+            $this->commandBus->dispatchAsync(new SendAccountValidatedEmailCommand($user->getEmail(), $user->getFullName()));
+        }
+
+        return $response;
     }
 
     public function refuseUserAccount(AdminContext $context): RedirectResponse
