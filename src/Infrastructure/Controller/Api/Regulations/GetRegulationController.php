@@ -317,6 +317,18 @@ final class GetRegulationController
                                                 ],
                                             ),
                                         ),
+                                        new OA\Property(
+                                            property: 'isPublicHolidaysExcluded',
+                                            type: 'boolean',
+                                            description: 'Vrai si la période ne s\'applique pas les jours fériés.',
+                                        ),
+                                        new OA\Property(
+                                            property: 'excludedPublicHolidays',
+                                            type: 'array',
+                                            description: 'Jours fériés exclus de la période (AAAA-MM-JJ), parmi les jours '
+                                                . 'd\'application. Pour une période sans date de fin, limités aux 12 prochains mois.',
+                                            items: new OA\Items(type: 'string', format: 'date'),
+                                        ),
                                     ],
                                 ),
                             ),

@@ -127,6 +127,48 @@ final class MapDataControllerTest extends AbstractWebTestCase
         }
     }
 
+    private function provideTestMeasureDatesFilterWithPublicHolidays(): array
+    {
+        return [
+            'not-excluded' => [false, '2026-11-11', '2026-11-11', true],
+            'excluded-holiday-only' => [true, '2026-11-11', '2026-11-11', false],
+            'excluded-with-working-day' => [true, '2026-11-10', '2026-11-11', true],
+            'excluded-start-only' => [true, '2026-11-11', null, false],
+        ];
+    }
+
+    /**
+     * @dataProvider provideTestMeasureDatesFilterWithPublicHolidays
+     */
+    public function testMeasureDatesFilterWithPublicHolidays(bool $isPublicHolidaysExcluded, string $startDate, ?string $endDate, bool $isVisible): void
+    {
+        $client = static::createClient();
+
+        // cifsPeriod2 : du 10/11/2026 au 11/11/2026 (jour férié), heure de Paris
+        static::getContainer()->get('doctrine.dbal.default_connection')->executeStatement(
+            'UPDATE period SET start_datetime = :start, end_datetime = :end, is_public_holidays_excluded = :excluded WHERE uuid = :uuid',
+            [
+                'start' => '2026-11-10 00:00:00+01:00',
+                'end' => '2026-11-11 23:59:00+01:00',
+                'excluded' => $isPublicHolidaysExcluded ? 'true' : 'false',
+                'uuid' => '0654b639-cd33-7507-8000-e2ea21673135',
+            ],
+        );
+
+        $url = \sprintf(
+            '/carte/data.geojson?map_filter_form[measureTypes][]=noEntry&map_filter_form[measureTypes][]=speedLimitation&map_filter_form[displayTemporaryRegulations]=yes&map_filter_form[displayHeavyGoodsVehicles]=yes&map_filter_form[startDate]=%s%s',
+            $startDate,
+            $endDate ? '&map_filter_form[endDate]=' . $endDate : '',
+        );
+        $client->request('GET', $url);
+
+        $this->assertResponseStatusCodeSame(200);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $locationUuids = array_map(fn ($feature) => $feature['properties']['location_uuid'], $data['features']);
+
+        $this->assertSame($isVisible, \in_array(LocationFixture::UUID_CIFS_NAMED_STREET, $locationUuids, true));
+    }
+
     private function provideTestMeasureDatesFilter(): array
     {
         return [

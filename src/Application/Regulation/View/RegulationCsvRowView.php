@@ -6,6 +6,9 @@ namespace App\Application\Regulation\View;
 
 final readonly class RegulationCsvRowView
 {
+    /**
+     * @param string[] $excludedPublicHolidays Dates Y-m-d
+     */
     public function __construct(
         public string $regulationOrderUuid,
         public string $title,
@@ -23,6 +26,8 @@ final readonly class RegulationCsvRowView
         public string $locationLabel,
         public string $geometry,
         public ?VehicleSetView $vehicleSet = null,
+        public bool $isPublicHolidaysExcluded = false,
+        public array $excludedPublicHolidays = [],
         // Bornes de l'emprise (point A et point B) et sens de circulation concerné, relatif à ces bornes
         public string $locationStart = '',
         public string $locationEnd = '',
