@@ -10,6 +10,7 @@ use App\Infrastructure\Controller\Admin\UserCrudController;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 final class UserCrudControllerTest extends AbstractWebTestCase
 {
@@ -108,11 +109,7 @@ final class UserCrudControllerTest extends AbstractWebTestCase
         $userRepository->findOneByUuid($userUuid)->setAccountStatus(UserAccountStatusEnum::PENDING->value);
         $em->flush();
 
-        $client->request('GET', '/admin', [
-            'crudAction' => 'validateUserAccount',
-            'crudControllerFqcn' => UserCrudController::class,
-            'entityId' => $userUuid,
-        ]);
+        $client->request('POST', $this->findAccountStatusActionUrl($client, 'validateUserAccount', $userUuid));
 
         $this->assertResponseStatusCodeSame(302);
 
@@ -133,11 +130,7 @@ final class UserCrudControllerTest extends AbstractWebTestCase
 
         $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
 
-        $client->request('GET', '/admin', [
-            'crudAction' => 'refuseUserAccount',
-            'crudControllerFqcn' => UserCrudController::class,
-            'entityId' => $userUuid,
-        ]);
+        $client->request('POST', $this->findAccountStatusActionUrl($client, 'refuseUserAccount', $userUuid));
 
         $this->assertResponseStatusCodeSame(302);
 
@@ -161,5 +154,65 @@ final class UserCrudControllerTest extends AbstractWebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testRefuseUserAccountRejectsGetRequest(): void
+    {
+        $userUuid = 'd47badd9-989e-472b-a80e-9df642e93880';
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+
+        $client->request('GET', $this->findAccountStatusActionUrl($client, 'refuseUserAccount', $userUuid));
+
+        $this->assertResponseStatusCodeSame(405);
+        $this->assertAccountStatusUnchanged($userUuid);
+    }
+
+    public function testRefuseUserAccountRejectsInvalidCsrfToken(): void
+    {
+        $userUuid = 'd47badd9-989e-472b-a80e-9df642e93880';
+        $client = $this->login(UserFixture::DEPARTMENT_93_ADMIN_EMAIL);
+
+        $client->request('POST', '/admin?' . http_build_query([
+            'crudAction' => 'refuseUserAccount',
+            'crudControllerFqcn' => UserCrudController::class,
+            'entityId' => $userUuid,
+            '_token' => 'invalid',
+        ]));
+
+        $this->assertResponseStatusCodeSame(403);
+        $this->assertAccountStatusUnchanged($userUuid);
+    }
+
+    private function findAccountStatusActionUrl(KernelBrowser $client, string $crudAction, string $userUuid): string
+    {
+        $crawler = $client->request('GET', '/admin?' . http_build_query([
+            'crudAction' => 'index',
+            'crudControllerFqcn' => UserCrudController::class,
+        ]));
+        $this->assertResponseStatusCodeSame(200);
+
+        foreach ($crawler->filter('form[method="POST"]') as $form) {
+            $action = html_entity_decode($form->getAttribute('action'));
+            parse_str((string) parse_url($action, \PHP_URL_QUERY), $query);
+
+            if (($query['crudAction'] ?? null) === $crudAction && ($query['entityId'] ?? null) === $userUuid) {
+                $this->assertNotEmpty($query['_token'] ?? null);
+
+                return $action;
+            }
+        }
+
+        $this->fail(\sprintf('No "%s" action form found for user %s.', $crudAction, $userUuid));
+    }
+
+    private function assertAccountStatusUnchanged(string $userUuid): void
+    {
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->clear();
+        $userRepository = static::getContainer()->get(UserRepositoryInterface::class);
+        $this->assertSame(
+            UserAccountStatusEnum::VALIDATED->value,
+            $userRepository->findOneByUuid($userUuid)->getAccountStatus(),
+        );
     }
 }

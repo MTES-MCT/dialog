@@ -7,6 +7,7 @@ namespace App\Application\User\Command\Invitation;
 use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\InvitationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -52,7 +53,8 @@ final readonly class CreateAccountFromInvitationCommandHandler
             ->setEmail($email)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($now)
-            ->setIsVerified();
+            ->setIsVerified()
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
 
         $passwordUser = new PasswordUser(
             uuid: $this->idFactory->make(),

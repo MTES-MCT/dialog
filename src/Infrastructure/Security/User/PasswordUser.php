@@ -8,6 +8,7 @@ use App\Domain\User\User;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Scheb\TwoFactorBundle\Model\TrustedDeviceInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenticatedUserInterface, TwoFactorInterface, TrustedDeviceInterface
 {
@@ -45,6 +46,13 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function isEqualTo(UserInterface $user): bool
+    {
+        return parent::isEqualTo($user)
+            && $user instanceof self
+            && $this->password === $user->getPassword();
     }
 
     public function setPassword(string $password): void

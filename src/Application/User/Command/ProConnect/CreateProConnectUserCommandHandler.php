@@ -48,7 +48,8 @@ final class CreateProConnectUserCommandHandler
                     ->setEmail($command->email)
                     ->setRoles([UserRolesEnum::ROLE_USER->value])
                     ->setRegistrationDate($this->dateUtils->getNow())
-                    ->setIsVerified();
+                    ->setIsVerified()
+                    ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
 
                 $this->userRepository->add($user);
             }
@@ -69,7 +70,9 @@ final class CreateProConnectUserCommandHandler
 
             $proConnectUser = new ProConnectUser($this->idFactory->make(), $user);
             $user->setProConnectUser($proConnectUser);
-            $user->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
+            if ($user->getAccountStatus() !== UserAccountStatusEnum::REFUSED->value) {
+                $user->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
+            }
             $this->proConnectUserRepository->add($proConnectUser);
         } catch (OrganizationNotFoundException $e) {
             throw $e;

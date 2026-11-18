@@ -210,9 +210,13 @@ final class RegisterCommandHandlerTest extends TestCase
         ($this->handler)($this->command);
     }
 
-    public function testRegisterAsOwner(): void
+    /**
+     * @dataProvider provideOwnership
+     */
+    public function testRegisterOwnership(bool $isWhitelisted, bool $hasOrganizationUsers, int $ownersCount, bool $expectedIsOwner): void
     {
         $organization = $this->createMock(Organization::class);
+        $organization->method('getUuid')->willReturn('a8439603-40f7-4b1e-8a35-cee9e53b98d4');
 
         $this->userRepository
             ->expects(self::once())
@@ -220,11 +224,20 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop')
             ->willReturn(null);
 
-        $orgView = new GetOrCreateOrganizationView($organization, false);
+        $orgView = new GetOrCreateOrganizationView($organization, $hasOrganizationUsers);
         $this->commandBus
             ->expects(self::once())
             ->method('handle')
             ->willReturn($orgView);
+
+        $this->territoryContactRepository
+            ->method('isWhitelisted')
+            ->willReturn($isWhitelisted);
+
+        $this->organizationUserRepository
+            ->method('countOwnersByOrganizationUuid')
+            ->with('a8439603-40f7-4b1e-8a35-cee9e53b98d4')
+            ->willReturn($ownersCount);
 
         $this->idFactory
             ->expects(self::exactly(3))
@@ -235,11 +248,10 @@ final class RegisterCommandHandlerTest extends TestCase
                 'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
             );
 
-        $date = new \DateTimeImmutable('2024-05-07');
         $this->dateUtils
             ->expects(self::once())
             ->method('getNow')
-            ->willReturn($date);
+            ->willReturn(new \DateTimeImmutable('2024-05-07'));
 
         $this->passwordHasher
             ->expects(self::once())
@@ -247,22 +259,22 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('12345')
             ->willReturn('passwordHashed');
 
-        $this->passwordUserRepository
-            ->expects(self::once())
-            ->method('add');
-
         $this->organizationUserRepository
             ->expects(self::once())
             ->method('add')
-            ->with(self::callback(function (OrganizationUser $orgUser) {
-                return $orgUser->isOwner() === true;
+            ->with(self::callback(function (OrganizationUser $orgUser) use ($expectedIsOwner) {
+                return $orgUser->isOwner() === $expectedIsOwner;
             }));
 
-        $this->userRepository
-            ->expects(self::once())
-            ->method('add');
-
         ($this->handler)($this->command);
+    }
+
+    public static function provideOwnership(): iterable
+    {
+        yield 'whitelisted, new organization' => [true, false, 0, true];
+        yield 'whitelisted, organization without owner' => [true, true, 0, true];
+        yield 'whitelisted, organization with owner' => [true, true, 1, false];
+        yield 'pending, new organization' => [false, false, 0, false];
     }
 
     public function testRegisterWithBadSiret(): void

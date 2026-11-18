@@ -23,6 +23,9 @@ class AnctImportCommand extends Command
 {
     private const DEFAULT_URL = 'https://www.data.gouv.fr/api/1/datasets/r/fd73a12f-572c-4b04-89e9-91cc8c6ebcb3';
     private const BATCH_SIZE = 1000;
+    // The full DPNT file contains tens of thousands of territories: a much smaller file is most likely
+    // truncated or broken, and importing it would wipe the whitelist used to auto-validate accounts.
+    private const DEFAULT_MIN_ROWS = 10000;
 
     public function __construct(
         private EntityManagerInterface $em,
@@ -36,7 +39,8 @@ class AnctImportCommand extends Command
     {
         $this
             ->addOption('url', null, InputOption::VALUE_REQUIRED, 'URL du fichier dpnt-quotidien.json.gz', self::DEFAULT_URL)
-            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Chemin local vers un fichier json ou json.gz (ignore --url)');
+            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Chemin local vers un fichier json ou json.gz (ignore --url)')
+            ->addOption('min-rows', null, InputOption::VALUE_REQUIRED, 'Nombre minimal de collectivités attendues pour remplacer les données existantes', (string) self::DEFAULT_MIN_ROWS);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -74,6 +78,13 @@ class AnctImportCommand extends Command
         }
 
         $io->text(\sprintf('%d collectivités avec une adresse e-mail officielle', \count($rows)));
+
+        $minRows = (int) $input->getOption('min-rows');
+        if (\count($rows) < $minRows) {
+            $io->error(\sprintf('Import annulé : %d collectivités trouvées, au moins %d attendues. Les données existantes sont conservées.', \count($rows), $minRows));
+
+            return Command::FAILURE;
+        }
 
         $connection = $this->em->getConnection();
         $connection->beginTransaction();

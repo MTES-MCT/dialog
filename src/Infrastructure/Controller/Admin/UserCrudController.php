@@ -31,16 +31,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class UserCrudController extends AbstractCrudController
 {
+    private const ACCOUNT_STATUS_CSRF_TOKEN_PREFIX = 'admin-user-account-status-';
+
     public function __construct(
         private readonly PasswordHasherInterface $passwordHasher,
         private readonly IdFactoryInterface $idFactory,
@@ -49,6 +54,7 @@ final class UserCrudController extends AbstractCrudController
         private readonly CommandBusInterface $commandBus,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly CommonAdminConfiguration $commonAdminConfiguration,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
@@ -59,7 +65,8 @@ final class UserCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): User
     {
-        return new User($this->idFactory->make());
+        return (new User($this->idFactory->make()))
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -89,14 +96,16 @@ final class UserCrudController extends AbstractCrudController
             ->createAsGlobalAction();
 
         $validateAccount = Action::new('validateUserAccount', 'Valider le compte')
-            ->linkToCrudAction('validateUserAccount')
+            ->linkToUrl(fn (User $user): string => $this->generateAccountStatusActionUrl('validateUserAccount', $user))
+            ->renderAsForm()
             ->setIcon('fa fa-check')
             ->displayIf(static function (User $user): bool {
                 return $user->getAccountStatus() !== UserAccountStatusEnum::VALIDATED->value;
             });
 
         $refuseAccount = Action::new('refuseUserAccount', 'Refuser le compte')
-            ->linkToCrudAction('refuseUserAccount')
+            ->linkToUrl(fn (User $user): string => $this->generateAccountStatusActionUrl('refuseUserAccount', $user))
+            ->renderAsForm()
             ->setIcon('fa fa-ban')
             ->displayIf(static function (User $user): bool {
                 return $user->getAccountStatus() !== UserAccountStatusEnum::REFUSED->value;
@@ -115,6 +124,8 @@ final class UserCrudController extends AbstractCrudController
     {
         /** @var User $user */
         $user = $context->getEntity()->getInstance();
+        $this->denyUnlessValidAccountStatusRequest($context, $user);
+
         $wasAlreadyValidated = $user->getAccountStatus() === UserAccountStatusEnum::VALIDATED->value;
 
         $response = $this->changeAccountStatus($context, UserAccountStatusEnum::VALIDATED, 'Le compte a été validé.');
@@ -128,7 +139,35 @@ final class UserCrudController extends AbstractCrudController
 
     public function refuseUserAccount(AdminContext $context): RedirectResponse
     {
+        /** @var User $user */
+        $user = $context->getEntity()->getInstance();
+        $this->denyUnlessValidAccountStatusRequest($context, $user);
+
         return $this->changeAccountStatus($context, UserAccountStatusEnum::REFUSED, 'Le compte a été refusé.');
+    }
+
+    private function generateAccountStatusActionUrl(string $crudAction, User $user): string
+    {
+        return $this->adminUrlGenerator
+            ->unsetAll()
+            ->setController(self::class)
+            ->setAction($crudAction)
+            ->setEntityId($user->getUuid())
+            ->set('_token', $this->container->get('security.csrf.token_manager')->getToken(self::ACCOUNT_STATUS_CSRF_TOKEN_PREFIX . $user->getUuid())->getValue())
+            ->generateUrl();
+    }
+
+    private function denyUnlessValidAccountStatusRequest(AdminContext $context, User $user): void
+    {
+        $request = $context->getRequest();
+
+        if (!$request->isMethod('POST')) {
+            throw new MethodNotAllowedHttpException(['POST']);
+        }
+
+        if (!$this->isCsrfTokenValid(self::ACCOUNT_STATUS_CSRF_TOKEN_PREFIX . $user->getUuid(), (string) $request->query->get('_token'))) {
+            throw new AccessDeniedHttpException('Invalid CSRF token.');
+        }
     }
 
     private function changeAccountStatus(AdminContext $context, UserAccountStatusEnum $status, string $successMessage): RedirectResponse

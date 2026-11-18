@@ -10,6 +10,7 @@ use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\SaveOrganizationUserCommand;
 use App\Application\User\Command\SaveOrganizationUserCommandHandler;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
@@ -104,7 +105,8 @@ final class SaveOrganizationUserCommandHandlerTest extends TestCase
             ->setFullName('Mathieu MARCHOIS')
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate($registrationDate)
-            ->setIsVerified();
+            ->setIsVerified()
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
 
         $this->userRepository
             ->expects(self::once())

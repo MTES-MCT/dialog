@@ -49,11 +49,14 @@ final class RegisterCommandHandler
         /** @var GetOrCreateOrganizationView $organizationView */
         $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($command->organizationSiret));
         $organization = $organizationView->organization;
-        $isOwner = !$organizationView->hasOrganizationUsers;
-
-        $accountStatus = $this->territoryContactRepository->isWhitelisted($command->organizationSiret, $email)
+        $isWhitelisted = $this->territoryContactRepository->isWhitelisted($command->organizationSiret, $email);
+        $accountStatus = $isWhitelisted
             ? UserAccountStatusEnum::VALIDATED->value
             : UserAccountStatusEnum::PENDING->value;
+
+        // Pending accounts become owner only once validated (see SetUserAccountStatusCommandHandler).
+        $isOwner = $isWhitelisted
+            && (!$organizationView->hasOrganizationUsers || 0 === $this->organizationUserRepository->countOwnersByOrganizationUuid($organization->getUuid()));
 
         $now = $this->dateUtils->getNow();
         $user = (new User($this->idFactory->make()))

@@ -20,7 +20,7 @@ final class AnctImportCommandTest extends KernelTestCase
 
         $command = $container->get(AnctImportCommand::class);
         $commandTester = new CommandTester($command);
-        $commandTester->execute(['--file' => __DIR__ . '/../../../../fixtures/anct/dpnt_sample.json']);
+        $commandTester->execute(['--file' => __DIR__ . '/../../../../fixtures/anct/dpnt_sample.json', '--min-rows' => '1']);
 
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('2 collectivités', $commandTester->getDisplay());

@@ -13,7 +13,18 @@ jobs:
 
     steps:
       - name: Install Scalingo CLI
-        run: curl -O https://cli-dl.scalingo.com/install && bash install
+        # Version épinglée et vérifiée par somme de contrôle (checksums.txt de la release GitHub),
+        # car ce job manipule la clé SSH de production.
+        env:
+          SCALINGO_CLI_VERSION: '1.52.0'
+          SCALINGO_CLI_SHA256: 'ced4bbd616235738288c4789e9940a821b27e5e5ba8f13250543f97f51682651'
+        run: |
+          archive="scalingo_${SCALINGO_CLI_VERSION}_linux_amd64.tar.gz"
+          curl -fsSL -o "$archive" "https://github.com/Scalingo/cli/releases/download/${SCALINGO_CLI_VERSION}/${archive}"
+          echo "${SCALINGO_CLI_SHA256}  ${archive}" | sha256sum -c -
+          tar -xzf "$archive"
+          sudo install -m 755 "scalingo_${SCALINGO_CLI_VERSION}_linux_amd64/scalingo" /usr/local/bin/scalingo
+          scalingo --version
 
       - name: Install SSH key
         run: |
