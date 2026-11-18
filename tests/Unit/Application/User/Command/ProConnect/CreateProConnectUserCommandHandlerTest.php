@@ -11,6 +11,7 @@ use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\User\Command\ProConnect\CreateProConnectUserCommand;
 use App\Application\User\Command\ProConnect\CreateProConnectUserCommandHandler;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
@@ -138,6 +139,27 @@ final class CreateProConnectUserCommandHandlerTest extends TestCase
         ($this->handler)($command);
     }
 
+    public function testDoesNotValidateRefusedExistingUser(): void
+    {
+        $email = 'mathieu@fairness.coop';
+        $user = $this->createMock(User::class);
+        $organization = $this->createMock(Organization::class);
+        $command = new CreateProConnectUserCommand($email, 'Mathieu', 'MARCHOIS', '12345678901234');
+
+        $this->userRepository->method('findOneByEmail')->with($email)->willReturn($user);
+        $user->method('getProConnectUser')->willReturn(null);
+        $user->method('getEmail')->willReturn($email);
+        $user->method('getAccountStatus')->willReturn(UserAccountStatusEnum::REFUSED->value);
+        $this->commandBus->method('handle')->willReturn(new GetOrCreateOrganizationView($organization, true));
+        $this->isUserAlreadyRegisteredInOrganization->method('isSatisfiedBy')->willReturn(true);
+        $this->idFactory->method('make')->willReturn('e2ff59cc-c792-46b7-b7d8-9c6eaa3103e7');
+
+        $user->expects($this->never())->method('setAccountStatus');
+        $this->proConnectUserRepository->expects($this->once())->method('add');
+
+        ($this->handler)($command);
+    }
+
     public function testCreateWithExistingUserNotInOrganization(): void
     {
         $email = 'mathieu@fairness.coop';
@@ -239,7 +261,7 @@ final class CreateProConnectUserCommandHandlerTest extends TestCase
             ->with($this->callback(function (User $user) use ($email, $userUuid, &$createdUser) {
                 $createdUser = $user;
 
-                return $user->getUuid() === $userUuid && $user->getEmail() === $email;
+                return $user->getUuid() === $userUuid && $user->getEmail() === $email && $user->isValidated();
             }));
 
         $this->commandBus

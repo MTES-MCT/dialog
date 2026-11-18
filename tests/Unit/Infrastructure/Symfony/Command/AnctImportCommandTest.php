@@ -65,7 +65,7 @@ final class AnctImportCommandTest extends TestCase
             });
 
         $commandTester = $this->createCommandTester($httpClient);
-        $commandTester->execute(['--url' => 'https://example.org/dpnt.json.gz']);
+        $commandTester->execute(['--url' => 'https://example.org/dpnt.json.gz', '--min-rows' => '1000']);
 
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString('1001 collectivités', $commandTester->getDisplay());
@@ -113,9 +113,24 @@ final class AnctImportCommandTest extends TestCase
         $this->connection->expects(self::once())->method('rollBack');
 
         $commandTester = $this->createCommandTester($httpClient);
-        $commandTester->execute([]);
+        $commandTester->execute(['--min-rows' => '1']);
 
         $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
         $this->assertStringContainsString('Import interrompu : Database error', $commandTester->getDisplay());
+    }
+
+    public function testAbortWhenTooFewRows(): void
+    {
+        $httpClient = new MockHttpClient(new MockResponse(json_encode([
+            ['siret' => '21930001000019', 'adresse_messagerie' => 'contact@ville-test.fr'],
+        ])));
+
+        $this->em->expects(self::never())->method('getConnection');
+
+        $commandTester = $this->createCommandTester($httpClient);
+        $commandTester->execute([]);
+
+        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('Import annulé', $commandTester->getDisplay());
     }
 }

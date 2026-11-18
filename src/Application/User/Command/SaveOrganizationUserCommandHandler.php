@@ -8,6 +8,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\OrganizationMustHaveAtLeastOneOwnerException;
@@ -83,7 +84,8 @@ final class SaveOrganizationUserCommandHandler
                 ->setFullName($command->fullName)
                 ->setRoles([UserRolesEnum::ROLE_USER->value])
                 ->setRegistrationDate($this->dateUtils->getNow())
-                ->setIsVerified();
+                ->setIsVerified()
+                ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
 
             $passwordUser = new PasswordUser(
                 uuid: $this->idFactory->make(),

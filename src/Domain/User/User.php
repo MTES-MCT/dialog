@@ -19,7 +19,7 @@ class User
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
     private bool $isVerified = false;
-    private string $accountStatus = UserAccountStatusEnum::VALIDATED->value;
+    private string $accountStatus = UserAccountStatusEnum::PENDING->value;
 
     public function __construct(
         private string $uuid,

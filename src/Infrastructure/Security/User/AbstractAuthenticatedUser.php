@@ -6,9 +6,10 @@ namespace App\Infrastructure\Security\User;
 
 use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\User;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-abstract class AbstractAuthenticatedUser implements UserInterface
+abstract class AbstractAuthenticatedUser implements UserInterface, EquatableInterface
 {
     protected string $uuid;
     protected string $email;
@@ -119,6 +120,28 @@ abstract class AbstractAuthenticatedUser implements UserInterface
     public function setFullName(string $fullName): void
     {
         $this->fullName = $fullName;
+    }
+
+    /**
+     * Called by Symfony when refreshing the user from the session: returning false logs the user out.
+     * This ensures that refusing (or unverifying) an account terminates its active sessions.
+     */
+    public function isEqualTo(UserInterface $user): bool
+    {
+        if (!$user instanceof static || $user::class !== static::class) {
+            return false;
+        }
+
+        $roles = $this->getRoles();
+        $refreshedRoles = $user->getRoles();
+        sort($roles);
+        sort($refreshedRoles);
+
+        return $this->uuid === $user->getUuid()
+            && $this->getUserIdentifier() === $user->getUserIdentifier()
+            && $roles === $refreshedRoles
+            && $this->isVerified() === $user->isVerified()
+            && $this->isValidated() === $user->isValidated();
     }
 
     abstract public function isVerified(): bool;
