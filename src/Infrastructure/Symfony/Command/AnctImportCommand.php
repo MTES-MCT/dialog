@@ -46,7 +46,7 @@ class AnctImportCommand extends Command
         $file = $input->getOption('file');
         if ($file !== null) {
             $io->text(\sprintf('Lecture du fichier local %s', $file));
-            $raw = file_get_contents($file);
+            $raw = is_readable($file) ? file_get_contents($file) : false;
             if ($raw === false) {
                 $io->error(\sprintf('Impossible de lire le fichier %s', $file));
 
@@ -97,7 +97,7 @@ class AnctImportCommand extends Command
     private function decompressIfNeeded(string $raw): string
     {
         if (\strlen($raw) >= 2 && "\x1f\x8b" === substr($raw, 0, 2)) {
-            $decoded = gzdecode($raw);
+            $decoded = @gzdecode($raw);
             if ($decoded === false) {
                 throw new \RuntimeException('Impossible de décompresser le fichier gzip.');
             }
