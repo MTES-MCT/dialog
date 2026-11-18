@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\User\Enum\UserAccountStatusEnum;
+
 class User
 {
     private string $fullName;
@@ -17,6 +19,7 @@ class User
     private ?PasswordUser $passwordUser = null;
     private ?ProConnectUser $proConnectUser = null;
     private bool $isVerified = false;
+    private string $accountStatus = UserAccountStatusEnum::PENDING->value;
 
     public function __construct(
         private string $uuid,
@@ -158,6 +161,23 @@ class User
         $this->isVerified = $isVerified;
 
         return $this;
+    }
+
+    public function getAccountStatus(): string
+    {
+        return $this->accountStatus;
+    }
+
+    public function setAccountStatus(string $accountStatus): self
+    {
+        $this->accountStatus = $accountStatus;
+
+        return $this;
+    }
+
+    public function isValidated(): bool
+    {
+        return $this->accountStatus === UserAccountStatusEnum::VALIDATED->value;
     }
 
     public function __toString(): string

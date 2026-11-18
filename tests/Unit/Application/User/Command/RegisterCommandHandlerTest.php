@@ -13,6 +13,8 @@ use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
 use App\Application\User\Command\RegisterCommand;
 use App\Application\User\Command\RegisterCommandHandler;
+use App\Domain\Anct\Repository\TerritoryContactRepositoryInterface;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
@@ -36,6 +38,7 @@ final class RegisterCommandHandlerTest extends TestCase
     private MockObject $dateUtils;
     private MockObject $stringUtils;
     private MockObject $commandBus;
+    private MockObject $territoryContactRepository;
     private RegisterCommandHandler $handler;
     private RegisterCommand $command;
 
@@ -49,6 +52,7 @@ final class RegisterCommandHandlerTest extends TestCase
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->stringUtils = $this->createMock(StringUtilsInterface::class);
         $this->commandBus = $this->createMock(CommandBusInterface::class);
+        $this->territoryContactRepository = $this->createMock(TerritoryContactRepositoryInterface::class);
 
         $this->handler = new RegisterCommandHandler(
             $this->idFactory,
@@ -59,6 +63,7 @@ final class RegisterCommandHandlerTest extends TestCase
             $this->stringUtils,
             $this->passwordHasher,
             $this->commandBus,
+            $this->territoryContactRepository,
         );
 
         $this->command = new RegisterCommand();
@@ -93,6 +98,12 @@ final class RegisterCommandHandlerTest extends TestCase
             }))
             ->willReturn($orgView);
 
+        $this->territoryContactRepository
+            ->expects(self::once())
+            ->method('isWhitelisted')
+            ->with('82050375300015', 'mathieu@fairness.coop')
+            ->willReturn(false);
+
         $this->idFactory
             ->expects(self::exactly(3))
             ->method('make')
@@ -112,7 +123,8 @@ final class RegisterCommandHandlerTest extends TestCase
             ->setFullName('Mathieu MARCHOIS')
             ->setEmail('mathieu@fairness.coop')
             ->setRegistrationDate($date)
-            ->setRoles([UserRolesEnum::ROLE_USER->value]);
+            ->setRoles([UserRolesEnum::ROLE_USER->value])
+            ->setAccountStatus(UserAccountStatusEnum::PENDING->value);
 
         $passwordUser = new PasswordUser('3e4ea113-9f64-4933-a699-0561b8c15622', 'passwordHashed', $user);
         $user->setPasswordUser($passwordUser);
@@ -145,7 +157,7 @@ final class RegisterCommandHandlerTest extends TestCase
         $this->assertEquals(($this->handler)($this->command), $user);
     }
 
-    public function testRegisterAsOwner(): void
+    public function testRegisterWithAnctWhitelistedEmailIsValidated(): void
     {
         $organization = $this->createMock(Organization::class);
 
@@ -155,11 +167,17 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('mathieu@fairness.coop')
             ->willReturn(null);
 
-        $orgView = new GetOrCreateOrganizationView($organization, false);
+        $orgView = new GetOrCreateOrganizationView($organization, true);
         $this->commandBus
             ->expects(self::once())
             ->method('handle')
             ->willReturn($orgView);
+
+        $this->territoryContactRepository
+            ->expects(self::once())
+            ->method('isWhitelisted')
+            ->with('82050375300015', 'mathieu@fairness.coop')
+            ->willReturn(true);
 
         $this->idFactory
             ->expects(self::exactly(3))
@@ -182,22 +200,81 @@ final class RegisterCommandHandlerTest extends TestCase
             ->with('12345')
             ->willReturn('passwordHashed');
 
-        $this->passwordUserRepository
+        $this->userRepository
             ->expects(self::once())
-            ->method('add');
+            ->method('add')
+            ->with(self::callback(function (User $user) {
+                return $user->getAccountStatus() === UserAccountStatusEnum::VALIDATED->value;
+            }));
+
+        ($this->handler)($this->command);
+    }
+
+    /**
+     * @dataProvider provideOwnership
+     */
+    public function testRegisterOwnership(bool $isWhitelisted, bool $hasOrganizationUsers, int $ownersCount, bool $expectedIsOwner): void
+    {
+        $organization = $this->createMock(Organization::class);
+        $organization->method('getUuid')->willReturn('a8439603-40f7-4b1e-8a35-cee9e53b98d4');
+
+        $this->userRepository
+            ->expects(self::once())
+            ->method('findOneByEmail')
+            ->with('mathieu@fairness.coop')
+            ->willReturn(null);
+
+        $orgView = new GetOrCreateOrganizationView($organization, $hasOrganizationUsers);
+        $this->commandBus
+            ->expects(self::once())
+            ->method('handle')
+            ->willReturn($orgView);
+
+        $this->territoryContactRepository
+            ->method('isWhitelisted')
+            ->willReturn($isWhitelisted);
+
+        $this->organizationUserRepository
+            ->method('countOwnersByOrganizationUuid')
+            ->with('a8439603-40f7-4b1e-8a35-cee9e53b98d4')
+            ->willReturn($ownersCount);
+
+        $this->idFactory
+            ->expects(self::exactly(3))
+            ->method('make')
+            ->willReturn(
+                '0de5692b-cab1-494c-804d-765dc14df674',
+                '3e4ea113-9f64-4933-a699-0561b8c15622',
+                'f40f95eb-a7dd-4232-9f03-2db10f04f37f',
+            );
+
+        $this->dateUtils
+            ->expects(self::once())
+            ->method('getNow')
+            ->willReturn(new \DateTimeImmutable('2024-05-07'));
+
+        $this->passwordHasher
+            ->expects(self::once())
+            ->method('hash')
+            ->with('12345')
+            ->willReturn('passwordHashed');
 
         $this->organizationUserRepository
             ->expects(self::once())
             ->method('add')
-            ->with(self::callback(function (OrganizationUser $orgUser) {
-                return $orgUser->isOwner() === true;
+            ->with(self::callback(function (OrganizationUser $orgUser) use ($expectedIsOwner) {
+                return $orgUser->isOwner() === $expectedIsOwner;
             }));
 
-        $this->userRepository
-            ->expects(self::once())
-            ->method('add');
-
         ($this->handler)($this->command);
+    }
+
+    public static function provideOwnership(): iterable
+    {
+        yield 'whitelisted, new organization' => [true, false, 0, true];
+        yield 'whitelisted, organization without owner' => [true, true, 0, true];
+        yield 'whitelisted, organization with owner' => [true, true, 1, false];
+        yield 'pending, new organization' => [false, false, 0, false];
     }
 
     public function testRegisterWithBadSiret(): void

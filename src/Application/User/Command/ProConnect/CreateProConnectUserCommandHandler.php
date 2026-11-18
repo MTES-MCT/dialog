@@ -9,6 +9,7 @@ use App\Application\DateUtilsInterface;
 use App\Application\IdFactoryInterface;
 use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\OrganizationNotFoundException;
 use App\Domain\User\OrganizationUser;
@@ -47,7 +48,8 @@ final class CreateProConnectUserCommandHandler
                     ->setEmail($command->email)
                     ->setRoles([UserRolesEnum::ROLE_USER->value])
                     ->setRegistrationDate($this->dateUtils->getNow())
-                    ->setIsVerified();
+                    ->setIsVerified()
+                    ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
 
                 $this->userRepository->add($user);
             }
@@ -68,6 +70,9 @@ final class CreateProConnectUserCommandHandler
 
             $proConnectUser = new ProConnectUser($this->idFactory->make(), $user);
             $user->setProConnectUser($proConnectUser);
+            if ($user->getAccountStatus() !== UserAccountStatusEnum::REFUSED->value) {
+                $user->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
+            }
             $this->proConnectUserRepository->add($proConnectUser);
         } catch (OrganizationNotFoundException $e) {
             throw $e;

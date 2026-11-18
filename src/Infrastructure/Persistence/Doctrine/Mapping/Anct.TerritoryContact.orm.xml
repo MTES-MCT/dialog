@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Anct\TerritoryContact"
+    table="anct_territory_contact">
+    <id name="siret" type="string" column="siret" nullable="false" length="14" />
+    <field name="email" type="string" column="email" nullable="false" />
+    <indexes>
+      <index name="idx_anct_territory_contact_siret_email" columns="siret,email" />
+    </indexes>
+  </entity>
+</doctrine-mapping>

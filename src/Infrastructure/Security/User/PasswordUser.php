@@ -8,11 +8,13 @@ use App\Domain\User\User;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Scheb\TwoFactorBundle\Model\TrustedDeviceInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenticatedUserInterface, TwoFactorInterface, TrustedDeviceInterface
 {
     private string $password;
     private bool $isVerified;
+    private bool $isValidated;
     private ?string $emailAuthCode;
 
     public function __construct(
@@ -24,6 +26,7 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
 
         $this->password = $user->getPasswordUser()->getPassword();
         $this->isVerified = $user->isVerified();
+        $this->isValidated = $user->isValidated();
 
         $now ??= new \DateTimeImmutable();
         $expiresAt = $user->getEmailAuthCodeExpiresAt();
@@ -35,9 +38,21 @@ class PasswordUser extends AbstractAuthenticatedUser implements PasswordAuthenti
         return $this->isVerified;
     }
 
+    public function isValidated(): bool
+    {
+        return $this->isValidated;
+    }
+
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function isEqualTo(UserInterface $user): bool
+    {
+        return parent::isEqualTo($user)
+            && $user instanceof self
+            && $this->password === $user->getPassword();
     }
 
     public function setPassword(string $password): void
