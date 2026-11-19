@@ -20,6 +20,7 @@ use App\Infrastructure\Security\User\OrganizationAwareUserInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -53,9 +54,9 @@ final class CheckLocationController
             example: [
                 'roadType' => 'lane',
                 'namedStreet' => [
-                    'cityCode' => '93070',
-                    'cityLabel' => 'Saint-Ouen-sur-Seine',
-                    'roadName' => 'Rue Eugène Berthoud',
+                    'cityCode' => '60560',
+                    'cityLabel' => 'Orry-La-Ville',
+                    'roadName' => 'Rue de Sylvie',
                     'direction' => 'BOTH',
                 ],
             ],
@@ -63,16 +64,26 @@ final class CheckLocationController
     )]
     #[OA\Response(
         response: 200,
-        description: 'Résultat du contrôle. `accepted` vaut `false` si la localisation serait refusée '
-            . 'à la création de l\'arrêté ; `reason` en donne alors le motif.',
+        description: 'Localisation acceptée',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
+                new OA\Property(property: 'accepted', type: 'boolean', example: true),
+                new OA\Property(property: 'geometry', type: 'object', description: 'Géométrie GeoJSON calculée pour la localisation.'),
+            ],
+        ),
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Localisation refusée : elle le serait aussi à la création de l\'arrêté. `reason` en donne le motif.',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'status', type: 'integer', example: 400),
                 new OA\Property(property: 'accepted', type: 'boolean', example: false),
                 new OA\Property(
                     property: 'reason',
                     type: 'string',
-                    nullable: true,
                     enum: [
                         'organization_cannot_intervene_on_geometry',
                         'geocoding_failed',
@@ -84,13 +95,7 @@ final class CheckLocationController
                     ],
                     example: 'organization_cannot_intervene_on_geometry',
                 ),
-                new OA\Property(property: 'detail', type: 'string', nullable: true),
-                new OA\Property(
-                    property: 'geometry',
-                    type: 'object',
-                    nullable: true,
-                    description: 'Géométrie GeoJSON calculée pour la localisation, lorsqu\'elle a pu l\'être.',
-                ),
+                new OA\Property(property: 'detail', type: 'string'),
             ],
         ),
     )]
@@ -157,8 +162,6 @@ final class CheckLocationController
 
         return new JsonResponse([
             'accepted' => true,
-            'reason' => null,
-            'detail' => null,
             'geometry' => json_decode($geometry, true),
         ]);
     }
@@ -177,10 +180,10 @@ final class CheckLocationController
     private function refused(string $reason, ?string $detail = null): JsonResponse
     {
         return new JsonResponse([
+            'status' => Response::HTTP_BAD_REQUEST,
             'accepted' => false,
             'reason' => $reason,
             'detail' => $detail ?? $this->translator->trans('regulation.location.error.' . $reason, [], 'validators'),
-            'geometry' => null,
-        ]);
+        ], Response::HTTP_BAD_REQUEST);
     }
 }

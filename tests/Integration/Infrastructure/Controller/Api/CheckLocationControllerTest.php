@@ -42,7 +42,6 @@ final class CheckLocationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(200);
         $this->assertTrue($data['accepted']);
-        $this->assertNull($data['reason']);
         $this->assertIsArray($data['geometry']);
         $this->assertArrayHasKey('type', $data['geometry']);
     }
@@ -61,11 +60,12 @@ final class CheckLocationControllerTest extends AbstractWebTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertSame(400, $data['status']);
         $this->assertFalse($data['accepted']);
         $this->assertSame('organization_cannot_intervene_on_geometry', $data['reason']);
         $this->assertStringStartsWith('L\'organisation "' . OrganizationFixture::SEINE_SAINT_DENIS_NAME . '" ne semble pas avoir les compétences', $data['detail']);
-        $this->assertNull($data['geometry']);
+        $this->assertArrayNotHasKey('geometry', $data);
     }
 
     public function testLaneGeocodingFailure(): void
@@ -79,7 +79,8 @@ final class CheckLocationControllerTest extends AbstractWebTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertSame(400, $data['status']);
         $this->assertFalse($data['accepted']);
         $this->assertSame('geocoding_failed', $data['reason']);
         $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $data['detail']);
@@ -95,7 +96,8 @@ final class CheckLocationControllerTest extends AbstractWebTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertSame(400, $data['status']);
         $this->assertFalse($data['accepted']);
         $this->assertSame('zone_without_streets', $data['reason']);
     }
