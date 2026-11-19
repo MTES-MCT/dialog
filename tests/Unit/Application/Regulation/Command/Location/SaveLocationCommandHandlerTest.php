@@ -20,6 +20,7 @@ use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
 use App\Application\Regulation\Command\Location\SaveWholeCityCommand;
 use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Application\Regulation\Command\Location\SaveZoneCommand;
+use App\Application\Regulation\LocationGeometryChecker;
 use App\Application\Regulation\Query\Location\GetNamedStreetGeometryQuery;
 use App\Application\Regulation\Query\Location\GetNumberedRoadGeometryQuery;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
@@ -124,7 +125,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
@@ -191,7 +192,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
@@ -246,7 +247,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
@@ -315,7 +316,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
@@ -387,7 +388,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
@@ -449,7 +450,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
         $command = new SaveLocationCommand();
         $command->measure = $measure;
@@ -534,7 +535,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
 
         $command = new SaveLocationCommand($location);
@@ -622,7 +623,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
 
         $command = new SaveLocationCommand($location);
@@ -709,7 +710,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
 
         $command = new SaveLocationCommand($location);
@@ -790,7 +791,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
 
         $command = new SaveLocationCommand($location);
@@ -878,7 +879,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             $this->queryBus,
             $this->locationRepository,
             $this->idFactory,
-            $this->canOrganizationInterveneOnGeometry,
+            new LocationGeometryChecker($this->canOrganizationInterveneOnGeometry),
         );
 
         $this->assertSame($location, $handler($command));
