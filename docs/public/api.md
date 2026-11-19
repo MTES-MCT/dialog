@@ -19,6 +19,7 @@ L’authentification est requise pour les endpoints suivants :
 - DELETE `/api/regulations/{identifier}` (suppression d'un arrêté)
 - GET `/api/organization/identifiers` (récupération des identifiants déjà utilisés par votre organisation)
 - POST `/api/nearby-streets` (recherche de rues à proximité d'une géométrie)
+- POST `/api/locations/check` (vérification d'une localisation avant création d'un arrêté)
 
 Les exports (lecture) via GET (`/api/regulations/datex.xml`, `/api/regulations/cifs.xml` et `/api/stats`) restent publics et ne nécessitent pas d'authentification.
 
@@ -635,6 +636,76 @@ Erreurs possibles:
   "error": "Nearby streets query failed"
 }
 ```
+### Vérifier une localisation avant de créer un arrêté
+
+- Méthode: POST
+- URL: `/api/locations/check`
+- Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
+- Corps: JSON
+- Réponses: 200, 401, 422
+
+Ce endpoint calcule et contrôle la géométrie d'une localisation exactement comme lors de la création d'un arrêté (`POST /api/regulations`), **sans rien enregistrer**. Il permet de connaître à l'avance les localisations qui seraient refusées, notamment celles situées hors du territoire de votre organisation (les limites géographiques des collectivités n'étant pas reproduites exactement).
+
+#### Schéma du corps JSON
+
+Une localisation, au même format qu'un élément de `measures[].locations` de `POST /api/regulations` (`roadType` + `namedStreet`, `departmentalRoad`, `nationalRoad`, `rawGeoJSON`, `zone` ou `wholeCity`).
+
+#### Exemple de requête
+
+```bash
+curl -X POST \
+  'https://dialog.beta.gouv.fr/api/locations/check' \
+  -H 'Content-Type: application/json' \
+  -H 'X-Client-Id: VOTRE_CLIENT_ID' \
+  -H 'X-Client-Secret: VOTRE_CLIENT_SECRET' \
+  -d '{
+    "roadType": "lane",
+    "namedStreet": {
+      "cityCode": "93070",
+      "cityLabel": "Saint-Ouen-sur-Seine",
+      "roadName": "Rue Eugène Berthoud",
+      "direction": "BOTH"
+    }
+  }'
+```
+
+#### Réponses
+
+- 200 Localisation acceptée (`geometry` contient la géométrie GeoJSON calculée)
+
+```json
+{
+  "accepted": true,
+  "reason": null,
+  "detail": null,
+  "geometry": {"type": "MultiLineString", "coordinates": [[[2.335, 48.913], [2.336, 48.914]]]}
+}
+```
+
+- 200 Localisation refusée
+
+```json
+{
+  "accepted": false,
+  "reason": "organization_cannot_intervene_on_geometry",
+  "detail": "L'organisation \"Ma collectivité\" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S'il s'agit d'une erreur, vous pouvez contacter le support DiaLog.",
+  "geometry": null
+}
+```
+
+Valeurs possibles de `reason` :
+- `organization_cannot_intervene_on_geometry` : la localisation est hors du territoire de l'organisation.
+- `geocoding_failed` : l'adresse n'est pas reconnue.
+- `lane_geocoding_failed` : la voie n'a pas pu être géolocalisée entre les points indiqués.
+- `intersection_not_found` : les deux rues indiquées ne se croisent pas.
+- `numbered_road_geocoding_failed` : la route n'a pas pu être géolocalisée entre les PR indiqués.
+- `abscissa_out_of_range` : l'abscisse n'est pas située sur la route.
+- `zone_without_streets` : la zone dessinée (ou une zone en exception) ne contient aucune rue.
+
+- 401 Non authentifié / identifiants invalides
+
+- 422 Localisation incomplète ou mal formée (même format d'erreur que `POST /api/regulations`)
+
 ## Support
 
 Pour obtenir des identifiants d’accès ou signaler un problème, contactez l’équipe DiaLog.
