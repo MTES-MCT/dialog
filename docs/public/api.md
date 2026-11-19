@@ -641,7 +641,7 @@ Erreurs possibles:
 - URL: `/api/locations/check`
 - Authentification requise: oui (en-têtes `X-Client-Id`, `X-Client-Secret`)
 - Corps: JSON
-- Réponses: 200, 401, 422
+- Réponses: 200, 400, 401, 422
 
 Ce endpoint calcule et contrôle la géométrie d'une localisation exactement comme lors de la création d'un arrêté (`POST /api/regulations`), **sans rien enregistrer**. Il permet de connaître à l'avance les localisations qui seraient refusées, notamment celles situées hors du territoire de votre organisation (les limites géographiques des collectivités n'étant pas reproduites exactement).
 
@@ -675,20 +675,18 @@ curl -X POST \
 ```json
 {
   "accepted": true,
-  "reason": null,
-  "detail": null,
   "geometry": {"type": "MultiLineString", "coordinates": [[[2.335, 48.913], [2.336, 48.914]]]}
 }
 ```
 
-- 200 Localisation refusée
+- 400 Localisation refusée (elle le serait aussi à la création de l'arrêté)
 
 ```json
 {
+  "status": 400,
   "accepted": false,
   "reason": "organization_cannot_intervene_on_geometry",
-  "detail": "L'organisation \"Ma collectivité\" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S'il s'agit d'une erreur, vous pouvez contacter le support DiaLog.",
-  "geometry": null
+  "detail": "L'organisation \"Ma collectivité\" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S'il s'agit d'une erreur, vous pouvez contacter le support DiaLog."
 }
 ```
 
