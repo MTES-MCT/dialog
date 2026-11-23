@@ -49,6 +49,16 @@ final class MapDraftsDataControllerTest extends AbstractWebTestCase
         $this->assertContains(LocationFixture::UUID_TYPICAL, $locationUuids);
         // ...while published locations are never part of the drafts layer.
         $this->assertNotContains(LocationFixture::UUID_PUBLISHED, $locationUuids);
+
+        // Le sens n'est exposé que pour les emprises à sens unique (chevrons sur la carte)
+        $directions = [];
+        foreach ($data['features'] as $feature) {
+            $directions[$feature['properties']['location_uuid']] = $feature['properties']['direction'] ?? null;
+        }
+
+        $this->assertSame('A_TO_B', $directions[LocationFixture::UUID_TYPICAL]);
+        $this->assertNotContains('BOTH', $directions);
+        $this->assertContains(null, $directions);
     }
 
     public function testOtherOrganizationDoesNotSeeForeignDrafts(): void

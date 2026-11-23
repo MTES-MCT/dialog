@@ -80,7 +80,8 @@
                     {% for location in locationsWithGeometry %}
                         {% set geometryFieldId = 'location-geometry-' ~ location.uuid %}
                         {% set geometryFieldIds = geometryFieldIds|merge([geometryFieldId]) %}
-                        <input type="hidden" id="{{ geometryFieldId }}" value="{{ location.geometry }}" />
+                        {# Le sens accompagne la géométrie (orientée de A vers B) : la carte y dessine chevrons et flèche #}
+                        <input type="hidden" id="{{ geometryFieldId }}" value="{{ location.geometry }}" data-direction="{{ location.direction }}" />
                     {% endfor %}
                     {% set referencePointRoads = [] %}
                     {% for location in locationsWithGeometry %}

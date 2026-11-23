@@ -1,10 +1,14 @@
 {%- if location.hasPointNumbers -%}
-    {{ 'regulation.location.reference_point'|trans({
-        '%fromPointNumber%': location.fromPointNumber,
-        '%fromAbscissa%': location.fromAbscissa,
-        '%fromSide%': location.fromSide,
-        '%toPointNumber%': location.toPointNumber,
-        '%toAbscissa%': location.toAbscissa,
-        '%toSide%': location.toSide
+    {#- Sens unique : les PR sont lus dans le sens de circulation (« du PR 1+0 vers le PR 4+0 ») -#}
+    {%- set direction = location.direction|default('BOTH') -%}
+    {%- set isOneWay = direction in ['A_TO_B', 'B_TO_A'] -%}
+    {%- set isReversed = direction == 'B_TO_A' -%}
+    {{ ('regulation.location.reference_point' ~ (isOneWay ? '.towards' : ''))|trans({
+        '%fromPointNumber%': isReversed ? location.toPointNumber : location.fromPointNumber,
+        '%fromAbscissa%': isReversed ? location.toAbscissa : location.fromAbscissa,
+        '%fromSide%': isReversed ? location.toSide : location.fromSide,
+        '%toPointNumber%': isReversed ? location.fromPointNumber : location.toPointNumber,
+        '%toAbscissa%': isReversed ? location.fromAbscissa : location.toAbscissa,
+        '%toSide%': isReversed ? location.fromSide : location.toSide
     }) }}
 {%- endif -%}

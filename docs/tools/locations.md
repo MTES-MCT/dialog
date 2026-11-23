@@ -21,6 +21,16 @@ Une **voie entière** n'a pas de point A ni B saisis : `LineOrienter::normalize(
 
 Le serveur renvoie à l'aperçu (`fragment_location_geometry`) une géométrie orientée de A vers B. Le module `assets/maps/direction.js` en déduit les marqueurs A et B (extrémités) et, pour `A_TO_B` ou `B_TO_A`, une flèche au milieu du tracé ; les marqueurs ne sont affichés que lorsque A et B ont un sens (voie entière cochée, section avec ses deux points, route numérotée avec ses deux PR). Sur le tracé libre, la carte de dessin marque A au premier point et B au dernier dès que le select « Sens concerné » est présent.
 
+## Restitution du sens
+
+Une fois la mesure enregistrée, un sens unique (`A_TO_B` ou `B_TO_A`) est restitué de trois façons :
+
+- **Libellé** : les extrémités d'une section sont lues dans le sens de circulation et reliées par « vers » au lieu de « au » : « du n° 1 vers le n° 54 », et « du n° 54 vers le n° 1 » pour `B_TO_A`. Même règle pour les PR d'une route numérotée. Les gabarits `location/named_street/points.html.twig` et `regulation/_reference_points.html.twig` portent cette règle, donc la fiche de la mesure, la popup de la carte et l'export Word l'appliquent tous. Une voie entière et un tracé libre n'ont pas d'extrémités nommées : leur libellé ne change pas, le sens se lit sur la carte.
+- **Carte de la fiche de la mesure** : chaque géométrie est transmise avec son sens (attribut `data-direction`). Des chevrons sont répétés le long des tracés à sens unique et une flèche est posée au milieu de chacun, quel que soit le type de restriction. Les marqueurs A et B ne sont pas affichés ici.
+- **Carte publique** : les tuiles vectorielles et le GeoJSON des brouillons portent une propriété `direction`, absente en double sens. Les chevrons apparaissent à partir du zoom 13.
+
+Les chevrons sont une couche de symboles MapLibre (`assets/maps/direction_chevrons.js`) qui suit l'ordre des sommets, c'est-à-dire A vers B, et retourne l'icône de 180° pour `B_TO_A`. Ils ne sont justes que si la géométrie est bien orientée de A vers B.
+
 ## Commandes
 
 ### `app:location:geometry:sync`

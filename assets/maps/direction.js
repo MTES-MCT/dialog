@@ -265,13 +265,38 @@ export class DirectionMarkers {
         this.#add(createMarkerElement('app-direction-marker app-direction-marker--endpoint', 'B'), decorations.b);
 
         if (decorations.arrow) {
-            const element = createMarkerElement('app-direction-marker app-direction-marker--arrow');
-            element.appendChild(createArrowIcon());
-            this.#add(element, decorations.arrow.coordinates, {
-                rotation: decorations.arrow.rotation,
-                rotationAlignment: 'map',
-                pitchAlignment: 'map',
-            });
+            this.#addArrow(decorations.arrow);
+        }
+    }
+
+    /**
+     * @param {{ coordinates: [number, number], rotation: number }} arrow
+     */
+    #addArrow(arrow) {
+        const element = createMarkerElement('app-direction-marker app-direction-marker--arrow');
+        element.appendChild(createArrowIcon());
+        this.#add(element, arrow.coordinates, {
+            rotation: arrow.rotation,
+            rotationAlignment: 'map',
+            pitchAlignment: 'map',
+        });
+    }
+
+    /**
+     * Affichage en lecture seule (fiche de la mesure) : une flèche au milieu de chaque
+     * tracé à sens unique, sans marqueurs A et B (le libellé nomme déjà les extrémités).
+     *
+     * @param {Array<{ geometry: *, direction: string | null | undefined }>} items
+     */
+    updateArrows(items) {
+        this.clear();
+
+        for (const { geometry, direction } of items || []) {
+            const decorations = geometry ? buildDirectionDecorations(geometry, direction) : null;
+
+            if (decorations?.arrow) {
+                this.#addArrow(decorations.arrow);
+            }
         }
     }
 

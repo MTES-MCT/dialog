@@ -199,4 +199,26 @@ describe('DirectionMarkers', () => {
 
         expect(markerInstances.every((marker) => marker.removed)).toBe(true);
     });
+
+    it('shows one arrow per one-way location and no endpoint in read-only mode', () => {
+        const markers = new DirectionMarkers(/** @type {any} */ ({}));
+        const other = { type: 'LineString', coordinates: [[3, 49], [3, 49.001]] };
+
+        markers.updateArrows([
+            { geometry: { type: 'LineString', coordinates: LINE }, direction: 'A_TO_B' },
+            { geometry: other, direction: 'B_TO_A' },
+            { geometry: other, direction: 'BOTH' },
+            { geometry: null, direction: 'A_TO_B' },
+        ]);
+
+        expect(markerInstances).toHaveLength(2);
+        expect(markerInstances.every((marker) => marker.options.element.className.includes('app-direction-marker--arrow'))).toBe(true);
+        expect(markerInstances[0].options.rotation).toBeCloseTo(90, 5);
+        // Tracé vers le nord, sens B vers A : la flèche pointe vers le sud
+        expect(markerInstances[1].options.rotation).toBeCloseTo(180, 5);
+
+        markers.updateArrows([]);
+
+        expect(markerInstances.every((marker) => marker.removed)).toBe(true);
+    });
 });

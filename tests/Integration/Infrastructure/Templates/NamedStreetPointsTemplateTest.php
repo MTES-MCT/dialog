@@ -110,6 +110,91 @@ class NamedStreetPointsTemplateTest extends KernelTestCase
                 ],
                 'result' => 'de Rue Test à Boulevard Test',
             ],
+            'direction:both' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => '1',
+                        'fromRoadName' => null,
+                        'toHouseNumber' => '10',
+                        'toRoadName' => null,
+                        'direction' => 'BOTH',
+                    ],
+                ],
+                'result' => 'du n° 1 au n° 10',
+            ],
+            'direction:aToB-houseNumbers' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => '1',
+                        'fromRoadName' => null,
+                        'toHouseNumber' => '10',
+                        'toRoadName' => null,
+                        'direction' => 'A_TO_B',
+                    ],
+                ],
+                'result' => 'du n° 1 vers le n° 10',
+            ],
+            'direction:bToA-houseNumbers' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => '1',
+                        'fromRoadName' => null,
+                        'toHouseNumber' => '10',
+                        'toRoadName' => null,
+                        'direction' => 'B_TO_A',
+                    ],
+                ],
+                'result' => 'du n° 10 vers le n° 1',
+            ],
+            'direction:aToB-roadNames' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => null,
+                        'fromRoadName' => 'Rue Test',
+                        'toHouseNumber' => null,
+                        'toRoadName' => 'Boulevard Test',
+                        'direction' => 'A_TO_B',
+                    ],
+                ],
+                'result' => 'de Rue Test vers Boulevard Test',
+            ],
+            'direction:bToA-houseNumber-roadName' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => '1',
+                        'fromRoadName' => null,
+                        'toHouseNumber' => null,
+                        'toRoadName' => 'Rue Test',
+                        'direction' => 'B_TO_A',
+                    ],
+                ],
+                'result' => 'de Rue Test vers le n° 1',
+            ],
+            // Une seule extrémité : le libellé ne peut pas porter le sens, il reste inchangé
+            'direction:aToB-start-only' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => '1',
+                        'fromRoadName' => null,
+                        'toHouseNumber' => null,
+                        'toRoadName' => null,
+                        'direction' => 'A_TO_B',
+                    ],
+                ],
+                'result' => 'à partir du n° 1',
+            ],
+            'direction:bToA-end-only' => [
+                'context' => [
+                    'location' => [
+                        'fromHouseNumber' => null,
+                        'fromRoadName' => null,
+                        'toHouseNumber' => '1',
+                        'toRoadName' => null,
+                        'direction' => 'B_TO_A',
+                    ],
+                ],
+                'result' => 'jusqu&#039;au n° 1',
+            ],
         ];
     }
 

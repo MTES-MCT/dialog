@@ -1,21 +1,30 @@
 {%- set hasStart = location.fromHouseNumber or location.fromRoadName -%}
 {%- set hasEnd = location.toHouseNumber or location.toRoadName -%}
+{#- Sens unique sur une section : les extrémités sont lues dans le sens de circulation (« du n° 1 vers le n° 54 ») -#}
+{%- set direction = location.direction|default('BOTH') -%}
+{%- set isOneWay = hasStart and hasEnd and direction in ['A_TO_B', 'B_TO_A'] -%}
+{%- set isReversed = isOneWay and direction == 'B_TO_A' -%}
+{%- set startHouseNumber = isReversed ? location.toHouseNumber : location.fromHouseNumber -%}
+{%- set startRoadName = isReversed ? location.toRoadName : location.fromRoadName -%}
+{%- set endHouseNumber = isReversed ? location.fromHouseNumber : location.toHouseNumber -%}
+{%- set endRoadName = isReversed ? location.fromRoadName : location.toRoadName -%}
 
 {%- if hasStart or hasEnd -%}
     {%- if hasStart -%}
-        {%- if location.fromHouseNumber -%}
-            {{ ('regulation.location.from_point.house_number' ~ (hasEnd ? '' : '.only'))|trans({ '%houseNumber%': location.fromHouseNumber }) }}
+        {%- if startHouseNumber -%}
+            {{ ('regulation.location.from_point.house_number' ~ (hasEnd ? '' : '.only'))|trans({ '%houseNumber%': startHouseNumber }) }}
         {%- else -%}
-            {{ ('regulation.location.from_point.road_name' ~ (hasEnd ? '' : '.only'))|trans({ '%roadName%': location.fromRoadName })}}
+            {{ ('regulation.location.from_point.road_name' ~ (hasEnd ? '' : '.only'))|trans({ '%roadName%': startRoadName })}}
         {%- endif -%}
         {%- if hasEnd %} {# space #}{% endif %}
     {%- endif -%}
 
     {%- if hasEnd -%}
-        {%- if location.toHouseNumber -%}
-            {{ ('regulation.location.to_point.house_number' ~ (hasStart ? '' : '.only'))|trans({ '%houseNumber%': location.toHouseNumber }) }}
+        {%- set endSuffix = isOneWay ? '.towards' : (hasStart ? '' : '.only') -%}
+        {%- if endHouseNumber -%}
+            {{ ('regulation.location.to_point.house_number' ~ endSuffix)|trans({ '%houseNumber%': endHouseNumber }) }}
         {%- else -%}
-            {{ ('regulation.location.to_point.road_name' ~ (hasStart ? '' : '.only'))|trans({ '%roadName%': location.toRoadName }) }}
+            {{ ('regulation.location.to_point.road_name' ~ endSuffix)|trans({ '%roadName%': endRoadName }) }}
         {%- endif -%}
     {%- endif -%}
 {%- endif -%}

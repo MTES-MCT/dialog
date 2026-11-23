@@ -21,6 +21,15 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
 {
     private const PUBLIC_HOLIDAYS_OPEN_RANGE_YEARS = 20;
 
+    // Sens de circulation d'une emprise pour la carte : A_TO_B ou B_TO_A, NULL en double sens ou
+    // sans sens (ville entière, zone). La géométrie est orientée de A vers B : la carte dessine
+    // des chevrons le long du tracé, retournés pour B_TO_A.
+    private const ONE_WAY_DIRECTION_SQL = 'NULLIF(COALESCE(ns.direction, nr.direction, rg.direction), \'BOTH\')';
+
+    private const DIRECTION_JOINS_SQL = 'LEFT JOIN named_street AS ns ON ns.location_uuid = l.uuid
+                LEFT JOIN numbered_road AS nr ON nr.location_uuid = l.uuid
+                LEFT JOIN raw_geojson AS rg ON rg.location_uuid = l.uuid';
+
     public function __construct(
         ManagerRegistry $registry,
         private string $clientTimezone,
@@ -108,11 +117,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     ) AS geometry,
                     m.type AS measure_type,
                     l.uuid AS location_uuid,
-                    ro.category AS regulation_category
+                    ro.category AS regulation_category,
+                    %s AS direction
                 FROM location AS l
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+                %s
                 WHERE roc.status = :status
                 AND l.geometry IS NOT NULL
                 AND m.type IN (:measureTypes)
@@ -127,6 +138,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     ELSE 6
                 END
                 ',
+                self::ONE_WAY_DIRECTION_SQL,
+                self::DIRECTION_JOINS_SQL,
                 $regulationTypeWhereClause,
                 $measureDatesCondition,
             ),
@@ -137,14 +150,20 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         $features = [];
 
         foreach ($rows as $row) {
+            $properties = [
+                'location_uuid' => $row['location_uuid'],
+                'measure_type' => $row['measure_type'],
+                'regulation_category' => $row['regulation_category'],
+            ];
+
+            if ($row['direction'] !== null) {
+                $properties['direction'] = $row['direction'];
+            }
+
             $features[] = [
                 'type' => 'Feature',
                 'geometry' => json_decode($row['geometry']),
-                'properties' => [
-                    'location_uuid' => $row['location_uuid'],
-                    'measure_type' => $row['measure_type'],
-                    'regulation_category' => $row['regulation_category'],
-                ],
+                'properties' => $properties,
             ];
         }
 
@@ -233,11 +252,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
                     ) AS geom,
                     m.type AS measure_type,
                     l.uuid::text AS location_uuid,
-                    ro.category AS regulation_category
+                    ro.category AS regulation_category,
+                    %s AS direction
                 FROM bounds, location AS l
                 INNER JOIN measure AS m ON m.uuid = l.measure_uuid
                 INNER JOIN regulation_order AS ro ON ro.uuid = m.regulation_order_uuid
                 INNER JOIN regulation_order_record AS roc ON ro.uuid = roc.regulation_order_uuid
+                %s
                 WHERE l.geometry IS NOT NULL
                 AND l.geometry && bounds.geom_4326
                 %s
@@ -245,6 +266,8 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
             SELECT COALESCE(ST_AsMVT(mvtgeom.*, \'restrictions\', 4096, \'geom\'), \'\'::bytea) AS mvt
             FROM mvtgeom
             WHERE geom IS NOT NULL',
+            self::ONE_WAY_DIRECTION_SQL,
+            self::DIRECTION_JOINS_SQL,
             $extraWhere,
         );
 

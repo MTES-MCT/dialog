@@ -120,7 +120,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $measures = $crawler->filter('[data-testid="measure"]');
 
         $this->assertSame('Rue Ardoin à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(3)->text());
-        $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
+        $this->assertSame('Rue Eugène Berthoud du n° 47 vers le n° 65 à Saint-Ouen-sur-Seine', $measures->eq(0)->filter('.app-card__content li')->eq(4)->text());
     }
 
     public function testRemoveManyLocations(): void

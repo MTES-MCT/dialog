@@ -18,4 +18,15 @@ final readonly class LocationView
         public ?ZoneView $zone = null,
     ) {
     }
+
+    /**
+     * Sens de circulation concerné (BOTH, A_TO_B ou B_TO_A), la géométrie étant orientée de A vers B.
+     * Null pour les localisations sans sens (ville entière, zone).
+     */
+    public function getDirection(): ?string
+    {
+        return $this->namedStreet->direction
+            ?? $this->numberedRoad->direction
+            ?? $this->rawGeoJSON?->direction;
+    }
 }

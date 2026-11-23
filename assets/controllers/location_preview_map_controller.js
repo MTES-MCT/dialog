@@ -5,6 +5,10 @@ import { mapStyles } from 'carte-facile';
 import { addHouseNumbersLayer, addMeasureLineLayer, addReferencePointsLayer } from '../maps/layers';
 import { boundsFromGeoJSON, extractFirstGeometry, toFeatureCollection } from '../maps/geojson';
 import { DirectionMarkers } from '../maps/direction';
+import { addDirectionChevronsLayer, buildOneWayFeatureCollection, isOneWay } from '../maps/direction_chevrons';
+
+const DIRECTION_SOURCE_ID = 'location-preview-direction';
+const DIRECTION_LAYER_ID = 'location-preview-direction-chevrons';
 
 export default class extends Controller {
     // panel/toggleButton : repli/dépliage géré ici (et non par le collapse DSFR, qui ne
@@ -48,6 +52,9 @@ export default class extends Controller {
     #boundRefreshDirection = null;
     #directionMarkers = null;
     #lastGeojson = null;
+    // Fiche de la mesure (lecture seule) : tracés à sens unique lus dans les champs
+    // cachés, chacun avec son sens (attribut data-direction)
+    #oneWayLocations = [];
 
     connect() {
         this.#boundDebouncedLoad = () => this.#debouncedLoad();
@@ -398,19 +405,29 @@ export default class extends Controller {
         }
 
         const geometries = [];
+        const oneWayLocations = [];
 
         for (const id of fieldIds) {
-            const raw = document.getElementById(id)?.value;
+            const field = document.getElementById(id);
+            const raw = field?.value;
 
             if (!raw) continue;
 
             try {
                 const geometry = extractFirstGeometry(JSON.parse(raw));
-                if (geometry) geometries.push(geometry);
+                if (!geometry) continue;
+
+                geometries.push(geometry);
+
+                if (isOneWay(field.dataset.direction)) {
+                    oneWayLocations.push({ geometry, direction: field.dataset.direction });
+                }
             } catch {
                 // Ignore invalid entries; keep displaying the rest.
             }
         }
+
+        this.#oneWayLocations = oneWayLocations;
 
         if (geometries.length === 0) {
             this.#hideMap();
@@ -559,8 +576,29 @@ export default class extends Controller {
             return;
         }
 
+        this.#refreshDirectionChevrons();
+
+        if (this.#oneWayLocations.length > 0) {
+            this.#directionMarkers.updateArrows(this.#oneWayLocations);
+            return;
+        }
+
         const direction = this.#directionToDisplay();
         this.#directionMarkers.update(direction && this.#lastGeojson ? this.#lastGeojson : null, direction);
+    }
+
+    // Fiche de la mesure : chevrons répétés le long des tracés à sens unique, dans le
+    // sens de circulation. La flèche posée au milieu du tracé vient par-dessus.
+    #refreshDirectionChevrons() {
+        const data = buildOneWayFeatureCollection(this.#oneWayLocations);
+        const source = this.#map.getSource(DIRECTION_SOURCE_ID);
+
+        if (source) {
+            source.setData(data);
+        } else if (data.features.length > 0) {
+            this.#map.addSource(DIRECTION_SOURCE_ID, { type: 'geojson', data });
+            addDirectionChevronsLayer(this.#map, { id: DIRECTION_LAYER_ID, sourceId: DIRECTION_SOURCE_ID });
+        }
     }
 
     // Sens à représenter, ou null quand A et B n'ont pas de signification pour la
