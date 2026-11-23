@@ -27,6 +27,7 @@ final class RegulationMeasureLegendBuilder
         ],
         'alternateRoad' => ['color' => [0x6A, 0x6A, 0xF4], 'dasharray' => [2, 2]],
         'noOvertaking' => ['color' => [0xDA, 0x70, 0xD6], 'dasharray' => [1, 2, 4, 2]],
+        'oneWay' => ['color' => [0x5A, 0x9A, 0xA2], 'dasharray' => [1, 0]],
     ];
 
     public function buildSwatches(): array

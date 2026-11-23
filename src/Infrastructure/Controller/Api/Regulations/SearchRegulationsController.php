@@ -144,7 +144,7 @@ final class SearchRegulationsController
         required: false,
         description: 'Type de restriction recherché. Ne retourne que les arrêtés comportant au moins '
             . 'une mesure de ce type.',
-        schema: new OA\Schema(type: 'string', enum: ['alternateRoad', 'noOvertaking', 'noEntry', 'speedLimitation', 'parkingProhibited']),
+        schema: new OA\Schema(type: 'string', enum: ['alternateRoad', 'noOvertaking', 'noEntry', 'speedLimitation', 'parkingProhibited', 'oneWay']),
     )]
     #[OA\Parameter(
         name: 'includeHeavyGoodsVehicle',

@@ -209,11 +209,12 @@ final class GetRegulationController
                             new OA\Property(
                                 property: 'type',
                                 type: 'string',
-                                enum: ['alternateRoad', 'noOvertaking', 'noEntry', 'speedLimitation', 'parkingProhibited'],
+                                enum: ['alternateRoad', 'noOvertaking', 'noEntry', 'speedLimitation', 'parkingProhibited', 'oneWay'],
                                 description: 'Type de mesure : `alternateRoad` (circulation alternée), '
                                     . '`noOvertaking` (interdiction de dépasser), `noEntry` (interdiction de circuler), '
                                     . '`speedLimitation` (limitation de vitesse), `parkingProhibited` '
-                                    . '(stationnement interdit).',
+                                    . '(stationnement interdit), `oneWay` (sens unique : la circulation '
+                                    . 'n\'est autorisée que dans le sens donné par `direction`).',
                                 example: 'speedLimitation',
                             ),
                             new OA\Property(

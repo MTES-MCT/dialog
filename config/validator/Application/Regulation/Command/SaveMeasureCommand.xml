@@ -12,6 +12,7 @@
                     <value>speedLimitation</value>
                     <value>parkingProhibited</value>
                     <value>noOvertaking</value>
+                    <value>oneWay</value>
                 </option>
             </constraint>
         </property>
@@ -47,5 +48,6 @@
         </constraint>
         <constraint name="Valid" />
     </property>
+        <constraint name="App\Infrastructure\Validator\SaveMeasureCommandConstraint" />
     </class>
 </constraint-mapping>

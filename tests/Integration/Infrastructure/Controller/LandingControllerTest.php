@@ -109,7 +109,7 @@ final class LandingControllerTest extends AbstractWebTestCase
         $this->assertSame('/carte/tiles/{z}/{x}/{y}.mvt', $tilesPath);
         parse_str($tilesQuery, $tilesParams);
         $this->assertEqualsCanonicalizing(
-            ['noEntry', 'speedLimitation', 'alternateRoad', 'parkingProhibited', 'noOvertaking'],
+            ['noEntry', 'speedLimitation', 'alternateRoad', 'parkingProhibited', 'noOvertaking', 'oneWay'],
             $tilesParams['map_filter_form']['measureTypes'],
         );
         $this->assertSame('yes', $tilesParams['map_filter_form']['displayPermanentRegulations']);

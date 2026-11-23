@@ -11,12 +11,16 @@ enum MeasureTypeEnum: string
     case NO_ENTRY = 'noEntry';
     case SPEED_LIMITATION = 'speedLimitation';
     case PARKING_PROHIBITED = 'parkingProhibited';
+    // Mise en sens unique : la circulation n'est autorisée que dans le sens indiqué par chaque emprise
+    case ONE_WAY = 'oneWay';
 
     public function getCifsKey(): string
     {
         return match ($this) {
             self::ALTERNATE_ROAD => 'HAZARD',
             self::NO_ENTRY => 'ROAD_CLOSED',
+            // Un sens unique ferme le sens opposé au sens autorisé
+            self::ONE_WAY => 'ROAD_CLOSED',
             self::SPEED_LIMITATION => 'HAZARD_ON_ROAD',
             default => 'HAZARD',
         };

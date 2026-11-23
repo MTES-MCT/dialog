@@ -111,7 +111,7 @@ final class GetRegulationsCsvController
         in: 'query',
         required: false,
         description: 'Type de restriction recherché.',
-        schema: new OA\Schema(type: 'string', enum: ['alternateRoad', 'noOvertaking', 'noEntry', 'speedLimitation', 'parkingProhibited']),
+        schema: new OA\Schema(type: 'string', enum: ['alternateRoad', 'noOvertaking', 'noEntry', 'speedLimitation', 'parkingProhibited', 'oneWay']),
     )]
     #[OA\Parameter(
         name: 'includeHeavyGoodsVehicle',

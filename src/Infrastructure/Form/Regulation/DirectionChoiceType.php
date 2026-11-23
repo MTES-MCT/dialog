@@ -19,14 +19,18 @@ final class DirectionChoiceType extends AbstractType
     {
         $choices = [];
 
+        // Libellés courts de la maquette (« A vers B »). L'export CSV garde les siens
+        // (« Sens A vers B »), déjà publiés dans la colonne sens_circulation.
         foreach (DirectionEnum::cases() as $case) {
-            $choices[\sprintf('regulation.location.direction.%s', $case->value)] = $case->value;
+            $choices[\sprintf('regulation.location.direction.choice.%s', $case->value)] = $case->value;
         }
 
         $resolver->setDefaults([
             'choices' => $choices,
             'label' => 'regulation.location.direction',
             'help' => 'regulation.location.direction.help',
+            // Cible du contrôleur one-way-direction : « Double sens » est retiré pour un sens unique
+            'attr' => ['data-one-way-direction-target' => 'direction'],
         ]);
     }
 

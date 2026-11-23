@@ -964,6 +964,18 @@
                 <source>regulation.location.direction.B_TO_A</source>
                 <target>Sens B vers A</target>
             </trans-unit>
+            <trans-unit id="regulation.location.direction.choice.BOTH">
+                <source>regulation.location.direction.choice.BOTH</source>
+                <target>Double sens</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.direction.choice.A_TO_B">
+                <source>regulation.location.direction.choice.A_TO_B</source>
+                <target>A vers B</target>
+            </trans-unit>
+            <trans-unit id="regulation.location.direction.choice.B_TO_A">
+                <source>regulation.location.direction.choice.B_TO_A</source>
+                <target>B vers A</target>
+            </trans-unit>
             <trans-unit id="regulation.location.storage_area">
                 <source>regulation.location.storage_area</source>
                 <target>Aire de stockage</target>
@@ -2151,6 +2163,10 @@
                 <source>regulation.measure.type.noOvertaking</source>
                 <target>Interdiction de dépasser</target>
             </trans-unit>
+            <trans-unit id="regulation.measure.type.oneWay">
+                <source>regulation.measure.type.oneWay</source>
+                <target>Sens unique</target>
+            </trans-unit>
             <trans-unit id="regulation.measure.card.title">
                 <source>regulation.measure.card.title</source>
                 <target>Mesure</target>
@@ -2892,6 +2908,10 @@
             <trans-unit id="map.filter.type.noOvertaking">
                 <source>map.filter.type.noOvertaking</source>
                 <target>Interdiction de dépasser</target>
+            </trans-unit>
+            <trans-unit id="map.filter.type.oneWay">
+                <source>map.filter.type.oneWay</source>
+                <target>Sens unique</target>
             </trans-unit>
             <trans-unit id="map.filters.title.application.period">
                 <source>map.filters.title.application.period</source>

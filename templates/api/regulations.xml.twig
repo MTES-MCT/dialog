@@ -147,6 +147,10 @@
                                     </com:values>
                                 </otherObligation>
                             </typeOfRegulation>
+                        {% elseif trafficRegulation.type == 'oneWay' %}
+                            <typeOfRegulation xsi:type="DirectionRestriction">
+                                <directionRestrictionType>oneWayTraffic</directionRestrictionType>
+                            </typeOfRegulation>
                         {% elseif trafficRegulation.type == 'parkingProhibited'%}
                             <typeOfRegulation xsi:type="StandingOrParkingRestriction">
                                 <standingOrParkingRestrictionType>parkingProhibited</standingOrParkingRestrictionType>

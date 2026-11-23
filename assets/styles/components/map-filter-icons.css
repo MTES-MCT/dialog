@@ -60,6 +60,11 @@
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><circle cx='9' cy='14' r='4' fill='%23DA70D6'/><circle cx='19' cy='14' r='4' fill='%23DA70D6'/></svg>");
 }
 
+/* Sens unique : trait plein bleu-vert portant le chevron blanc du sens de circulation */
+.map-filter-label--oneWay::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'><rect x='5' y='11' width='18' height='6' rx='3' fill='%235A9AA2'/><path d='M13 12.2 L15 14 L13 15.8' fill='none' stroke='%23FFFFFF' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
 /* Filtre "Types de véhicules" : pictogramme camion (poids-lourds) en 24x24,
    couleur "artwork minor" (#6A6AF4) conformément à la maquette (issue #2013). */
 .map-vehicle-toggle__icon {

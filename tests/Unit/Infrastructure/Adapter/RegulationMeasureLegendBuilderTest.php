@@ -21,6 +21,7 @@ final class RegulationMeasureLegendBuilderTest extends TestCase
             'parkingProhibited',
             'alternateRoad',
             'noOvertaking',
+            'oneWay',
         ];
 
         $this->assertSame($expectedTypes, array_keys($swatches));

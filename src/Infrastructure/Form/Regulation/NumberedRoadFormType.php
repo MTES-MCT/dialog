@@ -98,7 +98,7 @@ final class NumberedRoadFormType extends AbstractType
                     'help' => 'regulation.location.referencePoint.abscissa.help',
                 ],
             )
-            ->add('direction', ChoiceType::class, $this->getDirectionOptions())
+            ->add('direction', DirectionChoiceType::class)
             ->add('roadType', HiddenType::class, ['data' => $options['roadType']])
         ;
 
@@ -186,21 +186,6 @@ final class NumberedRoadFormType extends AbstractType
                 ['regulation.location.administrator.placeholder' => ''],
                 $choices,
             ),
-        ];
-    }
-
-    private function getDirectionOptions(): array
-    {
-        $choices = [];
-
-        foreach (DirectionEnum::cases() as $case) {
-            $choices[\sprintf('regulation.location.direction.%s', $case->value)] = $case->value;
-        }
-
-        return [
-            'choices' => $choices,
-            'label' => 'regulation.location.direction',
-            'help' => 'regulation.location.direction.help',
         ];
     }
 

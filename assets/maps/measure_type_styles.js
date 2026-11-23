@@ -56,6 +56,7 @@ export const MEASURE_TYPE_STYLES = {
     borderWidth: 3,
   }, // black
   speedLimitation: {color: '#f6c43c', dasharray: [1, 0], lineWidth: 4}, // yellow with dark yellow border
+  oneWay: { color: '#5A9AA2', dasharray: [1, 0], lineWidth: 4 }, // trait plein bleu-vert (sens unique)
   noEntry: {
     color: '#CE0500',
     dasharray: [1, 1],
