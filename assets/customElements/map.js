@@ -18,8 +18,6 @@ const DRAFTS_CLICK_ZONE_LAYER_ID = 'drafts-layer-click-zone';
 const PUBLISHED_CLICK_ZONE_LAYER_ID = 'locations-layer-click-zone';
 /** Opacity applied to draft traces so they read as "not yet published". */
 const DRAFTS_OPACITY = 0.5;
-/** Chevrons de sens de circulation : affichés à partir de l'échelle du quartier. */
-const DIRECTION_CHEVRONS_MIN_ZOOM = 13;
 
 class MapLibreMap {
     /** @type {string} */
@@ -226,7 +224,6 @@ class MapLibreMap {
                     id: 'locations-layer-direction',
                     sourceId: 'locations-source',
                     sourceLayer: RESTRICTIONS_SOURCE_LAYER,
-                    minzoom: DIRECTION_CHEVRONS_MIN_ZOOM,
                 });
 
                 // popup when clicking on a feature of the locations layer
@@ -295,7 +292,6 @@ class MapLibreMap {
                     const draftChevronsLayerId = addDirectionChevronsLayer(map, {
                         id: `${DRAFTS_LAYER_PREFIX}-direction`,
                         sourceId: DRAFTS_SOURCE_ID,
-                        minzoom: DIRECTION_CHEVRONS_MIN_ZOOM,
                         opacity: DRAFTS_OPACITY,
                     });
 

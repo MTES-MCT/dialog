@@ -7,6 +7,20 @@ export const DIRECTION_BOTH = 'BOTH';
 export const DIRECTION_A_TO_B = 'A_TO_B';
 export const DIRECTION_B_TO_A = 'B_TO_A';
 
+// Quand on dézoome, le tracé raccourcit à l'écran et les marqueurs finiraient par s'empiler dessus.
+// Chacun est donc masqué en dessous d'une distance minimale à l'écran, en pixels CSS.
+/** A et B (pastilles de 24 px) ne doivent pas se chevaucher. */
+export const ENDPOINTS_MIN_DISTANCE = 28;
+/** La flèche (carré de 22 px) ne doit pas toucher les pastilles A et B. */
+export const ARROW_MIN_DISTANCE_FROM_ENDPOINT = 32;
+/** Sans pastilles (fiche de la mesure), il suffit que le tracé dépasse de part et d'autre de la flèche. */
+export const ARROW_MIN_DISTANCE_FROM_LINE_END = 16;
+/**
+ * Zoom à partir duquel la flèche est affichée : le sens reste lisible à l'échelle d'un quartier.
+ * En dessous, sur une carte qui montre plusieurs tracés, les flèches les recouvriraient même s'ils sont longs.
+ */
+export const ARROW_MIN_ZOOM = 13;
+
 /**
  * Extrait, dans l'ordre, les lignes (tableaux de [lng, lat]) d'une géométrie GeoJSON :
  * LineString, MultiLineString, GeometryCollection (récursif), Feature ou FeatureCollection.
@@ -213,8 +227,8 @@ function createMarkerElement(className, text) {
 }
 
 /**
- * Pointe de flèche (vers le nord avant rotation) à base échancrée : un simple
- * triangle presque équilatéral rendrait la rotation illisible (symétrie à 120°).
+ * Flèche à tige (vers le nord avant rotation), tracée au trait comme sur la maquette.
+ * La tige lève toute ambiguïté sur la rotation, qu'une simple pointe ne lèverait pas.
  */
 function createArrowIcon() {
     const svgNamespace = 'http://www.w3.org/2000/svg';
@@ -224,28 +238,44 @@ function createArrowIcon() {
     svg.setAttribute('aria-hidden', 'true');
 
     const path = document.createElementNS(svgNamespace, 'path');
-    path.setAttribute('d', 'M12 2 L21 21 L12 16 L3 21 Z');
+    path.setAttribute('d', 'M12 20 V4 M5 11 L12 4 L19 11');
     svg.appendChild(path);
 
     return svg;
 }
 
 /**
+ * Marqueurs d'un tracé : ses extrémités, les pastilles A et B (absentes en lecture seule) et la flèche.
+ *
+ * @typedef {Object} MarkerGroup
+ * @property {[number, number]} a
+ * @property {[number, number]} b
+ * @property {Array<HTMLElement>} endpoints
+ * @property {{ element: HTMLElement, coordinates: [number, number] } | null} arrow
+ */
+
+/**
  * Gère les marqueurs HTML de sens (A, B et flèche) d'une carte MapLibre. Les
  * marqueurs sont recréés à chaque mise à jour et retirés quand la géométrie
- * n'est plus linéaire ou que le sens ne doit plus être affiché.
+ * n'est plus linéaire ou que le sens ne doit plus être affiché. Ils sont masqués
+ * tant que le tracé est trop court à l'écran pour les contenir sans chevauchement,
+ * et la flèche tant que la carte est dézoomée en dessous de ARROW_MIN_ZOOM.
  */
 export class DirectionMarkers {
     /** @type {import('maplibre-gl').Map} */
     #map;
     /** @type {Array<import('maplibre-gl').Marker>} */
     #markers = [];
+    /** @type {Array<MarkerGroup>} */
+    #groups = [];
 
     /**
      * @param {import('maplibre-gl').Map} map
      */
     constructor(map) {
         this.#map = map;
+        // La visibilité des marqueurs ne dépend que du zoom
+        this.#map.on('zoom', () => this.#refreshVisibility());
     }
 
     /**
@@ -261,12 +291,16 @@ export class DirectionMarkers {
             return;
         }
 
-        this.#add(createMarkerElement('app-direction-marker app-direction-marker--endpoint', 'A'), decorations.a);
-        this.#add(createMarkerElement('app-direction-marker app-direction-marker--endpoint', 'B'), decorations.b);
-
-        if (decorations.arrow) {
-            this.#addArrow(decorations.arrow);
-        }
+        this.#groups.push({
+            a: decorations.a,
+            b: decorations.b,
+            endpoints: [
+                this.#add(createMarkerElement('app-direction-marker app-direction-marker--endpoint', 'A'), decorations.a),
+                this.#add(createMarkerElement('app-direction-marker app-direction-marker--endpoint', 'B'), decorations.b),
+            ],
+            arrow: decorations.arrow ? this.#addArrow(decorations.arrow) : null,
+        });
+        this.#refreshVisibility();
     }
 
     /**
@@ -280,6 +314,8 @@ export class DirectionMarkers {
             rotationAlignment: 'map',
             pitchAlignment: 'map',
         });
+
+        return { element, coordinates: arrow.coordinates };
     }
 
     /**
@@ -295,9 +331,16 @@ export class DirectionMarkers {
             const decorations = geometry ? buildDirectionDecorations(geometry, direction) : null;
 
             if (decorations?.arrow) {
-                this.#addArrow(decorations.arrow);
+                this.#groups.push({
+                    a: decorations.a,
+                    b: decorations.b,
+                    endpoints: [],
+                    arrow: this.#addArrow(decorations.arrow),
+                });
             }
         }
+
+        this.#refreshVisibility();
     }
 
     clear() {
@@ -306,6 +349,29 @@ export class DirectionMarkers {
         }
 
         this.#markers = [];
+        this.#groups = [];
+    }
+
+    // Masque les marqueurs qui se chevaucheraient au zoom courant, et réaffiche les autres
+    #refreshVisibility() {
+        const isZoomedIn = this.#map.getZoom() >= ARROW_MIN_ZOOM;
+
+        for (const group of this.#groups) {
+            const a = this.#map.project(group.a);
+            const b = this.#map.project(group.b);
+            const hasEndpoints = group.endpoints.length > 0;
+
+            for (const element of group.endpoints) {
+                setVisible(element, screenDistance(a, b) >= ENDPOINTS_MIN_DISTANCE);
+            }
+
+            if (group.arrow) {
+                const arrow = this.#map.project(group.arrow.coordinates);
+                const minDistance = hasEndpoints ? ARROW_MIN_DISTANCE_FROM_ENDPOINT : ARROW_MIN_DISTANCE_FROM_LINE_END;
+
+                setVisible(group.arrow.element, isZoomedIn && Math.min(screenDistance(arrow, a), screenDistance(arrow, b)) >= minDistance);
+            }
+        }
     }
 
     /**
@@ -319,5 +385,23 @@ export class DirectionMarkers {
             .addTo(this.#map);
 
         this.#markers.push(marker);
+
+        return element;
     }
+}
+
+/**
+ * @param {{ x: number, y: number }} from
+ * @param {{ x: number, y: number }} to
+ */
+function screenDistance(from, to) {
+    return Math.hypot(to.x - from.x, to.y - from.y);
+}
+
+/**
+ * @param {HTMLElement} element
+ * @param {boolean} visible
+ */
+function setVisible(element, visible) {
+    element.style.display = visible ? '' : 'none';
 }

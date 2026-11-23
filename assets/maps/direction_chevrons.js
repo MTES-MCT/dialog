@@ -9,9 +9,20 @@ export const DIRECTION_CHEVRON_IMAGE_ID = 'app-direction-chevron';
 /** Valeurs de `direction` pour lesquelles un sens est à représenter. */
 export const ONE_WAY_DIRECTIONS = ['A_TO_B', 'B_TO_A'];
 
+/**
+ * Zoom à partir duquel les chevrons sont affichés, sur toutes les cartes. En dessous, le trait
+ * (4 px, contre 8 px à partir de ce zoom) est trop fin pour qu'un chevron y soit lisible.
+ * La flèche, elle, a son propre seuil (ARROW_MIN_ZOOM dans direction.js).
+ */
+export const DIRECTION_CHEVRONS_MIN_ZOOM = 15;
+
 /** Côté de l'image en pixels CSS, et densité à laquelle elle est dessinée. */
-const CHEVRON_SIZE = 16;
-const CHEVRON_PIXEL_RATIO = 2;
+const CHEVRON_SIZE = 12;
+const CHEVRON_PIXEL_RATIO = 3;
+
+/** Blanc comme sur la maquette, avec un fin contour sombre pour rester visible sur les tracés clairs ou hachurés. */
+const CHEVRON_COLOR = '#FFFFFF';
+const CHEVRON_OUTLINE_COLOR = 'rgba(22, 22, 22, 0.45)';
 
 /**
  * @param {string | null | undefined} direction
@@ -50,23 +61,24 @@ export function buildOneWayFeatureCollection(items) {
  * @param {string} options.id
  * @param {string} options.sourceId
  * @param {string} [options.sourceLayer] - couche des tuiles vectorielles (absente pour une source GeoJSON)
- * @param {number} [options.minzoom] - zoom à partir duquel les chevrons sont affichés
+ * @param {number} [options.minzoom] - zoom à partir duquel les chevrons sont affichés (DIRECTION_CHEVRONS_MIN_ZOOM par défaut)
  * @param {number} [options.opacity] - opacité des chevrons (ex : 0.5 pour les brouillons)
  * @returns {import('maplibre-gl').SymbolLayerSpecification}
  */
-export function buildDirectionChevronsLayer({ id, sourceId, sourceLayer, minzoom, opacity }) {
+export function buildDirectionChevronsLayer({ id, sourceId, sourceLayer, minzoom = DIRECTION_CHEVRONS_MIN_ZOOM, opacity }) {
     return /** @type {import('maplibre-gl').SymbolLayerSpecification} */ ({
         id,
         type: 'symbol',
         source: sourceId,
         ...(sourceLayer ? { 'source-layer': sourceLayer } : {}),
-        ...(minzoom !== undefined ? { minzoom } : {}),
+        minzoom,
         filter: ['match', ['get', 'direction'], ONE_WAY_DIRECTIONS, true, false],
         layout: {
             'symbol-placement': 'line',
-            'symbol-spacing': 48,
+            'symbol-spacing': 90,
             'icon-image': DIRECTION_CHEVRON_IMAGE_ID,
-            'icon-size': ['interpolate', ['linear'], ['zoom'], 12, 0.75, 15, 1, 18, 1.5],
+            // Le chevron tient dans l'épaisseur du trait, qui double aux zooms 15 et 18
+            'icon-size': ['step', ['zoom'], 0.8, 15, 1, 18, 1.8],
             'icon-rotate': ['case', ['==', ['get', 'direction'], 'B_TO_A'], 180, 0],
             // Les chevrons ne masquent ni ne sont masqués par les libellés du fond de carte
             'icon-allow-overlap': true,
@@ -77,23 +89,23 @@ export function buildDirectionChevronsLayer({ id, sourceId, sourceLayer, minzoom
 }
 
 /**
- * Trace un chevron pointant vers la droite (le sens de parcours d'une ligne pour
- * MapLibre) : trait bleu sur liseré blanc, lisible sur tous les styles de mesure.
+ * Trace un petit chevron pointant vers la droite (le sens de parcours d'une ligne
+ * pour MapLibre) : trait blanc, à l'intérieur du tracé, sur un fin contour sombre.
  *
  * @param {CanvasRenderingContext2D} context
  * @param {number} size - côté de la zone de dessin, dans l'unité du contexte
  */
 export function drawChevron(context, size) {
-    const unit = size / 16;
+    const unit = size / CHEVRON_SIZE;
 
     context.lineCap = 'round';
     context.lineJoin = 'round';
 
-    for (const [color, width] of /** @type {Array<[string, number]>} */ ([['#FFFFFF', 5.5], ['#000091', 2.5]])) {
+    for (const [color, width] of /** @type {Array<[string, number]>} */ ([[CHEVRON_OUTLINE_COLOR, 3.2], [CHEVRON_COLOR, 1.6]])) {
         context.beginPath();
-        context.moveTo(5.5 * unit, 3.5 * unit);
-        context.lineTo(10.5 * unit, 8 * unit);
-        context.lineTo(5.5 * unit, 12.5 * unit);
+        context.moveTo(4.75 * unit, 3 * unit);
+        context.lineTo(7.75 * unit, 6 * unit);
+        context.lineTo(4.75 * unit, 9 * unit);
         context.strokeStyle = color;
         context.lineWidth = width * unit;
         context.stroke();

@@ -2,6 +2,7 @@
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import {
+    DIRECTION_CHEVRONS_MIN_ZOOM,
     DIRECTION_CHEVRON_IMAGE_ID,
     addDirectionChevronImage,
     addDirectionChevronsLayer,
@@ -102,7 +103,9 @@ describe('buildDirectionChevronsLayer', () => {
         expect(layer.layout?.['icon-rotate']).toEqual(['case', ['==', ['get', 'direction'], 'B_TO_A'], 180, 0]);
         expect(layer.layout?.['icon-allow-overlap']).toBe(true);
         expect(layer).not.toHaveProperty('source-layer');
-        expect(layer).not.toHaveProperty('minzoom');
+        // Sans précision, les chevrons sont masqués quand on dézoome (fiche de la mesure comme carte publique)
+        expect(DIRECTION_CHEVRONS_MIN_ZOOM).toBe(15);
+        expect(layer.minzoom).toBe(DIRECTION_CHEVRONS_MIN_ZOOM);
         expect(layer).not.toHaveProperty('paint');
     });
 
@@ -122,44 +125,46 @@ describe('buildDirectionChevronsLayer', () => {
 });
 
 describe('drawChevron', () => {
-    it('strokes a white outline then a blue chevron pointing to the right', () => {
+    it('strokes a dark outline then a white chevron pointing to the right', () => {
         const context = createContextMock();
-        /** @type {string[]} */
+        /** @type {Array<[string, number]>} */
         const strokes = [];
-        context.stroke.mockImplementation(() => strokes.push(context.strokeStyle));
+        context.stroke.mockImplementation(() => strokes.push([context.strokeStyle, context.lineWidth]));
 
-        drawChevron(/** @type {any} */ (context), 16);
+        drawChevron(/** @type {any} */ (context), 12);
 
-        expect(strokes).toEqual(['#FFFFFF', '#000091']);
+        expect(strokes.map(([color]) => color)).toEqual(['rgba(22, 22, 22, 0.45)', '#FFFFFF']);
+        // Le contour dépasse du trait blanc
+        expect(strokes[0][1]).toBeGreaterThan(strokes[1][1]);
         // La pointe (sommet du milieu) est le point le plus à droite, à mi-hauteur
         const [tipX, tipY] = context.lineTo.mock.calls[0];
         const [startX] = context.moveTo.mock.calls[0];
         expect(tipX).toBeGreaterThan(startX);
-        expect(tipY).toBe(8);
+        expect(tipY).toBe(6);
     });
 
     it('scales with the drawing size', () => {
         const context = createContextMock();
 
-        drawChevron(/** @type {any} */ (context), 32);
+        drawChevron(/** @type {any} */ (context), 24);
 
-        expect(context.lineTo.mock.calls[0]).toEqual([21, 16]);
+        expect(context.lineTo.mock.calls[0]).toEqual([15.5, 12]);
     });
 });
 
 describe('addDirectionChevronImage', () => {
-    it('registers the chevron image once, drawn at twice the CSS size', () => {
+    it('registers the chevron image once, drawn at three times the CSS size', () => {
         const context = createContextMock();
         const canvas = stubDocument(context);
         const map = createMapMock();
 
         expect(addDirectionChevronImage(/** @type {any} */ (map))).toBe(true);
 
-        expect(canvas.width).toBe(32);
-        expect(canvas.height).toBe(32);
+        expect(canvas.width).toBe(36);
+        expect(canvas.height).toBe(36);
         expect(map.addImage).toHaveBeenCalledTimes(1);
         expect(map.addImage.mock.calls[0][0]).toBe(DIRECTION_CHEVRON_IMAGE_ID);
-        expect(map.addImage.mock.calls[0][2]).toEqual({ pixelRatio: 2 });
+        expect(map.addImage.mock.calls[0][2]).toEqual({ pixelRatio: 3 });
     });
 
     it('does nothing when the image is already registered', () => {

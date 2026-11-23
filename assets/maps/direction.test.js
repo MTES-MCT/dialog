@@ -46,6 +46,42 @@ const {
 /** @type {[number, number][]} */
 const LINE = [[2.0, 48.0], [2.001, 48.0], [2.002, 48.0]];
 
+/**
+ * Carte factice à projection plane. L'échelle (`pixelsPerDegree`) et le niveau de zoom sont
+ * réglés séparément, pour tester chaque règle de masquage indépendamment de l'autre.
+ * À 1 000 000 px par degré, LINE mesure 2 000 px à l'écran.
+ *
+ * @param {number} [pixelsPerDegree]
+ * @param {number} [zoom]
+ */
+function createMap(pixelsPerDegree = 1_000_000, zoom = 18) {
+    /** @type {Array<() => void>} */
+    const zoomListeners = [];
+    let scale = pixelsPerDegree;
+    let level = zoom;
+
+    return {
+        /** @param {string} event @param {() => void} listener */
+        on(event, listener) {
+            if (event === 'zoom') {
+                zoomListeners.push(listener);
+            }
+        },
+        /** @param {[number, number]} lngLat */
+        project: ([lng, lat]) => ({ x: lng * scale, y: -lat * scale }),
+        getZoom: () => level,
+        /** @param {number} value @param {number} [zoom] */
+        zoomTo(value, zoom = level) {
+            scale = value;
+            level = zoom;
+            zoomListeners.forEach((listener) => listener());
+        },
+    };
+}
+
+/** @param {{ options: { element: HTMLElement } }} marker */
+const isShown = (marker) => marker.options.element.style.display !== 'none';
+
 describe('extractLines', () => {
     it('returns the coordinates of a LineString', () => {
         expect(extractLines({ type: 'LineString', coordinates: LINE })).toEqual([LINE]);
@@ -167,7 +203,7 @@ describe('DirectionMarkers', () => {
     });
 
     it('adds A, B and a rotated arrow marker, then removes them all on clear', () => {
-        const markers = new DirectionMarkers(/** @type {any} */ ({}));
+        const markers = new DirectionMarkers(/** @type {any} */ (createMap()));
 
         markers.update({ type: 'LineString', coordinates: LINE }, 'B_TO_A');
 
@@ -186,7 +222,7 @@ describe('DirectionMarkers', () => {
     });
 
     it('replaces the previous markers on each update and shows none without a direction', () => {
-        const markers = new DirectionMarkers(/** @type {any} */ ({}));
+        const markers = new DirectionMarkers(/** @type {any} */ (createMap()));
 
         markers.update({ type: 'LineString', coordinates: LINE }, 'A_TO_B');
         markers.update({ type: 'LineString', coordinates: LINE }, 'BOTH');
@@ -201,7 +237,7 @@ describe('DirectionMarkers', () => {
     });
 
     it('shows one arrow per one-way location and no endpoint in read-only mode', () => {
-        const markers = new DirectionMarkers(/** @type {any} */ ({}));
+        const markers = new DirectionMarkers(/** @type {any} */ (createMap()));
         const other = { type: 'LineString', coordinates: [[3, 49], [3, 49.001]] };
 
         markers.updateArrows([
@@ -220,5 +256,80 @@ describe('DirectionMarkers', () => {
         markers.updateArrows([]);
 
         expect(markerInstances.every((marker) => marker.removed)).toBe(true);
+    });
+
+    it('hides the arrow, then A and B, as the line shrinks on screen, and shows them again when zooming in', () => {
+        // LINE mesure 200 px : tout tient
+        const map = createMap(100_000);
+        const markers = new DirectionMarkers(/** @type {any} */ (map));
+
+        markers.update({ type: 'LineString', coordinates: LINE }, 'A_TO_B');
+        const [a, b, arrow] = markerInstances;
+
+        expect([a, b, arrow].map(isShown)).toEqual([true, true, true]);
+
+        // 50 px : la flèche, à 25 px de A et de B, toucherait les pastilles
+        map.zoomTo(25_000);
+        expect([a, b, arrow].map(isShown)).toEqual([true, true, false]);
+
+        // 20 px : A et B se chevaucheraient
+        map.zoomTo(10_000);
+        expect([a, b, arrow].map(isShown)).toEqual([false, false, false]);
+
+        map.zoomTo(100_000);
+        expect([a, b, arrow].map(isShown)).toEqual([true, true, true]);
+    });
+
+    it('hides markers created while the map is already zoomed out', () => {
+        const markers = new DirectionMarkers(/** @type {any} */ (createMap(10_000)));
+
+        markers.update({ type: 'LineString', coordinates: LINE }, 'A_TO_B');
+
+        expect(markerInstances.map(isShown)).toEqual([false, false, false]);
+    });
+
+    it('hides the arrow below the minimum zoom even on a long line, but keeps A and B', () => {
+        // LINE mesure 2 000 px : la longueur n'est pas en cause
+        const map = createMap(1_000_000, 12.9);
+        const markers = new DirectionMarkers(/** @type {any} */ (map));
+
+        markers.update({ type: 'LineString', coordinates: LINE }, 'A_TO_B');
+        const [a, b, arrow] = markerInstances;
+
+        // A et B restent : ils disent où commence et où finit le tracé, sans le recouvrir
+        expect([a, b, arrow].map(isShown)).toEqual([true, true, false]);
+
+        map.zoomTo(1_000_000, 13);
+        expect([a, b, arrow].map(isShown)).toEqual([true, true, true]);
+    });
+
+    it('hides every read-only arrow below the minimum zoom', () => {
+        const map = createMap(1_000_000, 12);
+        const markers = new DirectionMarkers(/** @type {any} */ (map));
+        const other = { type: 'LineString', coordinates: [[3, 49], [3, 49.001]] };
+
+        markers.updateArrows([
+            { geometry: { type: 'LineString', coordinates: LINE }, direction: 'A_TO_B' },
+            { geometry: other, direction: 'B_TO_A' },
+        ]);
+
+        expect(markerInstances.map(isShown)).toEqual([false, false]);
+
+        map.zoomTo(1_000_000, 16);
+        expect(markerInstances.map(isShown)).toEqual([true, true]);
+    });
+
+    it('keeps the read-only arrow as long as the line sticks out on both sides', () => {
+        // 50 px : sans pastilles A et B à éviter, la flèche tient
+        const map = createMap(25_000);
+        const markers = new DirectionMarkers(/** @type {any} */ (map));
+
+        markers.updateArrows([{ geometry: { type: 'LineString', coordinates: LINE }, direction: 'A_TO_B' }]);
+
+        expect(isShown(markerInstances[0])).toBe(true);
+
+        // 20 px : la flèche recouvrirait tout le tracé
+        map.zoomTo(10_000);
+        expect(isShown(markerInstances[0])).toBe(false);
     });
 });
