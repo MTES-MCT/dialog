@@ -45,7 +45,7 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
             'regulationOrderRecords.published' => 4,
             'regulationOrderRecords.permanent' => 1,
             'regulationOrderRecords.temporary' => 9,
-            'cifs.incidents' => 7,
+            'cifs.incidents' => 3,
         ], $counts);
 
         // Check user active statistics

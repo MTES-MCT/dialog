@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\View\Measure;
 
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\View\DailyRangeView;
 use App\Application\Regulation\View\PeriodView;
 use App\Application\Regulation\View\TimeSlotView;
@@ -24,7 +25,7 @@ readonly class MeasureView
     ) {
     }
 
-    public static function fromEntity(Measure $measure): self
+    public static function fromEntity(Measure $measure, ?PeriodPublicHolidaysProvider $publicHolidaysProvider = null): self
     {
         $periods = [];
         $locations = [];
@@ -47,6 +48,8 @@ readonly class MeasureView
                 $period->getEndDateTime(),
                 $dailyRangeView,
                 $timeSlotsViews,
+                $period->isPublicHolidaysExcluded(),
+                $publicHolidaysProvider?->getExcludedPublicHolidays($period) ?? [],
             );
         }
 

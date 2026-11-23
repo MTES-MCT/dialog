@@ -19,7 +19,7 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
     private const TRO_NAMESPACE = 'http://datex2.eu/schema/3/trafficRegulation';
     private const COMMON_NAMESPACE = 'http://datex2.eu/schema/3/common';
 
-    private function render(array $vehicleConditions): \DOMDocument
+    private function render(array $vehicleConditions, bool $isPublicHolidaysExcluded = false): \DOMDocument
     {
         self::bootKernel();
         /** @var \Twig\Environment */
@@ -55,6 +55,7 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
                                     new \DateTimeImmutable('2026-11-15 23:00:00'),
                                     new \DateTimeImmutable('2027-08-31 21:59:00'),
                                     [],
+                                    $isPublicHolidaysExcluded,
                                 ),
                             ],
                         ),
@@ -178,5 +179,24 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
         $xpath = $this->createXPath($xml);
         // Seuls restent les ensembles de conditions de validité et de localisation
         $this->assertSame(2.0, $xpath->evaluate('count(//tro:trafficRegulation/tro:condition/tro:conditions)'));
+    }
+
+    public function testPublicHolidaysExcluded(): void
+    {
+        $xml = $this->render([], isPublicHolidaysExcluded: true);
+
+        $this->assertSchemaValid($xml);
+
+        $xpath = $this->createXPath($xml);
+        $specialDay = '//com:validityTimeSpecification/com:exceptionPeriod/com:recurringSpecialDay';
+        $this->assertSame('publicHoliday', $xpath->evaluate("string($specialDay/com:specialDayType)"));
+        $this->assertSame('true', $xpath->evaluate("string($specialDay/com:intersectWithApplicableDays)"));
+    }
+
+    public function testPublicHolidaysNotExcluded(): void
+    {
+        $xml = $this->render([]);
+
+        $this->assertSame(0.0, $this->createXPath($xml)->evaluate('count(//com:exceptionPeriod)'));
     }
 }

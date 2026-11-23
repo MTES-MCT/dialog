@@ -90,6 +90,7 @@
                     {{ form_row(form.dailyRange.recurrenceType) }}
                     {{ form_errors(form.dailyRange.applicableDays) }}
                 </div>
+                {{ form_row(form.isPublicHolidaysExcluded, {group_class: 'fr-checkbox-group', row_attr: {class: 'fr-my-2w'}}) }}
                 <div
                     data-controller="form-collection"
                     data-form-collection-prototype-key-value="timeSlot"

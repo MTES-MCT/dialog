@@ -6,10 +6,12 @@ namespace App\Tests\Unit\Application\Regulation\Query;
 
 use App\Application\DateUtilsInterface;
 use App\Application\Regulation\NumberedRoadLabelMaker;
+use App\Application\Regulation\PeriodPublicHolidaysProvider;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQuery;
 use App\Application\Regulation\Query\GetRegulationOrdersForCsvExportQueryHandler;
 use App\Application\Regulation\View\RegulationCsvRowView;
 use App\Application\StorageInterface;
+use App\Domain\Condition\Period\Period;
 use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
@@ -63,23 +65,38 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
             $this->dateUtils,
             new NumberedRoadLabelMaker($this->translator),
             $this->translator,
+            new PeriodPublicHolidaysProvider($this->dateUtils, 'Europe/Paris'),
         );
     }
 
     /**
-     * @param Location[] $locations
+     * @param Location[]                                               $locations
+     * @param list<array{start: string, end: ?string, excluded: bool}> $periods
      */
     private function makeRecord(
         string $uuid,
         array $locations = [],
         ?array $restrictedTypes = null,
         ?string $organizationName = 'Org',
+        array $periods = [],
     ): RegulationOrderRecord {
         $regulationOrder = new RegulationOrder($uuid . '-ro', 'F/1', 'temporaryRegulation', 'Title');
         $measure = new Measure($uuid . '-m', $regulationOrder, 'noEntry', new \DateTimeImmutable());
 
         if ($restrictedTypes !== null) {
             $measure->setVehicleSet(new VehicleSet($uuid . '-v', $measure, $restrictedTypes));
+        }
+
+        foreach ($periods as $index => $period) {
+            $measure->addPeriod(new Period(
+                $uuid . '-p' . $index,
+                $measure,
+                new \DateTimeImmutable($period['start']),
+                $period['end'] !== null ? new \DateTimeImmutable($period['end']) : null,
+                'everyDay',
+                null,
+                $period['excluded'],
+            ));
         }
 
         foreach ($locations as $location) {
@@ -148,6 +165,34 @@ final class GetRegulationOrdersForCsvExportQueryHandlerTest extends TestCase
         $this->assertSame('Rue de la Paix, Paris', $row->locationLabel);
         $this->assertEquals(new \DateTimeImmutable('2025-01-01'), $row->startDate);
         $this->assertEquals(new \DateTimeImmutable('2025-02-01'), $row->endDate);
+    }
+
+    public function testBuildsRowWithExcludedPublicHolidays(): void
+    {
+        $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet->method('getRoadName')->willReturn('Rue de la Paix');
+        $namedStreet->method('getCityLabel')->willReturn('Paris');
+
+        $location = $this->makeLocation();
+        $location->method('getNamedStreet')->willReturn($namedStreet);
+
+        $record = $this->makeRecord('uuid-1', [$location], periods: [
+            // May 1st and 8th 2026 are public holidays
+            ['start' => '2026-05-01T00:00:00+02:00', 'end' => '2026-05-10T00:00:00+02:00', 'excluded' => true],
+            // No exclusion: must not contribute any date
+            ['start' => '2026-07-01T00:00:00+02:00', 'end' => '2026-07-31T00:00:00+02:00', 'excluded' => false],
+        ]);
+
+        $this->regulationOrderRecordRepository->method('findUuidsForApi')->willReturn(['uuid-1']);
+        $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([]);
+        $this->regulationOrderRecordRepository->method('iterateRegulationOrdersForApiByUuids')->willReturn([$record]);
+        $this->storageRegulationOrderRepository->method('getStoragesByRegulationOrderRecordUuids')->willReturn([]);
+
+        $rows = $this->handler->__invoke(new GetRegulationOrdersForCsvExportQuery());
+
+        $this->assertCount(1, $rows);
+        $this->assertTrue($rows[0]->isPublicHolidaysExcluded);
+        $this->assertSame(['2026-05-01', '2026-05-08'], $rows[0]->excludedPublicHolidays);
     }
 
     public function testResolvesPdfLinkFromStoragePathWhenNoUrl(): void

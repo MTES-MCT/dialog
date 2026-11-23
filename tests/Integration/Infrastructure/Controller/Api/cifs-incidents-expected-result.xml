@@ -18,43 +18,6 @@
             <everyday>18:00-22:00</everyday>
         </schedule>
     </incident>
-    <incident id="F/CIFS/2023:06548f85-d545-7b45-8000-8a23c45850b3:0654b639-cd33-7507-8000-e2ea21673135">
-        <creationtime>2023-09-06T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Circulation interdite</description>
-        <street>Rue Claude Monet</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>48.910599408 2.337514404 48.910695641 2.337678265 48.911459354 2.338854183 48.911521022 2.338947542 48.911545625 2.339005897 48.911549433 2.339044051 48.911546991 2.339090471 48.911532934 2.339150682 48.911316524 2.339535452</polyline>
-        <starttime>2023-06-01T23:00:00+00:00</starttime>
-        <endtime>2023-06-06T22:59:00+00:00</endtime>
-        <source>
-            <reference>93</reference>
-            <name>Département de Seine-Saint-Denis (DiaLog)</name>
-            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
-        </source>
-        <schedule>
-            <tuesday>12:00-14:00,19:00-21:00</tuesday>
-        </schedule>
-    </incident>
-    <incident id="F/CIFS/2023:06548f85-d545-7b45-8000-8a23c45850b3:0654b63a-838d-798b-8000-044b619f225d">
-        <creationtime>2023-09-06T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Circulation interdite</description>
-        <street>Rue Claude Monet</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>48.910599408 2.337514404 48.910695641 2.337678265 48.911459354 2.338854183 48.911521022 2.338947542 48.911545625 2.339005897 48.911549433 2.339044051 48.911546991 2.339090471 48.911532934 2.339150682 48.911316524 2.339535452</polyline>
-        <starttime>2023-06-03T08:00:00+00:00</starttime>
-        <endtime>2023-06-05T10:00:00+00:00</endtime>
-        <source>
-            <reference>93</reference>
-            <name>Département de Seine-Saint-Denis (DiaLog)</name>
-            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
-        </source>
-        <schedule>
-            <tuesday>08:00-10:00</tuesday>
-            <thursday>08:00-10:00</thursday>
-        </schedule>
-    </incident>
     <incident id="F/CIFS/2023:065f94ef-ea0a-7ab5-8000-bd5686102151:06548fe3-7bfb-73af-8000-f7f34af31312">
         <creationtime>2023-09-06T00:00:00+00:00</creationtime>
         <type>ROAD_CLOSED</type>
@@ -71,43 +34,6 @@
         </source>
         <schedule>
             <everyday>18:00-22:00</everyday>
-        </schedule>
-    </incident>
-    <incident id="F/CIFS/2023:065f94ef-ea0a-7ab5-8000-bd5686102151:0654b639-cd33-7507-8000-e2ea21673135">
-        <creationtime>2023-09-06T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Circulation interdite</description>
-        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
-        <starttime>2023-06-01T23:00:00+00:00</starttime>
-        <endtime>2023-06-06T22:59:00+00:00</endtime>
-        <source>
-            <reference>93</reference>
-            <name>Département de Seine-Saint-Denis (DiaLog)</name>
-            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
-        </source>
-        <schedule>
-            <tuesday>12:00-14:00,19:00-21:00</tuesday>
-        </schedule>
-    </incident>
-    <incident id="F/CIFS/2023:065f94ef-ea0a-7ab5-8000-bd5686102151:0654b63a-838d-798b-8000-044b619f225d">
-        <creationtime>2023-09-06T00:00:00+00:00</creationtime>
-        <type>ROAD_CLOSED</type>
-        <description>Circulation interdite</description>
-        <street>D14 (Seine-Saint-Denis) du PR 1+0 (côté U) au PR 4+0 (côté U)</street>
-        <direction>BOTH_DIRECTIONS</direction>
-        <polyline>48.911986097 2.344241283 48.908845831 2.344182729</polyline>
-        <starttime>2023-06-03T08:00:00+00:00</starttime>
-        <endtime>2023-06-05T10:00:00+00:00</endtime>
-        <source>
-            <reference>93</reference>
-            <name>Département de Seine-Saint-Denis (DiaLog)</name>
-            <url>http://localhost/regulations/0654905d-6771-75d8-8000-d523184d0b55</url>
-        </source>
-        <schedule>
-            <tuesday>08:00-10:00</tuesday>
-            <thursday>08:00-10:00</thursday>
         </schedule>
     </incident>
     <incident id="117374#24-A-0473:066e984f-4746-78f8-8000-dce555b28604:0671628e-04f8-7c89-8000-43928d1376ba">
