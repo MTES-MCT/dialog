@@ -37,6 +37,26 @@ final class GeoJSONTest extends TestCase
         $this->assertFalse(GeoJSON::isEmptyGeometryCollection('pas du JSON'));
     }
 
+    public function testEndpoints(): void
+    {
+        $this->assertEquals(
+            [Coordinates::fromLonLat(1, 1), Coordinates::fromLonLat(7, 2)],
+            GeoJSON::endpoints('{"type":"LineString","coordinates":[[1,1],[1,2],[7,2]]}'),
+        );
+        $this->assertEquals(
+            [Coordinates::fromLonLat(1, 1), Coordinates::fromLonLat(9, 9)],
+            GeoJSON::endpoints('{"type":"MultiLineString","coordinates":[[[1,1],[2,2]],[[8,8],[9,9]]]}'),
+        );
+        $this->assertEquals(
+            [Coordinates::fromLonLat(1, 1), Coordinates::fromLonLat(5, 5)],
+            GeoJSON::endpoints('{"type":"GeometryCollection","geometries":[{"type":"LineString","coordinates":[[1,1],[2,2]]},{"type":"LineString","coordinates":[[4,4],[5,5]]}]}'),
+        );
+
+        $this->assertNull(GeoJSON::endpoints('{"type":"Point","coordinates":[1,1]}'));
+        $this->assertNull(GeoJSON::endpoints('{"type":"Polygon","coordinates":[[[0,0],[1,0],[1,1],[0,0]]]}'));
+        $this->assertNull(GeoJSON::endpoints('pas du JSON'));
+    }
+
     public function testToPoint(): void
     {
         $this->assertSame(

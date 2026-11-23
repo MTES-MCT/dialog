@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
+use App\Application\LineOrienterInterface;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
 use App\Application\Regulation\Command\Location\SaveRawGeoJSONCommand;
@@ -11,6 +12,7 @@ use App\Application\Regulation\Command\Location\SaveWholeCityExceptionCommand;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
 use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQueryHandler;
 use App\Application\RoadGeocoderInterface;
+use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\RawGeoJSON;
@@ -21,11 +23,13 @@ final class GetRawGeoJSONGeometryQueryHandlerTest extends TestCase
 {
     private $roadGeocoder;
     private $queryBus;
+    private $lineOrienter;
 
     public function setUp(): void
     {
         $this->roadGeocoder = $this->createMock(RoadGeocoderInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
+        $this->lineOrienter = $this->createMock(LineOrienterInterface::class);
     }
 
     private function makeLaneException(string $cityCode, string $roadBanId, string $roadName): SaveWholeCityExceptionCommand
@@ -50,14 +54,15 @@ final class GetRawGeoJSONGeometryQueryHandlerTest extends TestCase
         $command = new SaveRawGeoJSONCommand();
         $command->geometry = '<geometry>';
 
-        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus);
+        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus, $this->lineOrienter);
 
         $this->assertSame('<geometry>', $handler(new GetRawGeoJSONGeometryQuery($command)));
     }
 
-    public function testSubtractsExceptions(): void
+    public function testSubtractsExceptionsAndKeepsDrawingOrientation(): void
     {
         $exception = $this->makeLaneException('93070', '93070_3185', 'Rue Eugène Berthoud');
+        $drawn = '{"type":"LineString","coordinates":[[2.34,48.90],[2.35,48.91],[2.36,48.92]]}';
 
         $this->queryBus
             ->expects(self::once())
@@ -68,16 +73,23 @@ final class GetRawGeoJSONGeometryQueryHandlerTest extends TestCase
         $this->roadGeocoder
             ->expects(self::once())
             ->method('subtractGeometries')
-            ->with('<geometry>', ['<exception-geometry>'])
+            ->with($drawn, ['<exception-geometry>'])
             ->willReturn('<geometry-minus-exceptions>');
 
+        // Le résultat de la soustraction est réorienté du premier au dernier point dessiné
+        $this->lineOrienter
+            ->expects(self::once())
+            ->method('orient')
+            ->with('<geometry-minus-exceptions>', Coordinates::fromLonLat(2.34, 48.90), Coordinates::fromLonLat(2.36, 48.92))
+            ->willReturn('<oriented-geometry>');
+
         $command = new SaveRawGeoJSONCommand();
-        $command->geometry = '<geometry>';
+        $command->geometry = $drawn;
         $command->exceptions = [$exception];
 
-        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus);
+        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus, $this->lineOrienter);
 
-        $this->assertSame('<geometry-minus-exceptions>', $handler(new GetRawGeoJSONGeometryQuery($command)));
+        $this->assertSame('<oriented-geometry>', $handler(new GetRawGeoJSONGeometryQuery($command)));
     }
 
     public function testReturnsCachedLocationGeometryWhenUnchanged(): void
@@ -108,7 +120,7 @@ final class GetRawGeoJSONGeometryQueryHandlerTest extends TestCase
         $command->geometry = '<geometry>';
         $command->exceptions = [$exception];
 
-        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus);
+        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus, $this->lineOrienter);
 
         $this->assertSame('<geometry-minus-exceptions>', $handler(new GetRawGeoJSONGeometryQuery($command, $location)));
     }
@@ -140,7 +152,7 @@ final class GetRawGeoJSONGeometryQueryHandlerTest extends TestCase
         $command->geometry = '<geometry-new>';
         $command->exceptions = [$exception];
 
-        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus);
+        $handler = new GetRawGeoJSONGeometryQueryHandler($this->roadGeocoder, $this->queryBus, $this->lineOrienter);
 
         $this->assertSame('<geometry-new-minus-exceptions>', $handler(new GetRawGeoJSONGeometryQuery($command, $location)));
     }

@@ -48,6 +48,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
                         location: $location,
                         label: 'Evénement spécial',
                         geometry: '<geometry>',
+                        direction: 'A_TO_B',
                     ),
                 ),
             )->willReturn($createdRawGeoJSON);
@@ -62,6 +63,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
         $command->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $command->label = 'Evénement spécial';
         $command->geometry = '<geometry>';
+        $command->direction = 'A_TO_B';
 
         $result = $handler($command);
 
@@ -83,6 +85,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
             ->with(
                 'Evénement très spécial',
                 '<geometry>',
+                'B_TO_A',
             );
 
         $this->idFactory
@@ -101,6 +104,7 @@ final class SaveRawGeoJSONCommandHandlerTest extends TestCase
         $command = new SaveRawGeoJSONCommand($rawGeoJSON);
         $command->label = 'Evénement très spécial';
         $command->geometry = '<geometry>';
+        $command->direction = 'B_TO_A';
 
         $this->assertSame($rawGeoJSON, $handler($command));
     }

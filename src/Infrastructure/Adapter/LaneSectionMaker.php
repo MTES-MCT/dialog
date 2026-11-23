@@ -37,7 +37,6 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
         string $roadBanId,
         string $roadName,
         string $cityCode,
-        string $direction,
         ?Coordinates $fromCoords,
         ?string $fromHouseNumber,
         ?string $fromRoadBanId,
@@ -58,8 +57,8 @@ final class LaneSectionMaker implements LaneSectionMakerInterface
                     : $this->intersectionGeocoder->computeIntersection($roadBanId, $toRoadBanId);
             }
 
-            // La géométrie est toujours calculée de A vers B, quel que soit le sens de circulation ($direction) :
-            // le sens reste une métadonnée que les exports (CIFS, DATEX, etc.) interprètent.
+            // La géométrie est toujours calculée de A vers B, quel que soit le sens de circulation :
+            // le sens reste une métadonnée (colonne direction) que les exports interprètent.
             return $this->lineSectionMaker->computeSection($fullLaneGeometry, $fromCoords, $toCoords);
         } catch (IntersectionGeocodingFailureException $exc) {
             throw $exc;

@@ -112,17 +112,18 @@ final class GetRegulationOrdersToDatexFormatQueryHandler
                     $roadType = $location->getRoadType();
                     $namedStreet = $location->getNamedStreet();
                     $numberedRoad = $location->getNumberedRoad();
+                    $rawGeoJSON = $location->getRawGeoJSON();
 
                     $locationConditions[] = new DatexLocationView(
                         roadType: $roadType,
                         roadName: $namedStreet?->getRoadName(),
                         roadNumber: $numberedRoad?->getRoadNumber(),
-                        rawGeoJSONLabel: $location->getRawGeoJSON()?->getLabel(),
+                        rawGeoJSONLabel: $rawGeoJSON?->getLabel(),
                         geometry: $location->getGeometry(),
                         wholeCityLabel: $location->getCityLabel(),
                         zoneLabel: $location->getZone()?->getLabel(),
                         referencePoints: $numberedRoad ? ($this->numberedRoadLabelMaker->makeReferencePoints($numberedRoad) ?: null) : null,
-                        direction: DirectionEnum::toDatexDirection($namedStreet?->getDirection() ?? $numberedRoad?->getDirection()),
+                        direction: DirectionEnum::toDatexDirection($namedStreet?->getDirection() ?? $numberedRoad?->getDirection() ?? $rawGeoJSON?->getDirection()),
                     );
 
                     $storageArea = $location->getStorageArea();

@@ -34,7 +34,6 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
         string $toPointNumber,
         string $toSide,
         int $toAbscissa,
-        string $direction,
     ): string {
         try {
             $fromCoords = $this->roadGeocoder
@@ -54,8 +53,8 @@ final class RoadSectionMaker implements RoadSectionMakerInterface
             throw new RoadGeocodingFailureException($roadType, previous: $e);
         }
 
-        // La géométrie est toujours calculée de A vers B, quel que soit le sens de circulation ($direction) :
-        // le sens reste une métadonnée que les exports (CIFS, DATEX, etc.) interprètent.
+        // La géométrie est toujours calculée de A vers B, quel que soit le sens de circulation :
+        // le sens reste une métadonnée (colonne direction) que les exports interprètent.
         try {
             return $this->lineSectionMaker->computeSection(
                 $fullRoadGeometry,

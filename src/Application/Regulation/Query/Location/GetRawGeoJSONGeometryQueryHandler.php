@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Application\Regulation\Query\Location;
 
+use App\Application\LineOrienterInterface;
 use App\Application\QueryBusInterface;
 use App\Application\QueryInterface;
 use App\Application\RoadGeocoderInterface;
+use App\Domain\Geography\GeoJSON;
 
 final class GetRawGeoJSONGeometryQueryHandler implements QueryInterface
 {
     public function __construct(
         private RoadGeocoderInterface $roadGeocoder,
         private QueryBusInterface $queryBus,
+        private LineOrienterInterface $lineOrienter,
     ) {
     }
 
@@ -43,10 +46,16 @@ final class GetRawGeoJSONGeometryQueryHandler implements QueryInterface
             }
         }
 
-        return $this->roadGeocoder->subtractGeometries(
+        $geometry = $this->roadGeocoder->subtractGeometries(
             $command->geometry,
             array_values(array_filter($subtractGeometries)),
         );
+
+        // La soustraction peut réordonner les morceaux : on garde l'orientation du tracé dessiné,
+        // dont le sens de circulation dépend (A = premier point, B = dernier point).
+        $endpoints = GeoJSON::endpoints($command->geometry);
+
+        return $endpoints ? $this->lineOrienter->orient($geometry, $endpoints[0], $endpoints[1]) : $geometry;
     }
 
     private function shouldRecomputeGeometry(GetRawGeoJSONGeometryQuery $query): bool

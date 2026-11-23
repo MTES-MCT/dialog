@@ -63,7 +63,6 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             $command->roadBanId,
             $command->roadName,
             $command->cityCode,
-            $command->direction,
             $command->fromCoords,
             $command->fromHouseNumber,
             $command->fromRoadBanId,

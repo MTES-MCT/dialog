@@ -243,6 +243,10 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getLabel')
             ->willReturn('Données');
+        $rawGeoJSON1
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn('A_TO_B');
 
         $duplicatedMeasure = $this->createMock(Measure::class);
 
@@ -300,6 +304,7 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
         $locationCommand3->rawGeoJSON->roadType = RoadTypeEnum::RAW_GEOJSON->value;
         $locationCommand3->rawGeoJSON->label = 'Données';
         $locationCommand3->rawGeoJSON->geometry = 'rawGeometry';
+        $locationCommand3->rawGeoJSON->direction = 'A_TO_B';
 
         $measureCommand1 = new SaveMeasureCommand($this->originalRegulationOrder);
         $measureCommand1->type = MeasureTypeEnum::NO_ENTRY->value;
@@ -395,6 +400,7 @@ final class DuplicateMeasureCommandHandlerTest extends TestCase
 
         $rawGeoJSON = $this->createMock(RawGeoJSON::class);
         $rawGeoJSON->expects(self::once())->method('getLabel')->willReturn('Tracé libre');
+        $rawGeoJSON->expects(self::once())->method('getDirection')->willReturn(DirectionEnum::BOTH->value);
         $rawGeoJSON->expects(self::once())->method('getGeometry')->willReturn('drawnGeometry');
 
         $rawGeoJSONLocation = $this->createMock(Location::class);

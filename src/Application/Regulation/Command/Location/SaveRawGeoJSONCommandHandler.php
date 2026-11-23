@@ -25,6 +25,7 @@ final class SaveRawGeoJSONCommandHandler
                     location: $command->location,
                     label: $command->label,
                     geometry: $command->geometry,
+                    direction: $command->direction,
                 ),
             );
 
@@ -36,6 +37,7 @@ final class SaveRawGeoJSONCommandHandler
         $command->rawGeoJSON->update(
             label: $command->label,
             geometry: $command->geometry,
+            direction: $command->direction,
         );
 
         return $command->rawGeoJSON;

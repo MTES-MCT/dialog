@@ -8,7 +8,6 @@ use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\RoadGeocoderInterface;
 use App\Application\RoadSectionMakerInterface;
-use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Controller\Regulation\Fragments\GetLocationGeometryController;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -127,7 +126,6 @@ final class GetLocationGeometryControllerTest extends TestCase
                 'ban123',
                 'Rue Test',
                 '59000',
-                DirectionEnum::BOTH->value,
                 null,
                 '5',
                 null,
@@ -169,7 +167,6 @@ final class GetLocationGeometryControllerTest extends TestCase
                 'ban123',
                 'Rue Test',
                 '59000',
-                DirectionEnum::BOTH->value,
                 null,
                 null,
                 'fromBan456',
@@ -387,7 +384,6 @@ final class GetLocationGeometryControllerTest extends TestCase
                 '35',  // toPointNumber
                 'U',
                 500,
-                DirectionEnum::BOTH->value,
             )
             ->willReturn($sectionGeometry);
 
@@ -433,7 +429,6 @@ final class GetLocationGeometryControllerTest extends TestCase
                 '200',  // toPointNumber
                 'G',
                 100,
-                'A_TO_B',
             )
             ->willReturn($sectionGeometry);
 
@@ -556,7 +551,6 @@ final class GetLocationGeometryControllerTest extends TestCase
                 'ban123',
                 '',
                 '',
-                DirectionEnum::BOTH->value,
                 null,
                 '5',
                 null,
@@ -595,7 +589,6 @@ final class GetLocationGeometryControllerTest extends TestCase
                 'ban123',
                 '',
                 '',
-                'A_TO_B',
                 null,
                 '5',
                 null,
