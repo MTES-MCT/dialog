@@ -89,6 +89,65 @@ final class UpdateRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame(50, $data['measures'][0]['maxSpeed']);
     }
 
+    public function testUpdateRegulationReplacesRejectedLocations(): void
+    {
+        $client = static::createClient();
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_CLIENT_ID' => 'clientId',
+            'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+        ];
+
+        $payload = $this->getPayload();
+        $payload['measures'][0]['locations'][] = ['roadType' => 'lane'];
+
+        $client->request('PUT', '/api/regulations', [], [], $headers, json_encode($payload));
+
+        $this->assertResponseStatusCodeSame(200);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertCount(1, $data['rejectedLocations']);
+        $this->assertSame(1, $data['rejectedLocations'][0]['locationIndex']);
+
+        $client->request('GET', '/api/regulations/FO1/2023/rejected-locations', [], [], $headers);
+        $this->assertCount(1, json_decode($client->getResponse()->getContent(), true)['rejectedLocations']);
+
+        // Un nouvel envoi sans erreur efface les rejets précédents
+        $client->request('PUT', '/api/regulations', [], [], $headers, json_encode($this->getPayload()));
+
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertSame([], json_decode($client->getResponse()->getContent(), true)['rejectedLocations']);
+
+        $client->request('GET', '/api/regulations/FO1/2023/rejected-locations', [], [], $headers);
+        $this->assertSame([], json_decode($client->getResponse()->getContent(), true)['rejectedLocations']);
+    }
+
+    public function testUpdateRegulationWithAllLocationsRejectedKeepsRegulationUnchanged(): void
+    {
+        $client = static::createClient();
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_CLIENT_ID' => 'clientId',
+            'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+        ];
+
+        $client->request('GET', '/api/regulations/FO1/2023', [], [], $headers);
+        $before = json_decode($client->getResponse()->getContent(), true);
+
+        $payload = $this->getPayload();
+        $payload['measures'][0]['locations'] = [['roadType' => 'lane']];
+
+        $client->request('PUT', '/api/regulations', [], [], $headers, json_encode($payload));
+
+        $this->assertResponseStatusCodeSame(422);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertCount(1, $data['rejectedLocations']);
+
+        $client->request('GET', '/api/regulations/FO1/2023', [], [], $headers);
+        $after = json_decode($client->getResponse()->getContent(), true);
+        $this->assertSame($before['title'], $after['title']);
+        $this->assertSame(\count($before['measures']), \count($after['measures']));
+    }
+
     public function testUpdateRegulationAndPublish(): void
     {
         $client = static::createClient();

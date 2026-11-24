@@ -41,9 +41,10 @@ final class SaveLocationCommandHandler
             $roadCommand->setLocation($location);
             $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
             $this->checkGeometry($roadCommand, $organizationUuid, $geometry);
+            $exceptions = $this->prepareExceptions($roadCommand, $location);
 
             $location->update($command->roadType, $geometry);
-            $this->applyRoadCommand($roadCommand, $location);
+            $this->applyRoadCommand($roadCommand, $location, $exceptions);
 
             if ($deleteCommand = $command->getRoadDeleteCommand()) {
                 $this->commandBus->handle($deleteCommand);
@@ -53,9 +54,12 @@ final class SaveLocationCommandHandler
         }
 
         // Create location
+        // Tout ce qui peut échouer (géocodage, compétence, exceptions) est calculé avant de persister quoi
+        // que ce soit : l'API peut ainsi rejeter cette localisation seule et poursuivre avec les suivantes.
 
         $geometry = $this->queryBus->handle($roadCommand->getGeometryQuery());
         $this->checkGeometry($roadCommand, $organizationUuid, $geometry);
+        $exceptions = $this->prepareExceptions($roadCommand, null);
 
         $location = $this->locationRepository->add(
             new Location(
@@ -66,7 +70,7 @@ final class SaveLocationCommandHandler
             ),
         );
         $roadCommand->setLocation($location);
-        $this->applyRoadCommand($roadCommand, $location);
+        $this->applyRoadCommand($roadCommand, $location, $exceptions);
         $command->measure->addLocation($location);
 
         return $location;
@@ -93,7 +97,10 @@ final class SaveLocationCommandHandler
         }
     }
 
-    private function applyRoadCommand(RoadCommandInterface $roadCommand, Location $location): void
+    /**
+     * @param array<array{command: SaveWholeCityExceptionCommand, geometry: ?string}> $exceptions
+     */
+    private function applyRoadCommand(RoadCommandInterface $roadCommand, Location $location, array $exceptions): void
     {
         // « Ville entière » n'a pas de sous-entité dédiée : ses données (ville + voies exclues)
         // vivent sur la localisation elle-même, donc rien à persister via un sous-handler.
@@ -103,6 +110,16 @@ final class SaveLocationCommandHandler
             $this->commandBus->handle($roadCommand);
         }
 
+        $this->replaceExceptions($exceptions, $location);
+    }
+
+    /**
+     * Calcule les géométries des exceptions sans rien persister.
+     *
+     * @return array<array{command: SaveWholeCityExceptionCommand, geometry: ?string}>
+     */
+    private function prepareExceptions(RoadCommandInterface $roadCommand, ?Location $location): array
+    {
         // « Ville entière », « Tracé de zone » et « Tracé libre » supportent des exceptions ;
         // pour les autres types, on synchronise avec une liste vide afin de purger les
         // exceptions restantes après un changement de type de localisation.
@@ -113,22 +130,14 @@ final class SaveLocationCommandHandler
             default => [],
         };
 
-        $this->syncExceptions($exceptionCommands, $location);
-    }
-
-    /**
-     * @param SaveWholeCityExceptionCommand[] $exceptionCommands
-     */
-    private function syncExceptions(array $exceptionCommands, Location $location): void
-    {
-        // On remplace l'ensemble des exceptions (l'orphan removal supprime les anciennes),
-        // en gardant leurs géométries : une exception inchangée (même signature) ne doit pas
-        // être re-géocodée à chaque enregistrement de la mesure.
+        // On garde les géométries des exceptions existantes : une exception inchangée (même signature)
+        // ne doit pas être re-géocodée à chaque enregistrement de la mesure.
         $existingGeometries = [];
-        foreach ($location->getExceptions() as $existingException) {
+        foreach ($location?->getExceptions() ?? [] as $existingException) {
             $existingGeometries[ExceptionsSignature::ofException($existingException)] ??= $existingException->getGeometry();
-            $location->removeException($existingException);
         }
+
+        $prepared = [];
 
         foreach ($exceptionCommands as $exceptionCommand) {
             $signature = ExceptionsSignature::ofCommand($exceptionCommand);
@@ -153,6 +162,23 @@ final class SaveLocationCommandHandler
                 throw new ZoneWithoutStreetsException();
             }
 
+            $prepared[] = ['command' => $exceptionCommand, 'geometry' => $geometry];
+        }
+
+        return $prepared;
+    }
+
+    /**
+     * @param array<array{command: SaveWholeCityExceptionCommand, geometry: ?string}> $exceptions
+     */
+    private function replaceExceptions(array $exceptions, Location $location): void
+    {
+        // On remplace l'ensemble des exceptions (l'orphan removal supprime les anciennes).
+        foreach ($location->getExceptions() as $existingException) {
+            $location->removeException($existingException);
+        }
+
+        foreach ($exceptions as ['command' => $exceptionCommand, 'geometry' => $geometry]) {
             $location->addException(
                 new WholeCityException(
                     uuid: $this->idFactory->make(),

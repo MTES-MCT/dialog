@@ -6,6 +6,44 @@ nelmio_api_doc:
             version: 1.0.0
         components:
             schemas:
+                # Localisation (emprise) envoyée via l'API d'écriture mais rejetée lors de l'intégration.
+                RejectedLocation:
+                    type: object
+                    description: >-
+                        Localisation rejetée lors de l'intégration de l'arrêté (valeur manquante, géocodage
+                        en échec, hors compétence...). Les autres localisations de l'arrêté ont été intégrées.
+                        Une erreur portant sur la mesure elle-même (type, périodes, véhicules...) rejette
+                        toutes ses localisations.
+                    properties:
+                        identifier:
+                            type: string
+                            description: Identifiant de l'arrêté (uniquement sur `GET /api/rejected-locations`).
+                            example: F2025/001
+                        measureIndex:
+                            type: integer
+                            description: Position (à partir de 0) de la mesure dans le tableau `measures` envoyé.
+                            example: 0
+                        locationIndex:
+                            type: integer
+                            description: Position (à partir de 0) de la localisation dans le tableau `locations` de la mesure.
+                            example: 2
+                        errors:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    propertyPath: { type: string, example: 'measures[0].locations[2].namedStreet.roadName' }
+                                    title: { type: string, example: Cette valeur ne doit pas être vide. }
+                        location:
+                            type: object
+                            description: Localisation telle qu'envoyée.
+                        measure:
+                            type: object
+                            description: Mesure parente telle qu'envoyée (sans ses localisations).
+                        createdAt:
+                            type: string
+                            format: date-time
+                            description: Date du rejet (uniquement sur les points d'accès de consultation).
                 # Exception (« Sauf... ») d'une localisation « Ville entière », « Tracé de zone »
                 # ou « Tracé libre » : emprise exclue de la restriction. Seul le sous-objet
                 # correspondant à roadType est pris en compte.

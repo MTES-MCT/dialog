@@ -15,6 +15,8 @@ final class UpdateRegulationWithMeasureCommand implements CommandInterface
         public SaveRegulationGeneralInfoCommand $generalInfo,
         public RegulationOrderRecordStatusEnum $status,
         public ?array $measureDtos,
+        /** Mesures telles qu'envoyées dans la requête, conservées pour exposer les localisations rejetées */
+        public array $rawMeasures = [],
     ) {
     }
 }

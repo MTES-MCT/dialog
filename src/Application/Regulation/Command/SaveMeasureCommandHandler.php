@@ -16,6 +16,7 @@ use App\Application\Regulation\Command\Period\DeletePeriodCommand;
 use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Measure;
 use App\Domain\Regulation\Repository\MeasureRepositoryInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 
 final class SaveMeasureCommandHandler
 {
@@ -127,14 +128,16 @@ final class SaveMeasureCommandHandler
             try {
                 $location = $this->commandBus->handle($locationCommand);
                 $measure->addLocation($location);
-            } catch (GeocodingFailureException $e) {
-                $e->setLocationIndex($index);
-                throw $e;
-            } catch (OrganizationCannotInterveneOnGeometryException $e) {
-                $e->setLocationIndex($index);
-                throw $e;
-            } catch (ZoneWithoutStreetsException $e) {
-                $e->setLocationIndex($index);
+            } catch (GeocodingFailureException|OrganizationCannotInterveneOnGeometryException|ZoneWithoutStreetsException|ValidationFailedException $e) {
+                if ($command->rejectFailingLocations) {
+                    $command->rejectedLocations[$index] = $e;
+                    continue;
+                }
+
+                if (!$e instanceof ValidationFailedException) {
+                    $e->setLocationIndex($index);
+                }
+
                 throw $e;
             }
         }

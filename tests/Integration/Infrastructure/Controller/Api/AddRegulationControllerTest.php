@@ -87,6 +87,110 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $data = json_decode($response->getContent(), true);
         $this->assertIsArray($data);
         $this->assertArrayHasKey('uuid', $data);
+        $this->assertSame([], $data['rejectedLocations']);
+    }
+
+    public function testAddRegulationWithPartiallyRejectedLocations(): void
+    {
+        $client = static::createClient();
+        $headers = ['HTTP_X_CLIENT_ID' => 'clientId', 'HTTP_X_CLIENT_SECRET' => 'clientSecret'];
+        $validLocation = [
+            'roadType' => 'lane',
+            'namedStreet' => [
+                'cityCode' => '93070',
+                'cityLabel' => 'saint ouen sur seine',
+                'roadName' => 'rue eugène berthoud',
+                'direction' => 'BOTH',
+            ],
+        ];
+        $periods = [[
+            'startDate' => '2025-10-16T13:01:02.887Z',
+            'recurrenceType' => 'everyDay',
+            'isPermanent' => true,
+        ]];
+
+        $payload = [
+            'identifier' => 'API-PARTIAL-0001',
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'category' => RegulationOrderCategoryEnum::TEMPORARY_REGULATION->value,
+            'subject' => RegulationSubjectEnum::ROAD_MAINTENANCE->value,
+            'title' => 'Intégration partielle',
+            'measures' => [
+                [
+                    'type' => 'noEntry',
+                    'periods' => $periods,
+                    'locations' => [
+                        $validLocation,
+                        // Géocodage en échec
+                        [
+                            'roadType' => 'lane',
+                            'namedStreet' => [
+                                'isEntireStreet' => true,
+                                'cityCode' => '59368',
+                                'cityLabel' => 'La Madeleine (59110)',
+                                'roadBanId' => '12345_6789',
+                                'roadName' => 'Rue inconnue',
+                            ],
+                        ],
+                        // Valeur manquante
+                        ['roadType' => 'lane'],
+                    ],
+                ],
+                // Erreur portant sur la mesure (vitesse manquante) : toutes ses localisations sont rejetées
+                [
+                    'type' => 'speedLimitation',
+                    'periods' => $periods,
+                    'locations' => [$validLocation],
+                ],
+            ],
+        ];
+
+        $client->request('POST', '/api/regulations', [], [], ['CONTENT_TYPE' => 'application/json'] + $headers, json_encode($payload));
+
+        $this->assertResponseStatusCodeSame(201);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $rejected = $data['rejectedLocations'];
+        $this->assertCount(3, $rejected);
+
+        $this->assertSame([0, 1], [$rejected[0]['measureIndex'], $rejected[0]['locationIndex']]);
+        $this->assertSame('measures[0].locations[1]', $rejected[0]['errors'][0]['propertyPath']);
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $rejected[0]['errors'][0]['title']);
+        $this->assertSame('Rue inconnue', $rejected[0]['location']['namedStreet']['roadName']);
+        $this->assertSame(['type' => 'noEntry', 'periods' => $periods], $rejected[0]['measure']);
+
+        $this->assertSame([0, 2], [$rejected[1]['measureIndex'], $rejected[1]['locationIndex']]);
+        $this->assertStringStartsWith('measures[0].locations[2]', $rejected[1]['errors'][0]['propertyPath']);
+        $this->assertSame(['roadType' => 'lane'], $rejected[1]['location']);
+
+        $this->assertSame([1, 0], [$rejected[2]['measureIndex'], $rejected[2]['locationIndex']]);
+        $this->assertSame('measures[1].maxSpeed', $rejected[2]['errors'][0]['propertyPath']);
+
+        // Seule la localisation valide de la première mesure a été intégrée, et l'arrêté est publié
+        $client->request('GET', '/api/regulations/API-PARTIAL-0001', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+        $regulation = json_decode($client->getResponse()->getContent(), true);
+        $this->assertSame('published', $regulation['status']);
+        $this->assertCount(1, $regulation['measures']);
+        $this->assertSame('noEntry', $regulation['measures'][0]['type']);
+        $this->assertCount(1, $regulation['measures'][0]['locations']);
+
+        // Les rejets sont stockés et consultables par arrêté...
+        $client->request('GET', '/api/regulations/API-PARTIAL-0001/rejected-locations', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+        $stored = json_decode($client->getResponse()->getContent(), true)['rejectedLocations'];
+        $this->assertCount(3, $stored);
+        $this->assertSame('API-PARTIAL-0001', $stored[0]['identifier']);
+        $this->assertSame($rejected[0]['errors'], $stored[0]['errors']);
+        $this->assertArrayHasKey('createdAt', $stored[0]);
+
+        // ... et pour toute l'organisation
+        $client->request('GET', '/api/rejected-locations', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+        $all = json_decode($client->getResponse()->getContent(), true)['rejectedLocations'];
+        $this->assertCount(3, array_filter($all, static fn (array $r) => $r['identifier'] === 'API-PARTIAL-0001'));
+
+        $client->request('GET', '/api/regulations/UNKNOWN/rejected-locations', [], [], $headers);
+        $this->assertResponseStatusCodeSame(404);
     }
 
     public function testAddRegulationWithOneWayRawGeoJSON(): void
@@ -286,13 +390,19 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             json_encode($payload),
         );
 
-        $this->assertResponseStatusCodeSame(400);
+        // Seule localisation rejetée : l'arrêté n'est pas enregistré
+        $this->assertResponseStatusCodeSame(422);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
-        $this->assertSame(400, $data['status']);
-        $this->assertSame('Aucune rue n\'a été trouvée à l\'intérieur de la zone dessinée. Modifiez le tracé pour qu\'il contienne au moins une rue.', $data['detail']);
+        $this->assertSame(422, $data['status']);
+        $this->assertCount(1, $data['rejectedLocations']);
+        $this->assertSame([[
+            'propertyPath' => 'measures[0].locations[0]',
+            'title' => 'Aucune rue n\'a été trouvée à l\'intérieur de la zone dessinée. Modifiez le tracé pour qu\'il contienne au moins une rue.',
+        ]], $data['rejectedLocations'][0]['errors']);
+        $this->assertSame('zone', $data['rejectedLocations'][0]['location']['roadType']);
     }
 
     public function testAddRegulationWithInvalidCredentials(): void
@@ -416,13 +526,15 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             $payload,
         );
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
-        $this->assertSame(400, $data['status']);
-        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', (string) $data['detail']);
+        $this->assertSame(422, $data['status']);
+        $this->assertCount(1, $data['rejectedLocations']);
+        $this->assertSame('measures[0].locations[0]', $data['rejectedLocations'][0]['errors'][0]['propertyPath']);
+        $this->assertStringStartsWith('Cette adresse n’est pas reconnue.', $data['rejectedLocations'][0]['errors'][0]['title']);
     }
 
     public function testAddRegulationLaneOrganizationOutOfPerimeter(): void
@@ -471,13 +583,13 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
             $payload,
         );
 
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(422);
         $this->assertResponseHeaderSame('content-type', 'application/json');
 
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
-        $this->assertSame(400, $data['status']);
-        $this->assertStringStartsWith('L\'organisation "" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route. S\'il s\'agit d\'une erreur, vous pouvez contacter le support DiaLog', (string) $data['detail']);
+        $this->assertSame(422, $data['status']);
+        $this->assertStringStartsWith('L\'organisation "Département de Seine-Saint-Denis" ne semble pas avoir les compétences pour intervenir sur ce linéaire de route.', $data['rejectedLocations'][0]['errors'][0]['title']);
     }
 
     public function testNoLocationWithMultipleViolations(): void
@@ -519,10 +631,15 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertIsArray($data);
         $this->assertSame(422, $data['status']);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][0]['title']);
-        $this->assertSame('Cette valeur ne doit pas être vide.', $data['violations'][1]['title']);
-        $this->assertSame('Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale, GeoJSON brut, ville entière ou tracé de zone).', $data['violations'][2]['title']);
-        $this->assertSame('La section de localisation doit correspondre à la valeur de type de voie (roadType).', $data['violations'][3]['title']);
+        $this->assertCount(1, $data['rejectedLocations']);
+        $errors = $data['rejectedLocations'][0]['errors'];
+        // Les erreurs de la mesure (période incomplète) précèdent celles de la localisation
+        $this->assertSame([
+            ['propertyPath' => 'measures[0].periods[0].startDate', 'title' => 'Cette valeur ne doit pas être vide.'],
+            ['propertyPath' => 'measures[0].periods[0].recurrenceType', 'title' => 'Cette valeur ne doit pas être vide.'],
+            ['propertyPath' => 'measures[0].locations[0]', 'title' => 'Un seul type de localisation doit être renseigné (voie nommée, route départementale, route nationale, GeoJSON brut, ville entière ou tracé de zone).'],
+            ['propertyPath' => 'measures[0].locations[0].roadType', 'title' => 'La section de localisation doit correspondre à la valeur de type de voie (roadType).'],
+        ], $errors);
     }
 
     public function testAddRegulationWithoutPeriods(): void
@@ -569,8 +686,9 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
 
         $this->assertIsArray($data);
         $this->assertSame(422, $data['status']);
-        $paths = array_map(static fn (array $v) => $v['propertyPath'], $data['violations']);
-        $this->assertContains('periods', $paths);
+        // Erreur portant sur la mesure : toutes ses localisations sont rejetées
+        $paths = array_map(static fn (array $v) => $v['propertyPath'], $data['rejectedLocations'][0]['errors']);
+        $this->assertContains('measures[0].periods', $paths);
     }
 
     public function testAddRegulationWithWholeCityAndExceptions(): void

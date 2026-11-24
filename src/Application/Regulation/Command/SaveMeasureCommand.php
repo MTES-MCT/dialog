@@ -23,6 +23,11 @@ final class SaveMeasureCommand implements CommandInterface
     public ?\DateTimeInterface $createdAt = null;
     public ?SaveVehicleSetCommand $vehicleSet = null;
     public array $permissions = []; // For validation
+    // Si vrai, une localisation dont l'enregistrement échoue (géocodage, compétence...) est ignorée
+    // au lieu de faire échouer toute la mesure : l'erreur est consignée dans $rejectedLocations.
+    public bool $rejectFailingLocations = false;
+    /** @var array<int, \Throwable> Erreurs indexées par position de la localisation dans */
+    public array $rejectedLocations = [];
 
     public function __construct(
         public ?RegulationOrder $regulationOrder = null,

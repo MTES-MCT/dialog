@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity
+    name="App\Domain\Regulation\RejectedLocation"
+    table="rejected_location">
+    <id name="uuid" type="guid" column="uuid" />
+    <field name="measureIndex" type="integer" column="measure_index" nullable="false" />
+    <field name="locationIndex" type="integer" column="location_index" nullable="false" />
+    <field name="location" type="json" column="location" nullable="false" />
+    <field name="measure" type="json" column="measure" nullable="false" />
+    <field name="errors" type="json" column="errors" nullable="false" />
+    <field name="createdAt" type="datetimetz" column="created_at" nullable="false" />
+    <many-to-one field="regulationOrderRecord" target-entity="App\Domain\Regulation\RegulationOrderRecord">
+      <join-columns>
+        <join-column name="regulation_order_record_uuid" referenced-column-name="uuid" nullable="false"
+          on-delete="CASCADE" />
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

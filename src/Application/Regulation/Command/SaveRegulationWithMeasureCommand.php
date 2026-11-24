@@ -15,6 +15,8 @@ final class SaveRegulationWithMeasureCommand implements CommandInterface
         public RegulationOrderRecordStatusEnum $status,
         /** @var SaveMeasureDTO[] */
         public ?array $measureDtos,
+        /** Mesures telles qu'envoyées dans la requête, conservées pour exposer les localisations rejetées */
+        public array $rawMeasures = [],
     ) {
     }
 }
