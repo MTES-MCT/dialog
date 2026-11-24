@@ -202,6 +202,9 @@ def _download_file(url: str, dest_path: Path, chunk_size: int = 8192) -> None:
 
     total_size = int(response.headers.get("content-length", 0))
     downloaded = 0
+    # Une ligne de log tous les 10 % seulement, pour ne pas saturer les logs
+    progress_step = 10
+    next_progress = progress_step
 
     with open(dest_path, "wb") as f:
         for chunk in response.iter_content(chunk_size=chunk_size):
@@ -210,10 +213,11 @@ def _download_file(url: str, dest_path: Path, chunk_size: int = 8192) -> None:
                 downloaded += len(chunk)
                 if total_size > 0:
                     percent = (downloaded / total_size) * 100
-                    print(f"\rProgression: {percent:.1f}% ({downloaded}/{total_size} bytes)", end="", flush=True)
+                    if percent >= next_progress:
+                        print(f"Progression: {percent:.0f}% ({downloaded}/{total_size} bytes)", flush=True)
+                        next_progress = (int(percent) // progress_step + 1) * progress_step
 
-    print()  # Nouvelle ligne après la barre de progression
-    print(f"✓ Téléchargement terminé: {dest_path}")
+    print(f"✓ Téléchargement terminé: {dest_path} ({downloaded} bytes)")
 
 
 def _extract_7z(archive_path: Path, dest_dir: Path, is_multi_volume: bool = False) -> None:
