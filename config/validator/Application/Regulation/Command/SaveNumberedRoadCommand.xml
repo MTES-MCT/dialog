@@ -20,6 +20,7 @@
                     <value>integer</value>
                 </option>
             </constraint>
+            <constraint name="PositiveOrZero" />
         </property>
         <property name="toAbscissa">
             <constraint name="Type">
@@ -28,6 +29,7 @@
                     <value>integer</value>
                 </option>
             </constraint>
+            <constraint name="PositiveOrZero" />
         </property>
     </class>
 </constraint-mapping>

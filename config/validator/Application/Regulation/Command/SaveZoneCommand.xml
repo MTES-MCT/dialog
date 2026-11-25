@@ -15,7 +15,12 @@
             </constraint>
         </property>
         <property name="geometry">
-            <constraint name="App\Infrastructure\Validator\ValidGeoJsonGeometryConstraint" />
+            <constraint name="App\Infrastructure\Validator\ValidGeoJsonGeometryConstraint">
+                <option name="types">
+                    <value>Polygon</value>
+                    <value>MultiPolygon</value>
+                </option>
+            </constraint>
             <constraint name="When">
                 <option name="expression">this.roadType === 'zone'</option>
                 <option name="constraints">

@@ -6,6 +6,7 @@ namespace App\Application\Regulation\Query\Location;
 
 use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineOrienterInterface;
 use App\Application\QueryInterface;
@@ -60,6 +61,14 @@ final class GetNamedStreetGeometryQueryHandler implements QueryInterface
             // Voie entière : fusion et orientation déterministe pour que A et B existent
             // (A à l'ouest, B à l'autre bout), identiques dans l'aperçu et à l'enregistrement.
             return $this->lineOrienter->normalize($fullLaneGeometry);
+        }
+
+        // LaneSectionMaker a besoin, pour chaque extrémité, de coordonnées, d'un numéro ou d'une voie en intersection.
+        $canResolveStart = $command->fromCoords || $command->fromHouseNumber || $command->fromRoadBanId;
+        $canResolveEnd = $command->toCoords || $command->toHouseNumber || $command->toRoadBanId;
+
+        if (!$canResolveStart || !$canResolveEnd) {
+            throw new LaneGeocodingFailureException();
         }
 
         return $this->laneSectionMaker->computeSection(

@@ -60,6 +60,25 @@
                 </option>
             </constraint>
         </property>
+        <!-- Hors « voie entière », un point de début sans point de fin (ou l'inverse) ne permet
+             pas de calculer la section de voie. Limité aux nouvelles voies pour ne pas bloquer
+             l'édition de données existantes dont la géométrie est déjà enregistrée. -->
+        <property name="fromPointType">
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and this.namedStreet === null and !this.getIsEntireStreet() and (this.toCoords or this.toHouseNumber or this.toRoadName) and !this.fromCoords and !this.fromHouseNumber and !this.fromRoadName</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
+        </property>
+        <property name="toPointType">
+            <constraint name="When">
+                <option name="expression">this.roadType === 'lane' and this.namedStreet === null and !this.getIsEntireStreet() and (this.fromCoords or this.fromHouseNumber or this.fromRoadName) and !this.toCoords and !this.toHouseNumber and !this.toRoadName</option>
+                <option name="constraints">
+                    <constraint name="NotBlank" />
+                </option>
+            </constraint>
+        </property>
         <property name="fromHouseNumber">
             <constraint name="Length">
                 <option name="max">8</option>

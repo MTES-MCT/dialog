@@ -10,6 +10,10 @@
                 <source>geojson.error.invalid_geometry</source>
                 <target>Cette valeur doit être une géométrie GeoJSON valide (LineString, Polygon, etc). Les objets Feature et FeatureCollection ne sont pas acceptés. Vous pouvez vous aider d'un validateur tel que https://geojson.io.</target>
             </trans-unit>
+            <trans-unit id="geojson.error.invalid_geometry_type">
+                <source>geojson.error.invalid_geometry_type</source>
+                <target>Le type de géométrie GeoJSON n'est pas accepté ici. Types acceptés : {{ types }}.</target>
+            </trans-unit>
             <trans-unit id="regulation.location.error.geocoding_failed">
                 <source>regulation.location.error.geocoding_failed</source>
                 <target>Cette adresse n’est pas reconnue. Vérifier le nom de la voie, et les numéros de début et fin.</target>

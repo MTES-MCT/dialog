@@ -86,11 +86,12 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
       - `fromHouseNumber`, `fromRoadName` (string, nullable)
       - `toPointType` (string, nullable) - enum : `houseNumber` | `intersection`
       - `toHouseNumber`, `toRoadName` (string, nullable)
+      - si un point de début est renseigné, un point de fin est obligatoire (et inversement) ; sans aucun des deux, toute la voie est prise
       - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`, relatif aux points de début (A) et de fin (B). Pour une voie entière (sans points), A est l'extrémité la plus à l'ouest de la voie et B l'extrémité opposée ; `BOTH` par défaut
     - `departmentalRoad` (object, nullable) — utilisé avec `roadType = departmentalRoad`
       - `administrator`, `roadNumber`, `fromDepartmentCode`, `fromPointNumber`, `toDepartmentCode`, `toPointNumber` (string, nullable)
-      - `fromAbscissa`, `toAbscissa` (integer, nullable)
-      - `fromSide`, `toSide` (string, nullable)
+      - `fromAbscissa`, `toAbscissa` (integer ≥ 0, nullable, 0 par défaut) — distance en mètres depuis le PR ; une abscisse qui dépasse la route est refusée (erreur 400)
+      - `fromSide`, `toSide` (string, obligatoires) — enum : `U` | `D` | `G`
       - `direction` (string, nullable) — enum: `BOTH` | `A_TO_B` | `B_TO_A`
     - `nationalRoad` (object, nullable) — utilisé avec `roadType = nationalRoad`
       - mêmes champs que `departmentalRoad`
@@ -101,7 +102,7 @@ Ci-dessous, un récapitulatif des champs acceptés aujourd’hui:
       - `exceptions` (array<object>, nullable) — voir « Exceptions » ci-dessous
     - `zone` (object, nullable) — utilisé avec `roadType = zone`
       - `label` (string, nullable)
-      - `geometry` (string GeoJSON, nullable) — polygone délimitant la zone ; les tronçons de rues couverts sont calculés automatiquement (une zone sans rue est refusée, erreur 400)
+      - `geometry` (string GeoJSON, nullable) — `Polygon` ou `MultiPolygon` délimitant la zone (autre type : erreur 422) ; les tronçons de rues couverts sont calculés automatiquement (une zone sans rue est refusée, erreur 400)
       - `exceptions` (array<object>, nullable) — voir « Exceptions » ci-dessous
     - `wholeCity` (object, nullable) — utilisé avec `roadType = wholeCity` : la restriction s'applique à toutes les voies de la commune
       - `cityCode` (string, nullable) — code INSEE de la commune
@@ -697,7 +698,7 @@ Valeurs possibles de `reason` :
 - `lane_geocoding_failed` : la voie n'a pas pu être géolocalisée entre les points indiqués.
 - `intersection_not_found` : les deux rues indiquées ne se croisent pas.
 - `numbered_road_geocoding_failed` : la route n'a pas pu être géolocalisée entre les PR indiqués.
-- `abscissa_out_of_range` : l'abscisse n'est pas située sur la route.
+- `abscissa_out_of_range` : l'abscisse n'est pas située sur la route (elle dépasse l'extrémité de la section de PR).
 - `zone_without_streets` : la zone dessinée (ou une zone en exception) ne contient aucune rue.
 
 - 401 Non authentifié / identifiants invalides

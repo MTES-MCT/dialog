@@ -102,6 +102,80 @@ final class CheckLocationControllerTest extends AbstractWebTestCase
         $this->assertSame('zone_without_streets', $data['reason']);
     }
 
+    public function testAbscissaOutOfRange(): void
+    {
+        $data = $this->check([
+            'roadType' => 'departmentalRoad',
+            'departmentalRoad' => [
+                'administrator' => 'Ardèche',
+                'roadNumber' => 'D906',
+                'fromPointNumber' => '34',
+                'fromSide' => 'U',
+                'fromAbscissa' => 0,
+                'toPointNumber' => '34',
+                'toSide' => 'U',
+                'toAbscissa' => 900000,
+                'direction' => 'BOTH',
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertFalse($data['accepted']);
+        $this->assertSame('abscissa_out_of_range', $data['reason']);
+    }
+
+    private function provideIncompleteLocations(): array
+    {
+        $numberedRoad = [
+            'administrator' => 'Ardèche',
+            'roadNumber' => 'D906',
+            'fromPointNumber' => '34',
+            'fromSide' => 'U',
+            'toPointNumber' => '34',
+            'toSide' => 'U',
+            'direction' => 'BOTH',
+        ];
+
+        return [
+            'numbered-road-without-sides' => [
+                ['roadType' => 'departmentalRoad', 'departmentalRoad' => ['fromSide' => null, 'toSide' => null] + $numberedRoad],
+                ['location.departmentalRoad.fromSide', 'location.departmentalRoad.toSide'],
+            ],
+            'negative-abscissa' => [
+                ['roadType' => 'departmentalRoad', 'departmentalRoad' => ['fromAbscissa' => -10] + $numberedRoad],
+                ['location.departmentalRoad.fromAbscissa'],
+            ],
+            'lane-without-end' => [
+                ['roadType' => 'lane', 'namedStreet' => [
+                    'cityCode' => '93070',
+                    'cityLabel' => 'saint ouen sur seine',
+                    'roadName' => 'rue eugène berthoud',
+                    'fromPointType' => 'houseNumber',
+                    'fromHouseNumber' => '10',
+                ]],
+                ['location.namedStreet.toPointType'],
+            ],
+            'zone-not-polygon' => [
+                ['roadType' => 'zone', 'zone' => [
+                    'label' => 'Zone',
+                    'geometry' => '{"type":"LineString","coordinates":[[2.33,48.9],[2.34,48.91]]}',
+                ]],
+                ['location.zone.geometry'],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideIncompleteLocations
+     */
+    public function testIncompleteLocation(array $payload, array $propertyPaths): void
+    {
+        $data = $this->check($payload);
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertEqualsCanonicalizing($propertyPaths, array_column($data['violations'], 'propertyPath'));
+    }
+
     public function testValidationErrors(): void
     {
         $data = $this->check(['roadType' => 'lane']);

@@ -51,6 +51,8 @@ class SaveWholeCityExceptionCommandConstraintValidatorTest extends ConstraintVal
         $command->departmentalRoad->roadNumber = 'D110';
         $command->departmentalRoad->fromPointNumberWithDepartmentCode = '07##6';
         $command->departmentalRoad->toPointNumberWithDepartmentCode = '07##15';
+        $command->departmentalRoad->fromSide = 'U';
+        $command->departmentalRoad->toSide = 'U';
 
         $this->validator->validate($command, $this->constraintObj);
         $this->assertNoViolation();
@@ -72,6 +74,10 @@ class SaveWholeCityExceptionCommandConstraintValidatorTest extends ConstraintVal
             ->atPath('property.path.nationalRoad.fromPointNumber')
             ->buildNextViolation('regulation.location.pointNumber.error.blank')
             ->atPath('property.path.nationalRoad.toPointNumber')
+            ->buildNextViolation('common.error.not_blank')
+            ->atPath('property.path.nationalRoad.fromSide')
+            ->buildNextViolation('common.error.not_blank')
+            ->atPath('property.path.nationalRoad.toSide')
             ->assertRaised();
     }
 
@@ -85,6 +91,8 @@ class SaveWholeCityExceptionCommandConstraintValidatorTest extends ConstraintVal
         $command->departmentalRoad->roadNumber = '0';
         $command->departmentalRoad->fromPointNumberWithDepartmentCode = '0';
         $command->departmentalRoad->toPointNumberWithDepartmentCode = '0';
+        $command->departmentalRoad->fromSide = 'U';
+        $command->departmentalRoad->toSide = 'U';
 
         $this->validator->validate($command, $this->constraintObj);
         $this->assertNoViolation();

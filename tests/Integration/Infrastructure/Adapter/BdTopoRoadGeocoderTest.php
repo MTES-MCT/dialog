@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Adapter;
 
+use App\Application\Exception\AbscissaOutOfRangeException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Application\Organization\View\MapBboxView;
 use App\Domain\Geography\Coordinates;
@@ -310,6 +311,22 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
             pointNumber: '1',
             side: 'U',
             abscissa: 0,
+        );
+    }
+
+    public function testComputeReferencePointErrorAbscissaOutOfRange(): void
+    {
+        // Avant : l'abscisse était ramenée silencieusement à l'extrémité de la section.
+        $this->expectException(AbscissaOutOfRangeException::class);
+
+        $this->roadGeocoder->computeReferencePoint(
+            roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
+            administrator: 'Ardèche',
+            roadNumber: 'D906',
+            departmentCode: null,
+            pointNumber: '34',
+            side: 'U',
+            abscissa: 900000,
         );
     }
 

@@ -30,6 +30,20 @@ final class ValidGeoJsonGeometryConstraintValidator extends ConstraintValidator
         } catch (\Exception $e) {
             $this->context->buildViolation('geojson.error.invalid_geometry')
                 ->addViolation();
+
+            return;
+        }
+
+        if ($value === null || $value === '' || !$constraint->types) {
+            return;
+        }
+
+        $type = json_decode($value, true)['type'] ?? null;
+
+        if (!\in_array($type, $constraint->types, true)) {
+            $this->context->buildViolation($constraint->typeMessage)
+                ->setParameter('{{ types }}', implode(', ', $constraint->types))
+                ->addViolation();
         }
     }
 }
