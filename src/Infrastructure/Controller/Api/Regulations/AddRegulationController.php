@@ -5,15 +5,21 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Api\Regulations;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\AllLocationsRejectedException;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
+use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\SaveRegulationWithMeasureCommand;
+use App\Application\Regulation\Query\GetRejectedLocationsQuery;
+use App\Application\Regulation\View\RejectedLocationView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordSourceEnum;
 use App\Infrastructure\DTO\Event\RegulationGeneralInfoDTO;
 use App\Infrastructure\Security\User\OrganizationAwareUserInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -23,6 +29,7 @@ final class AddRegulationController
 {
     public function __construct(
         private CommandBusInterface $commandBus,
+        private QueryBusInterface $queryBus,
         private Security $security,
         private ObjectMapperInterface $objectMapper,
     ) {
@@ -34,6 +41,17 @@ final class AddRegulationController
         methods: ['POST'],
     )]
     #[OA\Tag(name: 'Private')]
+    #[OA\Post(
+        summary: 'Créer un arrêté de circulation',
+        description: <<<'DESCRIPTION'
+            ### Localisations rejetées
+            Une localisation invalide (valeur manquante, géocodage en échec, hors compétence...) est
+            rejetée sans empêcher l'intégration des autres ; une erreur portant sur une mesure (type,
+            périodes, véhicules...) rejette toutes ses localisations. Les rejets sont listés dans
+            `rejectedLocations` et consultables via `GET /api/regulations/{identifier}/rejected-locations`.
+            Si aucune localisation ne peut être intégrée, l'arrêté n'est pas enregistré (erreur `422`).
+            DESCRIPTION,
+    )]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -227,6 +245,7 @@ final class AddRegulationController
             type: 'object',
             properties: [
                 new OA\Property(property: 'uuid', type: 'string', example: '123e4567-e89b-12d3-a456-426614174000'),
+                new OA\Property(property: 'rejectedLocations', type: 'array', description: 'Localisations rejetées (les autres ont été intégrées). Également consultables via `GET /api/regulations/{identifier}/rejected-locations`.', items: new OA\Items(ref: '#/components/schemas/RejectedLocation')),
             ],
         ),
     )]
@@ -241,24 +260,14 @@ final class AddRegulationController
         ),
     )]
     #[OA\Response(
-        response: 400,
-        description: 'Erreur métier (géocodage / périmètre géographique)',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'status', type: 'integer', example: 400),
-                new OA\Property(property: 'detail', type: 'string', example: 'Le géocodage de la voie a échoué.'),
-            ],
-        ),
-    )]
-    #[OA\Response(
         response: 422,
-        description: 'Erreur de validation',
+        description: 'Erreur de validation, ou aucune localisation n\'a pu être intégrée (`rejectedLocations` détaille alors chaque rejet et rien n\'est enregistré)',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
                 new OA\Property(property: 'status', type: 'integer', example: 422),
                 new OA\Property(property: 'detail', type: 'string', example: 'Validation failed'),
+                new OA\Property(property: 'rejectedLocations', type: 'array', nullable: true, items: new OA\Items(ref: '#/components/schemas/RejectedLocation')),
                 new OA\Property(
                     property: 'violations',
                     type: 'array',
@@ -275,6 +284,7 @@ final class AddRegulationController
         ),
     )]
     public function __invoke(
+        Request $request,
         #[MapRequestPayload] RegulationGeneralInfoDTO $dto,
     ): JsonResponse {
         /** @var OrganizationAwareUserInterface $user */
@@ -286,12 +296,41 @@ final class AddRegulationController
         $generalInfo->organization = $organization;
         $this->objectMapper->map($dto, $generalInfo);
 
-        $regulationOrderRecord = $this->commandBus->handle(new SaveRegulationWithMeasureCommand($generalInfo, $dto->status, $dto->measures));
+        try {
+            $regulationOrderRecord = $this->commandBus->handle(
+                new SaveRegulationWithMeasureCommand($generalInfo, $dto->status, $dto->measures, self::getRawMeasures($request)),
+            );
+        } catch (AllLocationsRejectedException $e) {
+            return new JsonResponse([
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'detail' => 'Aucune localisation n\'a pu être intégrée : l\'arrêté n\'a pas été enregistré.',
+                'rejectedLocations' => array_map(static fn (RejectedLocationView $view) => $view->toArray(), $e->getRejectedLocations()),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $this->commandBus->handle(new UpdateApiClientLastUsedAtCommand($user->getUserIdentifier()));
 
+        $rejectedLocations = $this->queryBus->handle(
+            new GetRejectedLocationsQuery($organization->getUuid(), $regulationOrderRecord->getUuid()),
+        );
+
         return new JsonResponse(
-            ['uuid' => $regulationOrderRecord->getUuid()],
+            [
+                'uuid' => $regulationOrderRecord->getUuid(),
+                'rejectedLocations' => array_map(static fn (RejectedLocationView $view) => $view->toArray(), $rejectedLocations),
+            ],
             Response::HTTP_CREATED,
         );
+    }
+
+    public static function getRawMeasures(Request $request): array
+    {
+        try {
+            $measures = $request->toArray()['measures'] ?? [];
+        } catch (JsonException) {
+            return [];
+        }
+
+        return \is_array($measures) ? array_values($measures) : [];
     }
 }

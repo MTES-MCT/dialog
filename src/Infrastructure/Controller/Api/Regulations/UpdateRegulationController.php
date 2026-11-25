@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Infrastructure\Controller\Api\Regulations;
 
 use App\Application\CommandBusInterface;
+use App\Application\Exception\AllLocationsRejectedException;
 use App\Application\Organization\Command\UpdateApiClientLastUsedAtCommand;
 use App\Application\QueryBusInterface;
 use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Application\Regulation\Command\SaveRegulationGeneralInfoCommand;
 use App\Application\Regulation\Command\UpdateRegulationWithMeasureCommand;
 use App\Application\Regulation\Query\GetRegulationOrderRecordByIdentifierQuery;
+use App\Application\Regulation\Query\GetRejectedLocationsQuery;
+use App\Application\Regulation\View\RejectedLocationView;
 use App\Domain\Regulation\Enum\RegulationOrderRecordStatusEnum;
 use App\Domain\Regulation\Exception\RegulationOrderRecordNotFoundException;
 use App\Domain\Regulation\RegulationOrderRecord;
@@ -19,6 +22,7 @@ use App\Infrastructure\Security\User\OrganizationAwareUserInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -61,6 +65,13 @@ final class UpdateRegulationController
             - Si l'arrêté est en brouillon (`draft`) et que le payload indique `published`, l'arrêté est publié.
             - Un arrêté publié ne peut pas être repassé en brouillon : une requête avec `status: draft`
               sur un arrêté publié renvoie une erreur `400`.
+
+            ### Localisations rejetées
+            Une localisation invalide (valeur manquante, géocodage en échec, hors compétence...) est
+            rejetée sans empêcher l'intégration des autres ; une erreur portant sur une mesure (type,
+            périodes, véhicules...) rejette toutes ses localisations. Les rejets sont listés dans
+            `rejectedLocations` et consultables via `GET /api/regulations/{identifier}/rejected-locations`.
+            Si aucune localisation ne peut être intégrée, l'arrêté n'est pas modifié (erreur `422`).
 
             ### Authentification
             Cette route est privée : elle nécessite l'envoi des entêtes `X-Client-Id` et `X-Client-Secret`
@@ -262,17 +273,18 @@ final class UpdateRegulationController
                 new OA\Property(property: 'uuid', type: 'string', example: '123e4567-e89b-12d3-a456-426614174000'),
                 new OA\Property(property: 'identifier', type: 'string', example: 'F2025/001'),
                 new OA\Property(property: 'status', type: 'string', enum: ['draft', 'published'], example: 'draft'),
+                new OA\Property(property: 'rejectedLocations', type: 'array', description: 'Localisations rejetées (les autres ont été intégrées). Remplace les rejets de l\'envoi précédent.', items: new OA\Items(ref: '#/components/schemas/RejectedLocation')),
             ],
         ),
     )]
     #[OA\Response(
         response: 400,
-        description: 'Erreur métier (géocodage / périmètre géographique / changement de statut invalide)',
+        description: 'Changement de statut invalide',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
                 new OA\Property(property: 'status', type: 'integer', example: 400),
-                new OA\Property(property: 'detail', type: 'string', example: 'Le géocodage de la voie a échoué.'),
+                new OA\Property(property: 'detail', type: 'string', example: 'Un arrêté publié ne peut pas être repassé en brouillon.'),
             ],
         ),
     )]
@@ -299,12 +311,13 @@ final class UpdateRegulationController
     )]
     #[OA\Response(
         response: 422,
-        description: 'Erreur de validation',
+        description: 'Erreur de validation, ou aucune localisation n\'a pu être intégrée (`rejectedLocations` détaille alors chaque rejet et l\'arrêté n\'est pas modifié)',
         content: new OA\JsonContent(
             type: 'object',
             properties: [
                 new OA\Property(property: 'status', type: 'integer', example: 422),
                 new OA\Property(property: 'detail', type: 'string', example: 'Validation failed'),
+                new OA\Property(property: 'rejectedLocations', type: 'array', nullable: true, items: new OA\Items(ref: '#/components/schemas/RejectedLocation')),
                 new OA\Property(
                     property: 'violations',
                     type: 'array',
@@ -321,6 +334,7 @@ final class UpdateRegulationController
         ),
     )]
     public function __invoke(
+        Request $request,
         #[MapRequestPayload] RegulationGeneralInfoDTO $dto,
     ): JsonResponse {
         /** @var OrganizationAwareUserInterface $user */
@@ -349,7 +363,18 @@ final class UpdateRegulationController
         $generalInfo = SaveRegulationGeneralInfoCommand::create($regulationOrderRecord);
         $this->objectMapper->map($dto, $generalInfo);
 
-        $this->commandBus->handle(new UpdateRegulationWithMeasureCommand($generalInfo, $dto->status, $dto->measures));
+        try {
+            $this->commandBus->handle(
+                new UpdateRegulationWithMeasureCommand($generalInfo, $dto->status, $dto->measures, AddRegulationController::getRawMeasures($request)),
+            );
+        } catch (AllLocationsRejectedException $e) {
+            return new JsonResponse([
+                'status' => Response::HTTP_UNPROCESSABLE_ENTITY,
+                'detail' => 'Aucune localisation n\'a pu être intégrée : l\'arrêté n\'a pas été enregistré.',
+                'rejectedLocations' => array_map(static fn (RejectedLocationView $view) => $view->toArray(), $e->getRejectedLocations()),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $this->commandBus->handle(new UpdateApiClientLastUsedAtCommand($user->getUserIdentifier()));
 
         if (!$regulationOrderRecord->isDraft()) {
@@ -360,6 +385,10 @@ final class UpdateRegulationController
             'uuid' => $regulationOrderRecord->getUuid(),
             'identifier' => $regulationOrderRecord->getRegulationOrder()->getIdentifier(),
             'status' => $regulationOrderRecord->getStatus(),
+            'rejectedLocations' => array_map(
+                static fn (RejectedLocationView $view) => $view->toArray(),
+                $this->queryBus->handle(new GetRejectedLocationsQuery($organization->getUuid(), $regulationOrderRecord->getUuid())),
+            ),
         ], Response::HTTP_OK);
     }
 }
