@@ -70,6 +70,10 @@
                 <source>measure.locations.error.not_blank</source>
                 <target>Veuillez définir une ou plusieurs localisations.</target>
             </trans-unit>
+            <trans-unit id="measure.locations.error.one_way_direction">
+                <source>measure.locations.error.one_way_direction</source>
+                <target>Un sens unique ne s'applique que dans un sens : choisissez « A vers B » ou « B vers A ».</target>
+            </trans-unit>
             <trans-unit id="regulation.vehicle_set.restricted_types.error.not_blank">
                 <source>regulation.vehicle_set.restricted_types.error.not_blank</source>
                 <target>Veuillez spécifier un ou plusieurs véhicules concernés.</target>

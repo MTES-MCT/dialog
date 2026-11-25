@@ -769,7 +769,7 @@ Sans aucun filtre, l'export porte sur **toute la base publiée** (tous statuts c
 | `organisation` | Organisation émettrice. |
 | `lien_pdf` | Lien vers le document source (PDF) le cas échéant. |
 | `mesure_uuid` | UUID de la mesure. |
-| `type_restriction` | Type de restriction (`alternateRoad`, `noOvertaking`, `noEntry`, `speedLimitation`, `parkingProhibited`). |
+| `type_restriction` | Type de restriction (`alternateRoad`, `noOvertaking`, `noEntry`, `speedLimitation`, `parkingProhibited`, `oneWay`). |
 | `types_vehicules` | Types de véhicules concernés par la restriction (vide si tous les véhicules). |
 | `exceptions` | Types de véhicules exemptés de la restriction. |
 | `sauf_jours_feries` | `oui` si au moins une période de la mesure exclut les jours fériés, `non` sinon. |

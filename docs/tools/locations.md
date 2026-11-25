@@ -31,6 +31,15 @@ Une fois la mesure enregistrée, un sens unique (`A_TO_B` ou `B_TO_A`) est resti
 
 Les chevrons sont une couche de symboles MapLibre (`assets/maps/direction_chevrons.js`) qui suit l'ordre des sommets, c'est-à-dire A vers B, et retourne l'icône de 180° pour `B_TO_A`. Ils ne sont justes que si la géométrie est bien orientée de A vers B.
 
+## Type de restriction « Sens unique »
+
+Le type de mesure `oneWay` (« Sens unique ») décrit une mise en sens unique : la circulation n'est autorisée que dans le sens indiqué par chaque emprise (`A_TO_B` ou `B_TO_A`). Pour les autres types, le sens désigne au contraire le sens touché par la restriction.
+
+- **Saisie** : « Double sens » est refusé pour ce type. Le contrôleur Stimulus `one-way-direction` retire l'option des selects « Sens concerné » dès que le type est choisi, et `SaveMeasureCommandConstraintValidator` applique la même règle côté serveur, donc aussi à l'API d'écriture. La ville entière et la zone, qui n'ont pas de sens, ne sont pas concernées par cette règle.
+- **Carte** : trait plein bleu-vert (`assets/maps/measure_type_styles.js`), sur lequel se lisent les chevrons du sens.
+- **DATEX II** : `typeOfRegulation` de type `DirectionRestriction`, avec `directionRestrictionType` valant `oneWayTraffic`. Sans ce cas dédié, le gabarit retomberait sur `AccessRestriction` / `noEntry`, c'est-à-dire une route fermée.
+- **CIFS (Waze)** : exporté comme la fermeture du sens opposé au sens autorisé, c'est-à-dire un incident `ROAD_CLOSED` en `ONE_DIRECTION` dont la polyligne est parcourue dans le sens fermé. Pour les fermetures (`noEntry`), le sens saisi est au contraire le sens fermé. Une emprise sans sens unique (ville entière, zone) n'est pas exportée : il n'y a pas de sens à fermer.
+
 ## Commandes
 
 ### `app:location:geometry:sync`

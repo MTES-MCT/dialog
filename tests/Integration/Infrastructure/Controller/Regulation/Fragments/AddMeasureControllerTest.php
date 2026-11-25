@@ -173,6 +173,76 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add', $addMeasureBtn->form()->getUri());
     }
 
+    /**
+     * Valeurs d'une mesure « Sens unique » sur la Rue Ardoin (voie entière), au sens près.
+     */
+    private function oneWayMeasureValues(array $values, string $direction): array
+    {
+        $values['measure_form']['type'] = 'oneWay';
+        $values['measure_form']['vehicleSet']['allVehicles'] = 'yes';
+        $values['measure_form']['periods'][0]['isPermanent'] = '1';
+        $values['measure_form']['periods'][0]['recurrenceType'] = 'everyDay';
+        $values['measure_form']['periods'][0]['startDate'] = '2023-10-30';
+        $values['measure_form']['locations'][0]['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['roadType'] = 'lane';
+        $values['measure_form']['locations'][0]['namedStreet']['cityCode'] = '93070';
+        $values['measure_form']['locations'][0]['namedStreet']['cityLabel'] = 'Saint-Ouen-sur-Seine';
+        $values['measure_form']['locations'][0]['namedStreet']['roadBanId'] = '93070_0074';
+        $values['measure_form']['locations'][0]['namedStreet']['roadName'] = 'Rue Ardoin';
+        $values['measure_form']['locations'][0]['namedStreet']['direction'] = $direction;
+
+        return $values;
+    }
+
+    public function testAddOneWay(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        // Le type est proposé, et le formulaire porte le contrôleur qui retire « Double sens »
+        $this->assertContains('oneWay', $crawler->filter('#measure_form_type option')->extract(['value']));
+        $this->assertSame('type', $crawler->filter('#measure_form_type')->attr('data-one-way-direction-target'));
+        $this->assertSame('direction', $crawler->filter('#measure_form_locations_0_namedStreet_direction')->attr('data-one-way-direction-target'));
+        $this->assertSame('direction', $crawler->filter('#measure_form_locations_0_departmentalRoad_direction')->attr('data-one-way-direction-target'));
+        // Libellés du select « Sens concerné », tels que sur la maquette
+        $this->assertSame(
+            ['Double sens', 'A vers B', 'B vers A'],
+            $crawler->filter('#measure_form_locations_0_namedStreet_direction option')->each(fn ($option) => $option->text()),
+        );
+
+        $form = $crawler->selectButton('Valider')->form();
+        $values = $this->oneWayMeasureValues($form->getPhpValues(), DirectionEnum::A_TO_B->value);
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(200);
+
+        $measure = $crawler->filter('turbo-stream[target=measure_list] [data-testid="measure"]');
+        $this->assertSame('Sens unique', $measure->filter('h3')->text());
+        $this->assertCount(1, $measure->filter('.app-card--measure-oneWay .fr-icon-x-one-way-circle'));
+        $this->assertSame('Rue Ardoin à Saint-Ouen-sur-Seine', $measure->filter('[data-location-uuid]')->text());
+        $this->assertSame('A_TO_B', $measure->filter('input[id^="location-geometry-"]')->attr('data-direction'));
+    }
+
+    public function testAddOneWayRefusesBothDirections(): void
+    {
+        $client = $this->login();
+        $crawler = $client->request('GET', '/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_PERMANENT . '/measure/add');
+        $this->assertResponseStatusCodeSame(200);
+
+        $form = $crawler->selectButton('Valider')->form();
+        $values = $this->oneWayMeasureValues($form->getPhpValues(), DirectionEnum::BOTH->value);
+
+        $crawler = $client->request($form->getMethod(), $form->getUri(), $values, $form->getPhpFiles());
+
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSame(
+            'Un sens unique ne s\'applique que dans un sens : choisissez « A vers B » ou « B vers A ».',
+            $crawler->filter('#measure_form_locations_0_namedStreet_direction_error')->text(),
+        );
+    }
+
     public function testAddWholeCity(): void
     {
         $client = $this->login();

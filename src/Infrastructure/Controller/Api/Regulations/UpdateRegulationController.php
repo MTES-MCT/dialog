@@ -86,7 +86,7 @@ final class UpdateRegulationController
                     items: new OA\Items(
                         type: 'object',
                         properties: [
-                            new OA\Property(property: 'type', type: 'string', enum: ['alternateRoad', 'noEntry', 'speedLimitation', 'parkingProhibited', 'noOvertaking'], example: 'speedLimitation'),
+                            new OA\Property(property: 'type', type: 'string', enum: ['alternateRoad', 'noEntry', 'speedLimitation', 'parkingProhibited', 'noOvertaking', 'oneWay'], example: 'speedLimitation'),
                             new OA\Property(property: 'maxSpeed', type: 'integer', nullable: true, example: 30),
                             new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', nullable: true, example: '2025-10-09T08:00:00Z'),
                             new OA\Property(

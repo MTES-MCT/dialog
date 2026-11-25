@@ -75,6 +75,8 @@ final class GetCifsIncidentsQueryHandler
 
             /** @var Measure $measure */
             foreach ($regulationOrder->getMeasures() as $measure) {
+                $measureType = MeasureTypeEnum::from($measure->getType());
+
                 /** @var Period[] $periods */
                 $periods = $measure->getPeriods();
 
@@ -161,6 +163,16 @@ final class GetCifsIncidentsQueryHandler
                     $rawGeoJSON = $location->getRawGeoJSON();
                     $roadDirection = $location->getNamedStreet()?->getDirection() ?? $numberedRoad?->getDirection() ?? $rawGeoJSON?->getDirection();
 
+                    if ($measureType === MeasureTypeEnum::ONE_WAY) {
+                        // Le sens saisi pour un sens unique est le sens autorisé : c'est le sens opposé qui est
+                        // fermé. En double sens ou sans sens (ville entière, zone), il n'y a rien à fermer.
+                        $roadDirection = DirectionEnum::opposite($roadDirection);
+
+                        if ($roadDirection === null) {
+                            continue;
+                        }
+                    }
+
                     if ($roadDirection) {
                         $direction = DirectionEnum::toCifsDirection($roadDirection);
                     }
@@ -176,7 +188,7 @@ final class GetCifsIncidentsQueryHandler
                     }
 
                     // La géométrie est stockée de A vers B. En CIFS, le sens d'un incident ONE_DIRECTION est donné
-                    // par l'ordre des points de la polyligne : pour une restriction de B vers A, on la retourne.
+                    // par l'ordre des points de la polyligne : pour un sens fermé de B vers A, on la retourne.
                     if ($roadDirection === DirectionEnum::B_TO_A->value) {
                         $polyline = self::reversePolyline($polyline);
                     }
@@ -186,7 +198,6 @@ final class GetCifsIncidentsQueryHandler
                         // Il doit être "unique dans le flux et rester stable pendant toute la vie de l'incident".
                         // Un incident logique par (règlement, lieu, période) — pas de hash de la polyline pour éviter les doublons avec un MultiLineString.
                         $id = $identifier . ':' . $locationId . ':' . $incidentPeriod['id'];
-                        $measureType = MeasureTypeEnum::from($measure->getType());
 
                         $incidents[] = new CifsIncidentView(
                             id: $id,

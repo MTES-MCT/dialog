@@ -137,6 +137,81 @@ final class AddRegulationControllerTest extends AbstractWebTestCase
         $this->assertSame([2.3477, 48.9053], json_decode($location['geometry'], true)['coordinates'][0]);
     }
 
+    private function oneWayPayload(string $identifier, string $direction): array
+    {
+        return [
+            'identifier' => $identifier,
+            'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
+            'category' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
+            'subject' => RegulationSubjectEnum::OTHER->value,
+            'otherCategoryText' => 'Plan de circulation',
+            'title' => 'Mise en sens unique de la rue des Lilas',
+            'measures' => [[
+                'type' => 'oneWay',
+                'periods' => [[
+                    'startDate' => '2025-10-16T13:01:02.887Z',
+                    'startTime' => '2025-10-16T13:01:02.887Z',
+                    'recurrenceType' => 'everyDay',
+                    'isPermanent' => true,
+                ]],
+                'locations' => [[
+                    'roadType' => 'rawGeoJSON',
+                    'rawGeoJSON' => [
+                        'label' => 'Rue des Lilas, du parking à la mairie',
+                        'geometry' => '{"type":"LineString","coordinates":[[2.3477,48.9053],[2.3485,48.9049],[2.3493,48.9046]]}',
+                        'direction' => $direction,
+                    ],
+                ]],
+            ]],
+        ];
+    }
+
+    public function testAddOneWayRegulation(): void
+    {
+        $client = static::createClient();
+        $headers = [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_X_CLIENT_ID' => 'clientId',
+            'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+        ];
+
+        $client->request('POST', '/api/regulations', [], [], $headers, json_encode($this->oneWayPayload('F2025-sens-unique', 'A_TO_B')));
+        $this->assertResponseStatusCodeSame(201);
+
+        $client->request('GET', '/api/regulations/F2025-sens-unique', [], [], $headers);
+        $this->assertResponseStatusCodeSame(200);
+        $measure = json_decode($client->getResponse()->getContent(), true)['measures'][0];
+        $this->assertSame('oneWay', $measure['type']);
+        $this->assertSame('A_TO_B', $measure['locations'][0]['rawGeoJSON']['direction']);
+    }
+
+    public function testAddOneWayRegulationRefusesBothDirections(): void
+    {
+        $client = static::createClient();
+
+        $client->request(
+            'POST',
+            '/api/regulations',
+            [],
+            [],
+            [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_X_CLIENT_ID' => 'clientId',
+                'HTTP_X_CLIENT_SECRET' => 'clientSecret',
+            ],
+            json_encode($this->oneWayPayload('F2025-sens-unique-double', 'BOTH')),
+        );
+
+        $this->assertResponseStatusCodeSame(422);
+
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $violations = array_column($data['violations'], 'title', 'propertyPath');
+        $this->assertSame(
+            ['locations[0].rawGeoJSON.direction' => 'Un sens unique ne s\'applique que dans un sens : choisissez « A vers B » ou « B vers A ».'],
+            $violations,
+        );
+    }
+
     public function testAddRegulationTimeSlotRoundTripsInClientTimezone(): void
     {
         $client = static::createClient();

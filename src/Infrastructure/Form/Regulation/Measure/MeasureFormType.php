@@ -101,6 +101,7 @@ final class MeasureFormType extends AbstractType
             MeasureTypeEnum::PARKING_PROHIBITED,
             MeasureTypeEnum::ALTERNATE_ROAD,
             MeasureTypeEnum::NO_OVERTAKING,
+            MeasureTypeEnum::ONE_WAY,
         ];
 
         $choices = [];

@@ -33,6 +33,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GetCifsIncidentsQueryHandlerTest extends TestCase
 {
+    // Polyligne CIFS (« lat lon lat lon ») de la géométrie de test, stockée de A vers B
+    private const POLYLINE_A_TO_B = '44.028996 1.362275 44.025665 1.35931';
+    private const POLYLINE_B_TO_A = '44.025665 1.35931 44.028996 1.362275';
+
     private $regulationOrderRecordRepository;
     private $polylineMaker;
     private $dateUtils;
@@ -734,7 +738,8 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->method('getNamedStreet')
             ->willReturn($namedStreet);
 
-        $this->assertPolylineReversedForBToA($location, 'Rue des Arts');
+        // La géométrie est stockée de A vers B : la polyligne est retournée pour une restriction de B vers A
+        $this->assertOneDirectionIncident($location, 'Rue des Arts', MeasureTypeEnum::NO_ENTRY, self::POLYLINE_B_TO_A);
     }
 
     public function testGetAllReversesPolylineForBToANumberedRoad(): void
@@ -759,13 +764,119 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->willReturn($numberedRoad);
 
         // Le libellé des PR passe par le traducteur, qui renvoie ici la clé telle quelle
-        $this->assertPolylineReversedForBToA($location, 'D110 (Ardèche) regulation.location.reference_point');
+        $this->assertOneDirectionIncident($location, 'D110 (Ardèche) regulation.location.reference_point', MeasureTypeEnum::NO_ENTRY, self::POLYLINE_B_TO_A);
     }
 
-    private function assertPolylineReversedForBToA(Location $location, string $expectedStreet): void
+    /**
+     * @dataProvider provideOneWayDirections
+     */
+    public function testGetAllClosesOppositeDirectionForOneWay(string $allowedDirection, string $expectedPolyline): void
+    {
+        $namedStreet = $this->createMock(NamedStreet::class);
+        $namedStreet
+            ->expects(self::once())
+            ->method('getDirection')
+            ->willReturn($allowedDirection);
+
+        $location = $this->createMock(Location::class);
+        $location
+            ->expects(self::once())
+            ->method('getCifsStreetLabel')
+            ->willReturn('Rue des Arts');
+        $location
+            ->expects(self::once())
+            ->method('getNamedStreet')
+            ->willReturn($namedStreet);
+
+        $this->assertOneDirectionIncident($location, 'Rue des Arts', MeasureTypeEnum::ONE_WAY, $expectedPolyline);
+    }
+
+    public static function provideOneWayDirections(): array
+    {
+        return [
+            // Le sens saisi est le sens autorisé : l'incident ferme le sens opposé
+            'circulation autorisée de A vers B' => [DirectionEnum::A_TO_B->value, self::POLYLINE_B_TO_A],
+            'circulation autorisée de B vers A' => [DirectionEnum::B_TO_A->value, self::POLYLINE_A_TO_B],
+        ];
+    }
+
+    /**
+     * @dataProvider provideDirectionsWithoutSingleWay
+     */
+    public function testGetAllSkipsOneWayWithoutSingleDirection(?string $direction): void
+    {
+        $uuid = '06716514-0a0d-7bde-8000-f23df39a6693';
+        $geometry = '{"type":"LineString","coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}';
+
+        $namedStreet = null;
+
+        if ($direction !== null) {
+            $namedStreet = $this->createMock(NamedStreet::class);
+            $namedStreet->method('getDirection')->willReturn($direction);
+        }
+
+        $location = $this->createMock(Location::class);
+        $location->method('getUuid')->willReturn('02d5eb61-9ca3-4e67-aacd-726f124382d0');
+        $location->method('getCifsStreetLabel')->willReturn('Rue des Arts');
+        $location->method('getNamedStreet')->willReturn($namedStreet);
+        $location->method('getGeometry')->willReturn($geometry);
+
+        $measure = $this->createMock(Measure::class);
+        $measure->method('getType')->willReturn(MeasureTypeEnum::ONE_WAY->value);
+        $measure->method('getPeriods')->willReturn([]);
+        $measure->method('getLocations')->willReturn([$location]);
+
+        $regulationOrder = $this->createMock(RegulationOrder::class);
+        $regulationOrder->method('getIdentifier')->willReturn('2024T3');
+        $regulationOrder->method('getMeasures')->willReturn([$measure]);
+
+        $organization = $this->createMock(Organization::class);
+        $organization->method('getCode')->willReturn('82121');
+        $organization->method('getName')->willReturn('Commune de Montauban');
+
+        $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
+        $regulationOrderRecord->method('getUuid')->willReturn($uuid);
+        $regulationOrderRecord->method('getCreatedAt')->willReturn(new \DateTimeImmutable('2023-11-01 00:00:00'));
+        $regulationOrderRecord->method('getOrganization')->willReturn($organization);
+        $regulationOrderRecord->method('getRegulationOrder')->willReturn($regulationOrder);
+
+        $this->dateUtils->method('addDays')->willReturn(new \DateTimeImmutable('2023-11-07 00:00:00'));
+        $this->polylineMaker->method('normalizeToLineStringGeoJSON')->willReturn($geometry);
+        // Rien à fermer : l'emprise est écartée avant le calcul de la polyligne
+        $this->polylineMaker->expects(self::never())->method('getMergedPolyline');
+        $this->regulationOrderRecordRepository->method('findRegulationOrdersForCifsIncidentFormat')->willReturn([$regulationOrderRecord]);
+        $this->regulationOrderRecordRepository->method('getOverallDatesByRegulationUuids')->willReturn([
+            $uuid => [
+                'overallStartDate' => new \DateTimeImmutable('2023-11-02 00:00:00'),
+                'overallEndDate' => new \DateTimeImmutable('2023-11-06 00:00:00'),
+            ],
+        ]);
+
+        $handler = new GetCifsIncidentsQueryHandler($this->regulationOrderRecordRepository, $this->polylineMaker, $this->dateUtils, $this->translator, $this->numberedRoadLabelMaker, $this->publicHolidaysProvider);
+
+        $this->assertSame([], $handler(new GetCifsIncidentsQuery()));
+    }
+
+    public static function provideDirectionsWithoutSingleWay(): array
+    {
+        return [
+            'double sens (ville entière, donnée antérieure à la règle de saisie)' => [DirectionEnum::BOTH->value],
+            'emprise sans sens (zone)' => [null],
+        ];
+    }
+
+    /**
+     * Vérifie l'incident ONE_DIRECTION produit pour une emprise à sens unique, dont la géométrie
+     * est stockée de A vers B : seul l'ordre des points de la polyligne dit quel sens est fermé.
+     */
+    private function assertOneDirectionIncident(Location $location, string $expectedStreet, MeasureTypeEnum $measureType, string $expectedPolyline): void
     {
         $geometry = '{"type":"LineString","coordinates":[[1.362275,44.028996],[1.35931,44.025665]]}';
-        $polyline = '44.028996 1.362275 44.025665 1.35931';
+        $polyline = self::POLYLINE_A_TO_B;
+        $descriptions = [
+            'regulation.measure.type.noEntry' => 'Interdiction d\'accès',
+            'regulation.measure.type.oneWay' => 'Sens unique',
+        ];
         $uuid = '06716514-0a0d-7bde-8000-f23df39a6693';
 
         $regulationOrderRecord = $this->createMock(RegulationOrderRecord::class);
@@ -815,7 +926,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $measure
             ->expects(self::atLeastOnce())
             ->method('getType')
-            ->willReturn(MeasureTypeEnum::NO_ENTRY->value);
+            ->willReturn($measureType->value);
         $measure
             ->expects(self::once())
             ->method('getPeriods')
@@ -854,7 +965,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->translator
             ->expects(self::atLeastOnce())
             ->method('trans')
-            ->willReturnCallback(fn (string $id) => $id === 'regulation.measure.type.noEntry' ? 'Interdiction d\'accès' : $id);
+            ->willReturnCallback(fn (string $id) => $descriptions[$id] ?? $id);
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
@@ -881,11 +992,10 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
                     id: '2024T3:02d5eb61-9ca3-4e67-aacd-726f124382d0:0',
                     creationTime: new \DateTimeImmutable('2023-11-01T00:00:00+00:00'),
                     type: 'ROAD_CLOSED',
-                    description: 'Interdiction d\'accès',
+                    description: $descriptions['regulation.measure.type.' . $measureType->value],
                     street: $expectedStreet,
                     direction: 'ONE_DIRECTION',
-                    // La géométrie est stockée de A vers B : la polyligne est retournée pour une restriction de B vers A
-                    polyline: '44.025665 1.35931 44.028996 1.362275',
+                    polyline: $expectedPolyline,
                     startTime: new \DateTimeImmutable('2023-11-02T00:00:00+00:00'),
                     endTime: new \DateTimeImmutable('2023-11-07T00:00:00+00:00'),
                     sourceReference: '82121',

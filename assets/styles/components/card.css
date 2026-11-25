@@ -81,12 +81,17 @@
     background-color: #fef3fd;
 }
 
+.app-card--measure-oneWay {
+    background-color: #e5fbfd;
+}
+
 /* Les icônes de type "circle" sont des SVG multicolores. On utilise background-image
    plutôt que mask-image pour conserver leurs couleurs d'origine. */
 .fr-icon-x-alternate-road-circle::before,
 .fr-icon-x-forbidden-circle::before,
 .fr-icon-x-noparking-circle::before,
-.fr-icon-x-noovertake-circle::before {
+.fr-icon-x-noovertake-circle::before,
+.fr-icon-x-one-way-circle::before {
     mask-image: none;
     -webkit-mask-image: none;
     background-size: contain;
@@ -108,6 +113,10 @@
 
 .fr-icon-x-noovertake-circle::before {
     background-image: url('../../../public/images/icons/noovertake-circle.svg');
+}
+
+.fr-icon-x-one-way-circle::before {
+    background-image: url('../../../public/images/icons/one-way-circle.svg');
 }
 
 .app-card__header {

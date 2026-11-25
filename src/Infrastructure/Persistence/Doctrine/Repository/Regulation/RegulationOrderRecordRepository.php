@@ -690,7 +690,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
                 ...($excludedOrgUuids ? ['excludedOrgUuids' => $excludedOrgUuids] : []),
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
-                'measureTypes' => [MeasureTypeEnum::NO_ENTRY->value, MeasureTypeEnum::ALTERNATE_ROAD->value],
+                'measureTypes' => [MeasureTypeEnum::NO_ENTRY->value, MeasureTypeEnum::ALTERNATE_ROAD->value, MeasureTypeEnum::ONE_WAY->value],
                 'today' => $this->dateUtils->getNow(),
                 'excludedRoadTypes' => [RoadTypeEnum::RAW_GEOJSON->value],
                 // Allow RawGeoJSON locations only for Litteralis source

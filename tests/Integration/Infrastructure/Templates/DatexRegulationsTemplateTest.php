@@ -19,7 +19,7 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
     private const TRO_NAMESPACE = 'http://datex2.eu/schema/3/trafficRegulation';
     private const COMMON_NAMESPACE = 'http://datex2.eu/schema/3/common';
 
-    private function render(array $vehicleConditions, bool $isPublicHolidaysExcluded = false): \DOMDocument
+    private function render(array $vehicleConditions, bool $isPublicHolidaysExcluded = false, string $type = 'noEntry', ?string $direction = null): \DOMDocument
     {
         self::bootKernel();
         /** @var \Twig\Environment */
@@ -39,7 +39,7 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
                     endDate: new \DateTimeImmutable('2027-08-31 21:59:00'),
                     trafficRegulations: [
                         new DatexTrafficRegulationView(
-                            type: 'noEntry',
+                            type: $type,
                             locationConditions: [
                                 new DatexLocationView(
                                     roadType: RoadTypeEnum::LANE->value,
@@ -47,6 +47,7 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
                                     roadNumber: null,
                                     rawGeoJSONLabel: null,
                                     geometry: '{"type":"LineString","coordinates":[[2.33,48.86],[2.34,48.87]]}',
+                                    direction: $direction,
                                 ),
                             ],
                             vehicleConditions: $vehicleConditions,
@@ -198,5 +199,28 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
         $xml = $this->render([]);
 
         $this->assertSame(0.0, $this->createXPath($xml)->evaluate('count(//com:exceptionPeriod)'));
+    }
+
+    public function testOneWay(): void
+    {
+        $xml = $this->render([], type: 'oneWay', direction: 'aligned');
+
+        $this->assertSchemaValid($xml);
+
+        $xpath = $this->createXPath($xml);
+        $typeOfRegulation = '//tro:trafficRegulation/tro:typeOfRegulation';
+        // Un sens unique n'est pas une fermeture : il ne doit pas retomber sur AccessRestriction/noEntry
+        $this->assertSame('DirectionRestriction', $xpath->evaluate("string($typeOfRegulation/@xsi:type)"));
+        $this->assertSame('oneWayTraffic', $xpath->evaluate("string($typeOfRegulation/tro:directionRestrictionType)"));
+        $this->assertSame(0.0, $xpath->evaluate('count(//tro:accessRestrictionType)'));
+        // Le sens autorisé est porté par l'emprise, relativement à l'ordre de ses sommets
+        $this->assertSame('aligned', $xpath->evaluate('string(//*[local-name()="directionRelativeOnLinearSection"])'));
+    }
+
+    public function testOtherTypesKeepTheirRegulationType(): void
+    {
+        $xpath = $this->createXPath($this->render([]));
+
+        $this->assertSame('AccessRestriction', $xpath->evaluate('string(//tro:trafficRegulation/tro:typeOfRegulation/@xsi:type)'));
     }
 }

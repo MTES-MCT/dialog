@@ -1480,7 +1480,7 @@
             {# L'id du formulaire et ceux de ses champs dérivent de son nom, propre à chaque mesure (voir MeasureFormType::getName) #}
             {{ form_start(form, {attr: {
                 id: form.vars.id,
-                'data-controller': 'unsaved-changes',
+                'data-controller': 'unsaved-changes one-way-direction',
                 'data-unsaved-changes-message-value': 'common.unsaved_changes.warning'|trans,
                 'data-unsaved-changes-tracking-name-value': 'mesure',
             }}) }}
@@ -1503,6 +1503,7 @@
                         {{ form_errors(form) }}
 
                         <div data-controller="form-reveal">
+                            {# Le type pilote aussi les selects « Sens concerné » : « Double sens » en est retiré pour un sens unique #}
                             {{ form_row(form.type, {
                                 group_class: 'fr-select-group',
                                 widget_class: 'fr-select',
@@ -1511,6 +1512,10 @@
                                     'data-condition-equals-value': 'speedLimitation',
                                     'data-action':
                                     'change->condition#dispatchFromInputChange condition:yes->form-reveal#open condition:no->form-reveal#close',
+                                },
+                                attr: {
+                                    'data-one-way-direction-target': 'type',
+                                    'data-action': 'change->one-way-direction#refresh',
                                 },
                             }) }}
 

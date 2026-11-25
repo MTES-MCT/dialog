@@ -24,6 +24,18 @@ enum DirectionEnum: string
         };
     }
 
+    /**
+     * Sens opposé à un sens unique (A_TO_B ou B_TO_A). Null en double sens ou sans sens connu.
+     */
+    public static function opposite(?string $value): ?string
+    {
+        return match ($value) {
+            self::A_TO_B->value => self::B_TO_A->value,
+            self::B_TO_A->value => self::A_TO_B->value,
+            default => null,
+        };
+    }
+
     public static function toCifsDirection(string $value): string
     {
         return match ($value) {

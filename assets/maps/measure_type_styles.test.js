@@ -20,6 +20,17 @@ describe('getMeasureTypeStyle', () => {
         expect(getMeasureTypeStyle('parkingProhibited')).toBe(MEASURE_TYPE_STYLES.parkingProhibited);
         expect(getMeasureTypeStyle('alternateRoad')).toBe(MEASURE_TYPE_STYLES.alternateRoad);
         expect(getMeasureTypeStyle('noOvertaking')).toBe(MEASURE_TYPE_STYLES.noOvertaking);
+        expect(getMeasureTypeStyle('oneWay')).toBe(MEASURE_TYPE_STYLES.oneWay);
+    });
+
+    it('draws a one-way street as a plain line, below road closures', () => {
+        // Trait plein : les chevrons blancs du sens de circulation doivent rester lisibles dessus
+        expect(MEASURE_TYPE_STYLES.oneWay.dasharray).toEqual([1, 0]);
+        expect(MEASURE_TYPE_STYLES.oneWay.backgroundColor).toBeUndefined();
+
+        // L'ordre de déclaration est l'ordre de dessin : une fermeture reste au-dessus d'un sens unique
+        const order = Object.keys(MEASURE_TYPE_STYLES);
+        expect(order.indexOf('oneWay')).toBeLessThan(order.indexOf('noEntry'));
     });
 
     it('returns the default style for an unknown measure type', () => {
