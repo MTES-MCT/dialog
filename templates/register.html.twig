@@ -20,11 +20,22 @@
                     <div class="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
                         <div class="fr-col-12 fr-col-md-9 fr-col-lg-8">
                             <div class="fr-mb-6v">
-                                <h6>{{ 'register.auth.proconnect'|trans }}</h6>
+                                <h6>
+                                    {{ 'register.auth.proconnect'|trans }}
+                                    <span class="fr-badge fr-badge--success fr-badge--no-icon fr-ml-1w">{{ 'register.auth.recommended'|trans }}</span>
+                                </h6>
+                                <p class="fr-text--sm fr-mb-3v">{{ 'register.auth.proconnect.help'|trans }}</p>
                                 {% include 'proconnect/_auth_widget.html.twig' %}
                             </div>
                             <p class="fr-hr-or">{{ 'common.or'|trans }}</p>
-                            <h6>{{ 'register.auth.email'|trans }}</h6>
+                            <section class="fr-accordion">
+                                <h6 class="fr-accordion__title">
+                                    <button type="button" class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-register-email">
+                                        {{ 'register.auth.email'|trans }}
+                                    </button>
+                                </h6>
+                                <div class="fr-collapse" id="accordion-register-email">
+                            <p class="fr-text--sm fr-mb-3v">{{ 'register.auth.email.help'|trans }}</p>
                             {{ form_start(form) }}
                             {{ form_row(form.fullName, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
                             {{ form_row(form.email, {group_class: 'fr-input-group', attr: {class: 'fr-input'} }) }}
@@ -45,6 +56,8 @@
                             </div>
                             {{ form_row(form.save, {group_class: 'fr-btns-group'}) }}
                             {{ form_end(form) }}
+                                </div>
+                            </section>
                         </div>
                     </div>
                 </div>

@@ -11,6 +11,8 @@ use App\Application\Organization\Command\GetOrCreateOrganizationBySiretCommand;
 use App\Application\Organization\View\GetOrCreateOrganizationView;
 use App\Application\PasswordHasherInterface;
 use App\Application\StringUtilsInterface;
+use App\Domain\Anct\Repository\TerritoryContactRepositoryInterface;
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Exception\UserAlreadyRegisteredException;
 use App\Domain\User\OrganizationUser;
@@ -31,6 +33,7 @@ final class RegisterCommandHandler
         private StringUtilsInterface $stringUtils,
         private PasswordHasherInterface $passwordHasher,
         private CommandBusInterface $commandBus,
+        private TerritoryContactRepositoryInterface $territoryContactRepository,
     ) {
     }
 
@@ -46,14 +49,22 @@ final class RegisterCommandHandler
         /** @var GetOrCreateOrganizationView $organizationView */
         $organizationView = $this->commandBus->handle(new GetOrCreateOrganizationBySiretCommand($command->organizationSiret));
         $organization = $organizationView->organization;
-        $isOwner = !$organizationView->hasOrganizationUsers;
+        $isWhitelisted = $this->territoryContactRepository->isWhitelisted($command->organizationSiret, $email);
+        $accountStatus = $isWhitelisted
+            ? UserAccountStatusEnum::VALIDATED->value
+            : UserAccountStatusEnum::PENDING->value;
+
+        // Pending accounts become owner only once validated (see SetUserAccountStatusCommandHandler).
+        $isOwner = $isWhitelisted
+            && (!$organizationView->hasOrganizationUsers || 0 === $this->organizationUserRepository->countOwnersByOrganizationUuid($organization->getUuid()));
 
         $now = $this->dateUtils->getNow();
         $user = (new User($this->idFactory->make()))
             ->setFullName($command->fullName)
             ->setEmail($email)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
-            ->setRegistrationDate($now);
+            ->setRegistrationDate($now)
+            ->setAccountStatus($accountStatus);
 
         $passwordUser = new PasswordUser(
             uuid: $this->idFactory->make(),

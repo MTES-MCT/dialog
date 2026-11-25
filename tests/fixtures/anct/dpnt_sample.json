@@ -1,0 +1,6 @@
+[
+    {"type": "commune", "siret": "21930001000019", "code_insee": "93001", "adresse_messagerie": "Contact@Ville-Test.fr"},
+    {"type": "epci", "siret": "20005550700012", "code_insee": "97209", "adresse_messagerie": "courrier@collectivitedemartinique.mq"},
+    {"type": "commune", "siret": "21930002000018", "code_insee": "93002", "adresse_messagerie": null},
+    {"type": "commune", "siret": "", "code_insee": "93003", "adresse_messagerie": "orphan@example.fr"}
+]

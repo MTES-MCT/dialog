@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Doctrine\Fixtures;
 
+use App\Domain\User\Enum\UserAccountStatusEnum;
 use App\Domain\User\Enum\UserRolesEnum;
 use App\Domain\User\Organization;
 use App\Domain\User\OrganizationUser;
@@ -28,6 +29,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
             ->setEmail(self::DEPARTMENT_93_USER_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-03-01'))
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value)
             ->setLastActiveAt(new \DateTimeImmutable('2024-06-07'))
             ->setIsVerified();
         $department93UserPassword = new PasswordUser('e06f9972-6add-403d-82d9-bd7370b7668f', self::PASSWORD, $department93User);
@@ -37,6 +39,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
             ->setEmail(self::DEPARTMENT_93_ADMIN_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_SUPER_ADMIN->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-04-02'))
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value)
             ->setLastActiveAt(new \DateTimeImmutable('2024-06-08'))
             ->setIsVerified();
         $department93AdminPassword = new PasswordUser('437dd344-0b78-4aa6-ba79-112cb6827516', self::PASSWORD, $department93Admin);
@@ -45,7 +48,8 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
             ->setFullName('Florimond MANCA')
             ->setEmail(self::OTHER_ORG_USER_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
-            ->setRegistrationDate(new \DateTimeImmutable('2024-05-07'));
+            ->setRegistrationDate(new \DateTimeImmutable('2024-05-07'))
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value);
 
         $otherOrgPasswordUser = new PasswordUser('7eb26f55-3029-4a61-b88b-30e2a97806ea', self::PASSWORD, $otherOrgUser);
 
@@ -54,6 +58,7 @@ final class UserFixture extends Fixture implements DependentFixtureInterface
             ->setEmail(self::MANDATAIRE_USER_EMAIL)
             ->setRoles([UserRolesEnum::ROLE_USER->value])
             ->setRegistrationDate(new \DateTimeImmutable('2024-06-01'))
+            ->setAccountStatus(UserAccountStatusEnum::VALIDATED->value)
             ->setLastActiveAt(new \DateTimeImmutable('2024-06-10'))
             ->setIsVerified();
         $mandataireUserPassword = new PasswordUser('c1f2ab73-90d4-4e0b-8a5f-2d3e4f5a6b7c', self::PASSWORD, $mandataireUser);

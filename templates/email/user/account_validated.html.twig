@@ -1,0 +1,11 @@
+{% extends 'email/base.html.twig' %}
+{% trans_default_domain 'emails' %}
+
+{% block body %}
+    <h1>{{ 'account_validated.subject'|trans }}</h1>
+    <p>{{ 'common.hello'|trans({'%fullName%': fullName }) }}</p>
+    <p>{{ 'account_validated.description'|trans }}</p>
+    <a href="{{ baseUrl ~ path('app_login') }}">
+        {{ 'account_validated.login_button'|trans }}
+    </a>
+{% endblock %}
