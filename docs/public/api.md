@@ -824,6 +824,7 @@ Chaque incident identifie l'organisation émettrice de l'arrêté dans l'éléme
 
 - Le format CIFS ne permettant pas d'exprimer d'exceptions, une période « sauf jours fériés » est découpée en plusieurs incidents excluant chacun des jours fériés à venir. Le premier incident conserve l'identifiant habituel, les suivants sont suffixés par leur date de début (`:AAAAMMJJ`).
 - En raison des limites du format propriétaire CIFS (Waze), seules les interdictions de circulation temporaires s'appliquant à tous les véhicules sont exposées. Les autres cas (ex. zone 30, restrictions poids lourds, permanentes, etc.) ne sont pas inclus.
+- Une `<polyline>` CIFS décrit un seul tracé continu. Une emprise composée de plusieurs tronçons disjoints est donc exposée sous la forme d'un incident par tronçon, dont l'`id` est suffixé par le rang du tronçon (`:1`, `:2`, ...).
 
 ### Géométries des organisations (statistiques)
 
