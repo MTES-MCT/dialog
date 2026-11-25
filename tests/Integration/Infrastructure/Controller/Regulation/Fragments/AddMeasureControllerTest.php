@@ -95,8 +95,8 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('Veuillez choisir un PR parmi la liste.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toPointNumberWithDepartmentCodeLabel_error')->text());
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromSide_error')->text());
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toSide_error')->text());
-        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromAbscissa_error')->text());
-        $this->assertSame('Veuillez saisir un entier.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toAbscissa_error')->text());
+        $this->assertSame('Cette valeur n\'est pas un entier valide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_fromAbscissa_error')->text());
+        $this->assertSame('Cette valeur n\'est pas un entier valide.', $crawler->filter('#measure_form_locations_0_departmentalRoad_toAbscissa_error')->text());
     }
 
     public function testInvalidCertainDaysWithoutApplicableDays(): void
@@ -1212,9 +1212,9 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $crawler = $client->request($form->getMethod(), $form->getUri(), $values);
         $this->assertResponseStatusCodeSame(422);
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxWidth_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxLength_error')->text());
-        $this->assertStringContainsString('Veuillez saisir un nombre.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas un nombre valide.', $crawler->filter('#measure_form_vehicleSet_maxWidth_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas un nombre valide.', $crawler->filter('#measure_form_vehicleSet_maxLength_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas un nombre valide.', $crawler->filter('#measure_form_vehicleSet_maxHeight_error')->text());
     }
 
     public function testInvalidVehicleSetCharacteristicsNotPositive(): void
@@ -1366,13 +1366,13 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_periods_0_dailyRange_applicableDays_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_timeSlots_0_startTime_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_timeSlots_0_endTime_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas une heure valide.', $crawler->filter('#measure_form_periods_0_timeSlots_0_startTime_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas une heure valide.', $crawler->filter('#measure_form_periods_0_timeSlots_0_endTime_error')->text());
         $this->assertSame('Le choix sélectionné est invalide.', $crawler->filter('#measure_form_periods_0_recurrenceType_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_startTime_error')->text());
-        $this->assertStringContainsString('Veuillez saisir une heure valide.', $crawler->filter('#measure_form_periods_0_endTime_error')->text());
-        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_periods_0_endDate_error')->text());
-        $this->assertSame('Veuillez entrer une date valide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas une heure valide.', $crawler->filter('#measure_form_periods_0_startTime_error')->text());
+        $this->assertStringContainsString('Cette valeur n\'est pas une heure valide.', $crawler->filter('#measure_form_periods_0_endTime_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une date valide.', $crawler->filter('#measure_form_periods_0_endDate_error')->text());
+        $this->assertSame('Cette valeur n\'est pas une date valide.', $crawler->filter('#measure_form_periods_0_startDate_error')->text());
     }
 
     public function testRegulationOrderRecordNotFound(): void
