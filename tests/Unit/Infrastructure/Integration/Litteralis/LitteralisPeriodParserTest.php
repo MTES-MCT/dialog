@@ -11,6 +11,7 @@ use App\Infrastructure\Integration\IntegrationReport\CommonRecordEnum;
 use App\Infrastructure\Integration\IntegrationReport\Reporter;
 use App\Infrastructure\Integration\Litteralis\LitteralisPeriodParser;
 use App\Infrastructure\Integration\Litteralis\LitteralisRecordEnum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class LitteralisPeriodParserTest extends TestCase
@@ -23,7 +24,7 @@ final class LitteralisPeriodParserTest extends TestCase
         $this->parser = new LitteralisPeriodParser($tz);
     }
 
-    private function provideParseTimeSlots(): array
+    public static function provideParseTimeSlots(): array
     {
         $timeSlot1 = new SaveTimeSlotCommand();
         $timeSlot1->startTime = new \DateTimeImmutable('07:00');
@@ -40,46 +41,44 @@ final class LitteralisPeriodParserTest extends TestCase
         return [
             'hours1' => [
                 'value' => 'de 08 h 00 à 18 h 00',
-                'timeSlots' => [$timeSlot1],
+                'expectedResult' => [$timeSlot1],
             ],
             'hours2' => [
                 'value' => '08 h 00 à 18 h 00',
-                'timeSlots' => [$timeSlot1],
+                'expectedResult' => [$timeSlot1],
             ],
             'hours3' => [
                 'value' => 'DE 7 H 30 À 17 H 30',
-                'timeSlots' => [$timeSlot2],
+                'expectedResult' => [$timeSlot2],
             ],
             'hours3-typo' => [
                 'value' => 'DE 7 H 30 0 17 H 30',
-                'timeSlots' => [$timeSlot2],
+                'expectedResult' => [$timeSlot2],
             ],
             'hours-mandelieu' => [
                 'value' => 'DE 8H00 A 17H00',
-                'timeSlots' => [$timeSlotMandelieu],
+                'expectedResult' => [$timeSlotMandelieu],
             ],
             'hours4' => [
                 'value' => '8h à 18h',
-                'timeSlots' => [$timeSlot1],
+                'expectedResult' => [$timeSlot1],
             ],
             'hours5' => [
                 'value' => 'de 8h à 18h',
-                'timeSlots' => [$timeSlot1],
+                'expectedResult' => [$timeSlot1],
             ],
             'hours6' => [
                 'value' => 'de 7 heures 30 à 17 heures 30',
-                'timeSlots' => [$timeSlot2],
+                'expectedResult' => [$timeSlot2],
             ],
             'hours-colon' => [
                 'value' => '08:00 à 18:00',
-                'timeSlots' => [$timeSlot1],
+                'expectedResult' => [$timeSlot1],
             ],
         ];
     }
 
-    /**
-     * @dataProvider provideParseTimeSlots
-     */
+    #[DataProvider('provideParseTimeSlots')]
     public function testParseTimeSlots(string $value, array $expectedResult): void
     {
         $properties = [];
@@ -88,7 +87,7 @@ final class LitteralisPeriodParserTest extends TestCase
         $this->assertEquals($expectedResult, $this->parser->parseTimeSlots($value, $properties, $reporter));
     }
 
-    private function provideUnparsable(): array
+    public static function provideUnparsable(): array
     {
         return [
             ['de 8h à 9h et de 16h à 17h'],
@@ -101,9 +100,7 @@ final class LitteralisPeriodParserTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideUnparsable
-     */
+    #[DataProvider('provideUnparsable')]
     public function testUnparsable(string $value): void
     {
         $properties = [

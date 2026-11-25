@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Infrastructure\Adapter;
 
 use App\Infrastructure\Adapter\DateUtils;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class DateUtilsTest extends TestCase
@@ -39,7 +40,7 @@ final class DateUtilsTest extends TestCase
         $this->assertEquals(new \DateTime('2023-10-10 08:00:00'), $dateUtils->mergeDateAndTime($date1, $date2));
     }
 
-    private function provideAddDays(): array
+    public static function provideAddDays(): array
     {
         return [
             [
@@ -65,9 +66,7 @@ final class DateUtilsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideAddDays
-     */
+    #[DataProvider('provideAddDays')]
     public function testAddDays(\DateTimeInterface $date, int $days, \DateTimeInterface $result): void
     {
         $dateUtils = new DateUtils('Etc/GMT-1');

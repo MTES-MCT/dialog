@@ -1,19 +1,20 @@
 services:
-    App\Infrastructure\Persistence\Doctrine\PostGIS\Event\ORMSchemaEventListener:
+    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventListener:
         tags:
             - { name: doctrine.event_listener, event: postGenerateSchemaTable, connection: default }
-            - { name: doctrine.event_listener, event: onSchemaColumnDefinition, connection: default }
+
+    Jsor\Doctrine\PostGIS\Driver\Middleware:
+        tags:
+            - { name: doctrine.middleware, connection: default }
 
 doctrine:
     dbal:
-        schema_filter: ~^(?!tiger)(?!topology)~
+        schema_filter: ~^(?!tiger)(?!topology)(?!top_published_organization$)(?!analytics_)~
         types:
             geometry: 
                 class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
-                commented: false
             geojson_geometry:
                 class: 'App\Infrastructure\Persistence\Doctrine\DBAL\Types\GeoJSONGeometryType'
-                commented: true
     orm:
         dql:
             string_functions:

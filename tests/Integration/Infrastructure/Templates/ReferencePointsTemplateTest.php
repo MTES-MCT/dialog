@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Templates;
 
 use App\Application\Regulation\View\Measure\NumberedRoadView;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Twig\Environment;
 
 class ReferencePointsTemplateTest extends KernelTestCase
 {
-    private function provideTestRender(): array
+    public static function provideTestRender(): array
     {
         return [
             'no-direction' => [
@@ -32,14 +34,12 @@ class ReferencePointsTemplateTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestRender
-     */
+    #[DataProvider('provideTestRender')]
     public function testRender(?string $direction, string $result): void
     {
         self::bootKernel();
         $container = static::getContainer();
-        $twig = $container->get(\Twig\Environment::class);
+        $twig = $container->get(Environment::class);
 
         $location = new NumberedRoadView(
             administrator: 'Ardennes',
@@ -60,7 +60,7 @@ class ReferencePointsTemplateTest extends KernelTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
-        $twig = $container->get(\Twig\Environment::class);
+        $twig = $container->get(Environment::class);
 
         $location = new NumberedRoadView(
             administrator: 'Ardennes',

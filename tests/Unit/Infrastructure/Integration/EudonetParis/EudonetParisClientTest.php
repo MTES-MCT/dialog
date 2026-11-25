@@ -115,7 +115,7 @@ final class EudonetParisClientTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('debug')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'request'),
                 2 => $this->assertEquals($message, 'response'),
                 3 => $this->assertEquals($message, 'request'),
@@ -174,7 +174,7 @@ final class EudonetParisClientTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('debug')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'request'),
                 2 => $this->assertEquals($message, 'response') ?: $this->assertSame('Syntax error', $context['json_decode_error']),
             });

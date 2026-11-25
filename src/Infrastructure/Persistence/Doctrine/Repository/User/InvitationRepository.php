@@ -8,6 +8,7 @@ use App\Application\User\View\InvitationView;
 use App\Domain\User\Invitation;
 use App\Domain\User\Organization;
 use App\Domain\User\Repository\InvitationRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\QueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,10 +48,10 @@ final class InvitationRepository extends ServiceEntityRepository implements Invi
         return $this->createQueryBuilder('i')
             ->where('i.email = :email')
             ->andWhere('i.organization = :organization')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'organization' => $organization,
                 'email' => $email,
-            ])
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

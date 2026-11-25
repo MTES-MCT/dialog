@@ -6,7 +6,7 @@
     <id name="uuid" type="guid" column="uuid"/>
     <field name="fullName" type="string" column="full_name" nullable="false"/>
     <field name="email" type="string" column="email" nullable="false"/>
-    <field name="roles" type="array" column="roles" nullable="false"/>
+    <field name="roles" type="json" column="roles" nullable="false"/>
     <field name="registrationDate" type="datetimetz" nullable="false">
         <options>
           <option name="default">CURRENT_TIMESTAMP</option>

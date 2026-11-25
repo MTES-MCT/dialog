@@ -93,7 +93,7 @@ final class SaveMeasureCommandHandlerTest extends TestCase
             ->expects($handleMatcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($handleMatcher->getInvocationCount()) {
+                fn ($command) => match ($handleMatcher->numberOfInvocations()) {
                     1 => $this->assertEquals($periodCommand, $command) ?: $createdPeriod,
                     2 => $this->assertEquals($locationCommand, $command) ?: $createdLocation,
                 },
@@ -378,17 +378,32 @@ final class SaveMeasureCommandHandlerTest extends TestCase
 
         $periodCommand1 = new SavePeriodCommand($period1);
         $locationCommand2 = new SaveLocationCommand($location2);
+        $matcher = self::exactly(4);
 
         $this->commandBus
-            ->expects(self::exactly(4))
-            ->method('handle')
-            ->withConsecutive(
-                [$this->equalTo($periodCommand1)],
-                [$this->equalTo(new DeletePeriodCommand($period2))],
-                [$this->equalTo($locationCommand2)],
-                [$this->equalTo(new DeleteLocationCommand($location1))],
-            )
-            ->willReturnOnConsecutiveCalls(null, null, $location2, null);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $periodCommand1, $period2, $locationCommand2, $location1, $location2) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($periodCommand1, $parameters[0]);
+
+                    return null;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals(new DeletePeriodCommand($period2), $parameters[0]);
+
+                    return null;
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($locationCommand2, $parameters[0]);
+
+                    return $location2;
+                }
+                if ($matcher->numberOfInvocations() === 4) {
+                    $this->assertEquals(new DeleteLocationCommand($location1), $parameters[0]);
+
+                    return null;
+                }
+            });
 
         $handler = new SaveMeasureCommandHandler(
             $this->idFactory,

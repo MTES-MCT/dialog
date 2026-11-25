@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Pandoc;
 
+use Pandoc\Pandoc;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -57,7 +58,7 @@ final class ExportDocxLuaFilterTest extends TestCase
 
     private function runPandoc(string $html): string
     {
-        return (new \Pandoc\Pandoc())
+        return (new Pandoc())
             ->from('html')
             ->input($html)
             ->option('lua-filter', \dirname(__DIR__, 4) . '/data/pandoc/export-docx.lua')

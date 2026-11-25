@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Infrastructure\Common;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Twig\Environment;
 
 final class PaginationTest extends WebTestCase
 {
@@ -13,7 +14,7 @@ final class PaginationTest extends WebTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
-        $twig = $container->get(\Twig\Environment::class);
+        $twig = $container->get(Environment::class);
 
         $html = $twig->render('common/pagination.html.twig', [
             'queryParams' => [

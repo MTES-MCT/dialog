@@ -44,20 +44,27 @@ final class ImportJOPRegulationCommandHandlerTest extends TestCase
             ->with($measure);
 
         $publishCommand = new PublishRegulationCommand($regulationOrderRecord);
+        $matcher = self::exactly(3);
 
         $this->commandBus
-            ->expects(self::exactly(3))
-            ->method('handle')
-            ->withConsecutive(
-                [$generalInfoCommand],
-                [$measureCommand],
-                [$publishCommand],
-            )
-            ->willReturnOnConsecutiveCalls(
-                $regulationOrderRecord,
-                $measure,
-                null,
-            );
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $generalInfoCommand, $measureCommand, $publishCommand, $regulationOrderRecord, $measure) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($generalInfoCommand, $parameters[0]);
+
+                    return $regulationOrderRecord;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($measureCommand, $parameters[0]);
+
+                    return $measure;
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($publishCommand, $parameters[0]);
+
+                    return null;
+                }
+            });
 
         $handler = new ImportJOPRegulationCommandHandler($this->commandBus);
         $command = new ImportJOPRegulationCommand($generalInfoCommand, [$measureCommand]);

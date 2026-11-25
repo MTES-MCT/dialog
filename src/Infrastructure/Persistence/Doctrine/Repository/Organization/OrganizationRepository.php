@@ -12,6 +12,7 @@ use App\Domain\User\Organization;
 use App\Domain\User\Repository\OrganizationRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 final class OrganizationRepository extends ServiceEntityRepository implements OrganizationRepositoryInterface
@@ -291,7 +292,7 @@ final class OrganizationRepository extends ServiceEntityRepository implements Or
                     'limit' => $limit,
                 ],
                 [
-                    'limit' => \PDO::PARAM_INT,
+                    'limit' => ParameterType::INTEGER,
                 ],
             );
         });

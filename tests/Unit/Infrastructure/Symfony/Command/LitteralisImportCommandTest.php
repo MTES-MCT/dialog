@@ -67,16 +67,32 @@ class LitteralisImportCommandTest extends TestCase
             ->expects(self::once())
             ->method('setLogger')
             ->with($this->logger);
+        $matcher = self::exactly(3);
 
         $this->executor
-            ->expects(self::exactly(3))
-            ->method('execute')
-            ->withConsecutive(
-                ['mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', $now, $this->reporter],
-                ['fougeres', 'fe8ef74d-c948-4782-b6dd-979ca9b8ca67', $now, $this->reporter],
-                ['lonslesaunier', '8ac986f1-1c7e-4131-a485-8cc258bda1f3', $now, $this->reporter],
-            )
-            ->willReturn('Rapport');
+            ->expects($matcher)
+            ->method('execute')->willReturnCallback(function (...$parameters) use ($matcher, $now) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('mel', $parameters[0]);
+                    $this->assertEquals('3048af70-e3f6-49d9-a0ff-10579fd8bf14', $parameters[1]);
+                    $this->assertEquals($now, $parameters[2]);
+                    $this->assertEquals($this->reporter, $parameters[3]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('fougeres', $parameters[0]);
+                    $this->assertEquals('fe8ef74d-c948-4782-b6dd-979ca9b8ca67', $parameters[1]);
+                    $this->assertEquals($now, $parameters[2]);
+                    $this->assertEquals($this->reporter, $parameters[3]);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals('lonslesaunier', $parameters[0]);
+                    $this->assertEquals('8ac986f1-1c7e-4131-a485-8cc258bda1f3', $parameters[1]);
+                    $this->assertEquals($now, $parameters[2]);
+                    $this->assertEquals($this->reporter, $parameters[3]);
+                }
+
+                return 'Rapport';
+            });
 
         $this->tchap
             ->expects(self::once())
@@ -107,7 +123,7 @@ class LitteralisImportCommandTest extends TestCase
             ->expects($matcher)
             ->method('execute')
             ->willReturnCallback(
-                fn () => match ($matcher->getInvocationCount()) {
+                fn () => match ($matcher->numberOfInvocations()) {
                     1 => 'report1' . PHP_EOL,
                     2 => throw new \Exception('Failed'),
                     3 => 'report3' . PHP_EOL,

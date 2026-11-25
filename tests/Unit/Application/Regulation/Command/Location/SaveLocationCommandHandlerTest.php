@@ -38,6 +38,7 @@ use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\Regulation\Specification\CanOrganizationInterveneOnGeometry;
 use App\Domain\User\Organization;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class SaveLocationCommandHandlerTest extends TestCase
@@ -59,7 +60,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         $this->organization = $this->createMock(Organization::class);
     }
 
-    private function provideTestCreateNumberedRoad(): array
+    public static function provideTestCreateNumberedRoad(): array
     {
         return [
             ['roadType' => RoadTypeEnum::DEPARTMENTAL_ROAD->value],
@@ -67,9 +68,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestCreateNumberedRoad
-     */
+    #[DataProvider('provideTestCreateNumberedRoad')]
     public function testCreateNumberedRoad(string $roadType): void
     {
         $this->organization
@@ -523,7 +522,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($numberedRoadCommand, $command) ?: $location,
                     2 => $this->assertEquals(new DeleteNamedStreetCommand($namedStreet), $command),
                 },
@@ -611,7 +610,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($namedStreetCommand, $command) ?: $location,
                     2 => $this->assertEquals(new DeleteNumberedRoadCommand($numberedRoad), $command),
                 },
@@ -698,7 +697,7 @@ final class SaveLocationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($namedStreetCommand, $command) ?: $location,
                     2 => $this->assertEquals(new DeleteRawGeoJSONCommand($rawGeoJSON), $command),
                 },

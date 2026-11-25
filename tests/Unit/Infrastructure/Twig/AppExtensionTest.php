@@ -10,6 +10,7 @@ use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Infrastructure\Adapter\StringUtils;
 use App\Infrastructure\Twig\AppExtension;
 use App\Tests\TimezoneHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Validator\Constraints\Expression;
@@ -71,7 +72,7 @@ class AppExtensionTest extends TestCase
         $this->assertSame('18h00', $this->extension->formatTime(new \DateTimeImmutable('2023-01-06 17:00')));
     }
 
-    private function provideFormatNumber(): array
+    public static function provideFormatNumber(): array
     {
         return [
             [[12], '12'],
@@ -87,15 +88,13 @@ class AppExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideFormatNumber
-     */
+    #[DataProvider('provideFormatNumber')]
     public function testFormatNumber(array $args, $expected): void
     {
         $this->assertSame($expected, $this->extension->formatNumber(...$args));
     }
 
-    private function provideIsPast(): array
+    public static function provideIsPast(): array
     {
         return [
             // Day after
@@ -125,9 +124,7 @@ class AppExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideIsPast
-     */
+    #[DataProvider('provideIsPast')]
     public function testIsClientPastDay(string $date, string $now, bool $result): void
     {
         $date = new \DateTimeImmutable($date);
@@ -135,7 +132,7 @@ class AppExtensionTest extends TestCase
         $this->assertSame($result, $this->extension->isClientPastDay($date, $now));
     }
 
-    private function provideIsFuture(): array
+    public static function provideIsFuture(): array
     {
         return [
             // Day after
@@ -165,9 +162,7 @@ class AppExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideIsFuture
-     */
+    #[DataProvider('provideIsFuture')]
     public function testIsClientFutureDay(string $date, string $now, bool $result): void
     {
         $date = new \DateTimeImmutable($date);
@@ -183,7 +178,7 @@ class AppExtensionTest extends TestCase
         $this->assertSame('', $this->extension->getVehicleTypeIconName(VehicleTypeEnum::OTHER->value));
     }
 
-    private function provideGetVehicleSetIconClass(): array
+    public static function provideGetVehicleSetIconClass(): array
     {
         return [
             'no restriction defaults to car' => [
@@ -212,13 +207,13 @@ class AppExtensionTest extends TestCase
         ];
     }
 
-    /** @dataProvider provideGetVehicleSetIconClass */
+    #[DataProvider('provideGetVehicleSetIconClass')]
     public function testGetVehicleSetIconClass(VehicleSetView $vehicleSet, string $expected): void
     {
         $this->assertSame($expected, $this->extension->getVehicleSetIconClass($vehicleSet));
     }
 
-    protected function provideIsFieldsetError(): array
+    public static function provideIsFieldsetError(): array
     {
         return [
             [null, false],
@@ -228,7 +223,7 @@ class AppExtensionTest extends TestCase
         ];
     }
 
-    /** @dataProvider provideIsFieldsetError */
+    #[DataProvider('provideIsFieldsetError')]
     public function testIsFieldsetError(mixed $payload, bool $expected): void
     {
         $error = $this->createMock(FormError::class);

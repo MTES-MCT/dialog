@@ -445,14 +445,18 @@ final class ProConnectAuthenticatorTest extends TestCase
     public function testOnAuthenticationSuccess(): void
     {
         $token = $this->createMock(TokenInterface::class);
+        $matcher = self::exactly(2);
 
         $this->session
-            ->expects(self::exactly(2))
-            ->method('remove')
-            ->withConsecutive(
-                ['oauth2_state'],
-                ['oauth2_nonce'],
-            );
+            ->expects($matcher)
+            ->method('remove')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('oauth2_state', $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('oauth2_nonce', $parameters[0]);
+                }
+            });
 
         $result = $this->authenticator->onAuthenticationSuccess($this->request, $token, 'main');
 
@@ -462,14 +466,18 @@ final class ProConnectAuthenticatorTest extends TestCase
     public function testOnAuthenticationFailure(): void
     {
         $exception = new AuthenticationException('Auth failed');
+        $matcher = self::exactly(2);
 
         $this->session
-            ->expects(self::exactly(2))
-            ->method('remove')
-            ->withConsecutive(
-                ['oauth2_state'],
-                ['oauth2_nonce'],
-            );
+            ->expects($matcher)
+            ->method('remove')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('oauth2_state', $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('oauth2_nonce', $parameters[0]);
+                }
+            });
 
         $this->flashBag
             ->expects(self::once())
@@ -491,14 +499,18 @@ final class ProConnectAuthenticatorTest extends TestCase
     public function testOnAuthenticationFailureTranslatesUserMessage(): void
     {
         $exception = new CustomUserMessageAuthenticationException('login.proconnect.two_factor_required');
+        $matcher = self::exactly(2);
 
         $this->session
-            ->expects(self::exactly(2))
-            ->method('remove')
-            ->withConsecutive(
-                ['oauth2_state'],
-                ['oauth2_nonce'],
-            );
+            ->expects($matcher)
+            ->method('remove')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('oauth2_state', $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('oauth2_nonce', $parameters[0]);
+                }
+            });
 
         $this->translator
             ->expects(self::once())

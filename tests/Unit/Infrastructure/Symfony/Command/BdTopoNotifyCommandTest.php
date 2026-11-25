@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\TchapInterface;
 use App\Infrastructure\Symfony\Command\BdTopoNotifyCommand;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -134,9 +135,7 @@ class BdTopoNotifyCommandTest extends TestCase
         yield 'empty result' => [['prepare=', 'import=success', 'finalize=success']];
     }
 
-    /**
-     * @dataProvider provideInvalidResults
-     */
+    #[DataProvider('provideInvalidResults')]
     public function testInvalidResults(array $results): void
     {
         $this->tchap->expects(self::never())->method('post');

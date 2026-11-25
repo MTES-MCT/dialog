@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use DG\BypassFinals;
 use Symfony\Component\Dotenv\Dotenv;
 
 require \dirname(__DIR__) . '/vendor/autoload.php';
 
-DG\BypassFinals::enable();
+BypassFinals::denyPaths(['*/vendor/phpunit/*']);
+BypassFinals::enable();
 
 if (file_exists(\dirname(__DIR__) . '/config/bootstrap.php')) {
     require \dirname(__DIR__) . '/config/bootstrap.php';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class GetPointNumberCompletionFragmentControllerTest extends AbstractWebTestCase
 {
@@ -84,7 +85,7 @@ final class GetPointNumberCompletionFragmentControllerTest extends AbstractWebTe
         $this->assertSame(0, $options->count());
     }
 
-    private function provideNotFound(): array
+    public static function provideNotFound(): array
     {
         return [
             'roadNumber-missing' => ['search=&administrator=DIR Ouest'],
@@ -92,9 +93,7 @@ final class GetPointNumberCompletionFragmentControllerTest extends AbstractWebTe
         ];
     }
 
-    /**
-     * @dataProvider provideNotFound
-     */
+    #[DataProvider('provideNotFound')]
     public function testNotFound(string $query): void
     {
         $client = $this->login();

@@ -9,6 +9,7 @@ use App\Infrastructure\Adapter\LineOrienter;
 use App\Infrastructure\Adapter\LineSectionMaker;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class LineSectionMakerTest extends KernelTestCase
@@ -103,7 +104,7 @@ final class LineSectionMakerTest extends KernelTestCase
         return abs($distB - $distA);
     }
 
-    private function provideComputeSection(): array
+    public static function provideComputeSection(): array
     {
         return [
             'pointsOnSameLineDifferentSegments' => [
@@ -174,9 +175,7 @@ final class LineSectionMakerTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideComputeSection
-     */
+    #[DataProvider('provideComputeSection')]
     public function testComputeSection(Coordinates $fromCoords, Coordinates $toCoords, string $section, ?\Closure $getTolerance = null): void
     {
         $tolerance = $getTolerance ? $getTolerance($this->bdtopo2025Connection) : 1;
@@ -184,7 +183,7 @@ final class LineSectionMakerTest extends KernelTestCase
         $this->assertSame($section, $this->lineSectionMaker->computeSection($this->lineGeometry, $fromCoords, $toCoords, $tolerance));
     }
 
-    private function provideComputeSectionCrossSegments(): array
+    public static function provideComputeSectionCrossSegments(): array
     {
         return [
             'pointsDoNotMapToSameSegment' => [
@@ -258,9 +257,7 @@ final class LineSectionMakerTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideComputeSectionCrossSegments
-     */
+    #[DataProvider('provideComputeSectionCrossSegments')]
     public function testComputeSectionCrossSegments(Coordinates $fromCoords, Coordinates $toCoords, string $section, ?\Closure $getTolerance = null): void
     {
         $tolerance = $getTolerance ? $getTolerance($this->bdtopo2025Connection) : 1;

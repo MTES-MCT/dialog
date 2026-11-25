@@ -22,6 +22,9 @@ class VehicleSet
         /** @var string[] */
         private ?array $critairTypes = [],
     ) {
+        $this->restrictedTypes = array_values($restrictedTypes);
+        $this->exemptedTypes = array_values($exemptedTypes);
+        $this->critairTypes = $critairTypes === null ? null : array_values($critairTypes);
     }
 
     public function getUuid(): string
@@ -97,14 +100,14 @@ class VehicleSet
         ?float $maxHeight = null,
         ?array $critairTypes = null,
     ): void {
-        $this->restrictedTypes = $restrictedTypes ?: [];
+        $this->restrictedTypes = array_values($restrictedTypes ?: []);
         $this->otherRestrictedTypeText = $otherRestrictedTypeText;
-        $this->exemptedTypes = $exemptedTypes ?: [];
+        $this->exemptedTypes = array_values($exemptedTypes ?: []);
         $this->otherExemptedTypeText = $otherExemptedTypeText;
         $this->heavyweightMaxWeight = $heavyweightMaxWeight;
         $this->maxWidth = $maxWidth;
         $this->maxLength = $maxLength;
         $this->maxHeight = $maxHeight;
-        $this->critairTypes = $critairTypes ?? [];
+        $this->critairTypes = array_values($critairTypes ?? []);
     }
 }

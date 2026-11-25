@@ -9,6 +9,7 @@ use App\Domain\Condition\VehicleSet;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use App\Domain\Regulation\Measure;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Twig\Environment;
 
 class VehicleSetTemplateTest extends KernelTestCase
 {
@@ -17,8 +18,8 @@ class VehicleSetTemplateTest extends KernelTestCase
     {
         self::bootKernel();
         $container = static::getContainer();
-        /** @var \Twig\Environment */
-        $twig = $container->get(\Twig\Environment::class);
+        /** @var Environment */
+        $twig = $container->get(Environment::class);
 
         $measure = $this->createMock(Measure::class);
 

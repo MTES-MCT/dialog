@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class GetHouseNumberOptionsFragmentControllerTest extends AbstractWebTestCase
 {
@@ -27,7 +28,7 @@ final class GetHouseNumberOptionsFragmentControllerTest extends AbstractWebTestC
         }
     }
 
-    private function provideTestParamMissing(): array
+    public static function provideTestParamMissing(): array
     {
         return [
             'missing-roadBanId-targetIds' => ['/_fragment/house-number-options'],
@@ -36,9 +37,7 @@ final class GetHouseNumberOptionsFragmentControllerTest extends AbstractWebTestC
         ];
     }
 
-    /**
-     * @dataProvider provideTestParamMissing
-     */
+    #[DataProvider('provideTestParamMissing')]
     public function testParamMissing(string $url): void
     {
         $client = $this->login();

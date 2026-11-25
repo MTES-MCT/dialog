@@ -12,17 +12,18 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Twig\Environment;
 
 final class DatexGeneratorTest extends TestCase
 {
-    private \Twig\Environment&MockObject $twig;
+    private Environment&MockObject $twig;
     private DateUtilsInterface&MockObject $dateUtils;
     private QueryBusInterface&MockObject $queryBus;
     private Filesystem $storage;
 
     protected function setUp(): void
     {
-        $this->twig = $this->createMock(\Twig\Environment::class);
+        $this->twig = $this->createMock(Environment::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
 

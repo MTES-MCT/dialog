@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Application\CommandBusInterface;
 use App\Application\Regulation\Command\DeleteRegulationCommand;
+use App\Application\Regulation\Command\GenerateDatexCommand;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
@@ -110,7 +111,7 @@ final class DeleteRegulationsFromCsvCommandTest extends TestCase
         $this->commandBus
             ->expects(self::once())
             ->method('dispatchAsync')
-            ->with(self::isInstanceOf(\App\Application\Regulation\Command\GenerateDatexCommand::class));
+            ->with(self::isInstanceOf(GenerateDatexCommand::class));
         $file = $this->makeCsv("identifier,organization\nFO1/2023,org-uuid\n");
 
         $commandTester = $this->createCommandTester();

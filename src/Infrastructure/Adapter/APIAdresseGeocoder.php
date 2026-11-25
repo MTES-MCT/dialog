@@ -135,6 +135,10 @@ final class APIAdresseGeocoder implements GeocoderInterface
             $cities = [];
 
             foreach ($data['features'] as $feature) {
+                if (!isset($feature['properties']['citycode'], $feature['properties']['city'], $feature['properties']['postcode'])) {
+                    continue;
+                }
+
                 if (\in_array($feature['properties']['citycode'], self::IGNORE_CITY_CODES)) {
                     continue;
                 }

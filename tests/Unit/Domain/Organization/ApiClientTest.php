@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Domain\Organization;
 
 use App\Domain\Organization\ApiClient;
 use App\Domain\User\Organization;
+use App\Domain\User\User;
 use PHPUnit\Framework\TestCase;
 
 class ApiClientTest extends TestCase
@@ -17,7 +18,7 @@ class ApiClientTest extends TestCase
         $apiClient = new ApiClient(
             uuid: '9cebe00d-04d8-48da-89b1-059f6b7bfe44',
         );
-        $user = $this->createMock(\App\Domain\User\User::class);
+        $user = $this->createMock(User::class);
         $apiClient->setClientId('clientId')
             ->setClientSecret('clientSecret')
             ->setOrganization($organization)

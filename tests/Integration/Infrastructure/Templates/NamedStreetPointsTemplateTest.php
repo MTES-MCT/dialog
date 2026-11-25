@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Templates;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Twig\Environment;
 
 class NamedStreetPointsTemplateTest extends KernelTestCase
 {
-    private function provideTestRender(): array
+    public static function provideTestRender(): array
     {
         return [
             'start:none-end:none' => [
@@ -198,14 +200,12 @@ class NamedStreetPointsTemplateTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestRender
-     */
+    #[DataProvider('provideTestRender')]
     public function testRender(array $context, string $result): void
     {
         self::bootKernel();
         $container = static::getContainer();
-        $twig = $container->get(\Twig\Environment::class);
+        $twig = $container->get(Environment::class);
 
         $this->assertSame($result, $twig->render('location/named_street/points.html.twig', $context));
     }

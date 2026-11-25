@@ -52,7 +52,7 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
                     2 => $this->assertEquals($measureCommand, $command) ?: $measure,
                     3 => $this->assertEquals($publishCommand, $command),
@@ -79,7 +79,7 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
                     2 => $this->assertEquals($publishCommand, $command) ?: throw new RegulationOrderRecordCannotBePublishedException(),
                 },
@@ -104,7 +104,7 @@ final class ImportBacIdfRegulationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
                     2 => $this->assertEquals($measureCommand, $command) ?: throw new GeocodingFailureException('Could not geocode'),
                 },

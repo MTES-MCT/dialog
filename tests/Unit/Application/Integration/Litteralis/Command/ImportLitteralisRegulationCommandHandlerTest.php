@@ -50,7 +50,7 @@ final class ImportLitteralisRegulationCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($command) => match ($matcher->getInvocationCount()) {
+                fn ($command) => match ($matcher->numberOfInvocations()) {
                     1 => $this->assertEquals($generalInfoCommand, $command) ?: $regulationOrderRecord,
                     2 => $this->assertEquals($measureCommand, $command) ?: $measure,
                     3 => $this->assertEquals($publishCommand, $command),
@@ -90,7 +90,7 @@ final class ImportLitteralisRegulationCommandHandlerTest extends TestCase
             ->method('handle')
             ->willReturnCallback(
                 function ($command) use ($matcher, $generalInfoCommand, $measureCommand, $regulationOrderRecord, $measure, $publishCommand, $regulationOrder, $downloadUrl) {
-                    $invocationCount = $matcher->getInvocationCount();
+                    $invocationCount = $matcher->numberOfInvocations();
                     if ($invocationCount === 1) {
                         $this->assertEquals($generalInfoCommand, $command);
 

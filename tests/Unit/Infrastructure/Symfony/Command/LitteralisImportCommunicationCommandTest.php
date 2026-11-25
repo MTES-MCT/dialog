@@ -67,15 +67,26 @@ final class LitteralisImportCommunicationCommandTest extends TestCase
             ->expects(self::once())
             ->method('setLogger')
             ->with($this->logger);
+        $matcher = self::exactly(2);
 
         $this->executor
-            ->expects(self::exactly(2))
-            ->method('execute')
-            ->withConsecutive(
-                ['mel', '3048af70-e3f6-49d9-a0ff-10579fd8bf14', $now, $this->reporter],
-                ['fougeres', 'fe8ef74d-c948-4782-b6dd-979ca9b8ca67', $now, $this->reporter],
-            )
-            ->willReturn('Rapport Communication');
+            ->expects($matcher)
+            ->method('execute')->willReturnCallback(function (...$parameters) use ($matcher, $now) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('mel', $parameters[0]);
+                    $this->assertEquals('3048af70-e3f6-49d9-a0ff-10579fd8bf14', $parameters[1]);
+                    $this->assertEquals($now, $parameters[2]);
+                    $this->assertEquals($this->reporter, $parameters[3]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('fougeres', $parameters[0]);
+                    $this->assertEquals('fe8ef74d-c948-4782-b6dd-979ca9b8ca67', $parameters[1]);
+                    $this->assertEquals($now, $parameters[2]);
+                    $this->assertEquals($this->reporter, $parameters[3]);
+                }
+
+                return 'Rapport Communication';
+            });
 
         $this->tchap
             ->expects(self::once())

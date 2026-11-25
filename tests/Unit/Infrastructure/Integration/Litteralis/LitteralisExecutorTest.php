@@ -20,6 +20,7 @@ use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
 use App\Infrastructure\Integration\Litteralis\LitteralisExecutor;
 use App\Infrastructure\Integration\Litteralis\LitteralisExtractor;
 use App\Infrastructure\Integration\Litteralis\LitteralisTransformer;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -102,7 +103,7 @@ final class LitteralisExecutorTest extends TestCase
         $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('isTransactionActive')->willReturn(true);
         $connection->expects(self::once())->method('rollBack');
@@ -127,12 +128,22 @@ final class LitteralisExecutorTest extends TestCase
         ]);
         $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, null, $command3);
 
+        $matcher = self::exactly(3);
         $this->commandBus
-            ->expects(self::exactly(3))
+            ->expects($matcher)
             ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command1], [$command3])
             ->willReturnCallback(
-                static function ($command) use ($command3): void {
+                function ($command) use ($matcher, $cleanUpCommand, $command1, $command3): void {
+                    $parameters = [$command];
+                    if ($matcher->numberOfInvocations() === 1) {
+                        $this->assertEquals($cleanUpCommand, $parameters[0]);
+                    }
+                    if ($matcher->numberOfInvocations() === 2) {
+                        $this->assertEquals($command1, $parameters[0]);
+                    }
+                    if ($matcher->numberOfInvocations() === 3) {
+                        $this->assertEquals($command3, $parameters[0]);
+                    }
                     if ($command === $command3) {
                         throw new \RuntimeException('oops');
                     }
@@ -165,7 +176,7 @@ final class LitteralisExecutorTest extends TestCase
         $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('commit');
         $connection->expects(self::never())->method('rollBack');
@@ -186,12 +197,22 @@ final class LitteralisExecutorTest extends TestCase
         ]);
         $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, $command2);
 
+        $matcher = self::exactly(3);
         $this->commandBus
-            ->expects(self::exactly(3))
+            ->expects($matcher)
             ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command1], [$command2])
             ->willReturnCallback(
-                static function ($command) use ($command1): void {
+                function ($command) use ($matcher, $cleanUpCommand, $command1, $command2): void {
+                    $parameters = [$command];
+                    if ($matcher->numberOfInvocations() === 1) {
+                        $this->assertEquals($cleanUpCommand, $parameters[0]);
+                    }
+                    if ($matcher->numberOfInvocations() === 2) {
+                        $this->assertEquals($command1, $parameters[0]);
+                    }
+                    if ($matcher->numberOfInvocations() === 3) {
+                        $this->assertEquals($command2, $parameters[0]);
+                    }
                     if ($command === $command1) {
                         throw new GeocodingFailureException('geocoding failed');
                     }
@@ -226,7 +247,7 @@ final class LitteralisExecutorTest extends TestCase
         $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('commit');
         $this->entityManager->method('getConnection')->willReturn($connection);
@@ -243,11 +264,21 @@ final class LitteralisExecutorTest extends TestCase
             'identifier2' => $features2,
         ]);
         $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, $command2);
+        $matcher = self::exactly(3);
 
         $this->commandBus
-            ->expects(self::exactly(3))
-            ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command1], [$command2]);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $cleanUpCommand, $command1, $command2) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($cleanUpCommand, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($command1, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($command2, $parameters[0]);
+                }
+            });
 
         $this->reporter->method('acknowledgeNewErrors');
         $this->reporter->method('end')->with($endTime);

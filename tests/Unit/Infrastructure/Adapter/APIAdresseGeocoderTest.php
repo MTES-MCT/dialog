@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Infrastructure\Adapter;
 use App\Application\Exception\GeocodingAddressNotFoundException;
 use App\Application\Exception\GeocodingFailureException;
 use App\Infrastructure\Adapter\APIAdresseGeocoder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -36,7 +37,7 @@ final class APIAdresseGeocoderTest extends TestCase
         );
     }
 
-    private function provideStatusErrorData(): array
+    public static function provideStatusErrorData(): array
     {
         return [
             [503, '/requesting https:\/\/.*: server error: HTTP 503$/'],
@@ -51,9 +52,7 @@ final class APIAdresseGeocoderTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideStatusErrorData
-     */
+    #[DataProvider('provideStatusErrorData')]
     public function testComputeCoordinatesStatusError(int $statusCode, string $pattern): void
     {
         $this->expectException(GeocodingFailureException::class);
@@ -66,7 +65,7 @@ final class APIAdresseGeocoderTest extends TestCase
         $geocoder->computeCoordinates($this->address, $this->cityCode);
     }
 
-    private function provideDecodeErrorData(): array
+    public static function provideDecodeErrorData(): array
     {
         return [
             ['{"features": }', '/^requesting https:\/\/.*: invalid json: .*$/', GeocodingFailureException::class],
@@ -78,9 +77,7 @@ final class APIAdresseGeocoderTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDecodeErrorData
-     */
+    #[DataProvider('provideDecodeErrorData')]
     public function testComputeCoordinatesDecodeError(string $body, string $pattern, string $exception): void
     {
         $this->expectException($exception);

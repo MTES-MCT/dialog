@@ -330,14 +330,13 @@ final class LocationRepository extends ServiceEntityRepository implements Locati
         // Filtre "Types de véhicules" (#1523) : par défaut, on masque les restrictions spécifiques
         // aux poids-lourds pour qu'une ville couverte d'interdictions poids-lourds n'apparaisse pas
         // comme entièrement fermée. Une mesure cible les poids-lourds lorsque son vehicle_set
-        // restreint le type `heavyGoodsVehicle`. `restricted_types` est un tableau sérialisé PHP
-        // (type Doctrine `array`), stocké par ex. `a:1:{i:0;s:17:"heavyGoodsVehicle";}` — d'où le
-        // LIKE sur la valeur sérialisée entre guillemets.
+        // restreint le type `heavyGoodsVehicle`. `restricted_types` est une liste JSON
+        // (ex. `["heavyGoodsVehicle"]`), d'où le test d'inclusion via l'opérateur jsonb `@>`.
         if (!$includeHeavyGoodsVehicles) {
             $regulationTypeWhereClause .= ' AND NOT EXISTS (
                 SELECT 1 FROM vehicle_set AS vs
                 WHERE vs.measure_uuid = m.uuid
-                AND vs.restricted_types LIKE \'%"heavyGoodsVehicle"%\'
+                AND vs.restricted_types::jsonb @> \'["heavyGoodsVehicle"]\'::jsonb
             )';
         }
 

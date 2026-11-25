@@ -6,6 +6,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\Anct;
 
 use App\Domain\Anct\Repository\TerritoryContactRepositoryInterface;
 use App\Domain\Anct\TerritoryContact;
+use App\Infrastructure\Persistence\Doctrine\QueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -22,10 +23,10 @@ final class TerritoryContactRepository extends ServiceEntityRepository implement
             ->select('COUNT(tc.siret)')
             ->where('tc.siret = :siret')
             ->andWhere('tc.email = :email')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'siret' => $siret,
                 'email' => $email,
-            ])
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
 
