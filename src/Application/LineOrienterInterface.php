@@ -17,4 +17,12 @@ interface LineOrienterInterface
      * linéaire (points) est renvoyée telle quelle.
      */
     public function orient(string $geometry, Coordinates $from, Coordinates $to): string;
+
+    /**
+     * Oriente une géométrie linéaire sans point A ni B connus (voie entière) de façon déterministe :
+     * A est l'extrémité la plus à l'ouest (puis au sud), B l'extrémité la plus éloignée de A.
+     * Le résultat ne dépend donc pas de l'ordre des tronçons en entrée, ce qui garantit qu'aperçu
+     * et enregistrement placent A et B au même endroit.
+     */
+    public function normalize(string $geometry): string;
 }

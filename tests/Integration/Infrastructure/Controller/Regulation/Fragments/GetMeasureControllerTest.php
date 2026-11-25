@@ -28,7 +28,13 @@ final class GetMeasureControllerTest extends AbstractWebTestCase
         $this->assertSame('du 31/10/2023 à 09h00 au 31/10/2023 à 23h00', $measure1Content->filter('li')->eq(1)->text());
         $this->assertSame('Rue Adrien Lesesne à Saint-Ouen-sur-Seine', $measure1Content->filter('li')->eq(3)->text());
         $this->assertSame(LocationFixture::UUID_TYPICAL, $measure1Content->filter('li')->eq(4)->attr('data-location-uuid'));
-        $this->assertSame('Rue Eugène Berthoud du n° 47 au n° 65 à Saint-Ouen-sur-Seine', $measure1Content->filter('.app-card__content li')->eq(4)->text());
+        $this->assertSame('Rue Eugène Berthoud du n° 47 vers le n° 65 à Saint-Ouen-sur-Seine', $measure1Content->filter('.app-card__content li')->eq(4)->text());
+
+        // Chaque géométrie de l'aperçu porte son sens : la carte dessine chevrons et flèche pour les sens uniques
+        $this->assertSame('A_TO_B', $crawler->filter('#location-geometry-' . LocationFixture::UUID_TYPICAL)->attr('data-direction'));
+        $directions = $crawler->filter('input[id^="location-geometry-"]')->extract(['data-direction']);
+        sort($directions);
+        $this->assertSame(['A_TO_B', 'BOTH', 'BOTH'], $directions);
 
         $editForm = $crawler->selectButton('Modifier')->form();
         $this->assertSame('http://localhost/_fragment/regulations/' . RegulationOrderRecordFixture::UUID_TYPICAL . '/measure/' . MeasureFixture::UUID_TYPICAL . '/form', $editForm->getUri());

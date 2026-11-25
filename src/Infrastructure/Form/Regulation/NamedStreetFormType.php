@@ -116,7 +116,7 @@ final class NamedStreetFormType extends AbstractType
                     'label' => 'regulation.location.named_street.intersection',
                 ],
             )
-            ->add('direction', ChoiceType::class, $this->getDirectionOptions())
+            ->add('direction', DirectionChoiceType::class)
             ->add('roadType', HiddenType::class)
         ;
 
@@ -155,21 +155,6 @@ final class NamedStreetFormType extends AbstractType
                 ],
             ],
             'label' => 'regulation.location.named_street.point_type',
-        ];
-    }
-
-    private function getDirectionOptions(): array
-    {
-        $choices = [];
-
-        foreach (DirectionEnum::cases() as $case) {
-            $choices[\sprintf('regulation.location.direction.%s', $case->value)] = $case->value;
-        }
-
-        return [
-            'choices' => $choices,
-            'label' => 'regulation.location.direction',
-            'help' => 'regulation.location.direction.help',
         ];
     }
 

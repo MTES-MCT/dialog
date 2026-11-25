@@ -15,7 +15,21 @@ Le sens de circulation concerné par la mesure n'est **pas** porté par la géom
 
 Un **tracé libre** porte lui aussi un sens (`raw_geojson.direction`) : A est le premier point dessiné, B le dernier. Quand des exceptions sont soustraites du tracé, le résultat est réorienté dans l'ordre du dessin par `LineOrienter`, le même service qui oriente les sections.
 
-Les voies entières n'ont pas de point A ni B : leur sens est forcé à `BOTH` par le formulaire et leur géométrie n'est pas orientée.
+Une **voie entière** n'a pas de point A ni B saisis : `LineOrienter::normalize()` les fixe de façon déterministe (A est l'extrémité la plus à l'ouest, puis la plus au sud ; B l'extrémité la plus éloignée de A) et oriente la géométrie fusionnée de A vers B. L'aperçu du formulaire et l'enregistrement passent par le même calcul, donc les marqueurs A et B affichés correspondent au sens enregistré. Depuis novembre 2026, le sens est saisissable pour une voie entière.
+
+## Aperçu dans le formulaire
+
+Le serveur renvoie à l'aperçu (`fragment_location_geometry`) une géométrie orientée de A vers B. Le module `assets/maps/direction.js` en déduit les marqueurs A et B (extrémités) et, pour `A_TO_B` ou `B_TO_A`, une flèche au milieu du tracé ; les marqueurs ne sont affichés que lorsque A et B ont un sens (voie entière cochée, section avec ses deux points, route numérotée avec ses deux PR). Sur le tracé libre, la carte de dessin marque A au premier point et B au dernier dès que le select « Sens concerné » est présent.
+
+## Restitution du sens
+
+Une fois la mesure enregistrée, un sens unique (`A_TO_B` ou `B_TO_A`) est restitué de trois façons :
+
+- **Libellé** : les extrémités d'une section sont lues dans le sens de circulation et reliées par « vers » au lieu de « au » : « du n° 1 vers le n° 54 », et « du n° 54 vers le n° 1 » pour `B_TO_A`. Même règle pour les PR d'une route numérotée. Les gabarits `location/named_street/points.html.twig` et `regulation/_reference_points.html.twig` portent cette règle, donc la fiche de la mesure, la popup de la carte et l'export Word l'appliquent tous. Une voie entière et un tracé libre n'ont pas d'extrémités nommées : leur libellé ne change pas, le sens se lit sur la carte.
+- **Carte de la fiche de la mesure** : chaque géométrie est transmise avec son sens (attribut `data-direction`). De petits chevrons blancs sont répétés à l'intérieur des tracés à sens unique et une flèche (carré blanc cerclé de bleu, aligné sur le tracé) est posée au milieu de chacun, quel que soit le type de restriction. Les marqueurs A et B ne sont pas affichés ici. Quand on dézoome, les chevrons sont masqués en dessous du zoom 15 et les flèches en dessous du zoom 13 (`ARROW_MIN_ZOOM`, l'échelle d'un quartier) : sur une carte qui montre plusieurs tracés, ils finiraient par les recouvrir. Au-dessus, une flèche reste masquée tant que son tracé est trop court à l'écran pour la contenir.
+- **Carte publique** : les tuiles vectorielles et le GeoJSON des brouillons portent une propriété `direction`, absente en double sens. Les chevrons apparaissent à partir du zoom 15, quand le trait est assez épais pour les contenir : c'est le seuil `DIRECTION_CHEVRONS_MIN_ZOOM`, commun à toutes les cartes.
+
+Les chevrons sont une couche de symboles MapLibre (`assets/maps/direction_chevrons.js`) qui suit l'ordre des sommets, c'est-à-dire A vers B, et retourne l'icône de 180° pour `B_TO_A`. Ils ne sont justes que si la géométrie est bien orientée de A vers B.
 
 ## Commandes
 

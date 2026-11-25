@@ -3,6 +3,7 @@
 import { getAttributeOrError } from './util';
 import { mapStyles } from 'carte-facile';
 import { MEASURE_TYPE_STYLES, buildMeasureLineLayers } from '../maps/measure_type_styles';
+import { addDirectionChevronsLayer } from '../maps/direction_chevrons';
 
 /**
  * The `source-layer` name used inside the MVT tiles produced by the backend
@@ -216,6 +217,15 @@ class MapLibreMap {
                     measureLayerIds[0],
                 );
 
+                // Chevrons le long des tracés à sens unique (propriété `direction` des tuiles),
+                // par-dessus toutes les mesures. Hors de `measureLayerIds` : ils ne servent pas
+                // à déterminer la mesure cliquée.
+                const publishedChevronsLayerId = addDirectionChevronsLayer(map, {
+                    id: 'locations-layer-direction',
+                    sourceId: 'locations-source',
+                    sourceLayer: RESTRICTIONS_SOURCE_LAYER,
+                });
+
                 // popup when clicking on a feature of the locations layer
                 map.on('click', PUBLISHED_CLICK_ZONE_LAYER_ID, (event) => {
                     // When restrictions overlap, pick the topmost rendered measure
@@ -279,6 +289,12 @@ class MapLibreMap {
                         },
                     });
 
+                    const draftChevronsLayerId = addDirectionChevronsLayer(map, {
+                        id: `${DRAFTS_LAYER_PREFIX}-direction`,
+                        sourceId: DRAFTS_SOURCE_ID,
+                        opacity: DRAFTS_OPACITY,
+                    });
+
                     map.on('click', DRAFTS_CLICK_ZONE_LAYER_ID, (event) => {
                         if (!event.features) {
                             return;
@@ -295,6 +311,14 @@ class MapLibreMap {
 
                     const publishedLayerIds = [...measureLayerIds, PUBLISHED_CLICK_ZONE_LAYER_ID];
                     const draftAllLayerIds = [...draftLayerIds, DRAFTS_CLICK_ZONE_LAYER_ID];
+
+                    if (publishedChevronsLayerId) {
+                        publishedLayerIds.push(publishedChevronsLayerId);
+                    }
+
+                    if (draftChevronsLayerId) {
+                        draftAllLayerIds.push(draftChevronsLayerId);
+                    }
 
                     /**
                      * @param {string[]} ids
