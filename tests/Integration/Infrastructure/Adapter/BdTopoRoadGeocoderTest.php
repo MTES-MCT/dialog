@@ -9,6 +9,7 @@ use App\Application\Organization\View\MapBboxView;
 use App\Domain\Geography\Coordinates;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Infrastructure\Adapter\BdTopoRoadGeocoder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class BdTopoRoadGeocoderTest extends KernelTestCase
@@ -80,7 +81,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->assertNull($this->roadGeocoder->findCityBbox('00000'));
     }
 
-    private function provideTestFindRoads(): array
+    public static function provideTestFindRoads(): array
     {
         return [
             'departmentalRoad-administratorDoesNotExist' => [
@@ -161,15 +162,13 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestFindRoads
-     */
+    #[DataProvider('provideTestFindRoads')]
     public function testFindRoads(string $search, string $roadType, string $administrator, array $result): void
     {
         $this->assertEquals($result, $this->roadGeocoder->findRoads($search, $roadType, $administrator));
     }
 
-    private function provideTestComputeRoad(): array
+    public static function provideTestComputeRoad(): array
     {
         // Departmental road lines are very long, use hashes
         return [
@@ -188,15 +187,13 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestComputeRoad
-     */
+    #[DataProvider('provideTestComputeRoad')]
     public function testComputeRoad(string $roadType, string $administrator, string $roadNumber, string $geometryMd5): void
     {
         $this->assertSame($geometryMd5, md5($this->roadGeocoder->computeRoad($roadType, $administrator, $roadNumber)));
     }
 
-    private function provideTestComputeRoadNoResult(): array
+    public static function provideTestComputeRoadNoResult(): array
     {
         return [
             'noResult-roadDoesNotExist' => [
@@ -212,9 +209,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestComputeRoadNoResult
-     */
+    #[DataProvider('provideTestComputeRoadNoResult')]
     public function testComputeRoadNoResult(string $roadType, string $administrator, string $roadNumber): void
     {
         $this->expectException(GeocodingFailureException::class);
@@ -223,7 +218,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->roadGeocoder->computeRoad($roadType, $administrator, $roadNumber);
     }
 
-    private function provideTestComputeReferencePoint(): array
+    public static function provideTestComputeReferencePoint(): array
     {
         return [
             'success' => [
@@ -278,9 +273,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestComputeReferencePoint
-     */
+    #[DataProvider('provideTestComputeReferencePoint')]
     public function testComputeReferencePoint(string $roadNumber, string $administrator, ?string $departmentCode, string $pointNumber, string $side, int $abscissa, Coordinates $coords): void
     {
         $actual = $this->roadGeocoder->computeReferencePoint(
@@ -313,7 +306,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         );
     }
 
-    private function provideTestFindIntersectingRoadNames(): array
+    public static function provideTestFindIntersectingRoadNames(): array
     {
         return [
             'no-result' => ['12345_6789', '59606', []],
@@ -333,9 +326,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestFindIntersectingRoadNames
-     */
+    #[DataProvider('provideTestFindIntersectingRoadNames')]
     public function testFindIntersectingRoads(string $roadBanId, string $cityCode, array $roadNames): void
     {
         $this->assertEquals($roadNames, $this->roadGeocoder->findIntersectingNamedStreets($roadBanId, $cityCode));
@@ -350,7 +341,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         $this->assertEquals($coords, $this->roadGeocoder->computeIntersection($roadBanId, $otherRoadBanId));
     }
 
-    private function provideTestComputeIntersectionError(): array
+    public static function provideTestComputeIntersectionError(): array
     {
         return [
             'roadBanId-does-not-exist' => ['12345_6789', '93070_0061'],
@@ -359,9 +350,7 @@ final class BdTopoRoadGeocoderTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestComputeIntersectionError
-     */
+    #[DataProvider('provideTestComputeIntersectionError')]
     public function testComputeIntersectionError(string $roadBanId, string $otherRoadBanId): void
     {
         $this->expectException(GeocodingFailureException::class);

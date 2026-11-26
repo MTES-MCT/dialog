@@ -18,6 +18,7 @@ use App\Infrastructure\Integration\IntegrationReport\ReportFormatter;
 use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExecutor;
 use App\Infrastructure\Integration\Litteralis\LitteralisCommunicationExtractor;
 use App\Infrastructure\Integration\Litteralis\LitteralisTransformer;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
@@ -103,7 +104,7 @@ final class LitteralisCommunicationExecutorTest extends TestCase
         $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('commit');
         $this->entityManager->method('getConnection')->willReturn($connection);
@@ -120,11 +121,21 @@ final class LitteralisCommunicationExecutorTest extends TestCase
             'identifier2' => $features2,
         ]);
         $this->transformer->method('transform')->willReturnOnConsecutiveCalls($command1, $command2);
+        $matcher = self::exactly(3);
 
         $this->commandBus
-            ->expects(self::exactly(3))
-            ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command1], [$command2]);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $cleanUpCommand, $command1, $command2) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($cleanUpCommand, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($command1, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($command2, $parameters[0]);
+                }
+            });
 
         $this->reporter->method('acknowledgeNewErrors');
         $this->reporter->method('end')->with($endTime);
@@ -147,7 +158,7 @@ final class LitteralisCommunicationExecutorTest extends TestCase
         $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('commit');
         $this->entityManager->method('getConnection')->willReturn($connection);
@@ -164,11 +175,18 @@ final class LitteralisCommunicationExecutorTest extends TestCase
             'idB' => $featuresB,
         ]);
         $this->transformer->method('transform')->willReturnOnConsecutiveCalls(null, $command);
+        $matcher = self::exactly(2);
 
         $this->commandBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command]);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $cleanUpCommand, $command) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($cleanUpCommand, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($command, $parameters[0]);
+                }
+            });
 
         $this->reporter->method('acknowledgeNewErrors');
         $this->reporter->method('end')->with($endTime);
@@ -191,7 +209,7 @@ final class LitteralisCommunicationExecutorTest extends TestCase
         $endTime = new \DateTimeImmutable('2024-08-01 10:01:32');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('commit');
         $this->entityManager->method('getConnection')->willReturn($connection);
@@ -207,12 +225,21 @@ final class LitteralisCommunicationExecutorTest extends TestCase
 
         $violations = new ConstraintViolationList([]);
         $validationException = new ValidationFailedException($command, $violations);
+        $matcher = self::exactly(2);
 
         $this->commandBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command])
-            ->willReturnOnConsecutiveCalls(null, self::throwException($validationException));
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $cleanUpCommand, $command, $validationException) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($cleanUpCommand, $parameters[0]);
+
+                    return null;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($command, $parameters[0]);
+                    throw $validationException;
+                }
+            });
 
         $this->reporter->expects(self::atLeastOnce())->method('acknowledgeNewErrors');
         $this->reporter->expects(self::once())->method('addError');
@@ -235,7 +262,7 @@ final class LitteralisCommunicationExecutorTest extends TestCase
         $startTime = new \DateTimeImmutable('2024-08-01 10:00:00');
         $cleanUpCommand = new CleanUpLitteralisRegulationsBeforeImportCommand($organizationId, $laterThan);
 
-        $connection = $this->createMock(\Doctrine\DBAL\Connection::class);
+        $connection = $this->createMock(Connection::class);
         $connection->expects(self::once())->method('beginTransaction');
         $connection->expects(self::once())->method('isTransactionActive')->willReturn(true);
         $connection->expects(self::once())->method('rollBack');
@@ -251,12 +278,21 @@ final class LitteralisCommunicationExecutorTest extends TestCase
         $features = [['properties' => ['arretesrcid' => '26-AT-001', 'shorturl' => 'https://dl.example/?x']]];
         $this->extractor->method('extractFeaturesByRegulation')->willReturn(['id1' => $features]);
         $this->transformer->method('transform')->willReturn($command);
+        $matcher = self::exactly(2);
 
         $this->commandBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive([$cleanUpCommand], [$command])
-            ->willReturnOnConsecutiveCalls(null, self::throwException(new \RuntimeException('DB constraint')));
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $cleanUpCommand, $command) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($cleanUpCommand, $parameters[0]);
+
+                    return null;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($command, $parameters[0]);
+                    throw new \RuntimeException('DB constraint');
+                }
+            });
 
         $this->reporter->expects(self::atLeastOnce())->method('acknowledgeNewErrors');
         $this->reporter->expects(self::once())->method('addError');

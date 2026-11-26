@@ -45,28 +45,90 @@ final class ReporterTest extends TestCase
             ->expects(self::once())
             ->method('getName')
             ->willReturn('Test org');
+        $matcher = self::exactly(16);
 
         $this->logger
-            ->expects(self::exactly(16))
-            ->method('log')
-            ->withConsecutive(
-                [LogLevel::INFO, 'started'],
-                [LogLevel::INFO, CommonRecordEnum::FACT_START_TIME->value, ['value' => '2024-08-01T16:00:00+0000']],
-                [LogLevel::INFO, CommonRecordEnum::FACT_INTEGRATION_NAME->value, ['value' => 'test']],
-                [LogLevel::INFO, CommonRecordEnum::FACT_ORGANIZATION->value, ['value' => ['uuid' => '066eacf1-1029-72da-8000-692c061b2d79', 'name' => 'Test org']]],
-                [LogLevel::DEBUG, 'request', ['method' => 'GET', 'path' => '/example', 'options' => ['headers' => ['Accept-Encoding' => 'gzip']]]],
-                [LogLevel::DEBUG, 'response', ['status' => 200]],
-                [LogLevel::ERROR, 'some_error', ['message' => 'oops!']],
-                [LogLevel::WARNING, 'some_warning', ['message' => 'beware!']],
-                [LogLevel::DEBUG, 'some_notice', ['msg' => 'here is some info']],
-                [LogLevel::INFO, 'some_count', ['value' => 42, '%filter%' => 'endDate IS NULL']],
-                [LogLevel::INFO, 'extract:done', []],
-                [LogLevel::DEBUG, 'extract:done:details', ['result' => 'some_result']],
-                [LogLevel::INFO, 'end'],
-                [LogLevel::INFO, CommonRecordEnum::FACT_END_TIME->value, ['value' => '2024-08-01T16:02:00+0000']],
-                [LogLevel::INFO, CommonRecordEnum::FACT_ELAPSED_SECONDS->value, ['value' => 120]],
-                [LogLevel::INFO, 'report', ['content' => 'report content']],
-            );
+            ->expects($matcher)
+            ->method('log')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals('started', $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals(CommonRecordEnum::FACT_START_TIME->value, $parameters[1]);
+                    $this->assertEquals(['value' => '2024-08-01T16:00:00+0000'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals(CommonRecordEnum::FACT_INTEGRATION_NAME->value, $parameters[1]);
+                    $this->assertEquals(['value' => 'test'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 4) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals(CommonRecordEnum::FACT_ORGANIZATION->value, $parameters[1]);
+                    $this->assertEquals(['value' => ['uuid' => '066eacf1-1029-72da-8000-692c061b2d79', 'name' => 'Test org']], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 5) {
+                    $this->assertEquals(LogLevel::DEBUG, $parameters[0]);
+                    $this->assertEquals('request', $parameters[1]);
+                    $this->assertEquals(['method' => 'GET', 'path' => '/example', 'options' => ['headers' => ['Accept-Encoding' => 'gzip']]], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 6) {
+                    $this->assertEquals(LogLevel::DEBUG, $parameters[0]);
+                    $this->assertEquals('response', $parameters[1]);
+                    $this->assertEquals(['status' => 200], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 7) {
+                    $this->assertEquals(LogLevel::ERROR, $parameters[0]);
+                    $this->assertEquals('some_error', $parameters[1]);
+                    $this->assertEquals(['message' => 'oops!'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 8) {
+                    $this->assertEquals(LogLevel::WARNING, $parameters[0]);
+                    $this->assertEquals('some_warning', $parameters[1]);
+                    $this->assertEquals(['message' => 'beware!'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 9) {
+                    $this->assertEquals(LogLevel::DEBUG, $parameters[0]);
+                    $this->assertEquals('some_notice', $parameters[1]);
+                    $this->assertEquals(['msg' => 'here is some info'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 10) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals('some_count', $parameters[1]);
+                    $this->assertEquals(['value' => 42, '%filter%' => 'endDate IS NULL'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 11) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals('extract:done', $parameters[1]);
+                    $this->assertEquals([], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 12) {
+                    $this->assertEquals(LogLevel::DEBUG, $parameters[0]);
+                    $this->assertEquals('extract:done:details', $parameters[1]);
+                    $this->assertEquals(['result' => 'some_result'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 13) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals('end', $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 14) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals(CommonRecordEnum::FACT_END_TIME->value, $parameters[1]);
+                    $this->assertEquals(['value' => '2024-08-01T16:02:00+0000'], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 15) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals(CommonRecordEnum::FACT_ELAPSED_SECONDS->value, $parameters[1]);
+                    $this->assertEquals(['value' => 120], $parameters[2]);
+                }
+                if ($matcher->numberOfInvocations() === 16) {
+                    $this->assertEquals(LogLevel::INFO, $parameters[0]);
+                    $this->assertEquals('report', $parameters[1]);
+                    $this->assertEquals(['content' => 'report content'], $parameters[2]);
+                }
+            });
 
         $this->assertEquals([], $this->reporter->getRecords());
 

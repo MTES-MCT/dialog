@@ -11,6 +11,7 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixtur
 use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class UpdateMeasureControllerTest extends AbstractWebTestCase
 {
@@ -602,7 +603,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         $this->assertResponseStatusCodeSame(200);
     }
 
-    private function provideTestEditRawGeoJSONWithInvalidJSON(): array
+    public static function provideTestEditRawGeoJSONWithInvalidJSON(): array
     {
         return [
             'invalid-json' => ['geometry' => '{"fuoiu}'],
@@ -610,9 +611,7 @@ final class UpdateMeasureControllerTest extends AbstractWebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestEditRawGeoJSONWithInvalidJSON
-     */
+    #[DataProvider('provideTestEditRawGeoJSONWithInvalidJSON')]
     public function testEditRawGeoJSONWithInvalidJSON(string $geometry): void
     {
         $client = $this->login();

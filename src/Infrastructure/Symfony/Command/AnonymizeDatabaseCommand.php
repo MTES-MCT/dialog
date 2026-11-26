@@ -59,7 +59,7 @@ class AnonymizeDatabaseCommand extends Command
             <<<SQL
                 UPDATE password_user
                 SET password = :hash
-                WHERE user_uuid IN (SELECT uuid FROM "public"."user" WHERE roles NOT LIKE '%ROLE_SUPER_ADMIN%')
+                WHERE user_uuid IN (SELECT uuid FROM "public"."user" WHERE roles::text NOT LIKE '%ROLE_SUPER_ADMIN%')
             SQL,
             ['hash' => $hashed],
         );

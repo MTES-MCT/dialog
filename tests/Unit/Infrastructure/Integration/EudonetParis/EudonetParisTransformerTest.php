@@ -22,6 +22,7 @@ use App\Infrastructure\Integration\EudonetParis\Enum\EudonetParisErrorEnum;
 use App\Infrastructure\Integration\EudonetParis\EudonetParisExtractor;
 use App\Infrastructure\Integration\EudonetParis\EudonetParisTransformer;
 use App\Infrastructure\Integration\EudonetParis\EudonetParisTransformerResult;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class EudonetParisTransformerTest extends TestCase
@@ -247,7 +248,7 @@ final class EudonetParisTransformerTest extends TestCase
         $this->assertEquals($result, $transformer->transform($record, $organization));
     }
 
-    private function provideSkipStartWithoutEndOrConversely(): array
+    public static function provideSkipStartWithoutEndOrConversely(): array
     {
         return [
             [
@@ -333,9 +334,7 @@ final class EudonetParisTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideSkipStartWithoutEndOrConversely
-     */
+    #[DataProvider('provideSkipStartWithoutEndOrConversely')]
     public function testSkipStartWithoutEndOrConversely(array $location, array $error): void
     {
         $organization = $this->createMock(Organization::class);

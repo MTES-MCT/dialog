@@ -1,20 +1,22 @@
 doctrine:
     dbal:
         default_connection: default
+        types:
+            datetimetz: App\Infrastructure\Persistence\Doctrine\DBAL\Types\DateTimeTzInterfaceType
+            date: App\Infrastructure\Persistence\Doctrine\DBAL\Types\DateInterfaceType
+            time: App\Infrastructure\Persistence\Doctrine\DBAL\Types\TimeInterfaceType
         connections:
             default:
                 url: '%env(resolve:DATABASE_URL)%'
-                platform_service: App\Infrastructure\Persistence\Doctrine\DBAL\CustomPostgreSQLPlatformService
-                schema_manager_factory: 'doctrine.dbal.default_schema_manager_factory'
-                use_savepoints: true
+                server_version: '14'
             bdtopo2025:
                 url: '%env(resolve:BDTOPO_DATABASE_URL)%'
-                use_savepoints: true
+                server_version: '14'
             metabase:
                 url: '%env(METABASE_DATABASE_URL)%'
-                use_savepoints: true
+                server_version: '14'
     orm:
-        auto_generate_proxy_classes: true
+        enable_native_lazy_objects: true
         default_entity_manager: default
         entity_managers:
             default:
@@ -27,6 +29,8 @@ doctrine:
                         # Doctrine functions for PostgreSQL
                         # https://github.com/martin-georgiev/postgresql-for-doctrine
                         PG_ILIKE: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Ilike
+                        CAST: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Cast
+                        JSON_ARRAY_LENGTH: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonArrayLength
                 mappings:
                     Domain:
                         is_bundle: false
@@ -52,7 +56,6 @@ when@test:
 when@prod:
     doctrine:
         orm:
-            auto_generate_proxy_classes: false
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool

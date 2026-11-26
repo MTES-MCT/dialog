@@ -1,4 +1,4 @@
-{% set routeName = app.request.get('_route') %}
+{% set routeName = app.request.attributes.get('_route') %}
 
 <ul class="fr-tabs__list" role="tablist" aria-label="{{'config.menu.organization'|trans}}">
     <li role="presentation">

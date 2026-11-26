@@ -15,10 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Twig\Environment;
 
 final class GetRegulationsControllerTest extends TestCase
 {
-    private \Twig\Environment&MockObject $twig;
+    private Environment&MockObject $twig;
     private DateUtilsInterface&MockObject $dateUtils;
     private QueryBusInterface&MockObject $queryBus;
     private DatexGeneratorInterface&MockObject $datexGenerator;
@@ -27,7 +28,7 @@ final class GetRegulationsControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->twig = $this->createMock(\Twig\Environment::class);
+        $this->twig = $this->createMock(Environment::class);
         $this->dateUtils = $this->createMock(DateUtilsInterface::class);
         $this->queryBus = $this->createMock(QueryBusInterface::class);
         $this->datexGenerator = $this->createMock(DatexGeneratorInterface::class);

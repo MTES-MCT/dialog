@@ -4,7 +4,7 @@
   name="App\Domain\Condition\Period\DailyRange"
   table="dailyrange">
   <id name="uuid" type="guid" column="uuid"/>
-  <field name="applicableDays" type="array" column="applicable_days" nullable="false"/>
+  <field name="applicableDays" type="json" column="applicable_days" nullable="false"/>
   <one-to-one field="period" target-entity="App\Domain\Condition\Period\Period" inversed-by="dailyRange">
     <join-column name="period_uuid" referenced-column-name="uuid" nullable="false" on-delete="CASCADE"/>
   </one-to-one>

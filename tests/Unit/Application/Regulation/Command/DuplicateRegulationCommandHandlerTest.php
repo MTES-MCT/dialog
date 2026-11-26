@@ -102,12 +102,27 @@ final class DuplicateRegulationCommandHandlerTest extends TestCase
 
         $duplicateMeasureCommand1 = new DuplicateMeasureCommand($measure1, $duplicatedRegulationOrderRecord);
         $duplicateMeasureCommand2 = new DuplicateMeasureCommand($measure2, $duplicatedRegulationOrderRecord);
+        $matcher = self::exactly(3);
 
         $this->commandBus
-            ->expects(self::exactly(3))
-            ->method('handle')
-            ->withConsecutive([$generalInfoCommand], [$duplicateMeasureCommand1], [$duplicateMeasureCommand2])
-            ->willReturnOnConsecutiveCalls($duplicatedRegulationOrderRecord);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $generalInfoCommand, $duplicateMeasureCommand1, $duplicateMeasureCommand2, $duplicatedRegulationOrderRecord) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($generalInfoCommand, $parameters[0]);
+
+                    return $duplicatedRegulationOrderRecord;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($duplicateMeasureCommand1, $parameters[0]);
+
+                    return;
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($duplicateMeasureCommand2, $parameters[0]);
+
+                    return;
+                }
+            });
 
         $handler = new DuplicateRegulationCommandHandler(
             $this->queryBus,

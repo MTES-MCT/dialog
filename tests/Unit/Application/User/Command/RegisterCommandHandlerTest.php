@@ -25,6 +25,7 @@ use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\Repository\PasswordUserRepositoryInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -210,9 +211,7 @@ final class RegisterCommandHandlerTest extends TestCase
         ($this->handler)($this->command);
     }
 
-    /**
-     * @dataProvider provideOwnership
-     */
+    #[DataProvider('provideOwnership')]
     public function testRegisterOwnership(bool $isWhitelisted, bool $hasOrganizationUsers, int $ownersCount, bool $expectedIsOwner): void
     {
         $organization = $this->createMock(Organization::class);

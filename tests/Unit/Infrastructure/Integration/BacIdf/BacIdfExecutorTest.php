@@ -90,7 +90,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->transformer
             ->expects($transformMatcher)
             ->method('transform')
-            ->willReturnCallback(fn ($record) => match ($transformMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($record) => match ($transformMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($record1, $record) ?: $result1,
                 2 => $this->assertEquals($record2, $record) ?: $result2,
                 3 => $this->assertEquals($record3, $record) ?: $result3,
@@ -101,7 +101,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->commandBus
             ->expects($handleMatcher)
             ->method('handle')
-            ->willReturnCallback(fn ($command) => match ($handleMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($command) => match ($handleMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($importCommand1, $command),
                 2 => $this->assertEquals($organizationCommand, $command) ?: $createdOrganization,
                 3 => $this->assertEquals($importCommand3, $command),
@@ -111,7 +111,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218796.3069,
             });
@@ -120,7 +120,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('info')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => $this->assertEquals($message, 'created'),
                 3 => $this->assertEquals($message, 'skipped'),
@@ -178,7 +178,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218779.3069,
             });
@@ -187,7 +187,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('info')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => (
                     $this->assertEquals($message, 'done')
@@ -252,7 +252,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218796.3069,
             });
@@ -261,7 +261,7 @@ final class BacIdfExecutorTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('info')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => (
                     $this->assertEquals($message, 'done')
@@ -301,14 +301,18 @@ final class BacIdfExecutorTest extends TestCase
             ->expects(self::once())
             ->method('findIdentifiersForSource')
             ->willThrowException($exc);
+        $matcher = self::exactly(2);
 
         $this->logger
-            ->expects(self::exactly(2))
-            ->method('info')
-            ->withConsecutive(
-                ['started', []],
-                [
-                    'done', [
+            ->expects($matcher)
+            ->method('info')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('started', $parameters[0]);
+                    $this->assertEquals([], $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('done', $parameters[0]);
+                    $this->assertEquals([
                         'numProcessed' => 0,
                         'numCreated' => 0,
                         'percentCreated' => 0,
@@ -318,9 +322,9 @@ final class BacIdfExecutorTest extends TestCase
                         'numErrors' => 0,
                         'percentErrors' => 0,
                         'elapsedSeconds' => 0,
-                    ],
-                ],
-            );
+                    ], $parameters[1]);
+                }
+            });
 
         $this->logger
             ->expects(self::once())

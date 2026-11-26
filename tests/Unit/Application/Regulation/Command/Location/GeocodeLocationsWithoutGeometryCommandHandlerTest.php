@@ -139,7 +139,7 @@ final class GeocodeLocationsWithoutGeometryCommandHandlerTest extends TestCase
             ->expects($matcher)
             ->method('handle')
             ->willReturnCallback(
-                fn ($query) => match ($matcher->getInvocationCount()) {
+                fn ($query) => match ($matcher->numberOfInvocations()) {
                     1 => 'geometry1',
                     2 => 'geometry2',
                     3 => throw new GeocodingFailureException('oops 3'),

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\UX\Turbo\TurboBundle;
 
 final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
 {
-    private function provideGet(): array
+    public static function provideGet(): array
     {
         return [
             'U' => [
@@ -33,9 +34,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideGet
-     */
+    #[DataProvider('provideGet')]
     public function testGet(array $query, array $sides): void
     {
         $client = $this->login();
@@ -77,7 +76,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
         $this->assertSame(0, $options->count());
     }
 
-    private function provideNotFound(): array
+    public static function provideNotFound(): array
     {
         return [
             'administrator-missing' => [
@@ -95,9 +94,7 @@ final class GetSideOptionsFragmentControllerTest extends AbstractWebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideNotFound
-     */
+    #[DataProvider('provideNotFound')]
     public function testNotFound(string ...$query): void
     {
         $client = $this->login();

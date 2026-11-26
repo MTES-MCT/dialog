@@ -107,7 +107,7 @@ final class UserRepository extends ServiceEntityRepository implements UserReposi
     public function findAllByRole(string $role): array
     {
         return $this->createQueryBuilder('u')
-            ->where('u.roles LIKE :roleNeedle')
+            ->where('CAST(u.roles AS TEXT) LIKE :roleNeedle')
             ->setParameter('roleNeedle', '%"' . $role . '"%')
             ->getQuery()
             ->getResult();

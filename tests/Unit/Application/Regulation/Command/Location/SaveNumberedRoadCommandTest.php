@@ -6,11 +6,12 @@ namespace App\Tests\Unit\Application\Regulation\Command\Location;
 
 use App\Application\Regulation\Command\Location\SaveNumberedRoadCommand;
 use App\Domain\Regulation\Location\NumberedRoad;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class SaveNumberedRoadCommandTest extends TestCase
 {
-    private function provideEncodePointNumbers(): array
+    public static function provideEncodePointNumbers(): array
     {
         return [
             'all-values' => ['07', '12', '08', '2', '07##12', '12 (dép 07)', '08##2', '2 (dép 08)'],
@@ -20,9 +21,7 @@ final class SaveNumberedRoadCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideEncodePointNumbers
-     */
+    #[DataProvider('provideEncodePointNumbers')]
     public function testEncodePointNumbers(
         ?string $fromDepartmentCode,
         ?string $fromPointNumber,
@@ -63,7 +62,7 @@ final class SaveNumberedRoadCommandTest extends TestCase
         $this->assertSame($expectedToPointNumberWithDepartmentCodeLabel, $command->toPointNumberWithDepartmentCodeLabel);
     }
 
-    private function provideDecodePointNumbers(): array
+    public static function provideDecodePointNumbers(): array
     {
         return [
             'all' => ['11##123', '08##4', '11', '123', '08', '4'],
@@ -73,9 +72,7 @@ final class SaveNumberedRoadCommandTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDecodePointNumbers
-     */
+    #[DataProvider('provideDecodePointNumbers')]
     public function testDecodePointNumbers(
         ?string $fromPointNumberWithDepartmentCode,
         ?string $toPointNumberWithDepartmentCode,

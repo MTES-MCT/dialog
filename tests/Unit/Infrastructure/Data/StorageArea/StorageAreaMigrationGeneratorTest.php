@@ -43,12 +43,20 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
             ->expects(self::once())
             ->method('fetchAssociative')
             ->willReturn(['gestionnaire' => 'DIR Centre-Est']);
+        $matcher = self::once();
 
         $this->roadGeocoder
-            ->expects(self::once())
+            ->expects($matcher)
             ->method('computeRoad')
-            ->withConsecutive(['Nationale', 'DIR Centre-Est', 'N79'])
-            ->willReturn('roadGeometry1');
+            ->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('Nationale', $parameters[0]);
+                    $this->assertEquals('DIR Centre-Est', $parameters[1]);
+                    $this->assertEquals('N79', $parameters[2]);
+                }
+
+                return 'roadGeometry1';
+            });
 
         $this->roadSectionMaker
             ->expects(self::once())
@@ -68,69 +76,87 @@ final class StorageAreaMigrationGeneratorTest extends TestCase
                 ['gestionnaire' => 'DIR Atlantique'],
                 ['gestionnaire' => 'DIR Atlantique'],
             );
+        $matcher = self::exactly(3);
 
         $this->roadGeocoder
-            ->expects(self::exactly(3))
-            ->method('computeRoad')
-            ->withConsecutive(
-                ['Nationale', 'DIR Centre-Est', 'N79'],
-                ['Nationale', 'DIR Atlantique', 'N10'],
-                ['Nationale', 'DIR Atlantique', 'N10'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                'roadGeometry1',
-                'roadGeometry2',
-                'roadGeometry3',
-            );
+            ->expects($matcher)
+            ->method('computeRoad')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('Nationale', $parameters[0]);
+                    $this->assertEquals('DIR Centre-Est', $parameters[1]);
+                    $this->assertEquals('N79', $parameters[2]);
+
+                    return 'roadGeometry1';
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('Nationale', $parameters[0]);
+                    $this->assertEquals('DIR Atlantique', $parameters[1]);
+                    $this->assertEquals('N10', $parameters[2]);
+
+                    return 'roadGeometry2';
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals('Nationale', $parameters[0]);
+                    $this->assertEquals('DIR Atlantique', $parameters[1]);
+                    $this->assertEquals('N10', $parameters[2]);
+
+                    return 'roadGeometry3';
+                }
+            });
+        $matcher = self::exactly(3);
 
         $this->roadSectionMaker
-            ->expects(self::exactly(3))
-            ->method('computeSection')
-            ->withConsecutive(
-                [
-                    'roadGeometry1',
-                    'Nationale',
-                    'DIR Centre-Est',
-                    'N79',
-                    '71',
-                    '50',
-                    'D',
-                    600,
-                    '71',
-                    '51',
-                    'D',
-                    150,
-                ],
-                [
-                    'roadGeometry2',
-                    'Nationale',
-                    'DIR Atlantique',
-                    'N10',
-                    '86',
-                    '92',
-                    'G',
-                    0,
-                    '86',
-                    '87',
-                    'G',
-                    800,
-                ],
-                [
-                    'roadGeometry3',
-                    'Nationale',
-                    'DIR Atlantique',
-                    'N10',
-                    '16',
-                    '29',
-                    'D',
-                    200,
-                    '16',
-                    '29',
-                    'D',
-                    300,
-                ],
-            )
-            ->willReturnOnConsecutiveCalls('geom1', 'geom2', 'geom3');
+            ->expects($matcher)
+            ->method('computeSection')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('roadGeometry1', $parameters[0]);
+                    $this->assertEquals('Nationale', $parameters[1]);
+                    $this->assertEquals('DIR Centre-Est', $parameters[2]);
+                    $this->assertEquals('N79', $parameters[3]);
+                    $this->assertEquals('71', $parameters[4]);
+                    $this->assertEquals('50', $parameters[5]);
+                    $this->assertEquals('D', $parameters[6]);
+                    $this->assertEquals(600, $parameters[7]);
+                    $this->assertEquals('71', $parameters[8]);
+                    $this->assertEquals('51', $parameters[9]);
+                    $this->assertEquals('D', $parameters[10]);
+                    $this->assertEquals(150, $parameters[11]);
+
+                    return 'geom1';
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('roadGeometry2', $parameters[0]);
+                    $this->assertEquals('Nationale', $parameters[1]);
+                    $this->assertEquals('DIR Atlantique', $parameters[2]);
+                    $this->assertEquals('N10', $parameters[3]);
+                    $this->assertEquals('86', $parameters[4]);
+                    $this->assertEquals('92', $parameters[5]);
+                    $this->assertEquals('G', $parameters[6]);
+                    $this->assertEquals(0, $parameters[7]);
+                    $this->assertEquals('86', $parameters[8]);
+                    $this->assertEquals('87', $parameters[9]);
+                    $this->assertEquals('G', $parameters[10]);
+                    $this->assertEquals(800, $parameters[11]);
+
+                    return 'geom2';
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals('roadGeometry3', $parameters[0]);
+                    $this->assertEquals('Nationale', $parameters[1]);
+                    $this->assertEquals('DIR Atlantique', $parameters[2]);
+                    $this->assertEquals('N10', $parameters[3]);
+                    $this->assertEquals('16', $parameters[4]);
+                    $this->assertEquals('29', $parameters[5]);
+                    $this->assertEquals('D', $parameters[6]);
+                    $this->assertEquals(200, $parameters[7]);
+                    $this->assertEquals('16', $parameters[8]);
+                    $this->assertEquals('29', $parameters[9]);
+                    $this->assertEquals('D', $parameters[10]);
+                    $this->assertEquals(300, $parameters[11]);
+
+                    return 'geom3';
+                }
+            });
 
         $sql = $this->generator->makeMigrationSql($this->testRows);
 

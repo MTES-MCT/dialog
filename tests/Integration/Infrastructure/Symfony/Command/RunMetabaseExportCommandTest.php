@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Symfony\Command;
 
 use App\Infrastructure\Symfony\Command\RunMetabaseExportCommand;
+use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -22,7 +23,7 @@ final class RunMetabaseExportCommandTest extends KernelTestCase
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
 
-        /** @var \Doctrine\DBAL\Connection */
+        /** @var Connection */
         $metabaseConnection = $container->get('doctrine.dbal.metabase_connection');
 
         // Check count statistics

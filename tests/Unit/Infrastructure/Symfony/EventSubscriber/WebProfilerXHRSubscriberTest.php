@@ -27,9 +27,9 @@ class WebProfilerXHRSubscriberTest extends TestCase
     public function testEnabled()
     {
         $kernel = $this->createMock(KernelInterface::class);
-        $request = $this->createMock(Request::class);
+        $request = new Request();
         $request->headers = new HeaderBag(['Turbo-Frame' => 'example']);
-        $response = $this->createMock(Response::class);
+        $response = new Response();
         $response->headers = new ResponseHeaderBag();
         $event = new ResponseEvent($kernel, $request, 1, $response);
 
@@ -45,8 +45,8 @@ class WebProfilerXHRSubscriberTest extends TestCase
     public function testNotDebug()
     {
         $kernel = $this->createMock(KernelInterface::class);
-        $request = $this->createMock(Request::class);
-        $response = $this->createMock(Response::class);
+        $request = new Request();
+        $response = new Response();
         $response->headers = new ResponseHeaderBag();
         $event = new ResponseEvent($kernel, $request, 1, $response);
 
@@ -63,9 +63,9 @@ class WebProfilerXHRSubscriberTest extends TestCase
     public function testNotTurboFrame()
     {
         $kernel = $this->createMock(KernelInterface::class);
-        $request = $this->createMock(Request::class);
+        $request = new Request();
         $request->headers = new HeaderBag(['X-MyHeader' => 'not Turbo-Frame']);
-        $response = $this->createMock(Response::class);
+        $response = new Response();
         $response->headers = new ResponseHeaderBag();
         $event = new ResponseEvent($kernel, $request, 1, $response);
 

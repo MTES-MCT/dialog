@@ -6,7 +6,7 @@ namespace App\Tests\Unit\Infrastructure\Symfony\Command;
 
 use App\Infrastructure\Symfony\Command\BdTopoSetupIndexesCommand;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DBALException;
+use Doctrine\DBAL\ConnectionException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -40,7 +40,7 @@ class BdTopoSetupIndexesCommandTest extends TestCase
             ->method('executeStatement')
             ->willReturnCallback(function (string $sql): int {
                 if (str_contains($sql, 'voie_nommee_identifiant_voie_ban_idx')) {
-                    throw new DBALException('relation "voie_nommee" does not exist');
+                    throw new ConnectionException('relation "voie_nommee" does not exist');
                 }
 
                 return 0;
@@ -63,7 +63,7 @@ class BdTopoSetupIndexesCommandTest extends TestCase
 
         $connection
             ->method('executeStatement')
-            ->willThrowException(new DBALException('connection refused'));
+            ->willThrowException(new ConnectionException('connection refused'));
 
         $command = new BdTopoSetupIndexesCommand($connection);
         $commandTester = new CommandTester($command);

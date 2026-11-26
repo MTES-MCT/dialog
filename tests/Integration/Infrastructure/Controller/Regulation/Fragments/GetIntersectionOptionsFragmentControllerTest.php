@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Infrastructure\Controller\Regulation\Fragments;
 
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class GetIntersectionOptionsFragmentControllerTest extends AbstractWebTestCase
 {
@@ -27,7 +28,7 @@ final class GetIntersectionOptionsFragmentControllerTest extends AbstractWebTest
         }
     }
 
-    private function provideTestParamMissing(): array
+    public static function provideTestParamMissing(): array
     {
         return [
             'missing-roadBanId-cityCode-targetIds' => ['/_fragment/intersection-options'],
@@ -37,9 +38,7 @@ final class GetIntersectionOptionsFragmentControllerTest extends AbstractWebTest
         ];
     }
 
-    /**
-     * @dataProvider provideTestParamMissing
-     */
+    #[DataProvider('provideTestParamMissing')]
     public function testParamMissing(string $url): void
     {
         $client = $this->login();

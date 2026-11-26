@@ -358,9 +358,7 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
     }
 
-    /**
-     * @dataProvider roadBanIdDataProvider
-     */
+    #[DataProvider('roadBanIdDataProvider')]
     public function testRoadBanIsFilled(
         ?string $roadBanId,
         ?string $fromRoadName,

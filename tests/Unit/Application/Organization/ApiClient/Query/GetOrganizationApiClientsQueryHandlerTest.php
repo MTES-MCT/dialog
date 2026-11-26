@@ -11,6 +11,7 @@ use App\Application\User\Query\GetOrganizationByUuidQuery;
 use App\Domain\Organization\ApiClient;
 use App\Domain\Organization\Repository\ApiClientRepositoryInterface;
 use App\Domain\User\Organization;
+use App\Domain\User\OrganizationUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
 use App\Domain\User\User;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -49,7 +50,7 @@ final class GetOrganizationApiClientsQueryHandlerTest extends TestCase
             ->setLastUsedAt(new \DateTimeImmutable('2025-01-15'))
             ->setIsActive(true);
 
-        $orgUser = $this->createMock(\App\Domain\User\OrganizationUser::class);
+        $orgUser = $this->createMock(OrganizationUser::class);
         $orgUser->method('isOwner')->willReturn(false);
 
         $this->queryBus->method('handle')

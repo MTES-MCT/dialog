@@ -11,6 +11,7 @@ use App\Infrastructure\Persistence\Doctrine\Fixtures\RegulationOrderRecordFixtur
 use App\Infrastructure\Persistence\Doctrine\Fixtures\StorageAreaFixture;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\UserFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class AddMeasureControllerTest extends AbstractWebTestCase
 {
@@ -714,7 +715,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         $this->assertStringStartsWith('La géolocalisation de la voie entre ces points a échoué', $crawler->filter('#measure_form_locations_0_namedStreet_fromPointType_error')->text());
     }
 
-    private function provideTestAddNumberedRoad(): array
+    public static function provideTestAddNumberedRoad(): array
     {
         return [
             'departmentalRoad' => [
@@ -752,9 +753,7 @@ final class AddMeasureControllerTest extends AbstractWebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestAddNumberedRoad
-     */
+    #[DataProvider('provideTestAddNumberedRoad')]
     public function testAddNumberedRoad(array $locationForm, string $expectedText): void
     {
         $client = $this->login();

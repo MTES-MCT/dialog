@@ -20,11 +20,6 @@ class GeoJSONGeometryType extends GeometryType
         return ['geojson_geometry'];
     }
 
-    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
-    {
-        return true;
-    }
-
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         $options = $this->getNormalizedPostGISColumnOptions($column);

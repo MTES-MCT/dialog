@@ -13,6 +13,7 @@ class DailyRange
         private array $applicableDays,
         private Period $period,
     ) {
+        $this->applicableDays = array_values($applicableDays);
     }
 
     public function getUuid(): string
@@ -32,7 +33,7 @@ class DailyRange
 
     public function update(array $applicableDays): void
     {
-        $this->applicableDays = $applicableDays;
+        $this->applicableDays = array_values($applicableDays);
     }
 
     public function getDaysRanges(): array

@@ -18,6 +18,7 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\LocationRepositoryInterface;
 use App\Domain\User\Organization;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class RecomputeOneWayLocationGeometriesCommandHandlerTest extends TestCase
@@ -55,7 +56,7 @@ final class RecomputeOneWayLocationGeometriesCommandHandlerTest extends TestCase
         );
     }
 
-    private function provideDryRun(): array
+    public static function provideDryRun(): array
     {
         return [
             'apply' => ['dryRun' => false],
@@ -63,9 +64,7 @@ final class RecomputeOneWayLocationGeometriesCommandHandlerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDryRun
-     */
+    #[DataProvider('provideDryRun')]
     public function testRecompute(bool $dryRun): void
     {
         $organization = $this->createMock(Organization::class);
@@ -135,7 +134,7 @@ final class RecomputeOneWayLocationGeometriesCommandHandlerTest extends TestCase
             ->method('handle')
             ->with(self::isInstanceOf(GetNamedStreetGeometryQuery::class))
             ->willReturnCallback(
-                fn ($query) => match ($matcher->getInvocationCount()) {
+                fn ($query) => match ($matcher->numberOfInvocations()) {
                     1 => 'newGeometry',
                     2 => 'oldGeometry',
                     3 => throw new GeocodingFailureException('oops 3'),

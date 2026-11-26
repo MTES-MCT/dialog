@@ -8,6 +8,7 @@ use App\Domain\Regulation\Enum\MeasureTypeEnum;
 use App\Domain\Regulation\Enum\RegulationOrderCategoryEnum;
 use App\Infrastructure\Persistence\Doctrine\Fixtures\LocationFixture;
 use App\Tests\Integration\Infrastructure\Controller\AbstractWebTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class MapDataControllerTest extends AbstractWebTestCase
 {
@@ -127,7 +128,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
         }
     }
 
-    private function provideTestMeasureDatesFilterWithPublicHolidays(): array
+    public static function provideTestMeasureDatesFilterWithPublicHolidays(): array
     {
         return [
             'not-excluded' => [false, '2026-11-11', '2026-11-11', true],
@@ -137,9 +138,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestMeasureDatesFilterWithPublicHolidays
-     */
+    #[DataProvider('provideTestMeasureDatesFilterWithPublicHolidays')]
     public function testMeasureDatesFilterWithPublicHolidays(bool $isPublicHolidaysExcluded, string $startDate, ?string $endDate, bool $isVisible): void
     {
         $client = static::createClient();
@@ -169,7 +168,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
         $this->assertSame($isVisible, \in_array(LocationFixture::UUID_CIFS_NAMED_STREET, $locationUuids, true));
     }
 
-    private function provideTestMeasureDatesFilter(): array
+    public static function provideTestMeasureDatesFilter(): array
     {
         return [
             'interval-no-result' => [
@@ -250,9 +249,7 @@ final class MapDataControllerTest extends AbstractWebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTestMeasureDatesFilter
-     */
+    #[DataProvider('provideTestMeasureDatesFilter')]
     public function testMeasureDatesFilter(string $queryString, array $locationUuids): void
     {
         $client = static::createClient();

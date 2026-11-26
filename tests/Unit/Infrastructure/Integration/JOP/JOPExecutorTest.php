@@ -138,26 +138,34 @@ final class JOPExecutorTest extends TestCase
             ->method('findOneUuidByIdentifierInOrganization')
             ->with('JOP2024-ZONES', $organization)
             ->willReturn('064ef37c-170f-7737-8000-d6f3b1db7685');
+        $matcher = self::exactly(2);
 
         $this->queryBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive(
-                [new GetOrganizationByUuidQuery($this->orgId)],
-                [new GetRegulationOrderRecordByUuidQuery('064ef37c-170f-7737-8000-d6f3b1db7685')],
-            )
-            ->willReturnOnConsecutiveCalls(
-                $organization,
-                $existingRegulationOrderRecord,
-            );
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $organization, $existingRegulationOrderRecord) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals(new GetOrganizationByUuidQuery($this->orgId), $parameters[0]);
+
+                    return $organization;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals(new GetRegulationOrderRecordByUuidQuery('064ef37c-170f-7737-8000-d6f3b1db7685'), $parameters[0]);
+
+                    return $existingRegulationOrderRecord;
+                }
+            });
+        $matcher = self::exactly(2);
 
         $this->commandBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive(
-                [new DeleteRegulationCommand([$this->orgId], $existingRegulationOrderRecord)],
-                [$command],
-            );
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $existingRegulationOrderRecord, $command) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals(new DeleteRegulationCommand([$this->orgId], $existingRegulationOrderRecord), $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($command, $parameters[0]);
+                }
+            });
 
         $this->commandBus
             ->expects(self::once())

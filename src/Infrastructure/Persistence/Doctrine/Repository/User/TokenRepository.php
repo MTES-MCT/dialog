@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine\Repository\User;
 use App\Application\DateUtilsInterface;
 use App\Domain\User\Repository\TokenRepositoryInterface;
 use App\Domain\User\Token;
+use App\Infrastructure\Persistence\Doctrine\QueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -36,10 +37,10 @@ final class TokenRepository extends ServiceEntityRepository implements TokenRepo
         return $this->createQueryBuilder('t')
             ->where('t.token = :token')
             ->andWhere('t.type = :type')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'token' => $token,
                 'type' => $type,
-            ])
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()
@@ -51,9 +52,9 @@ final class TokenRepository extends ServiceEntityRepository implements TokenRepo
         $this->createQueryBuilder('t')
             ->delete()
             ->where('t.expirationDate < :now')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'now' => $this->dateUtils->getNow(),
-            ])
+            ]))
             ->getQuery()
             ->execute();
     }

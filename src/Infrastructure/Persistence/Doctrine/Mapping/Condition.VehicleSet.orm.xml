@@ -4,10 +4,10 @@
     name="App\Domain\Condition\VehicleSet"
     table="vehicle_set">
     <id name="uuid" type="guid" column="uuid"/>
-    <field name="restrictedTypes" type="array" column="restricted_types" nullable="false" />
-    <field name="critairTypes" type="array" column="critair_types" nullable="true" />
+    <field name="restrictedTypes" type="json" column="restricted_types" nullable="false" />
+    <field name="critairTypes" type="json" column="critair_types" nullable="true" />
     <field name="otherRestrictedTypeText" type="string" column="other_restricted_type_text" nullable="true" length="100"/>
-    <field name="exemptedTypes" type="array" column="exempted_types" nullable="false" />
+    <field name="exemptedTypes" type="json" column="exempted_types" nullable="false" />
     <field name="otherExemptedTypeText" type="string" column="other_exempted_type_text" nullable="true" length="300"/>
     <field name="heavyweightMaxWeight" type="float" column="heavyweight_max_weight" nullable="true" />
     <field name="maxWidth" type="float" column="max_width" nullable="true" />

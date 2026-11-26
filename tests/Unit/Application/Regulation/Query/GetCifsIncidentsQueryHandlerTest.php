@@ -28,6 +28,7 @@ use App\Domain\Regulation\RegulationOrder;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -385,12 +386,27 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getGeometry')
             ->willReturn($geometry1bis);
+        $matcher = self::exactly(3);
 
         $this->polylineMaker
-            ->expects(self::exactly(3))
-            ->method('normalizeToLineStringGeoJSON')
-            ->withConsecutive([$geometry1], [$geometry1bis], [$geometry2])
-            ->willReturnOnConsecutiveCalls($geometry1, $geometry1bis, $geometry2);
+            ->expects($matcher)
+            ->method('normalizeToLineStringGeoJSON')->willReturnCallback(function (...$parameters) use ($matcher, $geometry1, $geometry1bis, $geometry2) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($geometry1, $parameters[0]);
+
+                    return $geometry1;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($geometry1bis, $parameters[0]);
+
+                    return $geometry1bis;
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($geometry2, $parameters[0]);
+
+                    return $geometry2;
+                }
+            });
 
         $this->polylineMaker
             ->expects(self::once())
@@ -686,12 +702,27 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
             ->expects(self::once())
             ->method('getRegulationOrder')
             ->willReturn($regulationOrder2);
+        $matcher = self::exactly(3);
 
         $this->polylineMaker
-            ->expects(self::exactly(3))
-            ->method('getMergedPolyline')
-            ->withConsecutive([$geometry1], ['mergedGeometry1bis'], [$geometry2])
-            ->willReturnOnConsecutiveCalls($polyline1Merged, $polyline1bis, $polyline3);
+            ->expects($matcher)
+            ->method('getMergedPolyline')->willReturnCallback(function (...$parameters) use ($matcher, $geometry1, $geometry2, $polyline1Merged, $polyline1bis, $polyline3) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($geometry1, $parameters[0]);
+
+                    return $polyline1Merged;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('mergedGeometry1bis', $parameters[0]);
+
+                    return $polyline1bis;
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals($geometry2, $parameters[0]);
+
+                    return $polyline3;
+                }
+            });
 
         $this->regulationOrderRecordRepository
             ->expects(self::once())
@@ -767,9 +798,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         $this->assertOneDirectionIncident($location, 'D110 (Ardèche) regulation.location.reference_point', MeasureTypeEnum::NO_ENTRY, self::POLYLINE_B_TO_A);
     }
 
-    /**
-     * @dataProvider provideOneWayDirections
-     */
+    #[DataProvider('provideOneWayDirections')]
     public function testGetAllClosesOppositeDirectionForOneWay(string $allowedDirection, string $expectedPolyline): void
     {
         $namedStreet = $this->createMock(NamedStreet::class);
@@ -800,9 +829,7 @@ final class GetCifsIncidentsQueryHandlerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDirectionsWithoutSingleWay
-     */
+    #[DataProvider('provideDirectionsWithoutSingleWay')]
     public function testGetAllSkipsOneWayWithoutSingleDirection(?string $direction): void
     {
         $uuid = '06716514-0a0d-7bde-8000-f23df39a6693';

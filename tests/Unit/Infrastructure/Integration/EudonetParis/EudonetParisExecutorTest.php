@@ -94,7 +94,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->transformer
             ->expects($transformMatcher)
             ->method('transform')
-            ->willReturnCallback(fn ($record, $org) => match ($transformMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($record, $org) => match ($transformMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($record1, $record) ?: $this->assertEquals($organization, $org) ?: $result1,
                 2 => $this->assertEquals($record2, $record) ?: $this->assertEquals($organization, $org) ?: $result2,
                 3 => $this->assertEquals($record3, $record) ?: $this->assertEquals($organization, $org) ?: $result3,
@@ -104,7 +104,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->commandBus
             ->expects($handleMatcher)
             ->method('handle')
-            ->willReturnCallback(fn ($command) => match ($handleMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($command) => match ($handleMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($importCommand1, $command),
                 2 => $this->assertEquals($importCommand3, $command),
             });
@@ -113,7 +113,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218796.3069,
             });
@@ -132,7 +132,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('info')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => $this->assertEquals($message, 'created'),
                 3 => $this->assertEquals($message, 'skipped'),
@@ -201,7 +201,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218779.3069,
             });
@@ -220,7 +220,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('info')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => (
                     $this->assertEquals($message, 'done')
@@ -276,7 +276,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218796.3069,
             });
@@ -343,7 +343,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->dateUtils
             ->expects($timeMatcher)
             ->method('getMicroTime')
-            ->willReturnCallback(fn () => match ($timeMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn () => match ($timeMatcher->numberOfInvocations()) {
                 1 => 1695218778.6387,
                 2 => 1695218796.3069,
             });
@@ -362,7 +362,7 @@ final class EudonetParisExecutorTest extends TestCase
         $this->logger
             ->expects($logMatcher)
             ->method('info')
-            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($message, $context) => match ($logMatcher->numberOfInvocations()) {
                 1 => $this->assertEquals($message, 'started'),
                 2 => (
                     $this->assertEquals($message, 'done')

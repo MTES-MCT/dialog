@@ -62,7 +62,7 @@ class User
 
     public function setRoles(array $roles): self
     {
-        $this->roles = $roles;
+        $this->roles = array_values($roles);
 
         return $this;
     }

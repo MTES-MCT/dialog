@@ -7,6 +7,7 @@ namespace App\Tests\Integration\Infrastructure\Adapter;
 use App\Domain\Geography\Coordinates;
 use App\Infrastructure\Adapter\LineOrienter;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class LineOrienterTest extends KernelTestCase
@@ -18,7 +19,7 @@ final class LineOrienterTest extends KernelTestCase
         $this->orienter = new LineOrienter(self::getContainer()->get(EntityManagerInterface::class));
     }
 
-    private function provideOrient(): array
+    public static function provideOrient(): array
     {
         $a = Coordinates::fromLonLat(1, 1);
         $b = Coordinates::fromLonLat(7, 2);
@@ -51,7 +52,7 @@ final class LineOrienterTest extends KernelTestCase
         ];
     }
 
-    private function provideNormalize(): array
+    public static function provideNormalize(): array
     {
         return [
             'collection de tronçons dans le désordre : fusionnée, A à l\'ouest' => [
@@ -73,17 +74,13 @@ final class LineOrienterTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideNormalize
-     */
+    #[DataProvider('provideNormalize')]
     public function testNormalize(string $geometry, string $expected): void
     {
         $this->assertSame($expected, $this->orienter->normalize($geometry));
     }
 
-    /**
-     * @dataProvider provideOrient
-     */
+    #[DataProvider('provideOrient')]
     public function testOrient(string $geometry, string $expected): void
     {
         $this->assertSame($expected, $this->orienter->orient($geometry, Coordinates::fromLonLat(1, 1), Coordinates::fromLonLat(7, 2)));

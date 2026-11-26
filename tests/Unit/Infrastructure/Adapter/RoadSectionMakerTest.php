@@ -48,15 +48,34 @@ final class RoadSectionMakerTest extends TestCase
             $lineSectionMaker,
             $geocoder,
         );
+        $matcher = self::exactly(2);
 
         $geocoder
-            ->expects(self::exactly(2))
-            ->method('computeReferencePoint')
-            ->withConsecutive(
-                [$roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa],
-                [$roadType, $administrator, $roadNumber, $toDepartmentCode, $toPointNumber, $toSide, $toAbscissa],
-            )
-            ->willReturnOnConsecutiveCalls($this->fromCoords, $this->toCoords);
+            ->expects($matcher)
+            ->method('computeReferencePoint')->willReturnCallback(function (...$parameters) use ($matcher, $roadType, $administrator, $roadNumber, $fromDepartmentCode, $fromPointNumber, $fromSide, $fromAbscissa, $toDepartmentCode, $toPointNumber, $toSide, $toAbscissa) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($roadType, $parameters[0]);
+                    $this->assertEquals($administrator, $parameters[1]);
+                    $this->assertEquals($roadNumber, $parameters[2]);
+                    $this->assertEquals($fromDepartmentCode, $parameters[3]);
+                    $this->assertEquals($fromPointNumber, $parameters[4]);
+                    $this->assertEquals($fromSide, $parameters[5]);
+                    $this->assertEquals($fromAbscissa, $parameters[6]);
+
+                    return $this->fromCoords;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($roadType, $parameters[0]);
+                    $this->assertEquals($administrator, $parameters[1]);
+                    $this->assertEquals($roadNumber, $parameters[2]);
+                    $this->assertEquals($toDepartmentCode, $parameters[3]);
+                    $this->assertEquals($toPointNumber, $parameters[4]);
+                    $this->assertEquals($toSide, $parameters[5]);
+                    $this->assertEquals($toAbscissa, $parameters[6]);
+
+                    return $this->toCoords;
+                }
+            });
 
         $lineSectionMaker
             ->expects(self::once())
@@ -162,7 +181,7 @@ final class RoadSectionMakerTest extends TestCase
             ->expects($matcher)
             ->method('computeReferencePoint')
             ->willReturnCallback(function () use ($matcher, $roadType) {
-                if ($matcher->getInvocationCount() === 1) {
+                if ($matcher->numberOfInvocations() === 1) {
                     return $this->fromCoords;
                 }
 
@@ -218,7 +237,7 @@ final class RoadSectionMakerTest extends TestCase
             ->expects($matcher)
             ->method('computeReferencePoint')
             ->willReturnCallback(function () use ($matcher) {
-                if ($matcher->getInvocationCount() === 1) {
+                if ($matcher->numberOfInvocations() === 1) {
                     return $this->fromCoords;
                 }
                 throw new GeocodingFailureException('oops');

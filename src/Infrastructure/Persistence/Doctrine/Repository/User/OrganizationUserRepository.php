@@ -8,6 +8,7 @@ use App\Application\User\View\OrganizationUserView;
 use App\Application\User\View\UserOrganizationView;
 use App\Domain\User\OrganizationUser;
 use App\Domain\User\Repository\OrganizationUserRepositoryInterface;
+use App\Infrastructure\Persistence\Doctrine\QueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -83,10 +84,10 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->andWhere('ou.user = :userUuid')
             ->innerJoin('ou.user', 'u')
             ->innerJoin('ou.organization', 'o')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'organizationUuid' => $organizationUuid,
                 'userUuid' => $userUuid,
-            ])
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -99,10 +100,10 @@ final class OrganizationUserRepository extends ServiceEntityRepository implement
             ->andWhere('u.email = :email')
             ->innerJoin('ou.user', 'u')
             ->innerJoin('ou.organization', 'o')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'organizationUuid' => $organizationUuid,
                 'email' => $email,
-            ])
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();

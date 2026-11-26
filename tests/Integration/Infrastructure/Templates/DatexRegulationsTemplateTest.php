@@ -13,6 +13,7 @@ use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Twig\Environment;
 
 final class DatexRegulationsTemplateTest extends KernelTestCase
 {
@@ -22,8 +23,8 @@ final class DatexRegulationsTemplateTest extends KernelTestCase
     private function render(array $vehicleConditions, bool $isPublicHolidaysExcluded = false, string $type = 'noEntry', ?string $direction = null): \DOMDocument
     {
         self::bootKernel();
-        /** @var \Twig\Environment */
-        $twig = static::getContainer()->get(\Twig\Environment::class);
+        /** @var Environment */
+        $twig = static::getContainer()->get(Environment::class);
 
         $content = $twig->render('api/regulations.xml.twig', [
             'publicationTime' => new \DateTimeImmutable('2026-10-05 08:00:00'),

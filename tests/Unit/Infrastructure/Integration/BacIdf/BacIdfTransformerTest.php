@@ -26,6 +26,7 @@ use App\Domain\User\Organization;
 use App\Infrastructure\Integration\BacIdf\BacIdfCityProcessorInterface;
 use App\Infrastructure\Integration\BacIdf\BacIdfTransformer;
 use App\Infrastructure\Integration\BacIdf\BacIdfTransformerResult;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class BacIdfTransformerTest extends TestCase
@@ -33,7 +34,8 @@ final class BacIdfTransformerTest extends TestCase
     private $commandBus;
     private $organization;
     private $cityProcessor;
-    private $cityCode = '93027';
+    private const CITY_CODE = '93027';
+    private $cityCode = self::CITY_CODE;
     private $siret = '21930027400012';
 
     protected function setUp(): void
@@ -213,7 +215,7 @@ final class BacIdfTransformerTest extends TestCase
         $this->assertEquals($result, $transformer->transform($record));
     }
 
-    private function provideTransformErrors(): array
+    public static function provideTransformErrors(): array
     {
         return [
             'basiccheck-reg_type' => [
@@ -386,7 +388,7 @@ final class BacIdfTransformerTest extends TestCase
                         ],
                     ],
                     'ARR_COMMUNE' => [
-                        'ARR_INSEE' => $this->cityCode,
+                        'ARR_INSEE' => self::CITY_CODE,
                         'ARR_VILLE' => 'La Courneuve',
                         'ARR_CODE_POSTAL' => '93120',
                     ],
@@ -433,7 +435,7 @@ final class BacIdfTransformerTest extends TestCase
                         ],
                     ],
                     'ARR_COMMUNE' => [
-                        'ARR_INSEE' => $this->cityCode,
+                        'ARR_INSEE' => self::CITY_CODE,
                         'ARR_VILLE' => 'La Courneuve',
                         'ARR_CODE_POSTAL' => '93120',
                     ],
@@ -485,7 +487,7 @@ final class BacIdfTransformerTest extends TestCase
                         ],
                     ],
                     'ARR_COMMUNE' => [
-                        'ARR_INSEE' => $this->cityCode,
+                        'ARR_INSEE' => self::CITY_CODE,
                         'ARR_VILLE' => 'La Courneuve',
                         'ARR_CODE_POSTAL' => '93120',
                     ],
@@ -519,9 +521,7 @@ final class BacIdfTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTransformErrors
-     */
+    #[DataProvider('provideTransformErrors')]
     public function testTransformErrors(array $record, array $errors): void
     {
         $this->cityProcessor
@@ -655,7 +655,7 @@ final class BacIdfTransformerTest extends TestCase
         $this->assertEquals($result, $transformer->transform($record));
     }
 
-    private function provideTransformVehicleSet(): \Iterator
+    public static function provideTransformVehicleSet(): \Iterator
     {
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = false;
@@ -718,9 +718,7 @@ final class BacIdfTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTransformVehicleSet
-     */
+    #[DataProvider('provideTransformVehicleSet')]
     public function testTransformVehicleSet($data, SaveVehicleSetCommand $vehicleSetCommand): void
     {
         $this->doTestTransform(function (array &$regCirculation, SaveMeasureCommand &$measureCommand) use ($data, $vehicleSetCommand) {
@@ -729,7 +727,7 @@ final class BacIdfTransformerTest extends TestCase
         });
     }
 
-    private function provideTransformExemptedVehicleTypes(): \Iterator
+    public static function provideTransformExemptedVehicleTypes(): \Iterator
     {
         $vehicleSetCommand = new SaveVehicleSetCommand();
         $vehicleSetCommand->allVehicles = true;
@@ -817,9 +815,7 @@ final class BacIdfTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTransformExemptedVehicleTypes
-     */
+    #[DataProvider('provideTransformExemptedVehicleTypes')]
     public function testTransformExemptedVehicleTypes(array $data, SaveVehicleSetCommand $vehicleSetCommand): void
     {
         $this->doTestTransform(function (array &$regCirculation, SaveMeasureCommand &$measureCommand) use ($data, $vehicleSetCommand) {
@@ -828,7 +824,7 @@ final class BacIdfTransformerTest extends TestCase
         });
     }
 
-    private function provideTransformPeriods(): \Iterator
+    public static function provideTransformPeriods(): \Iterator
     {
         $periodCommand0 = new SavePeriodCommand();
         $periodCommand0->isPermanent = true;
@@ -920,9 +916,7 @@ final class BacIdfTransformerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTransformPeriods
-     */
+    #[DataProvider('provideTransformPeriods')]
     public function testTransformPeriods(array $data, array $periodCommands): void
     {
         $this->doTestTransform(function (array &$regCirculation, SaveMeasureCommand &$measureCommand) use ($data, $periodCommands) {

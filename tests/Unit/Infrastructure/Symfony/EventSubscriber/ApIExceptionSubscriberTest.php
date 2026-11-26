@@ -87,20 +87,20 @@ class ApIExceptionSubscriberTest extends TestCase
 
         $exception = new EmptyRoadBanIdException();
         $event = new ExceptionEvent($kernel, $request, KernelInterface::MAIN_REQUEST, $exception);
+        $matcher = self::exactly(2);
 
         $this->logger
-            ->expects(self::exactly(2))
-            ->method('error')
-            ->withConsecutive(
-                [
-                    'Empty roadBanId in the command GetNamedStreetGeometryQuery',
-                    ['exception' => ''],
-                ],
-                [
-                    'Unhandled API exception',
-                    ['exception' => $exception],
-                ],
-            );
+            ->expects($matcher)
+            ->method('error')->willReturnCallback(function (...$parameters) use ($matcher, $exception) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals('Empty roadBanId in the command GetNamedStreetGeometryQuery', $parameters[0]);
+                    $this->assertEquals(['exception' => ''], $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals('Unhandled API exception', $parameters[0]);
+                    $this->assertEquals(['exception' => $exception], $parameters[1]);
+                }
+            });
 
         $this->subscriber->onKernelException($event);
 

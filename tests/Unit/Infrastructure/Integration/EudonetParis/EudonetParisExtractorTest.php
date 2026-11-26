@@ -65,7 +65,7 @@ final class EudonetParisExtractorTest extends TestCase
         $this->client
             ->expects($matcher)
             ->method('search')
-            ->willReturnCallback(fn ($tabId, $listCols, $whereCustom) => match ($matcher->getInvocationCount()) {
+            ->willReturnCallback(fn ($tabId, $listCols, $whereCustom) => match ($matcher->numberOfInvocations()) {
                 1 => $this->assertSame([
                     1100,
                     [1101, 1102, 1108, 1109, 1110],

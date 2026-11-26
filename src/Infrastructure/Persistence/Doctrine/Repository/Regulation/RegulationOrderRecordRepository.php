@@ -19,6 +19,7 @@ use App\Domain\Regulation\RegulationOrderHistory;
 use App\Domain\Regulation\RegulationOrderRecord;
 use App\Domain\Regulation\Repository\RegulationOrderRecordRepositoryInterface;
 use App\Domain\User\Organization;
+use App\Infrastructure\Persistence\Doctrine\QueryParameters;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\Query\Expr\Join;
@@ -188,7 +189,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             }
         }
 
-        $query->setParameters($parameters);
+        $query->setParameters(QueryParameters::fromArray($parameters));
 
         $query
             ->innerJoin('roc.organization', 'o')
@@ -251,10 +252,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->select('count(roc.uuid)')
             ->where('roc.organization IN (:organizationUuids)')
             ->andWhere('roc.status = :status')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'organizationUuids' => $organizationUuids,
                 'status' => RegulationOrderRecordStatusEnum::DRAFT->value,
-            ])
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -265,12 +266,12 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.organization IN (:organizationUuids)')
             ->andWhere('roc.status = :status')
             ->andWhere(\sprintf('%s <= :now AND (ro.category = :permanentCategory OR %s >= :now)', $overallStartDateExpr(30), $overallEndDateExpr(31)))
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'organizationUuids' => $organizationUuids,
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
                 'now' => $now,
-            ])
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -280,11 +281,11 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->where('roc.organization IN (:organizationUuids)')
             ->andWhere('roc.status = :status')
             ->andWhere(\sprintf('%s > :now', $overallStartDateExpr(32)))
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'organizationUuids' => $organizationUuids,
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'now' => $now,
-            ])
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -339,10 +340,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->leftJoin('m.locations', 'l')
             ->leftJoin('l.numberedRoad', 'nr')
             ->leftJoin('l.namedStreet', 'ns')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'identifier' => $identifier,
                 'organization' => $organization,
-            ])
+            ]))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -354,10 +355,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
             ->select('roc.uuid')
             ->where('roc.organization = :organization')
             ->innerJoin('roc.regulationOrder', 'ro', 'WITH', 'ro.identifier = :identifier')
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'identifier' => $identifier,
                 'organization' => $organization,
-            ])
+            ]))
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -471,7 +472,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         }
 
         $rows = $qb
-            ->setParameters($parameters)
+            ->setParameters(QueryParameters::fromArray($parameters))
             ->getQuery()
             ->getResult();
 
@@ -585,7 +586,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
         }
 
         $rows = $qb
-            ->setParameters($parameters)
+            ->setParameters(QueryParameters::fromArray($parameters))
             ->getQuery()
             ->getResult();
 
@@ -682,9 +683,9 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 $allowedLocationIds ? 'loc.uuid IN (:allowedLocationIds)' : null,
                 $excludedOrgUuids ? 'roc.organization NOT IN (:excludedOrgUuids)' : null,
                 'm.type IN (:measureTypes)',
-                'v IS NULL or v.restrictedTypes = \'a:0:{}\'',
+                'v IS NULL or JSON_ARRAY_LENGTH(v.restrictedTypes) = 0',
             )
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 ...($allowedSources ? ['allowedSources' => $allowedSources] : []),
                 ...($excludedIdentifiers ? ['excludedIdentifiers' => $excludedIdentifiers] : []),
                 ...($allowedLocationIds ? ['allowedLocationIds' => $allowedLocationIds] : []),
@@ -696,7 +697,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 // Allow RawGeoJSON locations only for Litteralis source
                 'rawGeoJSONRoadType' => RoadTypeEnum::RAW_GEOJSON->value,
                 'litteralisSource' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
-            ])
+            ]))
             ->orderBy('loc.uuid') // Predictable order
             ->getQuery()
             ->getResult()
@@ -714,13 +715,13 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'roc.status = :status',
                 \sprintf('ro.category = :permanentCategory OR (%s) >= :laterThan', str_replace('%%n', '10', self::OVERALL_END_DATE_QUERY_TEMPLATE)),
             )
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'source' => RegulationOrderRecordSourceEnum::LITTERALIS->value,
                 'organizationId' => $organizationId,
                 'status' => RegulationOrderRecordStatusEnum::PUBLISHED->value,
                 'laterThan' => $laterThan,
                 'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            ])
+            ]))
             ->getQuery()
             ->getResult()
         ;
@@ -785,10 +786,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'o.uuid <> :uuid',
                 'ro.category = :permanentCategory',
             )
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'uuid' => $this->dialogOrgId,
                 'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            ])
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -803,10 +804,10 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
                 'o.uuid <> :uuid',
                 'ro.category <> :permanentCategory',
             )
-            ->setParameters([
+            ->setParameters(QueryParameters::fromArray([
                 'uuid' => $this->dialogOrgId,
                 'permanentCategory' => RegulationOrderCategoryEnum::PERMANENT_REGULATION->value,
-            ])
+            ]))
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -821,7 +822,7 @@ final class RegulationOrderRecordRepository extends ServiceEntityRepository impl
            ->select('COUNT(ror) + 1 AS number_of_records')
            ->where('ror.organization = :uuid')
            ->andWhere('ror.createdAt BETWEEN :startDate AND :endDate')
-           ->setParameters(['startDate' => $startDate, 'endDate' => $endDate, 'uuid' => $uuid])
+           ->setParameters(QueryParameters::fromArray(['startDate' => $startDate, 'endDate' => $endDate, 'uuid' => $uuid]))
            ->getQuery()
            ->getSingleScalarResult()
         ;

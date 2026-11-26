@@ -15,6 +15,7 @@ use App\Application\Regulation\Query\Location\GetRawGeoJSONGeometryQuery;
 use App\Application\Regulation\Query\Location\GetZoneGeometryQuery;
 use App\Domain\Regulation\Enum\DirectionEnum;
 use App\Domain\Regulation\Enum\RoadTypeEnum;
+use App\Domain\Regulation\Location\Location;
 use App\Domain\Regulation\Location\WholeCityException;
 use PHPUnit\Framework\TestCase;
 
@@ -52,7 +53,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
     {
         $exception = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::LANE->value,
             label: 'Rue de Paris',
             geometry: '<geom>',
@@ -84,7 +85,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
     {
         $exception = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::RAW_GEOJSON->value,
             label: 'Zone piétonne',
             geometry: '<geom>',
@@ -202,7 +203,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
 
         $persisted = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::LANE->value,
             label: $original->getLabel(),
             geometry: '<geom>',
@@ -235,7 +236,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
     {
         $exception = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::DEPARTMENTAL_ROAD->value,
             label: 'D110',
             geometry: '<geom>',
@@ -277,7 +278,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
     {
         $exception = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::NATIONAL_ROAD->value,
             label: 'N176',
             geometry: '<geom>',
@@ -312,7 +313,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
     {
         $exception = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::ZONE->value,
             label: 'Quartier des Halles',
             geometry: '<tronçons calculés>',
@@ -396,7 +397,7 @@ final class SaveWholeCityExceptionCommandTest extends TestCase
 
         $persisted = new WholeCityException(
             uuid: 'uuid',
-            location: $this->createMock(\App\Domain\Regulation\Location\Location::class),
+            location: $this->createMock(Location::class),
             roadType: RoadTypeEnum::NATIONAL_ROAD->value,
             label: $original->getLabel(),
             geometry: '<geom>',

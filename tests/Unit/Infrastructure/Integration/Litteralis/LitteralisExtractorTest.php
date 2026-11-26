@@ -82,30 +82,48 @@ final class LitteralisExtractorTest extends TestCase
             ->willReturn($this->client);
 
         $cqlFilter = "(mesures ILIKE '%circulation interdite%' OR mesures ILIKE '%limitation de vitesse%' OR mesures ILIKE '%interruption de circulation%' OR mesures ILIKE '%interdiction de stationnement%' OR mesures ILIKE '%interdiction de dépasser%') AND (arretefin IS NULL OR arretefin >= '2024-08-01T00:00:00+0000')";
+        $matcher = self::exactly(2);
 
         $this->client
-            ->expects(self::exactly(2))
-            ->method('count')
-            ->withConsecutive(
-                [null, $this->reporter],
-                [$cqlFilter, $this->reporter],
-            )
-            ->willReturnOnConsecutiveCalls(10, 4);
+            ->expects($matcher)
+            ->method('count')->willReturnCallback(function (...$parameters) use ($matcher, $cqlFilter) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals(null, $parameters[0]);
+                    $this->assertEquals($this->reporter, $parameters[1]);
+
+                    return 10;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($cqlFilter, $parameters[0]);
+                    $this->assertEquals($this->reporter, $parameters[1]);
+
+                    return 4;
+                }
+            });
 
         $this->client
             ->expects(self::once())
             ->method('fetchAllPaginated')
             ->with($cqlFilter, $this->reporter)
             ->willReturn($features);
+        $matcher = self::exactly(3);
 
         $this->reporter
-            ->expects(self::exactly(3))
-            ->method('addCount')
-            ->withConsecutive(
-                [LitteralisRecordEnum::COUNT_TOTAL_FEATURES->value, 10],
-                [LitteralisRecordEnum::COUNT_MATCHING_FEATURES->value, 4],
-                [LitteralisRecordEnum::COUNT_EXTRACTED_FEATURES->value, 3],
-            );
+            ->expects($matcher)
+            ->method('addCount')->willReturnCallback(function (...$parameters) use ($matcher) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals(LitteralisRecordEnum::COUNT_TOTAL_FEATURES->value, $parameters[0]);
+                    $this->assertEquals(10, $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals(LitteralisRecordEnum::COUNT_MATCHING_FEATURES->value, $parameters[0]);
+                    $this->assertEquals(4, $parameters[1]);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals(LitteralisRecordEnum::COUNT_EXTRACTED_FEATURES->value, $parameters[0]);
+                    $this->assertEquals(3, $parameters[1]);
+                }
+            });
 
         $this->reporter
             ->expects(self::once())

@@ -48,12 +48,24 @@ final class SavePeriodCommandHandlerTest extends TestCase
 
         $mergedStartDateTime = new \DateTimeImmutable('2023-05-22 10:00:00');
         $mergedEndDateTime = new \DateTimeImmutable('2023-05-23 16:00:00');
+        $matcher = self::exactly(2);
 
         $this->dateUtils
-            ->expects(self::exactly(2))
-            ->method('mergeDateAndTime')
-            ->withConsecutive([$startDateTime, $startTime], [$endDateTime, $endTime])
-            ->willReturnOnConsecutiveCalls($mergedStartDateTime, $mergedEndDateTime);
+            ->expects($matcher)
+            ->method('mergeDateAndTime')->willReturnCallback(function (...$parameters) use ($matcher, $startDateTime, $startTime, $endDateTime, $endTime, $mergedStartDateTime, $mergedEndDateTime) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($startDateTime, $parameters[0]);
+                    $this->assertEquals($startTime, $parameters[1]);
+
+                    return $mergedStartDateTime;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($endDateTime, $parameters[0]);
+                    $this->assertEquals($endTime, $parameters[1]);
+
+                    return $mergedEndDateTime;
+                }
+            });
 
         $this->idFactory
             ->expects(self::once())
@@ -109,12 +121,22 @@ final class SavePeriodCommandHandlerTest extends TestCase
 
         $timeSlotCommand = new SaveTimeSlotCommand();
         $timeSlotCommand->period = $createdPeriod;
+        $matcher = self::exactly(2);
 
         $this->commandBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive([$this->equalTo($timeSlotCommand)], [$this->equalTo($dailyRangeCommand)])
-            ->willReturnOnConsecutiveCalls($createdTimeSlot, $createdDailyRange);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $timeSlotCommand, $dailyRangeCommand, $createdTimeSlot, $createdDailyRange) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($timeSlotCommand, $parameters[0]);
+
+                    return $createdTimeSlot;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($dailyRangeCommand, $parameters[0]);
+
+                    return $createdDailyRange;
+                }
+            });
 
         $command = new SavePeriodCommand();
         $command->measure = $measure;
@@ -192,12 +214,22 @@ final class SavePeriodCommandHandlerTest extends TestCase
 
         $timeSlotCommand = new SaveTimeSlotCommand();
         $timeSlotCommand->period = $createdPeriod;
+        $matcher = self::exactly(2);
 
         $this->commandBus
-            ->expects(self::exactly(2))
-            ->method('handle')
-            ->withConsecutive([$this->equalTo($timeSlotCommand)], [$this->equalTo($dailyRangeCommand)])
-            ->willReturnOnConsecutiveCalls($createdTimeSlot, $createdDailyRange);
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $timeSlotCommand, $dailyRangeCommand, $createdTimeSlot, $createdDailyRange) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($timeSlotCommand, $parameters[0]);
+
+                    return $createdTimeSlot;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($dailyRangeCommand, $parameters[0]);
+
+                    return $createdDailyRange;
+                }
+            });
 
         $command = new SavePeriodCommand();
         $command->isPermanent = true;
@@ -223,12 +255,24 @@ final class SavePeriodCommandHandlerTest extends TestCase
 
         $mergedStartDateTime = new \DateTimeImmutable('2023-05-22 10:00:00');
         $mergedEndDateTime = new \DateTimeImmutable('2023-05-23 16:00:00');
+        $matcher = self::exactly(2);
 
         $this->dateUtils
-            ->expects(self::exactly(2))
-            ->method('mergeDateAndTime')
-            ->withConsecutive([$startDateTime, $startTime], [$endDateTime, $endTime])
-            ->willReturnOnConsecutiveCalls($mergedStartDateTime, $mergedEndDateTime);
+            ->expects($matcher)
+            ->method('mergeDateAndTime')->willReturnCallback(function (...$parameters) use ($matcher, $startDateTime, $startTime, $endDateTime, $endTime, $mergedStartDateTime, $mergedEndDateTime) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($startDateTime, $parameters[0]);
+                    $this->assertEquals($startTime, $parameters[1]);
+
+                    return $mergedStartDateTime;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($endDateTime, $parameters[0]);
+                    $this->assertEquals($endTime, $parameters[1]);
+
+                    return $mergedEndDateTime;
+                }
+            });
 
         $this->idFactory
             ->expects(self::never())
@@ -277,15 +321,21 @@ final class SavePeriodCommandHandlerTest extends TestCase
 
         $dailyRangeCommand = new SaveDailyRangeCommand();
         $dailyRangeCommand->period = $period;
+        $matcher = self::exactly(3);
 
         $this->commandBus
-            ->expects(self::exactly(3))
-            ->method('handle')
-            ->withConsecutive(
-                [$this->equalTo($dailyRangeCommand)],
-                [$this->equalTo($timeSlotCommand1)],
-                [$this->equalTo(new DeleteTimeSlotCommand($timeSlot2))],
-            );
+            ->expects($matcher)
+            ->method('handle')->willReturnCallback(function (...$parameters) use ($matcher, $dailyRangeCommand, $timeSlotCommand1, $timeSlot2) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($dailyRangeCommand, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($timeSlotCommand1, $parameters[0]);
+                }
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertEquals(new DeleteTimeSlotCommand($timeSlot2), $parameters[0]);
+                }
+            });
 
         $handler = new SavePeriodCommandHandler(
             $this->idFactory,
@@ -321,12 +371,24 @@ final class SavePeriodCommandHandlerTest extends TestCase
         $mergedEndDateTime = new \DateTimeImmutable('2023-05-23 16:00:00');
 
         $oldDailyRange = $this->createMock(DailyRange::class);
+        $matcher = self::exactly(2);
 
         $this->dateUtils
-            ->expects(self::exactly(2))
-            ->method('mergeDateAndTime')
-            ->withConsecutive([$startDateTime, $startTime], [$endDateTime, $endTime])
-            ->willReturnOnConsecutiveCalls($mergedStartDateTime, $mergedEndDateTime);
+            ->expects($matcher)
+            ->method('mergeDateAndTime')->willReturnCallback(function (...$parameters) use ($matcher, $startDateTime, $startTime, $endDateTime, $endTime, $mergedStartDateTime, $mergedEndDateTime) {
+                if ($matcher->numberOfInvocations() === 1) {
+                    $this->assertEquals($startDateTime, $parameters[0]);
+                    $this->assertEquals($startTime, $parameters[1]);
+
+                    return $mergedStartDateTime;
+                }
+                if ($matcher->numberOfInvocations() === 2) {
+                    $this->assertEquals($endDateTime, $parameters[0]);
+                    $this->assertEquals($endTime, $parameters[1]);
+
+                    return $mergedEndDateTime;
+                }
+            });
 
         $this->idFactory
             ->expects(self::never())

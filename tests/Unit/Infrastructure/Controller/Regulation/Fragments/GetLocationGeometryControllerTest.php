@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class GetLocationGeometryControllerTest extends TestCase
 {
@@ -541,7 +542,7 @@ final class GetLocationGeometryControllerTest extends TestCase
 
     public function testUnsupportedRoadType(): void
     {
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         ($this->controller)(roadType: RoadTypeEnum::RAW_GEOJSON);
     }

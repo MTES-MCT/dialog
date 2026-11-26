@@ -7,6 +7,7 @@ namespace App\Tests\Unit\Application\Regulation\View;
 use App\Application\Regulation\View\DatexVehicleConditionView;
 use App\Domain\Regulation\Enum\CritairEnum;
 use App\Domain\Regulation\Enum\VehicleTypeEnum;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class DatexVehicleConditionViewTest extends TestCase
@@ -57,9 +58,7 @@ final class DatexVehicleConditionViewTest extends TestCase
         $this->assertFalse($view->isOther);
     }
 
-    /**
-     * @dataProvider provideVehicleUsages
-     */
+    #[DataProvider('provideVehicleUsages')]
     public function testVehicleUsages(string $vehicleType): void
     {
         $view = new DatexVehicleConditionView($vehicleType, isExempted: true);
