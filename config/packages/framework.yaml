@@ -10,7 +10,8 @@ framework:
     # Remove or comment this section to explicitly disable session support.
     session:
         handler_id: '%env(REDIS_URL)%'
-        cookie_secure: auto
+        cookie_secure: true
+        cookie_httponly: true
         cookie_samesite: lax
         storage_factory_id: session.storage.factory.native
 
