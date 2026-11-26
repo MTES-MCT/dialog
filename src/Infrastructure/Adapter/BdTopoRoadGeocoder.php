@@ -637,7 +637,17 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                                     ps.identifiant_de_section
                             END AS target_section_id,
                             COALESCE(np.section_geometrie, ps.geometrie) AS target_geometrie,
-                            COALESCE(np.section_length, ps.section_length) AS target_section_length
+                            COALESCE(np.section_length, ps.section_length) AS target_section_length,
+                            -- L\'abscisse est hors borne quand la position n\'a pu être obtenue qu\'en la
+                            -- ramenant à une extrémité de section (cas 1.0 / 0.0 / LEAST ci-dessus) :
+                            -- la géométrie ne correspondrait pas au point demandé.
+                            CASE
+                                WHEN ps.pr_position + (:abscissa * ps.direction / ps.section_length) BETWEEN 0.0 AND 1.0 THEN FALSE
+                                WHEN ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
+                                     AND np.identifiant_de_section IS NOT NULL
+                                     AND np.pr_position + ((:abscissa * ps.direction - (1.0 - ps.pr_position) * ps.section_length) / np.section_length) <= 1.0 THEN FALSE
+                                ELSE TRUE
+                            END AS is_out_of_range
                         FROM pr_section AS ps
                         LEFT JOIN next_pr AS np ON ps.pr_position + (:abscissa * ps.direction / ps.section_length) > 1.0
                     )
@@ -656,7 +666,8 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
                     pc.raw_position,
                     pc.final_position,
                     pc.target_section_id,
-                    pc.target_geometrie IS NOT NULL AS has_next_section
+                    pc.target_geometrie IS NOT NULL AS has_next_section,
+                    pc.is_out_of_range
                     FROM position_calculation AS pc
                     ',
                     empty($departmentCode) ? '' : 'AND p.code_insee_du_departement = :departmentCode',
@@ -678,7 +689,7 @@ final class BdTopoRoadGeocoder implements RoadGeocoderInterface, IntersectionGeo
             throw new GeocodingAddressNotFoundException(\sprintf('no result found for roadNumber="%s", administrator="%s", departmentCode="%s", pointNumber=%s', $roadNumber, $administrator, $departmentCode, $pointNumber));
         }
 
-        if (empty($row['geom'])) {
+        if (empty($row['geom']) || \in_array($row['is_out_of_range'] ?? false, [true, 't', 1, '1'], true)) {
             throw new AbscissaOutOfRangeException($roadType);
         }
 

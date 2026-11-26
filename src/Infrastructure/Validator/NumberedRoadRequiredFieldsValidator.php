@@ -52,5 +52,13 @@ final class NumberedRoadRequiredFieldsValidator
                 ->atPath("$basePath.toPointNumber")
                 ->addViolation();
         }
+
+        foreach (['fromSide', 'toSide'] as $field) {
+            if ($command->$field === null || $command->$field === '') {
+                $context->buildViolation('common.error.not_blank')
+                    ->atPath("$basePath.$field")
+                    ->addViolation();
+            }
+        }
     }
 }

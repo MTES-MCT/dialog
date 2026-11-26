@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Application\Regulation\Query\Location;
 
 use App\Application\Exception\EmptyRoadBanIdException;
 use App\Application\Exception\GeocodingFailureException;
+use App\Application\Exception\LaneGeocodingFailureException;
 use App\Application\LaneSectionMakerInterface;
 use App\Application\LineOrienterInterface;
 use App\Application\Regulation\Command\Location\SaveNamedStreetCommand;
@@ -356,6 +357,32 @@ final class GetNamedStreetGeometryQueryHandlerTest extends TestCase
         $saveNamedStreetCommand->toCoords = null;
 
         $handler(new GetNamedStreetGeometryQuery($saveNamedStreetCommand));
+    }
+
+    public function testStartWithoutEnd(): void
+    {
+        $this->expectException(LaneGeocodingFailureException::class);
+
+        $this->roadGeocoder
+            ->expects(self::once())
+            ->method('computeRoadLine')
+            ->willReturn('{"type":"LineString","coordinates":[[1,2],[3,4]]}');
+
+        $this->laneSectionMaker
+            ->expects(self::never())
+            ->method('computeSection');
+
+        $handler = new GetNamedStreetGeometryQueryHandler($this->roadGeocoder, $this->laneSectionMaker, $this->lineOrienter);
+
+        $command = new SaveNamedStreetCommand();
+        $command->roadType = RoadTypeEnum::LANE->value;
+        $command->cityCode = $this->cityCode;
+        $command->cityLabel = $this->cityLabel;
+        $command->roadName = $this->roadName;
+        $command->roadBanId = $this->roadBanId;
+        $command->fromHouseNumber = '10';
+
+        $handler(new GetNamedStreetGeometryQuery($command));
     }
 
     /**
